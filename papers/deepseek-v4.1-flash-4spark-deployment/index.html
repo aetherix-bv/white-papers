@@ -1,0 +1,1387 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-default.css">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet">
+
+  <style id="jtd-nav-activation">
+  
+
+.site-nav > ul.nav-list:first-child > li > a,
+.site-nav > ul.nav-list:first-child > li > ul > li:not(:nth-child(10)) > a,
+.site-nav > ul.nav-list:first-child > li > ul > li > ul > li > a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:not(:first-child) a,
+.site-nav li.external a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(10) > a {
+  font-weight: 600;
+  text-decoration: none;
+}.site-nav > ul.nav-list:first-child > li:nth-child(3) > button svg,
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(10) > button svg {
+  transform: rotate(-90deg);
+}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list,
+.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list > li.nav-list-item:nth-child(10) > ul.nav-list {
+  display: block;
+}
+  </style>
+
+  
+
+  
+    <script src="/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+
+
+  <!-- Begin Jekyll SEO tag v2.9.1 -->
+<title>DeepSeek-V4.1-Flash 4× DGX Spark Deployment | Aetherix White Papers</title>
+<meta name="generator" content="Jekyll v4.3.4" />
+<meta property="og:title" content="DeepSeek-V4.1-Flash 4× DGX Spark Deployment" />
+<meta property="og:locale" content="en" />
+<meta name="description" content="Deployment of DeepSeek-V4.1-Flash (763B MoE, FP8, DSpark k=5) on 4× NVIDIA DGX Spark (GB10) with tensor parallelism: vLLM build chain, 7 SM 12.1a patches, Engram-on-disk, benchmark results and B300 comparison." />
+<meta name="twitter:description" property="og:description" content="Deployment of DeepSeek-V4.1-Flash (763B MoE, FP8, DSpark k=5) on 4× NVIDIA DGX Spark (GB10) with tensor parallelism: vLLM build chain, 7 SM 12.1a patches, Engram-on-disk, benchmark results and B300 comparison." />
+<link rel="canonical" href="https://whitepapers.aetherix.com/papers/deepseek-v4.1-flash-4spark-deployment/" />
+<meta property="og:url" content="https://whitepapers.aetherix.com/papers/deepseek-v4.1-flash-4spark-deployment/" />
+<meta property="og:site_name" content="Aetherix White Papers" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-09-16T08:17:32+00:00" />
+<meta property="article:modified_time" content="2026-09-16T08:17:32+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="DeepSeek-V4.1-Flash 4× DGX Spark Deployment" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2026-09-16T08:17:32+00:00","datePublished":"2026-09-16T08:17:32+00:00","description":"Deployment of DeepSeek-V4.1-Flash (763B MoE, FP8, DSpark k=5) on 4× NVIDIA DGX Spark (GB10) with tensor parallelism: vLLM build chain, 7 SM 12.1a patches, Engram-on-disk, benchmark results and B300 comparison.","headline":"DeepSeek-V4.1-Flash 4× DGX Spark Deployment","mainEntityOfPage":{"@type":"WebPage","@id":"https://whitepapers.aetherix.com/papers/deepseek-v4.1-flash-4spark-deployment/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://whitepapers.aetherix.com/assets/images/aetherix-logo.png"}},"url":"https://whitepapers.aetherix.com/papers/deepseek-v4.1-flash-4spark-deployment/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  
+<!-- Google tag (gtag.js) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JWLN33085T"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+
+  // Consent Mode v2 — default DENIED. Banner onayı ile GRANTED olur.
+  // KVKK/GDPR uyumu: ziyaretçi onay vermeden çerez set edilmez.
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    functionality_storage: 'granted',
+    security_storage: 'granted',
+    wait_for_update: 500
+  });
+
+  gtag('js', new Date());
+  gtag('config', 'G-JWLN33085T', {
+    anonymize_ip: true
+  });
+</script>
+
+<link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/papers/deepseek-v4.1-flash-4spark-deployment/">
+<link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/papers/deepseek-v4.1-flash-4spark-deployment/">
+<link rel="alternate" hreflang="x-default" href="https://whitepapers.aetherix.com/papers/deepseek-v4.1-flash-4spark-deployment/">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/images/favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+
+
+</head>
+
+<body>
+  <a class="skip-to-main" href="#main-content">Skip to main content</a>
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="svg-link" viewBox="0 0 24 24">
+  <title>Link</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+</symbol>
+
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+  <title>Menu</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+    <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</symbol>
+
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+  <title>Expand</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</symbol>
+
+  <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
+<symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+  <title id="svg-external-link-title">(external link)</title>
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+</symbol>
+
+  
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+  <title>Document</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+</symbol>
+
+    <symbol id="svg-search" viewBox="0 0 24 24">
+  <title>Search</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</symbol>
+
+  
+  
+    <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+<symbol id="svg-copy" viewBox="0 0 16 16">
+  <title>Copy</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+</symbol>
+<symbol id="svg-copied" viewBox="0 0 16 16">
+  <title>Copied</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"/>
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"/>
+  </svg>
+</symbol>
+
+  
+</svg>
+
+  
+    <div class="side-bar">
+  <div class="site-header" role="banner">
+    <a href="/" class="site-title lh-tight">
+  <div class="site-logo" role="img" aria-label="Aetherix White Papers"></div>
+
+</a>
+    <button id="menu-button" class="site-button btn-reset" aria-label="Toggle menu" aria-pressed="false">
+      <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  <nav aria-label="Main" id="site-nav" class="site-nav">
+  
+  
+    <ul class="nav-list"><li class="nav-list-item"><a href="/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/about/" class="nav-list-link">About</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in White Papers category" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+    </button><a href="/papers/" class="nav-list-link">White Papers</a><ul class="nav-list"><li class="nav-list-item"><a href="/papers/local-llm-guide/" class="nav-list-link">Local LLM Usage Guide</a></li><li class="nav-list-item"><a href="/papers/conditional-memory-offloading/" class="nav-list-link">Conditional Memory and Offloading in LLM Inference</a></li><li class="nav-list-item"><a href="/papers/b300-gb300-cluster-architecture/" class="nav-list-link">NVIDIA DGX B300 vs GB300 NVL72 Cluster Architecture Comparison</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-2node-cluster-setup/" class="nav-list-link">DGX Spark 2-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-3node-cluster-setup/" class="nav-list-link">DGX Spark 3-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-4node-cluster-setup/" class="nav-list-link">DGX Spark 4-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-8node-cluster-setup/" class="nav-list-link">DGX Spark 8-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/qwen3.6-27b-dgx-spark-benchmark/" class="nav-list-link">Qwen3.6-27B DGX Spark Benchmark</a></li><li class="nav-list-item"><a href="/papers/qwen3.6-27b-dgx-spark-scaling/" class="nav-list-link">Qwen3.6-27B DGX Spark Cluster Scaling</a></li><li class="nav-list-item"><a href="/papers/deepseek-v4.1-flash-4spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash 4× DGX Spark Deployment</a></li><li class="nav-list-item"><a href="/papers/deepseek-v4.1-flash-8spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash 8× DGX Spark TP8 Deployment</a></li><li class="nav-list-item"><a href="/papers/kimi-k3-dgx-b300-inference-benchmark/" class="nav-list-link">Kimi K3 Inference Benchmark on DGX-B300</a></li></ul></li><li class="nav-list-item"><a href="/llm-inference-benchmarks/" class="nav-list-link">LLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/cv-inference-benchmarks/" class="nav-list-link">CV Inference Benchmark Explorer</a></li></ul>
+
+  
+</nav>
+
+
+  
+  
+    <div class="lang-switcher">
+  
+    
+    
+      <span class="lang-switcher-item active">EN</span>
+    
+  
+    
+    
+      <a class="lang-switcher-item" href="/nl/papers/deepseek-v4.1-flash-4spark-deployment/">NL</a>
+    
+  
+</div>
+<script src="/assets/js/lang-switch.js"></script>
+
+  
+</div>
+
+  
+  <div class="main" id="top">
+    <div id="main-header" class="main-header">
+  
+    
+
+<div class="search" role="search">
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Search" aria-label="Search" autocomplete="off">
+    <label for="search-input" class="search-label"><svg viewBox="0 0 24 24" class="search-icon"><use xlink:href="#svg-search"></use></svg></label>
+  </div>
+  <div id="search-results" class="search-results"></div>
+</div>
+
+  
+  
+  
+    <nav aria-label="Auxiliary" class="aux-nav">
+  <ul class="aux-nav-list">
+    
+      <li class="aux-nav-list-item">
+        <a href="https://aetherix.com" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          aetherix.com
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://github.com/aetherix-bv" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          GitHub
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+  
+</div>
+
+    <div class="main-content-wrap">
+      <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+  <ol class="breadcrumb-nav-list">
+    <li class="breadcrumb-nav-list-item"><a href="/papers/">White Papers</a></li>
+    <li class="breadcrumb-nav-list-item"><span>DeepSeek-V4.1-Flash 4× DGX Spark Deployment</span></li>
+  </ol>
+</nav>
+      <div id="main-content" class="main-content">
+        <main>
+          
+            <p><em>Prepared by: <strong>Aetherix B.V.</strong> — Trusted Jetson Hardware Provider for Edge AI</em></p>
+
+<p><em>Test platform: 4× NVIDIA DGX Spark (GB10) · Model: DeepSeek-V4.1-Flash (763B) · Report date: September 2026</em></p><hr />
+<h2 class="no_toc" id="contents">
+  
+  
+    <a href="#contents" class="anchor-heading" aria-labelledby="contents"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Contents
+  
+  
+</h2>
+    
+
+<ul id="markdown-toc">
+  <li><a href="#1-introduction" id="markdown-toc-1-introduction">1. Introduction</a></li>
+  <li><a href="#2-model-architecture" id="markdown-toc-2-model-architecture">2. Model Architecture</a>    <ul>
+      <li><a href="#21-overview" id="markdown-toc-21-overview">2.1 Overview</a></li>
+      <li><a href="#22-causal-encoder-decoder-ced-architecture" id="markdown-toc-22-causal-encoder-decoder-ced-architecture">2.2 Causal Encoder-Decoder (CED) Architecture</a></li>
+      <li><a href="#23-compressed-sparse-attention-2-csa2" id="markdown-toc-23-compressed-sparse-attention-2-csa2">2.3 Compressed Sparse Attention 2 (CSA2)</a></li>
+      <li><a href="#24-engram-conditional-memory" id="markdown-toc-24-engram-conditional-memory">2.4 Engram Conditional Memory</a></li>
+      <li><a href="#25-dspark-speculative-decoding" id="markdown-toc-25-dspark-speculative-decoding">2.5 DSpark Speculative Decoding</a></li>
+    </ul>
+  </li>
+  <li><a href="#3-hardware" id="markdown-toc-3-hardware">3. Hardware</a></li>
+  <li><a href="#4-vllm-build-and-patch-chain" id="markdown-toc-4-vllm-build-and-patch-chain">4. vLLM Build and Patch Chain</a>    <ul>
+      <li><a href="#41-base-image-and-vllm-branch" id="markdown-toc-41-base-image-and-vllm-branch">4.1 Base Image and vLLM Branch</a></li>
+      <li><a href="#42-overlay-build-chain" id="markdown-toc-42-overlay-build-chain">4.2 Overlay Build Chain</a></li>
+      <li><a href="#43-patches" id="markdown-toc-43-patches">4.3 Patches</a></li>
+      <li><a href="#44-optimizations" id="markdown-toc-44-optimizations">4.4 Optimizations</a></li>
+    </ul>
+  </li>
+  <li><a href="#5-configuration" id="markdown-toc-5-configuration">5. Configuration</a>    <ul>
+      <li><a href="#51-sparkrun-recipe" id="markdown-toc-51-sparkrun-recipe">5.1 sparkrun Recipe</a></li>
+      <li><a href="#52-speculative-decoding-configuration" id="markdown-toc-52-speculative-decoding-configuration">5.2 Speculative Decoding Configuration</a></li>
+      <li><a href="#53-engram-on-disk-configuration" id="markdown-toc-53-engram-on-disk-configuration">5.3 Engram-on-disk Configuration</a></li>
+      <li><a href="#54-launch-command" id="markdown-toc-54-launch-command">5.4 Launch Command</a></li>
+      <li><a href="#55-serving-parameters" id="markdown-toc-55-serving-parameters">5.5 Serving Parameters</a></li>
+    </ul>
+  </li>
+  <li><a href="#6-performance-results" id="markdown-toc-6-performance-results">6. Performance Results</a>    <ul>
+      <li><a href="#61-benchmark-table" id="markdown-toc-61-benchmark-table">6.1 Benchmark Table</a></li>
+      <li><a href="#62-charts" id="markdown-toc-62-charts">6.2 Charts</a></li>
+      <li><a href="#63-assessment" id="markdown-toc-63-assessment">6.3 Assessment</a></li>
+      <li><a href="#64-dspark-acceptance" id="markdown-toc-64-dspark-acceptance">6.4 DSpark Acceptance</a></li>
+    </ul>
+  </li>
+  <li><a href="#7-comparative-analysis" id="markdown-toc-7-comparative-analysis">7. Comparative Analysis</a>    <ul>
+      <li><a href="#71-comparison-with-dgx-b300" id="markdown-toc-71-comparison-with-dgx-b300">7.1 Comparison with DGX-B300</a></li>
+    </ul>
+  </li>
+  <li><a href="#8-slo-and-capacity" id="markdown-toc-8-slo-and-capacity">8. SLO and Capacity</a></li>
+  <li><a href="#9-conclusion" id="markdown-toc-9-conclusion">9. Conclusion</a></li>
+  <li><a href="#appendix-a-docker-image-build-instructions" id="markdown-toc-appendix-a-docker-image-build-instructions">Appendix A: Docker Image Build Instructions</a>    <ul>
+      <li><a href="#a1-clone-the-repo" id="markdown-toc-a1-clone-the-repo">A.1 Clone the Repo</a></li>
+      <li><a href="#a2-checkout-vllm-branch" id="markdown-toc-a2-checkout-vllm-branch">A.2 Checkout vLLM Branch</a></li>
+      <li><a href="#a3-build-c-extensions" id="markdown-toc-a3-build-c-extensions">A.3 Build C Extensions</a></li>
+      <li><a href="#a4-overlay-chain" id="markdown-toc-a4-overlay-chain">A.4 Overlay Chain</a></li>
+      <li><a href="#a5-patch-layer" id="markdown-toc-a5-patch-layer">A.5 Patch Layer</a></li>
+      <li><a href="#a6-worker-distribution" id="markdown-toc-a6-worker-distribution">A.6 Worker Distribution</a></li>
+    </ul>
+  </li>
+  <li><a href="#appendix-b-engram-row-ranges" id="markdown-toc-appendix-b-engram-row-ranges">Appendix B: Engram Row Ranges</a></li>
+  <li><a href="#appendix-c-verification-commands" id="markdown-toc-appendix-c-verification-commands">Appendix C: Verification Commands</a>    <ul>
+      <li><a href="#api-health" id="markdown-toc-api-health">API Health</a></li>
+      <li><a href="#simple-test" id="markdown-toc-simple-test">Simple Test</a></li>
+    </ul>
+  </li>
+</ul><hr />
+<h2 id="1-introduction">
+  
+  
+    <a href="#1-introduction" class="anchor-heading" aria-labelledby="1-introduction"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1. Introduction
+  
+  
+</h2>
+    
+
+<p>DeepSeek-V4.1-Flash is a multimodal Mixture-of-Experts (MoE) model with 552B backbone parameters.</p>
+
+<p>Its Hugging Face checkpoint contains 763B parameters: 552B backbone + 196B Engram conditional memory (per the model’s technical report) + ~15B for the vision encoder, MLP projector, and DSpark draft model.</p>
+
+<p>The model ships with MXFP8 dense + MXFP4 expert weight quantization and FP4 (E2M1) KV cache, and supports contexts of up to one million tokens.</p>
+
+<p>This report describes the deployment of this model on <strong>4× NVIDIA DGX Spark (GB10)</strong> using tensor parallelism (TP=4).</p>
+
+<p>DGX Spark is a mini supercomputer with 128 GB unified LPDDR5X memory and 273 GB/s bandwidth. Running a 763B data center model on this hardware is made possible by multi-node tensor parallelism and especially the <strong>Engram-on-disk</strong> technique.</p>
+
+<p>Two aspects make this work worth documenting:</p>
+
+<ul>
+  <li><strong>The model is data center class.</strong> DeepSeek-V4.1-Flash is normally served on DGX-B300 and similar-class hardware. 4× DGX Spark represents the scalable edge of the architecture.</li>
+  <li><strong>7 SM 12.1a-specific patches.</strong> The stock vLLM nightly image has missing or broken code paths for SM 12.1a (GB10) — Engram-on-disk, FlashInfer sparse attention, SWA block size, attention page sizes — which are fixed with community patches.</li>
+</ul>
+
+<blockquote>
+  <p><strong>This is a deployment guide, not a benchmark comparison.</strong> Benchmark results are presented in Section 6.</p>
+</blockquote><hr />
+<h2 id="2-model-architecture">
+  
+  
+    <a href="#2-model-architecture" class="anchor-heading" aria-labelledby="2-model-architecture"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2. Model Architecture
+  
+  
+</h2>
+    
+<h3 id="21-overview">
+  
+  
+    <a href="#21-overview" class="anchor-heading" aria-labelledby="21-overview"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.1 Overview
+  
+  
+</h3>
+    
+
+<p>DeepSeek-V4.1-Flash introduces an architecture that dramatically reduces the KV cache footprint. Key specifications:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Component</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Backbone parameters</td>
+      <td>552B</td>
+    </tr>
+    <tr>
+      <td>Total checkpoint parameters</td>
+      <td>763B (HF verified)</td>
+    </tr>
+    <tr>
+      <td>Active parameters per token (prefill)</td>
+      <td>8B</td>
+    </tr>
+    <tr>
+      <td>Active parameters per token (decode)</td>
+      <td>16B</td>
+    </tr>
+    <tr>
+      <td>Engram conditional memory</td>
+      <td>196B (sparsely accessed via token-based lookup)</td>
+    </tr>
+    <tr>
+      <td>Shared / routed experts</td>
+      <td>1 / 384 (6 active per token)</td>
+    </tr>
+    <tr>
+      <td>Maximum context</td>
+      <td>1,000,000 tokens</td>
+    </tr>
+    <tr>
+      <td>Weight quantization</td>
+      <td>MXFP8 dense + MXFP4 experts (block 32×32, ue8m0 scale)</td>
+    </tr>
+    <tr>
+      <td>KV cache quantization</td>
+      <td>FP4 (E2M1, runtime — CSA2 architectural feature)</td>
+    </tr>
+    <tr>
+      <td>Checkpoint size</td>
+      <td>510 GB (48 safetensors files — below theoretical 763 GB due to FP4 expert weights and mixed precision)</td>
+    </tr>
+  </tbody>
+</table></div>
+<h3 id="22-causal-encoder-decoder-ced-architecture">
+  
+  
+    <a href="#22-causal-encoder-decoder-ced-architecture" class="anchor-heading" aria-labelledby="22-causal-encoder-decoder-ced-architecture"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.2 Causal Encoder-Decoder (CED) Architecture
+  
+  
+</h3>
+    
+
+<p>The model is a 40-layer Transformer organized as a 20-layer causal encoder followed by a 20-layer decoder. The key advantage of CED: the decoder’s global KV cache is projected from the encoder’s final hidden states rather than derived from each decoder layer’s own hidden states. This allows activating only 8B parameters during prefill and 16B during decode — significant cost efficiency for input-heavy agentic workloads.</p>
+
+<p><strong>SWA Bounded Replay</strong> reconstructs missing KV states by replaying only the most recent <em>n_win</em> tokens instead of storing the KV states required for Sliding Window Attention (SWA) in persistent storage. This eliminates the need to write SWA KV states to persistent storage and reduces the persistent KV cache storage footprint to roughly <strong>1/8</strong> of that of DeepSeek-V4-Flash.</p>
+<h3 id="23-compressed-sparse-attention-2-csa2">
+  
+  
+    <a href="#23-compressed-sparse-attention-2-csa2" class="anchor-heading" aria-labelledby="23-compressed-sparse-attention-2-csa2"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.3 Compressed Sparse Attention 2 (CSA2)
+  
+  
+</h3>
+    
+
+<p>CSA2 assigns each attention layer one of three static modes — <strong>Full</strong>, <strong>Reindex</strong>, or <strong>Reuse</strong> — to share main KV and indexer K across layers and reuse Top-K sparse-attention indices. In the decoder, a <strong>Hierarchical Sparse Indexer</strong> further restricts later indexing layers to a candidate pool constructed by the first Full Mode layer, bounding deeper indexer cost independently of context length.</p>
+
+<p>Combined with FP4 main KV caching (E2M1 format, one E4M3 scale per 16 channels), these designs reduce the global KV cache footprint to <strong>890 bytes per token</strong> — roughly 1/4 of DeepSeek-V4-Flash.</p>
+<h3 id="24-engram-conditional-memory">
+  
+  
+    <a href="#24-engram-conditional-memory" class="anchor-heading" aria-labelledby="24-engram-conditional-memory"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.4 Engram Conditional Memory
+  
+  
+</h3>
+    
+
+<p>The 196B Engram layer is sparsely accessed via token-based lookup. This deployment uses <strong>Engram-on-disk</strong> mode: Engram rows are stored on each node’s local disk rather than in GPU memory, and staged into GPU memory on demand. This enables the 763B model to fit within 4× 128 GB (512 GB total) unified memory.</p>
+
+<p>For the embedding lookup mechanism, memory budget and interpretation of the offloading results, see <a href="/papers/conditional-memory-offloading/">Conditional Memory and Offloading in LLM Inference</a>.</p>
+<h3 id="25-dspark-speculative-decoding">
+  
+  
+    <a href="#25-dspark-speculative-decoding" class="anchor-heading" aria-labelledby="25-dspark-speculative-decoding"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.5 DSpark Speculative Decoding
+  
+  
+</h3>
+    
+
+<p>DSpark is a speculative decoding mechanism using semi-autoregressive draft generation with confidence-scheduled verification. This deployment uses <strong>k=5</strong> depth — 5 tokens are predicted ahead and verified at each decode step. Verified tokens are appended to the output; rejected ones are regenerated.</p><hr />
+<h2 id="3-hardware">
+  
+  
+    <a href="#3-hardware" class="anchor-heading" aria-labelledby="3-hardware"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. Hardware
+  
+  
+</h2>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Component</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>GPU</td>
+      <td>Blackwell architecture (GB10), SM 12.1a (CC 12.1), 48 SMs</td>
+    </tr>
+    <tr>
+      <td>GPU memory</td>
+      <td>128 GB unified LPDDR5X (shared CPU+GPU)</td>
+    </tr>
+    <tr>
+      <td>Memory bandwidth</td>
+      <td>~273 GB/s (unified)</td>
+    </tr>
+    <tr>
+      <td>FP4 peak (with sparsity)</td>
+      <td>~1 PFLOP</td>
+    </tr>
+    <tr>
+      <td>CPU</td>
+      <td>20-core Arm (10× Cortex-X925 + 10× Cortex-A725)</td>
+    </tr>
+    <tr>
+      <td>Node interconnect</td>
+      <td>NVIDIA ConnectX-7, 200 Gb/s RDMA (QSFP)</td>
+    </tr>
+    <tr>
+      <td>Storage</td>
+      <td>4× NVMe SSD (4× 4 TB across 4 nodes)</td>
+    </tr>
+    <tr>
+      <td>Network topology</td>
+      <td>200 GbE switch (no NVLink; all-reduce over Ethernet)</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Critical architectural fact:</strong> There is <strong>no NVLink</strong> between DGX Sparks. TP=4 in this deployment is <strong>multi-node tensor parallelism</strong> over a ConnectX-7 200 GbE network — every all-reduce operation crosses the Ethernet fabric via a 200 GbE switch.</p>
+</blockquote><hr />
+<h2 id="4-vllm-build-and-patch-chain">
+  
+  
+    <a href="#4-vllm-build-and-patch-chain" class="anchor-heading" aria-labelledby="4-vllm-build-and-patch-chain"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. vLLM Build and Patch Chain
+  
+  
+</h2>
+    
+
+<p>The stock vLLM nightly image has missing code paths for SM 12.1a (GB10) in the DeepSeek-V4.1-Flash code paths. This section documents the build chain and 7 patches applied to create the custom Docker image (<code class="language-plaintext highlighter-rouge">vllm-dsv41:latest</code>, 33.8 GB).</p>
+<h3 id="41-base-image-and-vllm-branch">
+  
+  
+    <a href="#41-base-image-and-vllm-branch" class="anchor-heading" aria-labelledby="41-base-image-and-vllm-branch"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.1 Base Image and vLLM Branch
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>Base image:</strong> <code class="language-plaintext highlighter-rouge">vllm/vllm-openai:nightly-8a728663c1c3eeace834a95f5654fa653cc1998c</code></li>
+  <li><strong>vLLM branch:</strong> Checked out via <code class="language-plaintext highlighter-rouge">build/fetch_vllm_branch.sh</code>, commit <code class="language-plaintext highlighter-rouge">e47aa780b</code></li>
+  <li><strong>Source repo:</strong> <a href="https://github.com/tonyd2wild/DeepSeek-V4.1-Flash-vLLM-DGX-Spark">tonyd2wild/DeepSeek-V4.1-Flash-vLLM-DGX-Spark</a> (boot10 config)</li>
+</ul>
+<h3 id="42-overlay-build-chain">
+  
+  
+    <a href="#42-overlay-build-chain" class="anchor-heading" aria-labelledby="42-overlay-build-chain"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.2 Overlay Build Chain
+  
+  
+</h3>
+    
+
+<p>The build consists of 5 overlay layers and a patch layer. Each overlay builds on top of the previous one:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Step</th>
+      <th>Name</th>
+      <th>Content</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>C extension</td>
+      <td><code class="language-plaintext highlighter-rouge">_C_stable_libtorch</code> + <code class="language-plaintext highlighter-rouge">_moe_C_stable_libtorch</code> — compiled for SM 12.1a (<code class="language-plaintext highlighter-rouge">build_stable_ext.sh</code> in <code class="language-plaintext highlighter-rouge">v41build</code> container)</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>overlay1</td>
+      <td>Base image + vLLM branch tree (<code class="language-plaintext highlighter-rouge">vllm/vllm/</code>) + 2 .so files</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>overlay3</td>
+      <td>FlashInfer 0.7.0rc1 (07869c61) compiled</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>overlay4</td>
+      <td>CUTLASS mxfp8_gemm_sm120 prebuilt (MAX_JOBS=4)</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>overlay5</td>
+      <td>sparse_mla_sm120 prebuilt + verify (HIT/HIT)</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>patch layer</td>
+      <td>7 patch files baked into image + <code class="language-plaintext highlighter-rouge">ENTRYPOINT []</code> added</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Important:</strong> The Dockerfile must use <code class="language-plaintext highlighter-rouge">COPY vllm/vllm/</code> (not <code class="language-plaintext highlighter-rouge">vllm/</code>) — <code class="language-plaintext highlighter-rouge">vllm/</code> is a git repo, the Python package is under <code class="language-plaintext highlighter-rouge">vllm/vllm/</code>.</p>
+</blockquote>
+<h3 id="43-patches">
+  
+  
+    <a href="#43-patches" class="anchor-heading" aria-labelledby="43-patches"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.3 Patches
+  
+  
+</h3>
+    
+
+<p>The following 7 patches are baked into the image:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>File</th>
+      <th>Mount path</th>
+      <th>Function</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td><code class="language-plaintext highlighter-rouge">engram.py</code></td>
+      <td><code class="language-plaintext highlighter-rouge">models/deepseek_v4_1/common/engram.py</code></td>
+      <td>Engram-on-disk, rank-offset fix</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td><code class="language-plaintext highlighter-rouge">model_state.py</code></td>
+      <td><code class="language-plaintext highlighter-rouge">models/deepseek_v4_1/nvidia/model_state.py</code></td>
+      <td>Engram staging before forward (CUDA graph safe)</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td><code class="language-plaintext highlighter-rouge">weight_utils.py</code></td>
+      <td><code class="language-plaintext highlighter-rouge">model_executor/model_loader/weight_utils.py</code></td>
+      <td>Skip Engram tables on load</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td><code class="language-plaintext highlighter-rouge">attention.py</code></td>
+      <td><code class="language-plaintext highlighter-rouge">models/deepseek_v4_1/attention.py</code></td>
+      <td>SM 12.1a page sizes</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td><code class="language-plaintext highlighter-rouge">flashinfer_sparse.py</code></td>
+      <td><code class="language-plaintext highlighter-rouge">models/deepseek_v4_1/nvidia/flashinfer_sparse.py</code></td>
+      <td>64-state pages</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td><code class="language-plaintext highlighter-rouge">sparse_swa.py</code></td>
+      <td><code class="language-plaintext highlighter-rouge">v1/attention/backends/mla/sparse_swa.py</code></td>
+      <td>SWA block size hook</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td><code class="language-plaintext highlighter-rouge">sparse_attn_indexer.py</code></td>
+      <td><code class="language-plaintext highlighter-rouge">model_executor/layers/sparse_attn_indexer.py</code></td>
+      <td>SM 12.1a top_k_per_row_decode</td>
+    </tr>
+  </tbody>
+</table></div>
+<h3 id="44-optimizations">
+  
+  
+    <a href="#44-optimizations" class="anchor-heading" aria-labelledby="44-optimizations"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.4 Optimizations
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>OMP_NUM_THREADS=1</strong> — added to the recipe (reduces spin-wait contention)</li>
+  <li><strong>Build artifacts cleaned</strong> — overlay1/3/4/5, base image, build cache deleted (~258 GB reclaimed)</li>
+</ul><hr />
+<h2 id="5-configuration">
+  
+  
+    <a href="#5-configuration" class="anchor-heading" aria-labelledby="5-configuration"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5. Configuration
+  
+  
+</h2>
+    
+<h3 id="51-sparkrun-recipe">
+  
+  
+    <a href="#51-sparkrun-recipe" class="anchor-heading" aria-labelledby="51-sparkrun-recipe"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.1 sparkrun Recipe
+  
+  
+</h3>
+    
+
+<p>The sparkrun recipe (<code class="language-plaintext highlighter-rouge">deepseek-v41-flash-tp4.yaml</code>) contains the following parameters:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Value</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">tensor_parallel</code></td>
+      <td>4</td>
+      <td>4 nodes × 1 GPU</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">gpu_memory_utilization</code></td>
+      <td>0.80</td>
+      <td>80% GMU</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">max_model_len</code></td>
+      <td>300000</td>
+      <td>300K context (below 1M, memory constrained)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">max_num_seqs</code></td>
+      <td>8</td>
+      <td>Maximum 8 concurrent sequences</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">max_num_batched_tokens</code></td>
+      <td>8192</td>
+      <td>Prefill batch size</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">block_size</code></td>
+      <td>128</td>
+      <td>KV cache block size</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">distributed-executor-backend</code></td>
+      <td>mp</td>
+      <td>Multiprocess backend</td>
+    </tr>
+  </tbody>
+</table></div>
+<h3 id="52-speculative-decoding-configuration">
+  
+  
+    <a href="#52-speculative-decoding-configuration" class="anchor-heading" aria-labelledby="52-speculative-decoding-configuration"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.2 Speculative Decoding Configuration
+  
+  
+</h3>
+    
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"method"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dspark"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"num_speculative_tokens"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"draft_sample_method"</span><span class="p">:</span><span class="w"> </span><span class="s2">"probabilistic"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"rejection_sample_method"</span><span class="p">:</span><span class="w"> </span><span class="s2">"block"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"enable_adaptive_verification"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>With DSpark k=5 depth, 5 tokens are predicted ahead at each decode step.</p>
+<h3 id="53-engram-on-disk-configuration">
+  
+  
+    <a href="#53-engram-on-disk-configuration" class="anchor-heading" aria-labelledby="53-engram-on-disk-configuration"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.3 Engram-on-disk Configuration
+  
+  
+</h3>
+    
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">DSV41_ENGRAM_DISK</span><span class="o">=</span>1
+<span class="nv">DSV41_ENGRAM_DISK_THREADS</span><span class="o">=</span>32
+<span class="nv">DSV41_ENGRAM_DISK_CHUNK</span><span class="o">=</span>16
+</code></pre></div></div>
+
+<p>Engram rows are stored on disk, read in parallel with 32 threads, and staged into GPU memory in chunks of 16.</p>
+<h3 id="54-launch-command">
+  
+  
+    <a href="#54-launch-command" class="anchor-heading" aria-labelledby="54-launch-command"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.4 Launch Command
+  
+  
+</h3>
+    
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sparkrun run /home/nvidia/.cordatus-sparkrun/recipes/deepseek-v41-flash-tp4.yaml <span class="se">\</span>
+  <span class="nt">--hosts</span> 192.168.1.153,192.168.1.147,192.168.1.166,192.168.1.148 <span class="se">\</span>
+  <span class="nt">--foreground</span>
+</code></pre></div></div>
+<h3 id="55-serving-parameters">
+  
+  
+    <a href="#55-serving-parameters" class="anchor-heading" aria-labelledby="55-serving-parameters"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.5 Serving Parameters
+  
+  
+</h3>
+    
+
+<p>The model is served with thinking mode disabled (<code class="language-plaintext highlighter-rouge">"thinking": false</code>), tool calling and multimodal (vision) support enabled:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">--default-chat-template-kwargs '{"thinking": false}'</code></li>
+  <li><code class="language-plaintext highlighter-rouge">--tool-call-parser deepseek_v41 --enable-auto-tool-choice</code></li>
+  <li><code class="language-plaintext highlighter-rouge">--reasoning-parser deepseek_v41</code></li>
+  <li><code class="language-plaintext highlighter-rouge">--limit-mm-per-prompt '{"image":4}'</code></li>
+  <li><code class="language-plaintext highlighter-rouge">--compilation-config</code> with CUDA graphs (<code class="language-plaintext highlighter-rouge">FULL_AND_PIECEWISE</code> mode)</li>
+</ul><hr />
+<h2 id="6-performance-results">
+  
+  
+    <a href="#6-performance-results" class="anchor-heading" aria-labelledby="6-performance-results"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6. Performance Results
+  
+  
+</h2>
+    
+<h3 id="61-benchmark-table">
+  
+  
+    <a href="#61-benchmark-table" class="anchor-heading" aria-labelledby="61-benchmark-table"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.1 Benchmark Table
+  
+  
+</h3>
+    
+
+<p>Measurements were taken with <a href="https://github.com/CordatusAI/llm-benchmark">CordatusAI/llm-benchmark</a> (2nd run, after JIT warmup).</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Concurrency</th>
+      <th>TTFT (ms)</th>
+      <th>ITL (ms)</th>
+      <th>TPS (tok/s)</th>
+      <th>Latency (s)</th>
+      <th>Throughput (RPS)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>271.63</td>
+      <td>32.39</td>
+      <td>29.48</td>
+      <td>4.39</td>
+      <td>0.23</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>395.75</td>
+      <td>45.12</td>
+      <td>21.32</td>
+      <td>6.13</td>
+      <td>0.16</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>577.41</td>
+      <td>73.86</td>
+      <td>13.09</td>
+      <td>9.96</td>
+      <td>0.10</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>805.89</td>
+      <td>110.28</td>
+      <td>8.79</td>
+      <td>14.81</td>
+      <td>0.07</td>
+    </tr>
+  </tbody>
+</table></div>
+<h3 id="62-charts">
+  
+  
+    <a href="#62-charts" class="anchor-heading" aria-labelledby="62-charts"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.2 Charts
+  
+  
+</h3>
+    
+
+<p><img src="/papers/deepseek-v4.1-flash-4spark-deployment/deepseek-v4.1-flash-TTFT.png" alt="TTFT" /></p>
+
+<p><img src="/papers/deepseek-v4.1-flash-4spark-deployment/deepseek-v4.1-flash-ITL.png" alt="ITL" /></p>
+
+<p><img src="/papers/deepseek-v4.1-flash-4spark-deployment/deepseek-v4.1-flash-TPS.png" alt="TPS" /></p>
+
+<p><img src="/papers/deepseek-v4.1-flash-4spark-deployment/deepseek-v4.1-flash-Latency.png" alt="Latency" /></p>
+
+<p><img src="/papers/deepseek-v4.1-flash-4spark-deployment/deepseek-v4.1-flash-Throughput.png" alt="Throughput" /></p>
+<h3 id="63-assessment">
+  
+  
+    <a href="#63-assessment" class="anchor-heading" aria-labelledby="63-assessment"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.3 Assessment
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>29.5 tok/s at C=1</strong> is sufficient for interactive use, above the reading speed threshold (~15 tok/s).</li>
+  <li><strong>TTFT</strong> rises as expected with concurrency (272→806 ms, ~3x) — prefill is compute-bound.</li>
+  <li><strong>TPS decline</strong> reflects growing memory bandwidth contention as the GPU approaches saturation (29.5→8.8 tok/s, ~70% drop).</li>
+  <li><strong>Max C = 2</strong> at the Benchmark Explorer’s default targets (TTFT≤1000ms, TPS≥20) — chat capacity 8, agentic capacity 3.</li>
+</ul>
+<h3 id="64-dspark-acceptance">
+  
+  
+    <a href="#64-dspark-acceptance" class="anchor-heading" aria-labelledby="64-dspark-acceptance"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.4 DSpark Acceptance
+  
+  
+</h3>
+    
+
+<p>The effectiveness of DSpark speculative decoding is measured by acceptance ratio and draft rate:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Prompt type</th>
+      <th>Mean acceptance</th>
+      <th>Draft rate</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Prose (bench)</td>
+      <td>2.1–2.3</td>
+      <td>22%</td>
+    </tr>
+    <tr>
+      <td>Coding</td>
+      <td>4.9–5.3</td>
+      <td>80–86%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>The high acceptance of DSpark k=5 on coding prompts (4.9-5.3 / 5) is driven by code having more <strong>structural, patterned, and predictable token sequences</strong>, which contributes to this high acceptance rate. TPS also rises in this type of response.</p><hr />
+<h2 id="7-comparative-analysis">
+  
+  
+    <a href="#7-comparative-analysis" class="anchor-heading" aria-labelledby="7-comparative-analysis"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7. Comparative Analysis
+  
+  
+</h2>
+    
+<h3 id="71-comparison-with-dgx-b300">
+  
+  
+    <a href="#71-comparison-with-dgx-b300" class="anchor-heading" aria-labelledby="71-comparison-with-dgx-b300"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7.1 Comparison with DGX-B300
+  
+  
+</h3>
+    
+
+<p>DeepSeek-V4.1-Flash has also been measured on the <a href="/llm-inference-benchmarks/">LLM Inference Benchmark Explorer</a> on both DGX-B300 (8× Blackwell Ultra, TP=4) and 4× DGX Spark configurations.</p>
+
+<p>These results <strong>should not be evaluated as a direct one-to-one hardware comparison</strong>. The speculative decoding parameters and supported context lengths differ between the two configurations: the Spark side uses <strong>k=5 and 300K context</strong>, while the B300 side uses <strong>k=3 and 1M context</strong>. The measured TPS difference therefore reflects the combined effect of hardware, memory system, and inference server configuration.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Concurrency</th>
+      <th>4× Spark TP4 TPS</th>
+      <th>B300 TP4 TPS</th>
+      <th>B300 / Spark</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>29.48</td>
+      <td>284.54</td>
+      <td>9.65×</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>21.32</td>
+      <td>294.56</td>
+      <td>13.82×</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>13.09</td>
+      <td>252.60</td>
+      <td>19.30×</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>8.79</td>
+      <td>209.41</td>
+      <td>23.83×</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>In this measurement set, the B300 configuration produced approximately <strong>9.65× the aggregate TPS of the Spark configuration at C=1</strong>, and approximately 23.83× at C=8.</p>
+
+<p>The fundamental hardware-level differences are as follows:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th>DGX-B300</th>
+      <th>4× DGX Spark</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Memory type</td>
+      <td>HBM3e</td>
+      <td>LPDDR5X unified memory</td>
+    </tr>
+    <tr>
+      <td>Memory bandwidth</td>
+      <td>Very high, TB/s class</td>
+      <td>~273 GB/s / system</td>
+    </tr>
+    <tr>
+      <td>GPU interconnect</td>
+      <td>High-bandwidth NVLink-based connection</td>
+      <td>200 GbE RDMA</td>
+    </tr>
+    <tr>
+      <td>GPU architecture</td>
+      <td>Blackwell Ultra</td>
+      <td>GB10</td>
+    </tr>
+    <tr>
+      <td>Scaling target</td>
+      <td>Data center / high-density inference</td>
+      <td>Desktop/edge and development</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Especially in large MoE models, not only total memory capacity but also <strong>memory bandwidth and inter-GPU communication capacity</strong> significantly affect performance. Therefore, the fact that the model can run on 4× DGX Spark does not mean that the same model will reach a similar throughput level on DGX-B300.</p>
+
+<blockquote>
+  <p><strong>Conclusion:</strong> 4× DGX Spark can be used to run large-scale MoE models and can be considered for development, prototyping, model validation, and deployment scenarios requiring low/medium concurrency. However, the measured throughput results should not be interpreted as replacing data center class systems such as DGX-B300. These two platforms have different usage targets in terms of memory bandwidth, interconnect, and scaling capacity.</p>
+</blockquote><hr />
+<h2 id="8-slo-and-capacity">
+  
+  
+    <a href="#8-slo-and-capacity" class="anchor-heading" aria-labelledby="8-slo-and-capacity"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8. SLO and Capacity
+  
+  
+</h2>
+    
+
+<p>At the Benchmark Explorer’s default targets (TTFT≤1000ms, TPS≥20 tok/s), this configuration yields <strong>Max C = 2</strong>:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>SLO</th>
+      <th>Threshold</th>
+      <th>C=2 status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TTFT</td>
+      <td>≤ 1000 ms</td>
+      <td>396 ms ✓</td>
+    </tr>
+    <tr>
+      <td>TPS</td>
+      <td>≥ 20 tok/s</td>
+      <td>21.32 tok/s ✓</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Warning:</strong> At C=4, TPS drops to 13.09, falling below the 20 tok/s threshold. For interactive chat services, <strong>1-2 concurrent users</strong> are recommended; for higher loads, data center hardware (B300/GB300) should be preferred.</p>
+</blockquote><hr />
+<h2 id="9-conclusion">
+  
+  
+    <a href="#9-conclusion" class="anchor-heading" aria-labelledby="9-conclusion"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 9. Conclusion
+  
+  
+</h2>
+    
+
+<ol>
+  <li><strong>DeepSeek-V4.1-Flash (763B) can run on 4× DGX Spark</strong> — demonstrating the scalability ceiling of office-friendly mini supercomputers.</li>
+  <li><strong>7 SM 12.1a patches are mandatory</strong> — the stock vLLM nightly image has missing code paths for GB10 (SM 12.1a) in Engram-on-disk, FlashInfer sparse attention, and SWA paths.</li>
+  <li><strong>Engram-on-disk enables the model to fit in memory</strong> — offloading the 196B conditional memory to disk allows the 763B model to fit within 512 GB total unified memory.</li>
+  <li><strong>DSpark k=5 is effective on coding prompts</strong> with 80-86% draft rate; on prompts written in natural language in a <strong>plain text/prose form</strong>, this drops to 22%.</li>
+  <li><strong>29.5 tok/s at C=1</strong> is sufficient for development and prototyping; for production serving, B300-class hardware is ~10× faster.</li>
+  <li><strong>This configuration is a development platform, not a data center alternative.</strong> The ability to run a 763B model on office hardware demonstrates the boundaries of edge and on-premises deployment.</li>
+</ol><hr />
+<h2 id="appendix-a-docker-image-build-instructions">
+  
+  
+    <a href="#appendix-a-docker-image-build-instructions" class="anchor-heading" aria-labelledby="appendix-a-docker-image-build-instructions"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Appendix A: Docker Image Build Instructions
+  
+  
+</h2>
+    
+
+<p>This appendix contains full instructions to build the <code class="language-plaintext highlighter-rouge">vllm-dsv41:latest</code> image from scratch. All commands are run on the head node (192.168.1.153).</p>
+<h3 id="a1-clone-the-repo">
+  
+  
+    <a href="#a1-clone-the-repo" class="anchor-heading" aria-labelledby="a1-clone-the-repo"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> A.1 Clone the Repo
+  
+  
+</h3>
+    
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> /home/nvidia
+git clone https://github.com/tonyd2wild/DeepSeek-V4.1-Flash-vLLM-DGX-Spark.git
+<span class="nb">cd </span>DeepSeek-V4.1-Flash-vLLM-DGX-Spark
+</code></pre></div></div>
+<h3 id="a2-checkout-vllm-branch">
+  
+  
+    <a href="#a2-checkout-vllm-branch" class="anchor-heading" aria-labelledby="a2-checkout-vllm-branch"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> A.2 Checkout vLLM Branch
+  
+  
+</h3>
+    
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bash build/fetch_vllm_branch.sh /home/nvidia/vllm
+<span class="c"># commit e47aa780b</span>
+<span class="nb">rm</span> <span class="nt">-f</span> vllm <span class="o">&amp;&amp;</span> <span class="nb">cp</span> <span class="nt">-a</span> /home/nvidia/vllm ./vllm
+</code></pre></div></div>
+<h3 id="a3-build-c-extensions">
+  
+  
+    <a href="#a3-build-c-extensions" class="anchor-heading" aria-labelledby="a3-build-c-extensions"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> A.3 Build C Extensions
+  
+  
+</h3>
+    
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">-d</span> <span class="nt">--name</span> v41build <span class="nt">--gpus</span> all <span class="nt">--network</span> host <span class="nt">--entrypoint</span> <span class="nb">sleep</span> <span class="se">\</span>
+  <span class="nt">-v</span> /tmp/v41build-src:/src vllm/vllm-openai:nightly-8a728663c1c3eeace834a95f5654fa653cc1998c 7200
+docker <span class="nb">exec </span>v41build pip <span class="nb">install </span>cmake ninja <span class="nt">-q</span>
+bash build/build_stable_ext.sh
+docker <span class="nb">cp </span>v41build:/src/build/_C_stable_libtorch.abi3.so build/
+docker <span class="nb">cp </span>v41build:/src/build/_moe_C_stable_libtorch.abi3.so build/
+</code></pre></div></div>
+<h3 id="a4-overlay-chain">
+  
+  
+    <a href="#a4-overlay-chain" class="anchor-heading" aria-labelledby="a4-overlay-chain"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> A.4 Overlay Chain
+  
+  
+</h3>
+    
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># overlay1: base + vLLM tree + 2 .so files</span>
+docker build <span class="nt">-t</span> vllm-dsv41:overlay1 <span class="nt">-f</span> build/Dockerfile.overlay1 <span class="nb">.</span>
+
+<span class="c"># overlay3: FlashInfer 0.7.0rc1</span>
+bash build/build_overlay3.sh
+
+<span class="c"># overlay4: CUTLASS mxfp8_gemm_sm120</span>
+bash build/build_overlay4.sh
+
+<span class="c"># overlay5: sparse_mla_sm120 + verify</span>
+<span class="nb">cp </span>build/prewarm5.py build/verify5.py /tmp/
+bash build/build_overlay5.sh
+</code></pre></div></div>
+<h3 id="a5-patch-layer">
+  
+  
+    <a href="#a5-patch-layer" class="anchor-heading" aria-labelledby="a5-patch-layer"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> A.5 Patch Layer
+  
+  
+</h3>
+    
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> vllm-dsv41:overlay5</span>
+<span class="k">COPY</span><span class="s"> DeepSeek-V4.1-Flash-vLLM-DGX-Spark/patch/engram.py /usr/local/lib/python3.12/dist-packages/vllm/models/deepseek_v4_1/common/engram.py</span>
+<span class="k">COPY</span><span class="s"> DeepSeek-V4.1-Flash-vLLM-DGX-Spark/patch/model_state.py /usr/local/lib/python3.12/dist-packages/vllm/models/deepseek_v4_1/nvidia/model_state.py</span>
+<span class="k">COPY</span><span class="s"> DeepSeek-V4.1-Flash-vLLM-DGX-Spark/patch/weight_utils.py /usr/local/lib/python3.12/dist-packages/vllm/model_executor/model_loader/weight_utils.py</span>
+<span class="k">COPY</span><span class="s"> DeepSeek-V4.1-Flash-vLLM-DGX-Spark/patch/attention.py /usr/local/lib/python3.12/dist-packages/vllm/models/deepseek_v4_1/attention.py</span>
+<span class="k">COPY</span><span class="s"> DeepSeek-V4.1-Flash-vLLM-DGX-Spark/patch/flashinfer_sparse.py /usr/local/lib/python3.12/dist-packages/vllm/models/deepseek_v4_1/nvidia/flashinfer_sparse.py</span>
+<span class="k">COPY</span><span class="s"> DeepSeek-V4.1-Flash-vLLM-DGX-Spark/patch/sparse_swa.py /usr/local/lib/python3.12/dist-packages/vllm/v1/attention/backends/mla/sparse_swa.py</span>
+<span class="k">COPY</span><span class="s"> DeepSeek-V4.1-Flash-vLLM-DGX-Spark/patch/sparse_attn_indexer.py /usr/local/lib/python3.12/dist-packages/vllm/model_executor/layers/sparse_attn_indexer.py</span>
+<span class="k">ENTRYPOINT</span><span class="s"> []</span>
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> /home/nvidia <span class="o">&amp;&amp;</span> docker build <span class="nt">-t</span> vllm-dsv41:latest <span class="nt">-f</span> Dockerfile.patches <span class="nb">.</span>
+</code></pre></div></div>
+<h3 id="a6-worker-distribution">
+  
+  
+    <a href="#a6-worker-distribution" class="anchor-heading" aria-labelledby="a6-worker-distribution"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> A.6 Worker Distribution
+  
+  
+</h3>
+    
+
+<p>sparkrun auto-distributes the image, but if manual distribution is needed:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker save vllm-dsv41:latest | ssh nvidia@192.168.1.147 docker load
+docker save vllm-dsv41:latest | ssh nvidia@192.168.1.166 docker load
+docker save vllm-dsv41:latest | ssh nvidia@192.168.1.148 docker load
+</code></pre></div></div><hr />
+<h2 id="appendix-b-engram-row-ranges">
+  
+  
+    <a href="#appendix-b-engram-row-ranges" class="anchor-heading" aria-labelledby="appendix-b-engram-row-ranges"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Appendix B: Engram Row Ranges
+  
+  
+</h2>
+    
+
+<p>In Engram-on-disk mode, each rank (node) holds different row ranges on its local disk:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Rank</th>
+      <th>Node</th>
+      <th>Layer 1 Rows</th>
+      <th>Layer 14 Rows</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>153 (head)</td>
+      <td>[0, 96000564)</td>
+      <td>[0, 96003054)</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>147</td>
+      <td>[96000564, 192001740)</td>
+      <td>[96003054, 192007016)</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>166</td>
+      <td>[192001740, 288003654)</td>
+      <td>[192007016, 288011564)</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>148</td>
+      <td>[288003654, 384006168)</td>
+      <td>[288011564, 384016682)</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>A total of ~384M rows, evenly split across 4 ranks.</p><hr />
+<h2 id="appendix-c-verification-commands">
+  
+  
+    <a href="#appendix-c-verification-commands" class="anchor-heading" aria-labelledby="appendix-c-verification-commands"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Appendix C: Verification Commands
+  
+  
+</h2>
+    
+<h3 id="api-health">
+  
+  
+    <a href="#api-health" class="anchor-heading" aria-labelledby="api-health"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> API Health
+  
+  
+</h3>
+    
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl http://192.168.1.153:8000/v1/models
+</code></pre></div></div>
+<h3 id="simple-test">
+  
+  
+    <a href="#simple-test" class="anchor-heading" aria-labelledby="simple-test"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Simple Test
+  
+  
+</h3>
+    
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl http://192.168.1.153:8000/v1/chat/completions <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s1">'Content-Type: application/json'</span> <span class="se">\</span>
+  <span class="nt">-d</span> <span class="s1">'{"model":"deepseek-v4.1-flash","max_tokens":50,
+       "messages":[{"role":"user","content":"Count from 1 to 10."}]}'</span>
+</code></pre></div></div><hr />
+
+<p><em>Aetherix B.V. — <a href="https://aetherix.com">aetherix.com</a> · <a href="mailto:info@aetherix.com">info@aetherix.com</a></em></p>
+
+<p><em>Oude Apeldoornseweg 41, A1.08, 7333 NR Apeldoorn, Netherlands</em></p>
+
+<p><em>This report was generated from measurements produced with the <a href="https://github.com/CordatusAI/llm-benchmark">CordatusAI/llm-benchmark</a> tool.</em>
+<em>Deployment recipe adapted from <a href="https://github.com/tonyd2wild/DeepSeek-V4.1-Flash-vLLM-DGX-Spark">tonyd2wild/DeepSeek-V4.1-Flash-vLLM-DGX-Spark</a> boot10 config.</em>
+<em>Report date: September 2026</em></p>
+
+          
+
+          
+        </main>
+        
+
+
+      </div>
+    </div>
+    
+      
+
+<div class="search-overlay"></div>
+
+    
+  </div>
+
+  
+
+  <script>
+    window.JTD_I18N = {
+      search_no_results: "No results found",
+      copy_code: "Copy code to clipboard"
+    };
+  </script>
+
+  
+
+
+<div id="cookie-consent-banner" class="cookie-consent" role="dialog"
+     aria-modal="false" aria-label="Cookie consent"
+     data-consent-state="pending" hidden>
+  <div class="cookie-consent__body">
+    <div class="cookie-consent__text">
+      <span class="cookie-consent__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+          <path d="M21 12a9 9 0 1 1-9-9 4.5 4.5 0 0 0 4.5 4.5A4.5 4.5 0 0 0 21 12zm-9-3.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-1.5 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm6-1.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-3 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0z"/>
+        </svg>
+      </span>
+      <p>We use cookies to analyze site traffic and improve your experience. By clicking 'Accept', you consent to the use of analytics cookies as described in our Privacy Policy.
+        <a href="https://aetherix.com/privacy-policy/" target="_blank" rel="noopener noreferrer"
+           class="cookie-consent__link">Privacy Policy</a>
+      </p>
+    </div>
+    <div class="cookie-consent__actions">
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--reject"
+              data-consent-action="rejected">Reject</button>
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--accept"
+              data-consent-action="accepted">Accept</button>
+    </div>
+  </div>
+</div>
+<script>
+  // Eski karar önbellekte varsa bannerı gösterme
+  (function() {
+    try {
+      var v = localStorage.getItem('cookieConsent');
+      if (v === 'accepted' || v === 'rejected') {
+        document.documentElement.dataset.cookieConsent = v;
+      }
+    } catch (e) {}
+  })();
+</script>
+<script src="/assets/js/cookie-banner.js" defer></script>
+
+</body>
+</html>
+

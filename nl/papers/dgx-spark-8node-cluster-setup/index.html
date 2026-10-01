@@ -1,0 +1,2245 @@
+
+
+<!DOCTYPE html>
+
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-default.css">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet">
+
+  <style id="jtd-nav-activation">
+  
+
+.site-nav > ul.nav-list:first-child > li > a,
+.site-nav > ul.nav-list:first-child > li > ul > li:not(:nth-child(7)) > a,
+.site-nav > ul.nav-list:first-child > li > ul > li > ul > li > a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:not(:first-child) a,
+.site-nav li.external a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(7) > a {
+  font-weight: 600;
+  text-decoration: none;
+}.site-nav > ul.nav-list:first-child > li:nth-child(3) > button svg,
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(7) > button svg {
+  transform: rotate(-90deg);
+}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list,
+.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list > li.nav-list-item:nth-child(7) > ul.nav-list {
+  display: block;
+}
+  </style>
+
+  
+
+  
+    <script src="/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="icon" href="/nl/favicon.ico" type="image/x-icon">
+
+
+
+  <!-- Begin Jekyll SEO tag v2.9.1 -->
+<title>Installatiehandleiding voor een DGX Spark AI-cluster met 8 nodes | Aetherix White Papers</title>
+<meta name="generator" content="Jekyll v4.3.4" />
+<meta property="og:title" content="Installatiehandleiding voor een DGX Spark AI-cluster met 8 nodes" />
+<meta property="og:locale" content="nl" />
+<meta name="description" content="Installatie van een switchgebaseerd AI-cluster met 8 NVIDIA DGX Spark-nodes via een MikroTik CRS804 met 200G-breakout: management- en compute-netwerk, RoCEv2/RDMA, sparkrun en NAS." />
+<meta name="twitter:description" property="og:description" content="Installatie van een switchgebaseerd AI-cluster met 8 NVIDIA DGX Spark-nodes via een MikroTik CRS804 met 200G-breakout: management- en compute-netwerk, RoCEv2/RDMA, sparkrun en NAS." />
+<link rel="canonical" href="https://whitepapers.aetherix.com/nl/papers/dgx-spark-8node-cluster-setup/" />
+<meta property="og:url" content="https://whitepapers.aetherix.com/nl/papers/dgx-spark-8node-cluster-setup/" />
+<meta property="og:site_name" content="Aetherix White Papers" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-07-24T11:01:17+00:00" />
+<meta property="article:modified_time" content="2026-07-24T11:01:17+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Installatiehandleiding voor een DGX Spark AI-cluster met 8 nodes" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2026-07-24T11:01:17+00:00","datePublished":"2026-07-24T11:01:17+00:00","description":"Installatie van een switchgebaseerd AI-cluster met 8 NVIDIA DGX Spark-nodes via een MikroTik CRS804 met 200G-breakout: management- en compute-netwerk, RoCEv2/RDMA, sparkrun en NAS.","headline":"Installatiehandleiding voor een DGX Spark AI-cluster met 8 nodes","mainEntityOfPage":{"@type":"WebPage","@id":"https://whitepapers.aetherix.com/nl/papers/dgx-spark-8node-cluster-setup/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://whitepapers.aetherix.com/assets/images/aetherix-logo.png"}},"url":"https://whitepapers.aetherix.com/nl/papers/dgx-spark-8node-cluster-setup/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  
+<!-- Google tag (gtag.js) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JWLN33085T"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+
+  // Consent Mode v2 — default DENIED. Banner onayı ile GRANTED olur.
+  // KVKK/GDPR uyumu: ziyaretçi onay vermeden çerez set edilmez.
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    functionality_storage: 'granted',
+    security_storage: 'granted',
+    wait_for_update: 500
+  });
+
+  gtag('js', new Date());
+  gtag('config', 'G-JWLN33085T', {
+    anonymize_ip: true
+  });
+</script>
+
+<link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/papers/dgx-spark-8node-cluster-setup/">
+<link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/papers/dgx-spark-8node-cluster-setup/">
+<link rel="alternate" hreflang="x-default" href="https://whitepapers.aetherix.com/papers/dgx-spark-8node-cluster-setup/">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/images/favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+<script>
+(function () {
+  var open = XMLHttpRequest.prototype.open;
+  var own = "/nl/search-data.json";
+  XMLHttpRequest.prototype.open = function (method, url) {
+    if (typeof url === "string" && /assets\/js\/search-data\.json$/.test(url)) arguments[1] = own;
+    return open.apply(this, arguments);
+  };
+})();
+</script>
+
+
+</head>
+
+<body>
+  <a class="skip-to-main" href="#main-content">Naar de hoofdinhoud</a>
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="svg-link" viewBox="0 0 24 24">
+  <title>Link</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+</symbol>
+
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+  <title>Menu</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+    <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</symbol>
+
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+  <title>Expand</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</symbol>
+
+  <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
+<symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+  <title id="svg-external-link-title">(external link)</title>
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+</symbol>
+
+  
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+  <title>Document</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+</symbol>
+
+    <symbol id="svg-search" viewBox="0 0 24 24">
+  <title>Search</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</symbol>
+
+  
+  
+    <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+<symbol id="svg-copy" viewBox="0 0 16 16">
+  <title>Copy</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+</symbol>
+<symbol id="svg-copied" viewBox="0 0 16 16">
+  <title>Copied</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"/>
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"/>
+  </svg>
+</symbol>
+
+  
+</svg>
+
+  
+    <div class="side-bar">
+  <div class="site-header" role="banner">
+    <a href="/nl/" class="site-title lh-tight">
+  <div class="site-logo" role="img" aria-label="Aetherix White Papers"></div>
+
+</a>
+    <button id="menu-button" class="site-button btn-reset" aria-label="Toggle menu" aria-pressed="false">
+      <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  <nav aria-label="Main" id="site-nav" class="site-nav">
+  
+  
+    <ul class="nav-list"><li class="nav-list-item"><a href="/nl/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/nl/about/" class="nav-list-link">Over ons</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in White Papers category" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+    </button><a href="/nl/papers/" class="nav-list-link">White Papers</a><ul class="nav-list"><li class="nav-list-item"><a href="/nl/papers/local-llm-guide/" class="nav-list-link">Handleiding voor lokaal LLM-gebruik</a></li><li class="nav-list-item"><a href="/nl/papers/conditional-memory-offloading/" class="nav-list-link">Conditional memory en offloading bij LLM-inferentie</a></li><li class="nav-list-item"><a href="/nl/papers/b300-gb300-cluster-architecture/" class="nav-list-link">NVIDIA DGX B300 vs GB300 NVL72: vergelijking van clusterarchitecturen</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-2node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 2 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-3node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 3 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-4node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 4 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-8node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 8 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/qwen3.6-27b-dgx-spark-benchmark/" class="nav-list-link">Qwen3.6-27B DGX Spark-benchmark</a></li><li class="nav-list-item"><a href="/nl/papers/qwen3.6-27b-dgx-spark-scaling/" class="nav-list-link">Schaling van Qwen3.6-27B op een DGX Spark-cluster</a></li><li class="nav-list-item"><a href="/nl/papers/deepseek-v4.1-flash-4spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash-deployment op 4× DGX Spark</a></li><li class="nav-list-item"><a href="/nl/papers/deepseek-v4.1-flash-8spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash-deployment op 8× DGX Spark met TP8</a></li><li class="nav-list-item"><a href="/nl/papers/kimi-k3-dgx-b300-inference-benchmark/" class="nav-list-link">Kimi K3-inferentiebenchmark op DGX-B300</a></li></ul></li><li class="nav-list-item"><a href="/nl/llm-inference-benchmarks/" class="nav-list-link">LLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/nl/cv-inference-benchmarks/" class="nav-list-link">CV Inference Benchmark Explorer</a></li></ul>
+
+  
+</nav>
+
+
+  
+  
+    <div class="lang-switcher">
+  
+    
+    
+      <a class="lang-switcher-item" href="/papers/dgx-spark-8node-cluster-setup/">EN</a>
+    
+  
+    
+    
+      <span class="lang-switcher-item active">NL</span>
+    
+  
+</div>
+<script src="/assets/js/lang-switch.js"></script>
+
+  
+</div>
+
+  
+  <div class="main" id="top">
+    <div id="main-header" class="main-header">
+  
+    
+
+<div class="search" role="search">
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Zoeken" aria-label="Zoeken" autocomplete="off">
+    <label for="search-input" class="search-label"><svg viewBox="0 0 24 24" class="search-icon"><use xlink:href="#svg-search"></use></svg></label>
+  </div>
+  <div id="search-results" class="search-results"></div>
+</div>
+
+  
+  
+  
+    <nav aria-label="Auxiliary" class="aux-nav">
+  <ul class="aux-nav-list">
+    
+      <li class="aux-nav-list-item">
+        <a href="https://aetherix.com" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          aetherix.com
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://github.com/aetherix-bv" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          GitHub
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+  
+</div>
+
+    <div class="main-content-wrap">
+      <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+  <ol class="breadcrumb-nav-list">
+    <li class="breadcrumb-nav-list-item"><a href="/nl/papers/">White Papers</a></li>
+    <li class="breadcrumb-nav-list-item"><span>Installatiehandleiding voor een DGX Spark AI-cluster met 8 nodes</span></li>
+  </ol>
+</nav>
+      <div id="main-content" class="main-content">
+        <main>
+          
+            <h2 id="inhoudsopgave">
+  
+  
+    <a href="#inhoudsopgave" class="anchor-heading" aria-labelledby="inhoudsopgave"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Inhoudsopgave
+  
+  
+</h2>
+    
+
+<ul>
+  <li><a href="#architectuuroverzicht">Architectuuroverzicht</a></li>
+  <li><a href="#vereisten">Vereisten</a></li>
+  <li><a href="#voorbereiding-van-de-dgx-spark-nodes">Voorbereiding van de DGX Spark-nodes</a>
+    <ul>
+      <li><a href="#updates-van-systeem-en-firmware">Updates van systeem en firmware</a></li>
+      <li><a href="#docker-configuratie">Docker-configuratie</a></li>
+    </ul>
+  </li>
+  <li><a href="#aansluiting-van-het-managementnetwerk-10gbe">Aansluiting van het managementnetwerk (10GbE)</a></li>
+  <li><a href="#fysieke-aansluiting-van-het-compute-netwerk-200gbe-qsfp">Fysieke aansluiting van het compute-netwerk (200GbE QSFP)</a></li>
+  <li><a href="#configuratie-van-de-mikrotik-crs312-switch">Configuratie van de MikroTik CRS312-switch</a>
+    <ul>
+      <li><a href="#bonding-van-de-nas-poorten">Bonding van de NAS-poorten</a></li>
+    </ul>
+  </li>
+  <li><a href="#configuratie-van-de-mikrotik-crs804-switch">Configuratie van de MikroTik CRS804-switch</a>
+    <ul>
+      <li><a href="#voorbereiding-van-de-switch">Voorbereiding van de switch</a></li>
+      <li><a href="#inventarisatie-en-back-up-vooraf">Inventarisatie en back-up vooraf</a></li>
+      <li><a href="#breakoutconfiguratie-2200g-voor-de-qsfp-dd-poorten">Breakoutconfiguratie 2×200G voor de QSFP-DD-poorten</a></li>
+      <li><a href="#configuratie-van-jumboframes-en-mtu">Configuratie van jumboframes en MTU</a></li>
+      <li><a href="#classificatie-van-rocev2-verkeer">Classificatie van RoCEv2-verkeer</a></li>
+    </ul>
+  </li>
+  <li><a href="#sparkrun-installeren-op-de-spark-nodes">sparkrun installeren op de Spark-nodes</a>
+    <ul>
+      <li><a href="#configuratie-van-gebruiker-en-ssh">Configuratie van gebruiker en SSH</a></li>
+      <li><a href="#installatie-van-sparkrun">Installatie van sparkrun</a></li>
+      <li><a href="#configuratie-van-dcb-data-center-bridging">Configuratie van DCB (Data Center Bridging)</a></li>
+    </ul>
+  </li>
+  <li><a href="#snelheidstests-en-rdma-tests">Snelheidstests en RDMA-tests</a></li>
+  <li><a href="#modellen-draaien-met-sparkrun">Modellen draaien met sparkrun</a></li>
+  <li><a href="#nas-configuratie-asustor-as6808t">NAS-configuratie (ASUSTOR AS6808T)</a></li>
+  <li><a href="#resultaten-en-verificatie">Resultaten en verificatie</a></li>
+  <li><a href="#probleemoplossing">Probleemoplossing</a></li>
+</ul><hr />
+
+<div class="product-card">
+  <div class="product-card-image">
+<img src="/papers/dgx-spark-8node-cluster-setup/images/spark-8-1.2.png" alt="NVIDIA DGX Spark 8-Node AI Cluster" />
+</div>
+  <div class="product-card-body">
+<h3>
+  
+  
+    <a href="#inhoudsopgave" class="anchor-heading" aria-labelledby="inhoudsopgave"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> NVIDIA DGX Spark 8-Node AI Cluster – 8 nodes, 1 TB, 200GbE
+  
+  
+</h3>
+    
+<p>8 DGX Spark-nodes, 200GbE RoCEv2 RDMA en clusterbeheer met sparkrun voor een end-to-end AI-infrastructuur.</p>
+
+</div>
+</div>
+
+<p>Dit document beschrijft de volledige installatie- en configuratiestappen voor een switchgebaseerd AI-cluster dat bestaat uit 8 NVIDIA DGX Spark-nodes. Het cluster gebruikt de <strong>sparkrun</strong>-toolkit om gedistribueerde AI-workloads en de uitvoering van modellen te beheren.</p>
+
+<p>Het document behandelt de voorbereiding van het management- en het compute-netwerk, de configuratie van de ConnectX-7/QSFP-poorten, de RoCEv2/RDMA-instellingen, SSH-toegang, de validatie van de NCCL-communicatie en de stappen voor de statuscontrole van het cluster.</p>
+<h2 id="architectuuroverzicht">
+  
+  
+    <a href="#architectuuroverzicht" class="anchor-heading" aria-labelledby="architectuuroverzicht"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Architectuuroverzicht
+  
+  
+</h2>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th><strong>Component</strong></th>
+      <th><strong>Beschrijving</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>DGX Spark × 8</strong></td>
+      <td>Elk met een ConnectX-7 200GbE QSFP56-poort</td>
+    </tr>
+    <tr>
+      <td><strong>MikroTik CRS312</strong></td>
+      <td>10GbE-switch voor het managementnetwerk; bevat ook de bondingpoorten voor de NAS</td>
+    </tr>
+    <tr>
+      <td><strong>MikroTik CRS804</strong></td>
+      <td>400G QSFP-DD-switch voor het compute-netwerk; levert 8×200G via breakout</td>
+    </tr>
+    <tr>
+      <td><strong>ASUSTOR AS6808T</strong></td>
+      <td>NAS met 8 schijven; via 2×10Gbps LACP aangesloten op de CRS312</td>
+    </tr>
+    <tr>
+      <td><strong>sparkrun</strong></td>
+      <td>Toolkit voor clusterbeheer, SSH-mesh en CX7-configuratie</td>
+    </tr>
+  </tbody>
+</table></div>
+<h2 id="vereisten">
+  
+  
+    <a href="#vereisten" class="anchor-heading" aria-labelledby="vereisten"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Vereisten
+  
+  
+</h2>
+    
+
+<p><strong>Hardware</strong></p>
+
+<ul>
+  <li>
+    <p>8× NVIDIA DGX Spark-systemen</p>
+  </li>
+  <li>
+    <p>1× MikroTik CRS312-4C+8XS-switch (managementnetwerk)</p>
+  </li>
+  <li>
+    <p>1× MikroTik CRS804-switch (compute-netwerk)</p>
+  </li>
+  <li>
+    <p>1× ASUSTOR AS6808T NAS (8× HDD)</p>
+  </li>
+  <li>
+    <p>4× passieve breakoutkabel QSFP-DD → 2× QSFP56 (compute-netwerk)</p>
+  </li>
+  <li>
+    <p>Cat6-kabels (managementnetwerk en NAS-aansluitingen)</p>
+  </li>
+</ul>
+
+<p><strong>Software en besturingssysteem</strong></p>
+
+<ul>
+  <li>
+    <p>DGX OS (geïnstalleerd op elk Spark-systeem)</p>
+  </li>
+  <li>
+    <p>Internettoegang (voor het downloaden van pakketten en updates)</p>
+  </li>
+</ul>
+
+<p><strong>Kennis en toegang</strong></p>
+
+<ul>
+  <li>
+    <p>Kennis van de webinterface en de CLI van MikroTik RouterOS</p>
+  </li>
+  <li>
+    <p>Basiskennis van de Linux-opdrachtregel</p>
+  </li>
+  <li>
+    <p>Fysieke toegang tot alle apparaten (voor de bekabeling)</p>
+  </li>
+</ul>
+
+<p><strong>Installatie van DGX Spark OS</strong></p>
+
+<p>Voor de installatie van DGX Spark OS kunt u de volgende video gebruiken:</p>
+
+<p><a href="https://www.youtube.com/watch?v=-z8GqGKDyXE">NVIDIA DGX Spark Setup Part 1</a></p>
+<h2 id="voorbereiding-van-de-dgx-spark-nodes">
+  
+  
+    <a href="#voorbereiding-van-de-dgx-spark-nodes" class="anchor-heading" aria-labelledby="voorbereiding-van-de-dgx-spark-nodes"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <strong>Voorbereiding van de DGX Spark-nodes</strong>
+  
+  
+</h2>
+    
+
+<p>Zorg ervoor dat op alle Spark-systemen de nieuwste software- en firmwareversies draaien voordat u verdergaat met de fysieke aansluitingen en de netwerkconfiguratie. Een aanzienlijk deel van de prestatieproblemen die tijdens de installatie optreden, kan worden veroorzaakt door verouderde drivers, ontbrekende updates of incompatibele firmware.</p>
+
+<p>De volgende stappen moeten op alle acht de Spark-systemen worden uitgevoerd.</p>
+<h3 id="updates-van-systeem-en-firmware">
+  
+  
+    <a href="#updates-van-systeem-en-firmware" class="anchor-heading" aria-labelledby="updates-van-systeem-en-firmware"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <strong>Updates van systeem en firmware</strong>
+  
+  
+</h3>
+    
+
+<p>Eerst worden de pakketten van het besturingssysteem bijgewerkt:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt update
+<span class="nb">sudo </span>apt dist-upgrade
+</code></pre></div></div>
+<p>Daarna wordt de systeemfirmware bijgewerkt:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>fwupdmgr refresh <span class="nt">--force</span>
+<span class="nb">sudo </span>fwupdmgr upgrade
+</code></pre></div></div>
+<p>Controleer via het DGX Dashboard dat er geen openstaande updates zijn; als die er wel zijn, voer ze dan uit:</p>
+
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/01-dgx-dashboard.jpg" alt="" /></p>
+
+<p>Start het systeem opnieuw op nadat de updates zijn voltooid:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>reboot
+</code></pre></div></div>
+<p>Tijdens de tests die in het installatieproces zijn uitgevoerd, bleek dat de verbindingsprestaties door verouderde firmwareversies niet het verwachte niveau haalden. Daarom wordt aanbevolen om als eerste stap van de installatie alle systemen bij te werken.</p>
+<h3 id="docker-configuratie">
+  
+  
+    <a href="#docker-configuratie" class="anchor-heading" aria-labelledby="docker-configuratie"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <strong>Docker-configuratie</strong>
+  
+  
+</h3>
+    
+
+<p>Om de containergebaseerde tools die in de volgende stappen worden gebruikt zonder sudo te kunnen draaien, worden op elke Spark de post-installatiestappen van Docker uitgevoerd.</p>
+
+<p>Eerst wordt de huidige gebruiker aan de Docker-groep toegevoegd:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>groupadd docker
+<span class="nb">sudo </span>usermod <span class="nt">-aG</span> docker <span class="nv">$USER</span>
+newgrp docker
+</code></pre></div></div>
+<p>De configuratie kan met de volgende test worden gecontroleerd:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run hello-world
+</code></pre></div></div>
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/02-docker-hello.jpg" alt="" /></p>
+
+<p>Als de opdracht met succes wordt uitgevoerd en Docker de voorbeeldcontainer kan starten, is de voorbereiding voor de containergebaseerde tools die in de volgende stappen worden gebruikt voltooid.</p>
+
+<p><strong>Verificatie van de storage driver</strong></p>
+
+<p>Daarnaast is de storage driver van Docker op alle Spark-nodes gecontroleerd. Er is geverifieerd dat de waarde Storage Driver in de uitvoer van docker info overlayfs was. Werd overlay2 of een andere storage driver aangetroffen, dan is Docker geconfigureerd om de containerd-snapshotter (overlayfs) te gebruiken en is de Docker-service opnieuw gestart. Zo werd dezelfde opslaginfrastructuur op alle nodes gebruikt en ontstond een consistente runtime-omgeving.</p>
+
+<p>Eerst is de huidige storage driver met de volgende opdracht gecontroleerd:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker info <span class="nt">-f</span> <span class="s1">'Driver= DriverStatus= DockerRootDir='</span>
+</code></pre></div></div>
+<p>Als de uitvoer overlay2 als driver toonde, is de volgende configuratie toegepast:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo tee</span> /etc/docker/daemon.json <span class="o">&gt;</span>/dev/null <span class="o">&lt;&lt;</span><span class="sh">'</span><span class="no">EOF</span><span class="sh">'
+{
+  "features": {
+    "containerd-snapshotter": true
+  }
+}
+</span><span class="no">EOF
+
+</span><span class="nb">sudo </span>systemctl restart docker
+</code></pre></div></div>
+<p>Na de configuratie is dezelfde controleopdracht opnieuw uitgevoerd en is geverifieerd dat de storage driver overlayfs was.</p>
+
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/03-docker-storage.png" alt="" /></p>
+<h2 id="aansluiting-van-het-managementnetwerk-10gbe">
+  
+  
+    <a href="#aansluiting-van-het-managementnetwerk-10gbe" class="anchor-heading" aria-labelledby="aansluiting-van-het-managementnetwerk-10gbe"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Aansluiting van het managementnetwerk (10GbE)
+  
+  
+</h2>
+    
+
+<p>De 10GbE-ethernetpoort van elke DGX Spark wordt met een Cat6-kabel aangesloten op een van de 10G-poorten van de MikroTik CRS312-switch. Controleer na het aansluiten van de kabel of de linkindicator van de betreffende switchpoort brandt.</p>
+
+<p>Open een terminal op het bureaublad van de Spark en controleer of het apparaat een IP-adres heeft gekregen:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip addr show
+</code></pre></div></div>
+
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/04-ip-addr.jpg" alt="" /></p>
+
+<p>Als u in de uitvoer, zoals in het voorbeeld, een IP-adres op de 10GbE-interface ziet, kan SSH-toegang via het managementnetwerk worden opgezet. Is er geen IP-adres toegekend, dan kunt u het handmatig toewijzen via het bureaublad van DGX OS:</p>
+
+<ol>
+  <li>
+    <p>Klik op het netwerkpictogram rechtsboven → kies Wired Settings</p>
+  </li>
+  <li>
+    <p>Klik op het tandwielpictogram (⚙) naast de betreffende 10GbE-verbinding</p>
+  </li>
+  <li>
+    <p>Ga naar het tabblad IPv4</p>
+  </li>
+  <li>
+    <p>Wijzig het veld Method in Manual</p>
+  </li>
+  <li>
+    <p>Voer de volgende gegevens in:</p>
+
+    <ul>
+      <li>Address: 192.168.1.x (voor elke Spark anders en afhankelijk van uw eigen netwerk)</li>
+    </ul>
+  </li>
+</ol>
+
+<ul>
+  <li>
+    <p>Netmask: 255.255.255.0</p>
+  </li>
+  <li>
+    <p>Gateway: 192.168.1.1 (indien aanwezig, anders leeg laten)</p>
+  </li>
+  <li>
+    <p>DNS: 1.1.1.1,8.8.8.8</p>
+  </li>
+</ul>
+
+<ol>
+  <li>Druk op de knop Apply en schakel de verbinding uit en weer in</li>
+</ol>
+
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/05-wired-settings.jpg" alt="" /></p>
+
+<p>Als er internettoegang is, is de 10GbE-managementverbinding gereed. Herhaal dezelfde stappen op de andere zeven Sparks en geef elk een ander IP-adres.</p>
+
+<p><strong>Controle van de verbinding tussen nodes</strong></p>
+
+<p>Controleer of alle Sparks elkaar via het managementnetwerk kunnen bereiken. Ping vanaf één Spark de andere:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ping <span class="nt">-c</span> 4 192.168.1.x <span class="c">#Other Sparks' addresses</span>
+</code></pre></div></div>
+
+<p>Als alle pings slagen, is het managementnetwerk gereed en kunnen alle nodes met elkaar communiceren.</p>
+<h2 id="fysieke-aansluiting-van-het-compute-netwerk-200gbe-qsfp">
+  
+  
+    <a href="#fysieke-aansluiting-van-het-compute-netwerk-200gbe-qsfp" class="anchor-heading" aria-labelledby="fysieke-aansluiting-van-het-compute-netwerk-200gbe-qsfp"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Fysieke aansluiting van het compute-netwerk (200GbE QSFP)
+  
+  
+</h2>
+    
+
+<p>In het DGX Spark 8-Node AI Cluster is elke Spark via de ConnectX-7 QSFP-poort met een snelheid van 200GbE aangesloten op de MikroTik CRS804-switch. De 400G QSFP-DD-poorten van de CRS804 worden met passieve breakoutkabels elk in twee 200G-verbindingen opgesplitst.</p>
+
+<p><strong>Kabelplan</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th><strong>CRS804-poort</strong></th>
+      <th><strong>Poortsnelheid</strong></th>
+      <th><strong>Breakout</strong></th>
+      <th><strong>Aangesloten Spark</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>QSFP-DD-poort 1</td>
+      <td>400G</td>
+      <td>2 × 200G QSFP56</td>
+      <td>Spark 1 + Spark 2</td>
+    </tr>
+    <tr>
+      <td>QSFP-DD-poort 2</td>
+      <td>400G</td>
+      <td>2 × 200G QSFP56</td>
+      <td>Spark 3 + Spark 4</td>
+    </tr>
+    <tr>
+      <td>QSFP-DD-poort 3</td>
+      <td>400G</td>
+      <td>2 × 200G QSFP56</td>
+      <td>Spark 5 + Spark 6</td>
+    </tr>
+    <tr>
+      <td>QSFP-DD-poort 4</td>
+      <td>400G</td>
+      <td>2 × 200G QSFP56</td>
+      <td>Spark 7 + Spark 8</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Aansluitstappen</strong></p>
+
+<ol>
+  <li>
+    <p>Steek het QSFP-DD-uiteinde van de eerste breakoutkabel in QSFP-DD-poort nummer 1 van de CRS804. Zorg ervoor dat de vergrendelingshendels aan beide uiteinden van de kabel volledig vastzitten.</p>
+
+    <p><img src="/papers/dgx-spark-8node-cluster-setup/images/06-breakout-cable.jpg" alt="" /></p>
+  </li>
+  <li>
+    <p>Steek de twee QSFP56-uiteinden van dezelfde kabel in de buitenste ConnectX-7-poorten van de systemen Spark 1 en Spark 2.</p>
+
+    <p><img src="/papers/dgx-spark-8node-cluster-setup/images/07-connectx7-ports.jpg" alt="" /></p>
+  </li>
+  <li>
+    <p>Sluit de andere 3 kabels op dezelfde manier aan om de switch met de Sparks te verbinden.</p>
+  </li>
+  <li>
+    <p>Schakel de CRS804-switch in.</p>
+  </li>
+</ol>
+<h2 id="configuratie-van-de-mikrotik-crs312-switch">
+  
+  
+    <a href="#configuratie-van-de-mikrotik-crs312-switch" class="anchor-heading" aria-labelledby="configuratie-van-de-mikrotik-crs312-switch"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configuratie van de MikroTik CRS312-switch
+  
+  
+</h2>
+    
+
+<p>Wanneer de switch wordt ingeschakeld, is het standaard-IP-adres 192.168.88.1/24. U bereikt dit adres via de poort Ethernet-1.</p>
+
+<ol>
+  <li>
+    <p>Verbind de poort Ethernet-1 van de CRS312 met uw computer.</p>
+  </li>
+  <li>
+    <p>Wijs het statische IP-adres 192.168.88.2/24 toe aan de ethernetinterface van uw computer.</p>
+  </li>
+  <li>
+    <p>Ga in uw browser naar http://192.168.88.1</p>
+  </li>
+  <li>
+    <p>De gebruikersnaam is admin en het wachtwoord staat op het label aan de onderkant van het apparaat. Meld u aan met deze gegevens:</p>
+  </li>
+</ol>
+
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/08-crs312-login.png" alt="" /></p>
+
+<p><strong>Toewijzing van het management-IP-adres</strong></p>
+
+<p>Na het aanmelden verschijnt een scherm waarin u wordt gevraagd uw wachtwoord te wijzigen. Nadat u hier het wachtwoord hebt gewijzigd, kunt u in het scherm dat daarna opent het management-IP-adres toewijzen. Hier wordt 192.168.1.122/24 als voorbeeld gebruikt; voer de gateway- en DNS-serveradressen in die bij uw netwerkinstellingen passen en druk op de knop “Apply Configuration”:</p>
+
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/09-crs312-mgmt-ip.jpg" alt="" /></p>
+
+<p>Door deze instelling toe te passen wordt uw sessie verbroken. Zet het IP-adres van uw computer daarom weer op een adres in het netwerk 192.168.1.0/24 en open de interface van de switch door 192.168.1.122 in uw browser in te voeren.</p>
+
+<p><strong>RouterOS-update</strong></p>
+
+<p>Controleer in deze fase eerst of de RouterOS-software up-to-date is. Ga daarvoor naar de pagina System - Packages - Check for Updates, druk op de knop “Check for Updates” en voer de update uit als er een beschikbaar is:</p>
+
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/10-crs312-update.jpg" alt="" /></p>
+<h3 id="bonding-van-de-nas-poorten">
+  
+  
+    <a href="#bonding-van-de-nas-poorten" class="anchor-heading" aria-labelledby="bonding-van-de-nas-poorten"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Bonding van de NAS-poorten
+  
+  
+</h3>
+    
+
+<p>Door de beide 10Gbps-poorten van de gebruikte NAS te bundelen en aan te sluiten op de gebundelde Combo3- en Combo4-poorten van de switch, ontstaat een totale bandbreedte (bandwidth) van 20Gbps.</p>
+
+<p><strong>De poorten Combo3 en Combo4 uit de bridge verwijderen</strong></p>
+
+<ol>
+  <li>
+    <p>Ga naar het tabblad Bridge → Ports</p>
+  </li>
+  <li>
+    <p>Zoek de poorten combo3 en combo4</p>
+  </li>
+  <li>
+    <p>Selecteer ze één voor één en klik op de knop Remove (−)</p>
+  </li>
+</ol>
+
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/11-bridge-ports.jpg" alt="" /></p>
+
+<p><strong>Bonding aanmaken</strong></p>
+
+<ol>
+  <li>
+    <p>Ga in de interface van de switch naar het tabblad Interfaces → Bonding</p>
+  </li>
+  <li>
+    <p>Druk op de knop “new”</p>
+  </li>
+  <li>
+    <p>Voer de volgende waarden in:</p>
+
+    <ol>
+      <li>
+        <p>Name: bond-nas</p>
+      </li>
+      <li>
+        <p>Slaves: combo3, combo4</p>
+      </li>
+      <li>
+        <p>Mode: 802.3ad</p>
+      </li>
+      <li>
+        <p>Transmit Hash Policy: layer-3-and-4</p>
+      </li>
+    </ol>
+  </li>
+  <li>
+    <p>Druk op de knoppen Apply en OK</p>
+  </li>
+</ol>
+
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/12-bonding-config.jpg" alt="" /></p>
+
+<p><strong>De bond aan de bridge toevoegen</strong></p>
+
+<p>Tot slot wordt de aangemaakte bond aan de bridge toegevoegd:</p>
+
+<ol>
+  <li>
+    <p>Ga naar het tabblad Bridge → Ports</p>
+  </li>
+  <li>
+    <p>Druk op de knop “new”</p>
+  </li>
+  <li>
+    <p>Kies “bond-nas” als Interface</p>
+  </li>
+  <li>
+    <p>Druk op de knoppen Apply en OK</p>
+  </li>
+</ol>
+
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/13-bond-bridge.jpg" alt="" /></p>
+<h2 id="configuratie-van-de-mikrotik-crs804-switch">
+  
+  
+    <a href="#configuratie-van-de-mikrotik-crs804-switch" class="anchor-heading" aria-labelledby="configuratie-van-de-mikrotik-crs804-switch"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configuratie van de MikroTik CRS804-switch
+  
+  
+</h2>
+    
+<h3 id="voorbereiding-van-de-switch">
+  
+  
+    <a href="#voorbereiding-van-de-switch" class="anchor-heading" aria-labelledby="voorbereiding-van-de-switch"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Voorbereiding van de switch:
+  
+  
+</h3>
+    
+
+<p>Wanneer de switch wordt ingeschakeld, is het standaard-IP-adres 192.168.88.1/24. U bereikt dit adres via de poort MGMT-1:</p>
+
+<ol>
+  <li>
+    <p>Verbind de poort MGMT-1 van de CRS804 met uw computer.</p>
+  </li>
+  <li>
+    <p>Wijs het statische IP-adres 192.168.88.2/24 toe aan de ethernetinterface van uw computer.</p>
+  </li>
+  <li>
+    <p>Ga in uw browser naar http://192.168.88.1</p>
+  </li>
+  <li>
+    <p>De gebruikersnaam is admin en het wachtwoord staat op het label aan de onderkant van het apparaat. Meld u aan met deze gegevens:</p>
+  </li>
+</ol>
+
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/14-crs812-login.png" alt="" /></p>
+
+<p><strong>Toewijzing van het management-IP-adres</strong></p>
+
+<p>Na het aanmelden verschijnt een scherm waarin u wordt gevraagd uw wachtwoord te wijzigen. Nadat u hier het wachtwoord hebt gewijzigd, kunt u in het scherm dat daarna opent het management-IP-adres toewijzen. Hier wordt 192.168.1.155/24 als voorbeeld gebruikt; voer de gateway- en DNS-serveradressen in die bij uw netwerkinstellingen passen en druk op de knop “Apply Configuration”:</p>
+
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/15-crs812-mgmt-ip.jpg" alt="" /></p>
+
+<p>Door deze instelling toe te passen wordt uw sessie verbroken. Zet het IP-adres van uw computer daarom weer op een adres in het netwerk 192.168.1.0/24 en open de interface van de switch door 192.168.1.155 in uw browser in te voeren.</p>
+
+<p><strong>RouterOS-update</strong></p>
+
+<p>Het eerste wat u in deze fase doet, is ervoor zorgen dat de RouterOS-software de nieuwste versie heeft. Ga daarvoor naar de pagina System - Packages - Check for Updates, druk op de knop “Check for Updates” en voer de update uit als er een beschikbaar is:</p>
+
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/16-crs812-update.jpg" alt="" /></p>
+<h3 id="inventarisatie-en-back-up-vooraf">
+  
+  
+    <a href="#inventarisatie-en-back-up-vooraf" class="anchor-heading" aria-labelledby="inventarisatie-en-back-up-vooraf"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Inventarisatie en back-up vooraf
+  
+  
+</h3>
+    
+
+<p>Maak via het management-IP-adres een SSH-verbinding met de interface van de switch. Alle configuratiestappen worden via de terminal uitgevoerd.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh admin@192.168.1.155
+</code></pre></div></div>
+<p>Maak een back-up van de huidige configuratie voordat u aan de RoCEv2-configuratie begint:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/export <span class="nv">file</span><span class="o">=</span>before-roce
+/system/backup/save <span class="nv">name</span><span class="o">=</span>before-roce
+/file/print
+</code></pre></div></div>
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/17-config-backup.png" alt="" /></p>
+<h3 id="breakoutconfiguratie-2200g-voor-de-qsfp-dd-poorten">
+  
+  
+    <a href="#breakoutconfiguratie-2200g-voor-de-qsfp-dd-poorten" class="anchor-heading" aria-labelledby="breakoutconfiguratie-2200g-voor-de-qsfp-dd-poorten"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Breakoutconfiguratie 2×200G voor de QSFP-DD-poorten
+  
+  
+</h3>
+    
+
+<p>Elk van de vier fysieke QSFP-DD-poorten van de CRS804 is standaard 400G. Elke 400G-poort wordt met een passieve breakoutkabel in twee 200G-verbindingen opgesplitst. De QSFP-DD-poorten hebben 8 subinterfaces; in de modus 2×200G zijn -1 en -5 de 200G-hoofdinterfaces. De overige subinterfaces (-2, -3, -4, -6, -7, -8) worden niet uitgeschakeld; ze blijven actief, maar hoeven niet te worden geconfigureerd.</p>
+
+<p>Configureer na het aansluiten van de breakoutkabels elke 200G-hoofdinterface met een vaste snelheid en uitgeschakelde auto-negotiation:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/interface/ethernet
+<span class="nb">set </span>qsfp56-dd-1-1 auto-negotiation<span class="o">=</span>no <span class="nv">speed</span><span class="o">=</span>200G-baseCR4
+<span class="nb">set </span>qsfp56-dd-1-5 auto-negotiation<span class="o">=</span>no <span class="nv">speed</span><span class="o">=</span>200G-baseCR4
+<span class="nb">set </span>qsfp56-dd-2-1 auto-negotiation<span class="o">=</span>no <span class="nv">speed</span><span class="o">=</span>200G-baseCR4
+<span class="nb">set </span>qsfp56-dd-2-5 auto-negotiation<span class="o">=</span>no <span class="nv">speed</span><span class="o">=</span>200G-baseCR4
+<span class="nb">set </span>qsfp56-dd-3-1 auto-negotiation<span class="o">=</span>no <span class="nv">speed</span><span class="o">=</span>200G-baseCR4
+<span class="nb">set </span>qsfp56-dd-3-5 auto-negotiation<span class="o">=</span>no <span class="nv">speed</span><span class="o">=</span>200G-baseCR4
+<span class="nb">set </span>qsfp56-dd-4-1 auto-negotiation<span class="o">=</span>no <span class="nv">speed</span><span class="o">=</span>200G-baseCR4
+<span class="nb">set </span>qsfp56-dd-4-5 auto-negotiation<span class="o">=</span>no <span class="nv">speed</span><span class="o">=</span>200G-baseCR4
+</code></pre></div></div>
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/18-qsfp-breakout.png" alt="" /></p>
+<h3 id="configuratie-van-jumboframes-en-mtu">
+  
+  
+    <a href="#configuratie-van-jumboframes-en-mtu" class="anchor-heading" aria-labelledby="configuratie-van-jumboframes-en-mtu"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configuratie van jumboframes en MTU
+  
+  
+</h3>
+    
+
+<p>Stel op de QSFP-DD-poorten die met de Sparks zijn verbonden zowel de L2MTU- als de MTU-waarde in:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/interface/ethernet
+<span class="nb">set </span>qsfp56-dd-1-1 <span class="nv">l2mtu</span><span class="o">=</span>9500 <span class="nv">mtu</span><span class="o">=</span>9000
+<span class="nb">set </span>qsfp56-dd-1-5 <span class="nv">l2mtu</span><span class="o">=</span>9500 <span class="nv">mtu</span><span class="o">=</span>9000
+<span class="nb">set </span>qsfp56-dd-2-1 <span class="nv">l2mtu</span><span class="o">=</span>9500 <span class="nv">mtu</span><span class="o">=</span>9000
+<span class="nb">set </span>qsfp56-dd-2-5 <span class="nv">l2mtu</span><span class="o">=</span>9500 <span class="nv">mtu</span><span class="o">=</span>9000
+<span class="nb">set </span>qsfp56-dd-3-1 <span class="nv">l2mtu</span><span class="o">=</span>9500 <span class="nv">mtu</span><span class="o">=</span>9000
+<span class="nb">set </span>qsfp56-dd-3-5 <span class="nv">l2mtu</span><span class="o">=</span>9500 <span class="nv">mtu</span><span class="o">=</span>9000
+<span class="nb">set </span>qsfp56-dd-4-1 <span class="nv">l2mtu</span><span class="o">=</span>9500 <span class="nv">mtu</span><span class="o">=</span>9000
+<span class="nb">set </span>qsfp56-dd-4-5 <span class="nv">l2mtu</span><span class="o">=</span>9500 <span class="nv">mtu</span><span class="o">=</span>9000
+</code></pre></div></div>
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/19-mtu-config.png" alt="" /></p>
+<h3 id="classificatie-van-rocev2-verkeer">
+  
+  
+    <a href="#classificatie-van-rocev2-verkeer" class="anchor-heading" aria-labelledby="classificatie-van-rocev2-verkeer"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Classificatie van RoCEv2-verkeer
+  
+  
+</h3>
+    
+
+<p><strong>QoS-profielen</strong></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/interface/ethernet/switch/qos/profile
+add <span class="nv">name</span><span class="o">=</span>roce <span class="nv">dscp</span><span class="o">=</span>26 traffic-class<span class="o">=</span>3
+add <span class="nv">name</span><span class="o">=</span>cnp <span class="nv">dscp</span><span class="o">=</span>48 traffic-class<span class="o">=</span>6
+</code></pre></div></div>
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/20-qos-profiles.png" alt="" /></p>
+
+<p><strong>Tx-queue, ETS, ECN en CNP-prioriteit</strong></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/interface/ethernet/switch/qos/tx-manager/queue
+<span class="nb">set </span>1 <span class="nv">schedule</span><span class="o">=</span>high-priority-group <span class="nv">weight</span><span class="o">=</span>1
+<span class="nb">set </span>3 <span class="nv">schedule</span><span class="o">=</span>high-priority-group <span class="nv">weight</span><span class="o">=</span>1 <span class="nv">ecn</span><span class="o">=</span><span class="nb">yes
+set </span>6 <span class="nv">schedule</span><span class="o">=</span>strict-priority
+</code></pre></div></div>
+<p>TC1 en TC3 draaien in de ETS-groep met een gelijk gewicht (1:1); op TC3 is ECN-markering ingeschakeld; CNP-controlepakketten krijgen voorrang via strict priority op TC6. Als TC1 inactief is, kan TC3 de volledige poort gebruiken — deze opdracht stelt geen permanente rate-limit van 100G/100G in.</p>
+
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/21-tx-queue.png" alt="" /></p>
+
+<p><strong>PFC-profiel</strong></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/interface/ethernet/switch/qos/priority-flow-control
+add <span class="nv">name</span><span class="o">=</span>pfc-tc3 traffic-class<span class="o">=</span>3 <span class="nv">rx</span><span class="o">=</span><span class="nb">yes </span><span class="nv">tx</span><span class="o">=</span><span class="nb">yes</span>
+</code></pre></div></div>
+<p>Maakt een bidirectioneel profiel voor Priority-based Flow Control voor TC3 aan. Met tx=yes kan de switch voor TC3 XOFF/XON-frames naar de buur sturen; met rx=yes houdt hij rekening met TC3-PFC-frames die van de buur worden ontvangen.</p>
+
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/22-pfc-profile.png" alt="" /></p>
+
+<p><strong>Trust, PFC en referentie voor de queue-rate op de Spark-poorten</strong></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/interface/ethernet/switch/qos/port
+<span class="nb">set </span>qsfp56-dd-1-1 trust-l3<span class="o">=</span>keep <span class="nv">pfc</span><span class="o">=</span>pfc-tc3 egress-rate-queue3<span class="o">=</span>200Gbps
+<span class="nb">set </span>qsfp56-dd-1-5 trust-l3<span class="o">=</span>keep <span class="nv">pfc</span><span class="o">=</span>pfc-tc3 egress-rate-queue3<span class="o">=</span>200Gbps
+<span class="nb">set </span>qsfp56-dd-2-1 trust-l3<span class="o">=</span>keep <span class="nv">pfc</span><span class="o">=</span>pfc-tc3 egress-rate-queue3<span class="o">=</span>200Gbps
+<span class="nb">set </span>qsfp56-dd-2-5 trust-l3<span class="o">=</span>keep <span class="nv">pfc</span><span class="o">=</span>pfc-tc3 egress-rate-queue3<span class="o">=</span>200Gbps
+<span class="nb">set </span>qsfp56-dd-3-1 trust-l3<span class="o">=</span>keep <span class="nv">pfc</span><span class="o">=</span>pfc-tc3 egress-rate-queue3<span class="o">=</span>200Gbps
+<span class="nb">set </span>qsfp56-dd-3-5 trust-l3<span class="o">=</span>keep <span class="nv">pfc</span><span class="o">=</span>pfc-tc3 egress-rate-queue3<span class="o">=</span>200Gbps
+<span class="nb">set </span>qsfp56-dd-4-1 trust-l3<span class="o">=</span>keep <span class="nv">pfc</span><span class="o">=</span>pfc-tc3 egress-rate-queue3<span class="o">=</span>200Gbps
+<span class="nb">set </span>qsfp56-dd-4-5 trust-l3<span class="o">=</span>keep <span class="nv">pfc</span><span class="o">=</span>pfc-tc3 egress-rate-queue3<span class="o">=</span>200Gbps
+</code></pre></div></div>
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/23-trust-pfc.png" alt="" /></p>
+
+<p><strong>Lossless traffic class en bufferpool</strong></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/interface/ethernet/switch/qos/settings
+<span class="nb">set </span>lossless-traffic-class<span class="o">=</span>3 lossless-buffers<span class="o">=</span>auto
+</code></pre></div></div>
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/24-lossless.png" alt="" /></p>
+
+<p><strong>QoS-hardware-offload</strong></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/interface/ethernet/switch
+<span class="nb">set </span>switch1 qos-hw-offloading<span class="o">=</span><span class="nb">yes</span>
+</code></pre></div></div>
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/25-qos-hw-offload.png" alt="" /></p>
+
+<p><strong>LLDP-DCBX-advertisement</strong></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/ip/neighbor/discovery-settings
+<span class="nb">set </span>lldp-dcbx<span class="o">=</span><span class="nb">yes</span>
+</code></pre></div></div>
+
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/26-lldp-dcbx.png" alt="" /></p>
+<h2 id="sparkrun-installeren-op-de-spark-nodes">
+  
+  
+    <a href="#sparkrun-installeren-op-de-spark-nodes" class="anchor-heading" aria-labelledby="sparkrun-installeren-op-de-spark-nodes"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> sparkrun installeren op de Spark-nodes
+  
+  
+</h2>
+    
+<h3 id="configuratie-van-gebruiker-en-ssh">
+  
+  
+    <a href="#configuratie-van-gebruiker-en-ssh" class="anchor-heading" aria-labelledby="configuratie-van-gebruiker-en-ssh"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configuratie van gebruiker en SSH
+  
+  
+</h3>
+    
+
+<p>Nadat de netwerkconfiguratie is voltooid, moet op alle nodes een gemeenschappelijke gebruiker worden aangemaakt, zodat de Spark-systemen zonder wachtwoord met elkaar kunnen communiceren. sparkrun maakt via deze gebruiker een SSH-verbinding met alle nodes en voert de clusterbeheertaken uit.</p>
+
+<p><strong>Hostnamen instellen</strong></p>
+
+<p>Geef elke Spark een unieke hostnaam. Dit is nodig voor het beheer van SSH known_hosts, de analyse van logs en het bijhouden van de clusternodes:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># On Spark 1:</span>
+<span class="nb">sudo </span>hostnamectl set-hostname spark1
+
+<span class="c"># On Spark 2:</span>
+<span class="nb">sudo </span>hostnamectl set-hostname spark2
+
+<span class="c"># On Spark 3:</span>
+<span class="nb">sudo </span>hostnamectl set-hostname spark3
+
+<span class="c"># On Spark 4:</span>
+<span class="nb">sudo </span>hostnamectl set-hostname spark4
+
+<span class="c"># On Spark 5:</span>
+<span class="nb">sudo </span>hostnamectl set-hostname spark5
+
+<span class="c"># On Spark 6:</span>
+<span class="nb">sudo </span>hostnamectl set-hostname spark6
+
+<span class="c"># On Spark 7:</span>
+<span class="nb">sudo </span>hostnamectl set-hostname spark7
+
+<span class="c"># On Spark 8:</span>
+<span class="nb">sudo </span>hostnamectl set-hostname spark8
+</code></pre></div></div>
+
+<p><strong>Gemeenschappelijke gebruiker aanmaken</strong></p>
+
+<p>Op alle Spark-systemen moet dezelfde gebruikersnaam worden aangemaakt. In dit document wordt de gebruikersnaam nvidia gebruikt. De volgende opdrachten worden op alle acht de Spark-systemen uitgevoerd:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>useradd <span class="nt">-m</span> nvidia
+<span class="nb">sudo </span>usermod <span class="nt">-aG</span> <span class="nb">sudo </span>nvidia
+<span class="nb">sudo </span>passwd nvidia
+</code></pre></div></div>
+
+<p>Gebruik op alle systemen hetzelfde wachtwoord — dat vereenvoudigt het beheer. sparkrun vraagt bij de eerste verbinding tijdens de installatie van de SSH-mesh om dit wachtwoord; daarna wordt authenticatie op basis van sleutels gebruikt.</p>
+
+<p><strong>Sudo zonder wachtwoord configureren</strong></p>
+
+<p>sparkrun voert tijdens de CX7-netwerkconfiguratie opdrachten met sudo uit. Om te voorkomen dat er elke keer om een wachtwoord wordt gevraagd, moet sudo zonder wachtwoord worden geconfigureerd:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo</span> <span class="s2">"nvidia ALL=(ALL) NOPASSWD:ALL"</span> | <span class="nb">sudo tee</span> /etc/sudoers.d/nvidia
+<span class="nb">sudo chmod </span>440 /etc/sudoers.d/nvidia
+</code></pre></div></div>
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/27-passwordless-sudo.png" alt="" /></p>
+<h3 id="installatie-van-sparkrun">
+  
+  
+    <a href="#installatie-van-sparkrun" class="anchor-heading" aria-labelledby="installatie-van-sparkrun"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Installatie van sparkrun
+  
+  
+</h3>
+    
+
+<p>De installatie wordt uitgevoerd onder het account van de gebruiker nvidia.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>su - nvidia
+</code></pre></div></div>
+
+<p>Eerst wordt het pakket uv geïnstalleerd:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-LsSf</span> https://astral.sh/uv/install.sh | sh
+<span class="nb">source</span> ~/.bashrc
+</code></pre></div></div>
+
+<p>Daarna wordt sparkrun geïnstalleerd:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>uvx sparkrun setup
+</code></pre></div></div>
+
+<p>Beantwoord de vragen die tijdens de installatie worden gesteld als volgt:</p>
+
+<ol>
+  <li>
+    <p>Voer eerst de IP-adressen van de apparaten in:</p>
+  </li>
+  <li>
+    <p>Geef het cluster een naam</p>
+  </li>
+  <li>
+    <p>Voer als SSH-gebruikersnaam nvidia in, de gebruikersnaam die in de vorige stap is aangemaakt.</p>
+  </li>
+  <li>
+    <p>Kies Y voor de installatie van de MESH</p>
+
+    <p><img src="/papers/dgx-spark-8node-cluster-setup/images/28-sparkrun-wizard.jpg" alt="" /></p>
+  </li>
+  <li>
+    <p>Beantwoord de vraag Configure CX7 networking? met Y:</p>
+
+    <p><img src="/papers/dgx-spark-8node-cluster-setup/images/29-cx7-password.png" alt="" /></p>
+  </li>
+  <li>
+    <p>Kies Y bij de vraag Add ‘nvidia’ to the docker group on all hosts?</p>
+  </li>
+  <li>
+    <p>Kies “Y” bij de vraag Install sudoers entries?</p>
+  </li>
+  <li>
+    <p>Kies “Y” bij de vraag Install earlyoom?</p>
+  </li>
+  <li>
+    <p>Wanneer de melding Setup complete verschijnt, is de installatie met succes voltooid</p>
+
+    <p><img src="/papers/dgx-spark-8node-cluster-setup/images/30-sparkrun-complete.png" alt="" /></p>
+  </li>
+</ol>
+<h3 id="configuratie-van-dcb-data-center-bridging">
+  
+  
+    <a href="#configuratie-van-dcb-data-center-bridging" class="anchor-heading" aria-labelledby="configuratie-van-dcb-data-center-bridging"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configuratie van DCB (Data Center Bridging)
+  
+  
+</h3>
+    
+
+<p>PFC en ECN zijn aan de kant van de switch geconfigureerd, maar ook voor de ConnectX-7-interfaces aan de kant van de Spark moeten DSCP-tagging en PFC worden ingeschakeld. Deze stap wordt niet door sparkrun uitgevoerd — hij moet op elke Spark handmatig worden toegepast.</p>
+
+<p><strong>Actieve CX7-interfaces bepalen</strong></p>
+
+<p>Bepaal op elke Spark welke CX7-interfaces actief zijn:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip link show | grep -E 'enp.*np|enP.*np'
+</code></pre></div></div>
+
+<p>De interfaces met MTU 9000 en de status UP,LOWER_UP zijn de actieve. In dit document worden op elke Spark twee actieve interfaces gebruikt:</p>
+
+<ul>
+  <li>
+    <p>enp1s0f1np1 — Subnet 1</p>
+  </li>
+  <li>
+    <p>enP2p1s0f1np1 — Subnet 2</p>
+  </li>
+</ul>
+
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/31-cx7-interfaces.png" alt="" /></p>
+
+<p><strong>Koppeling van DSCP → traffic class</strong></p>
+
+<p>Met de opdracht dcb app wordt de DSCP-waarde 26 van RoCEv2-pakketten die op de ConnectX-7-interfaces binnenkomen gekoppeld aan traffic class 3:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>dcb app add dev enp1s0f1np1 dscp-prio 26:3
+<span class="nb">sudo </span>dcb app add dev enP2p1s0f1np1 dscp-prio 26:3
+</code></pre></div></div>
+
+<p>Deze opdracht zorgt ervoor dat pakketten die met DSCP 26 zijn gemarkeerd naar de queue met prioriteit 3 (TC3) worden geleid. Er wordt dezelfde traffic class gebruikt als in de TC3-configuratie aan de kant van de switch.</p>
+
+<p><strong>PFC inschakelen</strong></p>
+
+<p>Schakel PFC in om lossless communicatie voor TC3 te bieden:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>dcb pfc <span class="nb">set </span>dev enp1s0f1np1 prio-pfc 3:on
+<span class="nb">sudo </span>dcb pfc <span class="nb">set </span>dev enP2p1s0f1np1 prio-pfc 3:on
+</code></pre></div></div>
+
+<p>prio-pfc 3:on — verzend en ontvang PFC-frames alleen voor prioriteit 3. Andere prioriteiten worden niet beïnvloed.</p>
+
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/32-pfc-enable.png" alt="" /></p>
+
+<p><strong>Persistentie (systemd-service)</strong></p>
+
+<p>DCB-opdrachten gaan na een herstart verloren. Maak een systemd-servicebestand aan, zodat ze automatisch worden toegepast. Op elke Spark:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo tee</span> /etc/systemd/system/dcb-roce.service <span class="o">&gt;</span> /dev/null <span class="o">&lt;&lt;</span><span class="sh">'</span><span class="no">EOF</span><span class="sh">'
+[Unit]
+Description=Configure DCB DSCP and PFC for RoCEv2 on CX7 interfaces
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c '</span><span class="se">\</span><span class="sh">
+  dcb app add dev enp1s0f1np1 dscp-prio 26:3 &amp;&amp; </span><span class="se">\</span><span class="sh">
+  dcb app add dev enP2p1s0f1np1 dscp-prio 26:3 &amp;&amp; </span><span class="se">\</span><span class="sh">
+  dcb pfc set dev enp1s0f1np1 prio-pfc 3:on &amp;&amp; </span><span class="se">\</span><span class="sh">
+  dcb pfc set dev enP2p1s0f1np1 prio-pfc 3:on'
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+</span><span class="no">EOF
+
+</span><span class="nb">sudo </span>systemctl daemon-reload
+<span class="nb">sudo </span>systemctl <span class="nb">enable </span>dcb-roce.service
+<span class="nb">sudo </span>systemctl start dcb-roce.service
+</code></pre></div></div>
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/33-dcb-roce-service.jpg" alt="" /></p>
+<h2 id="snelheidstests-en-rdma-tests">
+  
+  
+    <a href="#snelheidstests-en-rdma-tests" class="anchor-heading" aria-labelledby="snelheidstests-en-rdma-tests"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Snelheidstests en RDMA-tests
+  
+  
+</h2>
+    
+
+<p>In deze stap controleren we of het compute-netwerk correct werkt en of de RDMA-communicatie via RoCEv2 naar verwachting presteert. De tests worden tussen twee Sparks uitgevoerd; voor 8 nodes kunnen kruistests op dezelfde manier worden herhaald.</p>
+
+<p><strong>Referentie voor de IP-toewijzing</strong></p>
+
+<p>De IP-adressen die de sparkrun-wizard voor de eerste twee Sparks aan de CX7-interfaces heeft toegewezen, staan hieronder; in uw scenario gebruikt u in plaats daarvan uw eigen adressen:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th><strong>Spark</strong></th>
+      <th><strong>Management (enP7s7)</strong></th>
+      <th><strong>CX7-subnet 1 (enp1s0f1np1)</strong></th>
+      <th><strong>CX7-subnet 2 (enP2p1s0f1np1)</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Spark 1</td>
+      <td>192.168.1.147</td>
+      <td>192.168.0.147</td>
+      <td>192.168.2.147</td>
+    </tr>
+    <tr>
+      <td>Spark 2</td>
+      <td>192.168.1.153</td>
+      <td>192.168.0.153</td>
+      <td>192.168.2.153</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Voor de tests worden twee CX7-subnetten gebruikt:</p>
+
+<ul>
+  <li>
+    <p>Subnet 1: 192.168.0.0/24 → enp1s0f1np1</p>
+  </li>
+  <li>
+    <p>Subnet 2: 192.168.2.0/24 → enP2p1s0f1np1</p>
+  </li>
+</ul>
+
+<p><strong>IP- en MTU-test</strong></p>
+
+<p>Test met ping de verbinding en de jumboframes van Spark 1 naar Spark 2:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># On Spark 1:</span>
+ping <span class="nt">-c</span> 4 192.168.0.153
+ping <span class="nt">-M</span> <span class="k">do</span> <span class="nt">-s</span> 8972 <span class="nt">-c</span> 4 192.168.0.153
+</code></pre></div></div>
+
+<p>De eerste ping test de normale verbinding, de tweede ping test een MTU van 9000 bytes. -M do voorkomt fragmentatie — als er geen pakketten wegvallen, werkt MTU 9000 end-to-end.</p>
+
+<p>Herhaal dit voor het tweede subnet:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ping <span class="nt">-c</span> 4 192.168.2.153
+ping <span class="nt">-M</span> <span class="k">do</span> <span class="nt">-s</span> 8972 <span class="nt">-c</span> 4 192.168.2.153
+</code></pre></div></div>
+
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/34-ping-mtu.jpg" alt="" /></p>
+
+<p><strong>Test van de TCP-doorvoer (iperf3)</strong></p>
+
+<p>Meet de basisbandbreedte op de Ethernet/IP-laag. Deze test is geen RDMA — het is een TCP-overdracht waarbij de CPU betrokken is.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># On Spark 2 (server):</span>
+iperf3 <span class="nt">-s</span>
+
+<span class="c"># On Spark 1 (client):</span>
+iperf3 <span class="nt">-c</span> 192.168.0.153 <span class="nt">-P</span> 8 <span class="nt">-t</span> 30
+</code></pre></div></div>
+
+<p>-P 8 betekent acht parallelle stromen, -t 30 betekent een testduur van dertig seconden. Verwacht resultaat: een totale doorvoer (throughput) van ~100-120 Gbps.</p>
+
+<p>Opmerking: als iperf3 niet is geïnstalleerd, installeer het dan:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>iperf3
+</code></pre></div></div>
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/35-iperf3.jpg" alt="" /></p>
+
+<p><strong>RDMA-apparaten identificeren</strong></p>
+
+<p>Achterhaal de namen van de RDMA-apparaten:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ibdev2netdev
+</code></pre></div></div>
+
+<p>Voorbeelduitvoer:</p>
+
+<p>rocep1s0f1 port 1 ==&gt; enp1s0f1np1 (Up)</p>
+
+<p>roceP2p1s0f1 port 1 ==&gt; enP2p1s0f1np1 (Up)</p>
+
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/36-ibdev2netdev.png" alt="" /></p>
+
+<p><strong>RDMA-schrijftest (ib_write_bw)</strong></p>
+
+<p>Meet de bandbreedte van de RDMA-schrijfbewerking via RoCEv2. Deze test meet rechtstreeks de geheugenoverdracht zonder tussenkomst van de CPU.</p>
+
+<p><strong>Subnet 1 (enp1s0f1np1 → rocep1s0f1):</strong></p>
+
+<p>Op Spark 2 (server):</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ib_write_bw <span class="nt">-d</span> rocep1s0f1 <span class="nt">-F</span> <span class="nt">--report_gbits</span>
+</code></pre></div></div>
+
+<p>Op Spark 1 (client):</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ib_write_bw <span class="nt">-d</span> rocep1s0f1 <span class="nt">-F</span> <span class="nt">--report_gbits</span> 192.168.0.153
+</code></pre></div></div>
+
+<p>Verwacht resultaat: ~100-111 Gbps.</p>
+
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/37-ib-write-bw-1.jpg" alt="" /></p>
+
+<p><strong>Subnet 2 (enP2p1s0f1np1 → roceP2p1s0f1):</strong></p>
+
+<p>Op Spark 2 (server):</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ib_write_bw <span class="nt">-d</span> roceP2p1s0f1 <span class="nt">-F</span> <span class="nt">--report_gbits</span>
+</code></pre></div></div>
+
+<p>Op Spark 1 (client):</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ib_write_bw <span class="nt">-d</span> roceP2p1s0f1 <span class="nt">-F</span> <span class="nt">--report_gbits</span> 192.168.2.153
+</code></pre></div></div>
+
+<p>Verwacht resultaat: ~100-111 Gbps.</p>
+
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/38-ib-write-bw-2.jpg" alt="" /></p>
+
+<p>Als beide interfaces ~100 Gbps leveren, is er tussen elke Spark in totaal ~200 Gbps RDMA-bandbreedte beschikbaar.</p>
+
+<p><strong>RDMA-leestest (ib_read_bw)</strong></p>
+
+<p>Meet de bandbreedte van de RDMA-leesbewerking:</p>
+
+<p><strong>Subnet 1 (enp1s0f1np1 → rocep1s0f1):</strong></p>
+
+<p>Op Spark 2 (server):</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ib_read_bw <span class="nt">-d</span> rocep1s0f1 <span class="nt">-F</span> <span class="nt">--report_gbits</span>
+</code></pre></div></div>
+
+<p>Op Spark 1 (client):</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ib_read_bw <span class="nt">-d</span> rocep1s0f1 <span class="nt">-F</span> <span class="nt">--report_gbits</span> 192.168.0.153
+</code></pre></div></div>
+<p>Verwacht resultaat: ~95-110 Gbps.</p>
+
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/39-ib-read-bw-1.jpg" alt="" /></p>
+
+<p><strong>Subnet 2 (enP2p1s0f1np1 → roceP2p1s0f1):</strong></p>
+
+<p>Op Spark 2 (server):</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ib_read_bw <span class="nt">-d</span> roceP2p1s0f1 <span class="nt">-F</span> <span class="nt">--report_gbits</span>
+</code></pre></div></div>
+
+<p>Op Spark 1 (client):</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ib_read_bw <span class="nt">-d</span> roceP2p1s0f1 <span class="nt">-F</span> <span class="nt">--report_gbits</span> 192.168.2.153
+</code></pre></div></div>
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/40-ib-read-bw-2.jpg" alt="" /></p>
+
+<p>Verwacht resultaat: ~95-110 Gbps.</p>
+
+<p><strong>RDMA-latentietest (ib_write_lat)</strong></p>
+
+<p>Op Spark 2 (server):</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ib_write_lat <span class="nt">-d</span> rocep1s0f1
+</code></pre></div></div>
+
+<p>Op Spark 1 (client):</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ib_write_lat <span class="nt">-d</span> rocep1s0f1 192.168.0.153
+</code></pre></div></div>
+
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/41-ib-write-lat.jpg" alt="" /></p>
+
+<p>Verwacht resultaat: een latentie (latency) van ~1-3 microseconden.</p>
+<h2 id="modellen-draaien-met-sparkrun">
+  
+  
+    <a href="#modellen-draaien-met-sparkrun" class="anchor-heading" aria-labelledby="modellen-draaien-met-sparkrun"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Modellen draaien met sparkrun
+  
+  
+</h2>
+    
+
+<p>In deze stap controleren we of het cluster end-to-end werkt door via sparkrun een multi-node workload voor inferentie (inference) uit te voeren.</p>
+
+<p><strong>Model en recipe</strong></p>
+
+<p>Voor deze test wordt het model glm-5.2-nvfp4 gebruikt. Het model draait met tensorparallellisme (tensor parallelism) over 8 nodes. De aangepaste containerimage en het recipe-YAML-bestand voor dit model zijn voor deze handleiding voorbereid.</p>
+
+<p>Download eerst de containerimage met de volgende opdracht:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker pull registry.cordata.ai/spark-cluster/vllm-zatz-dcp:probe
+</code></pre></div></div>
+
+<p>Geef de image daarna een nieuwe tag:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker tag registry.cordata.ai/spark-cluster/vllm-zatz-dcp:probe vllm-zatz-dcp:probe
+</code></pre></div></div>
+
+<p>Nadat de image is ingesteld, kan de inferentieworkload met sparkrun worden uitgevoerd met het meegeleverde recipe-YAML-bestand.</p>
+
+<p><strong>Het model uitvoeren</strong></p>
+
+<p>Hieronder staan de opdracht en de inhoud van het yaml-bestand voor het model dat als voorbeeld wordt uitgevoerd:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sparkrun run glm52-nvfp4-tp8-256k.yaml
+</code></pre></div></div>
+
+<p>De inhoud van het uitgevoerde yaml-bestand is als volgt:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>model: nvidia/GLM-5.2-NVFP4
+runtime: vllm-ray
+container: vllm-zatz-dcp:probe
+
+min_nodes: 8
+max_nodes: 8
+
+metadata:
+  description: nvidia/GLM-5.2-NVFP4 TP8 + Expert-Parallel <span class="o">(</span>resmi config<span class="o">)</span> 8x DGX Spark, B12X_MLA_SPARSE, cudagraph NONE
+  maintainer: <span class="nb">local
+  </span>model_dtype: nvfp4
+
+<span class="c"># --- Variables defined here in ONE place; used with curly braces in command ---</span>
+defaults:
+  port: 8210
+  host: 0.0.0.0
+  tensor_parallel: 8
+  pipeline_parallel: 1
+  gpu_memory_utilization: 0.75
+  max_model_len: 256000
+  max_num_seqs: 2
+  max_num_batched_tokens: 4096
+  kv_cache_dtype: fp8_ds_mla
+  kv_cache_memory_bytes: 35000000000
+  load_format: auto
+  served_model_name: glm-5.2-nvfp4
+  quantization: modelopt
+  reasoning_parser: glm45
+  tool_call_parser: glm47
+
+<span class="nb">env</span>:
+  NCCL_IB_TC: <span class="s2">"106"</span>
+  HF_HUB_OFFLINE: <span class="s2">"1"</span>
+  TRANSFORMERS_OFFLINE: <span class="s2">"1"</span>
+  SAFETENSORS_FAST_GPU: <span class="s2">"1"</span>
+  CUDA_DEVICE_ORDER: <span class="s2">"PCI_BUS_ID"</span>
+  CUDA_DEVICE_MAX_CONNECTIONS: <span class="s2">"32"</span>
+  CUTE_DSL_ARCH: <span class="s2">"sm_121a"</span>
+  TORCH_CUDA_ARCH_LIST: <span class="s2">"12.1a"</span>
+  VLLM_ALLOW_LONG_MAX_MODEL_LEN: <span class="s2">"1"</span>
+  VLLM_RPC_TIMEOUT: <span class="s2">"1800000"</span>
+  NCCL_MAX_NCHANNELS: <span class="s2">"4"</span>
+  NCCL_MIN_NCHANNELS: <span class="s2">"4"</span>
+  PYTORCH_CUDA_ALLOC_CONF: <span class="s2">"expandable_segments:True"</span>
+  VLLM_WORKER_MULTIPROC_METHOD: <span class="s2">"spawn"</span>
+  VLLM_USE_FLASHINFER_SAMPLER: <span class="s2">"1"</span>
+  VLLM_USE_V2_MODEL_RUNNER: <span class="s2">"1"</span>
+  VLLM_USE_B12X_SPARSE_INDEXER: <span class="s2">"1"</span>
+  VLLM_KZ_TRIM_AFTER_LOAD: <span class="s2">"1"</span>
+  VLLM_USE_B12X_MOE: <span class="s2">"0"</span>
+  VLLM_USE_B12X_FP8_GEMM: <span class="s2">"0"</span>
+  VLLM_DISABLE_TP_MQ_BROADCASTER: <span class="s2">"1"</span>
+  VLLM_ENABLE_PCIE_ALLREDUCE: <span class="s2">"0"</span>
+  USES_B12X: <span class="s2">"True"</span>
+  FLASHINFER_DISABLE_VERSION_CHECK: <span class="s2">"1"</span>
+  RAY_memory_usage_threshold: <span class="s2">"0.99"</span>
+  RAY_memory_monitor_refresh_ms: <span class="s2">"0"</span>
+  VLLM_DEEP_GEMM_WARMUP: <span class="s2">"skip"</span>
+
+<span class="nb">command</span>: |
+  vllm serve <span class="o">{</span>model<span class="o">}</span> <span class="se">\</span>
+      <span class="nt">--served-model-name</span> <span class="o">{</span>served_model_name<span class="o">}</span> <span class="se">\</span>
+      <span class="nt">--trust-remote-code</span> <span class="se">\</span>
+      <span class="nt">--load-format</span> <span class="o">{</span>load_format<span class="o">}</span> <span class="se">\</span>
+      <span class="nt">--quantization</span> <span class="o">{</span>quantization<span class="o">}</span> <span class="se">\</span>
+      <span class="nt">--distributed-executor-backend</span> ray <span class="se">\</span>
+      <span class="nt">--tensor-parallel-size</span> <span class="o">{</span>tensor_parallel<span class="o">}</span> <span class="se">\</span>
+      <span class="nt">--pipeline-parallel-size</span> <span class="o">{</span>pipeline_parallel<span class="o">}</span> <span class="se">\</span>
+      <span class="nt">--gpu-memory-utilization</span> <span class="o">{</span>gpu_memory_utilization<span class="o">}</span> <span class="se">\</span>
+      <span class="nt">--max-model-len</span> <span class="o">{</span>max_model_len<span class="o">}</span> <span class="se">\</span>
+      <span class="nt">--max-num-seqs</span> <span class="o">{</span>max_num_seqs<span class="o">}</span> <span class="se">\</span>
+      <span class="nt">--max-num-batched-tokens</span> <span class="o">{</span>max_num_batched_tokens<span class="o">}</span> <span class="se">\</span>
+      <span class="nt">--kv-cache-dtype</span> <span class="o">{</span>kv_cache_dtype<span class="o">}</span> <span class="se">\</span>
+      <span class="nt">--kv-cache-memory-bytes</span> <span class="o">{</span>kv_cache_memory_bytes<span class="o">}</span> <span class="se">\</span>
+      <span class="nt">--generation-config</span> vllm <span class="se">\</span>
+      <span class="nt">--hf-overrides</span> <span class="s1">'{"use_index_cache":true,"index_topk_pattern":"FFFSSSFSSSFSSSFSSSFSSSFSSSFSSSFSSSFSSSFSSSFSSSFSSSFSSSFSSSFSSSFSSSFSSSFSSSFSSS"}'</span> <span class="se">\</span>
+      <span class="nt">--port</span> <span class="o">{</span>port<span class="o">}</span> <span class="se">\</span>
+      <span class="nt">--host</span> <span class="o">{</span>host<span class="o">}</span> <span class="se">\</span>
+      <span class="nt">--no-enable-log-requests</span> <span class="se">\</span>
+      <span class="nt">--compilation-config</span> <span class="s1">'{"cudagraph_mode":"NONE"}'</span> <span class="se">\</span>
+      <span class="nt">--attention-backend</span> B12X_MLA_SPARSE <span class="se">\</span>
+      <span class="nt">--moe-backend</span> flashinfer_cutlass <span class="se">\</span>
+      <span class="nt">--reasoning-parser</span> <span class="o">{</span>reasoning_parser<span class="o">}</span> <span class="se">\</span>
+      <span class="nt">--tool-call-parser</span> <span class="o">{</span>tool_call_parser<span class="o">}</span> <span class="se">\</span>
+      <span class="nt">--enable-auto-tool-choice</span> <span class="se">\</span>
+      <span class="nt">--speculative-config</span> <span class="s1">'{"method":"mtp","num_speculative_tokens":5,"draft_attention_backend":"B12X_MLA_SPARSE","moe_backend":"flashinfer_cutlass"}'</span> <span class="se">\</span>
+      <span class="nt">--long-prefill-token-threshold</span> 2048 <span class="se">\</span>
+      <span class="nt">--load-format</span> instanttensor <span class="se">\</span>
+      <span class="nt">--async-scheduling</span>
+</code></pre></div></div>
+
+<p><strong>Oplossing voor een SSH-autorisatiefout</strong></p>
+
+<p>Als er na het uitvoeren van de sparkrun-opdracht een autorisatiefout optreedt wanneer de node verbinding met zichzelf maakt, voert u de volgende opdracht uit en start u sparkrun opnieuw:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> ~/.ssh/id_ed25519.pub <span class="o">&gt;&gt;</span> ~/.ssh/authorized_keys
+</code></pre></div></div>
+
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/42-ssh-auth-fix.png" alt="" /></p>
+
+<p><strong>Controleren of het model gereed is</strong></p>
+
+<p>Wanneer het model is gestart, krijgt u de melding “Application startup complete.” — het model is nu klaar voor gebruik:</p>
+
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/43-model-startup.jpg" alt="" /></p>
+
+<p><strong>Benchmarkresultaten</strong></p>
+
+<p>De gemiddelde waarden uit de tests die op het zo uitgerolde model zijn uitgevoerd met de benchmarktool die we via <a href="https://github.com/CordatusAI/llm-benchmark">deze link</a> beschikbaar stellen, zijn als volgt:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th style="text-align: right">Gelijktijdigheid</th>
+      <th style="text-align: right">Gem. TTFT</th>
+      <th style="text-align: right">Gem. ITL</th>
+      <th style="text-align: right">Gem. TPS</th>
+      <th style="text-align: right">Gem. latentie</th>
+      <th style="text-align: right">p90-latentie</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: right">1</td>
+      <td style="text-align: right">346.31 ms</td>
+      <td style="text-align: right">39.17 ms</td>
+      <td style="text-align: right">24.80 token/s</td>
+      <td style="text-align: right">5.32 s</td>
+      <td style="text-align: right">6.48 s</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">2</td>
+      <td style="text-align: right">609.43 ms</td>
+      <td style="text-align: right">52.36 ms</td>
+      <td style="text-align: right">18.15 token/s</td>
+      <td style="text-align: right">7.26 s</td>
+      <td style="text-align: right">9.14 s</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">4</td>
+      <td style="text-align: right">7710.88 ms</td>
+      <td style="text-align: right">55.84 ms</td>
+      <td style="text-align: right">8.90 token/s</td>
+      <td style="text-align: right">14.81 s</td>
+      <td style="text-align: right">17.45 s</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">8</td>
+      <td style="text-align: right">22812.65 ms</td>
+      <td style="text-align: right">57.75 ms</td>
+      <td style="text-align: right">4.54 token/s</td>
+      <td style="text-align: right">30.15 s</td>
+      <td style="text-align: right">35.06 s</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>De testresultaten laten zien dat het model met succes gedistribueerd over 8 nodes draaide, wat de end-to-end validatie van de multi-node inferentie-infrastructuur bevestigt. Naarmate de gelijktijdigheid (concurrency) toenam, stegen de TTFT en de totale latentie, terwijl de snelheid van tokengeneratie per gebruiker afnam.</p>
+<h2 id="nas-configuratie-asustor-as6808t">
+  
+  
+    <a href="#nas-configuratie-asustor-as6808t" class="anchor-heading" aria-labelledby="nas-configuratie-asustor-as6808t"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> NAS-configuratie (ASUSTOR AS6808T)
+  
+  
+</h2>
+    
+
+<p>Dit deel beschrijft de installatie van de NAS die in deze configuratie wordt gebruikt: vanaf het uitpakken, het aansluiten op de CRS312-switch via 2×10Gbps LACP met bonding, het aanmaken van een gedeelde map en het instellen van de rechten daarvan, tot het mounten van deze map op een Spark-node.</p>
+
+<p><strong>Fysieke installatie</strong></p>
+
+<ol>
+  <li>
+    <p>Plaats 8 HDD-schijven in uw apparaat.</p>
+  </li>
+  <li>
+    <p>Sluit de twee 10Gbps-poorten aan de achterkant van de NAS met Cat6-kabels aan op de poorten Combo3 en Combo4 van de CRS312.</p>
+  </li>
+  <li>
+    <p>Sluit de voeding aan.</p>
+  </li>
+</ol>
+
+<p><strong>Eerste keer opstarten en fabrieksreset van de NAS</strong></p>
+
+<p>Schakel het apparaat in door de aan/uit-knop 1-2 seconden ingedrukt te houden. Tijdens het opstarten verschijnen de volgende meldingen achtereenvolgens op het lcd-scherm:</p>
+
+<ol>
+  <li>
+    <p>“Starting system please wait” — het systeem start op</p>
+  </li>
+  <li>
+    <p>“booting-service” / “booting-network” — de services en het netwerk starten op</p>
+  </li>
+  <li>
+    <p>“Initialize NAS?” — vraag voor de eerste installatie/fabrieksreset</p>
+  </li>
+</ol>
+
+<p>Wanneer de vraag “Initialize NAS?” op het scherm verschijnt, drukt u met YES geselecteerd op de knop Confirm (enter) rechtsonder op het lcd-scherm.</p>
+
+<p>Daarna verschijnt de vraag “Delete all data?”. Omdat alle gegevens worden gewist, drukt u, als u het zeker weet, opnieuw op de knop Confirm met YES geselecteerd.</p>
+
+<p>De melding “Initializing please wait” verschijnt op het scherm en het proces begint. Na enige tijd is het proces voltooid en verschijnt het aan de NAS toegewezen IP-adres op het lcd-scherm.</p>
+
+<p><strong>Het IP-adres van de NAS vinden</strong></p>
+
+<p>In de fabrieksinstellingen krijgt de NAS zijn IP-adres via DHCP. Als er in uw netwerk een DHCP-server is, wordt het IP-adres automatisch op het lcd-scherm weergegeven.</p>
+
+<p>Als er in uw netwerk geen DHCP-server is, krijgt de NAS een link-local-adres (169.254.x.x). In dat geval bereikt u de NAS door uw computer in hetzelfde link-local-bereik te plaatsen.</p>
+
+<p>Ga, zodra u het IP-adres kent, in uw browser naar http://<nas-ip>:8000. Bijvoorbeeld: [http://192.168.1.31:8000](http://192.168.1.31:8000)</nas-ip></p>
+
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/44-nas-login.jpg" alt="" /></p>
+
+<p>In het scherm voor de eerste installatie zijn de standaardgebruikersnaam en het standaardwachtwoord admin / admin. Na het aanmelden wordt de standaardpoortconfiguratie getoond; u kunt die wijzigen of doorgaan met de standaardinstellingen:</p>
+
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/45-nas-port-config.jpg" alt="" /></p>
+
+<p>Als u wordt gevraagd uw wachtwoord te wijzigen, doe dat dan. Wordt dat niet gevraagd, dan kunt u rechtsboven op het pictogram A klikken, daar Personal kiezen en uw wachtwoord wijzigen in het scherm dat opent:</p>
+
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/46-nas-password.jpg" alt="" /></p>
+
+<p><strong>RAID-configuratie</strong></p>
+
+<p>In de fabrieksinstellingen is de NAS geconfigureerd met RAID 5 over 8 schijven. RAID 5 biedt een tolerantie van 1 schijf en ~51 TB bruikbare ruimte.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th><strong>RAID</strong></th>
+      <th><strong>Schijftolerantie</strong></th>
+      <th><strong>Bruikbare ruimte</strong></th>
+      <th><strong>Snelheid</strong></th>
+      <th><strong>Aanbevolen gebruik</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>RAID 0</td>
+      <td>Geen</td>
+      <td>58 TB</td>
+      <td>Snelst</td>
+      <td>Maximale prestaties, gegevensveiligheid niet belangrijk</td>
+    </tr>
+    <tr>
+      <td>RAID 5</td>
+      <td>1 schijf</td>
+      <td>51 TB</td>
+      <td>Gemiddeld</td>
+      <td>Standaard, gebalanceerd gebruik</td>
+    </tr>
+    <tr>
+      <td>RAID 6</td>
+      <td>2 schijven</td>
+      <td>44 TB</td>
+      <td>Laag</td>
+      <td>Hoge gegevensveiligheid</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Opmerking: hoewel op de labels van de schijven 8 TB staat, worden ze in de interface van de NAS als 7.28 TB weergegeven. Dat komt doordat schijffabrikanten de capaciteit in het decimale stelsel opgeven, terwijl besturingssystemen in het binaire stelsel rekenen. 8 TB (decimaal) wordt weergegeven als ≈ 7.28 TB (binair). De onderstaande waarden zijn berekend volgens het binaire stelsel.</p>
+
+<p>In dit document wordt de RAID 0-configuratie beschreven, voor snelheid maar ten koste van redundantie. Als u het systeem wilt gebruiken dat standaard met RAID 5 is geconfigureerd, kunt u deze stap overslaan. Wilt u redundantie voor 2 schijven, dan kunt u RAID 6 kiezen, maar in dat geval nemen uw snelheid en opslagruimte af. U kunt kiezen op basis van uw behoeften.</p>
+
+<p><strong>Stappen voor de RAID 0-configuratie:</strong></p>
+
+<ol>
+  <li>
+    <p>Ga in de webinterface van de NAS naar de pagina Storage Manager → Volume</p>
+  </li>
+  <li>
+    <p>Selecteer het bestaande RAID 5-volume</p>
+  </li>
+  <li>
+    <p>Klik op de knop Remove</p>
+
+    <p><img src="/papers/dgx-spark-8node-cluster-setup/images/47-raid-volume.jpg" alt="" /></p>
+  </li>
+  <li>
+    <p>Kies in het scherm dat verschijnt de optie Quick Setup</p>
+
+    <p><img src="/papers/dgx-spark-8node-cluster-setup/images/48-raid-quick-setup.jpg" alt="" /></p>
+  </li>
+  <li>
+    <p>Kies in het volgende scherm de optie RAID 0</p>
+
+    <p><img src="/papers/dgx-spark-8node-cluster-setup/images/49-raid0-select.jpg" alt="" /></p>
+  </li>
+  <li>
+    <p>Druk op de knop Finish</p>
+  </li>
+</ol>
+
+<p>Wanneer het proces is voltooid, is het RAID 0-volume met 8 schijven gereed. De totale bruikbare ruimte bedraagt ~58 TB.</p>
+
+<p><strong>Netwerkconfiguratie — LACP-bonding</strong></p>
+
+<p>Bundel de twee 10Gbps-ethernetpoorten van de NAS in één bondinginterface voor een 2×10Gbps-LACP-verbinding:</p>
+
+<ol>
+  <li>
+    <p>Ga in de webinterface van de NAS naar de pagina Settings → Network → Network Interface</p>
+  </li>
+  <li>
+    <p>Klik op ADD → Create Link Aggregation</p>
+
+    <p><img src="/papers/dgx-spark-8node-cluster-setup/images/50-link-aggregation.jpg" alt="" /></p>
+  </li>
+  <li>
+    <p>Selecteer in het veld Interface LAN 1 en LAN 2</p>
+  </li>
+  <li>
+    <p>Aggregation Mode: kies 802.3ad</p>
+  </li>
+  <li>
+    <p>Druk op de knop Next</p>
+
+    <p><img src="/papers/dgx-spark-8node-cluster-setup/images/51-lacp-config.jpg" alt="" /></p>
+  </li>
+  <li>
+    <p>Vink de optie Set up IP address manually aan</p>
+  </li>
+  <li>
+    <p>Voer de volgende gegevens in:</p>
+
+    <ol>
+      <li>
+        <p>IP Address: 192.168.1.31</p>
+      </li>
+      <li>
+        <p>Subnet Mask: 255.255.255.0</p>
+      </li>
+      <li>
+        <p>Gateway: 192.168.1.1</p>
+      </li>
+    </ol>
+  </li>
+  <li>
+    <p>Druk op de knop Next</p>
+
+    <p><img src="/papers/dgx-spark-8node-cluster-setup/images/52-nas-ip-config.jpg" alt="" /></p>
+  </li>
+  <li>
+    <p>Controleer het overzichtsscherm en druk op de knop Finish</p>
+  </li>
+</ol>
+
+<p>Wanneer het proces is voltooid, gebruikt de NAS de twee ethernetpoorten als één bondinginterface. Samen met de LACP-bonding aan de kant van de CRS312-switch levert dit een gezamenlijke doorvoer van 2×10Gbps.</p>
+
+<p><strong>SSH-toegang inschakelen</strong></p>
+
+<p>Om het script voor prestatie-afstemming te installeren, moet u via SSH verbinding maken met de NAS. SSH is standaard uitgeschakeld.</p>
+
+<ol>
+  <li>
+    <p>Ga in de webinterface van de NAS naar de pagina Services → Terminal</p>
+  </li>
+  <li>
+    <p>Vink de optie Enable SSH Service aan</p>
+  </li>
+  <li>
+    <p>Druk op de knop Apply</p>
+  </li>
+</ol>
+
+<p><img src="/papers/dgx-spark-8node-cluster-setup/images/53-ssh-enable.jpg" alt="" /></p>
+
+<p>U kunt nu via SSH verbinding maken met de NAS:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh admin@192.168.1.31
+</code></pre></div></div>
+
+<p>De gebruikersnaam is admin en het wachtwoord is het wachtwoord dat u tijdens de installatie hebt ingesteld.</p>
+
+<p><strong>NFS-service inschakelen</strong></p>
+
+<ol>
+  <li>
+    <p>Ga in de webinterface van de NAS naar de pagina Services → NFS</p>
+  </li>
+  <li>
+    <p>Vink de optie Enable NFS Service aan</p>
+  </li>
+  <li>
+    <p>Druk op de knop Apply</p>
+  </li>
+  <li>
+    <p>Start de NAS opnieuw op, zodat de NFS-service volledig start</p>
+  </li>
+</ol>
+
+<p>Belangrijk: na het inschakelen van de NFS-service moet u de NAS opnieuw opstarten. Anders kunt u bij het toevoegen van een NFS-export de fout “unknown error (ref. 5052)” krijgen.</p>
+
+<p><strong>Een gedeelde map aanmaken</strong></p>
+
+<ol>
+  <li>
+    <p>Klik in de webinterface van de NAS op de knop File Explorer → + (Create New Shared Folder)</p>
+
+    <p><img src="/papers/dgx-spark-8node-cluster-setup/images/54-shared-folder.png" alt="" /></p>
+  </li>
+  <li>
+    <p>Klik op de knop Add</p>
+
+    <ol>
+      <li>Name: voer een naam in</li>
+    </ol>
+  </li>
+  <li>
+    <p>Druk op de knop Next</p>
+  </li>
+  <li>
+    <p>In het scherm Access Rights:</p>
+
+    <ol>
+      <li>
+        <p>Kies de optie Read and Write for all users (iedereen krijgt lees- en schrijfrechten)</p>
+      </li>
+      <li>
+        <p>Of laat de standaardoptie Read and Write for admins staan</p>
+      </li>
+    </ol>
+
+    <p><img src="/papers/dgx-spark-8node-cluster-setup/images/55-access-rights.jpg" alt="" /></p>
+  </li>
+  <li>
+    <p>Druk op de knop Next</p>
+  </li>
+  <li>
+    <p>Aanvullende beschermingsmaatregelen: kies de optie Skip</p>
+
+    <ol>
+      <li>Encrypt this shared folder: u kunt dit desgewenst kiezen; in dit document is het niet gekozen</li>
+    </ol>
+
+    <p><img src="/papers/dgx-spark-8node-cluster-setup/images/56-protection-measures.jpg" alt="" /></p>
+  </li>
+  <li>
+    <p>Druk op de knoppen Next → Finish</p>
+  </li>
+</ol>
+
+<p><strong>NFS-rechten instellen</strong></p>
+
+<ol>
+  <li>
+    <p>Ga in de webinterface van de NAS naar de pagina Access Control → Shared Folders</p>
+  </li>
+  <li>
+    <p>Selecteer de betreffende map</p>
+  </li>
+  <li>
+    <p>Klik op de knop Access Rights</p>
+
+    <p><img src="/papers/dgx-spark-8node-cluster-setup/images/57-nfs-privileges.jpg" alt="" /></p>
+  </li>
+  <li>
+    <p>Ga naar het tabblad NFS Privileges</p>
+  </li>
+  <li>
+    <p>Klik op de knop Add</p>
+  </li>
+  <li>
+    <p>Voer de volgende gegevens in:</p>
+
+    <ol>
+      <li>
+        <p>Client Address: 192.168.1.1/24 (voer uw eigen netwerkbereik in; het masker /24 omvat het hele subnet)</p>
+      </li>
+      <li>
+        <p>Privilege: Read and Write</p>
+      </li>
+      <li>
+        <p>Root Mapping: root (0)</p>
+      </li>
+    </ol>
+  </li>
+  <li>
+    <p>Druk op de knop OK</p>
+
+    <p><img src="/papers/dgx-spark-8node-cluster-setup/images/58-nfs-add.jpg" alt="" /></p>
+  </li>
+</ol>
+
+<p><strong>Script voor prestatie-afstemming</strong></p>
+
+<p>Maak via SSH verbinding met de NAS en maak het script voor prestatie-afstemming aan. Dit script wordt bij elke herstart automatisch uitgevoerd en wijzigt de hash-policy van de bonding in layer3+4:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh admin@192.168.1.31
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo tee</span> /usr/local/etc/init.d/S98nfstune <span class="o">&gt;</span> /dev/null <span class="o">&lt;&lt;</span><span class="sh">'</span><span class="no">EOF</span><span class="sh">'
+#!/bin/sh
+# NFS + RAID0 performance tuning - persistent across reboots
+case "</span><span class="nv">$1</span><span class="sh">" in
+  start)
+    # wait for NFS and network to be ready
+    sleep 30
+
+    # RAID0 read-ahead 8MB
+    blockdev --setra 8192 /dev/md1 2&gt;/dev/null
+    # per-disk read-ahead 8MB
+    for d in a b c d e f g h; do blockdev --setra 8192 /dev/sd</span><span class="nv">$d</span><span class="sh"> 2&gt;/dev/null; done
+    # nfsd threads 64
+    echo 64 &gt; /proc/fs/nfsd/threads 2&gt;/dev/null
+    # RPC slot table
+    echo 128 &gt; /proc/sys/sunrpc/tcp_slot_table_entries 2&gt;/dev/null
+    echo 128 &gt; /proc/sys/sunrpc/tcp_max_slot_table_entries 2&gt;/dev/null
+    # VM writeback cache
+    echo 40 &gt; /proc/sys/vm/dirty_ratio
+    echo 5 &gt; /proc/sys/vm/dirty_background_ratio
+    echo 6000 &gt; /proc/sys/vm/dirty_expire_centisecs
+    # bond xmit_hash_policy layer3+4
+    sh -c 'echo layer3+4 &gt; /sys/class/net/bond0/bonding/xmit_hash_policy' 2&gt;/dev/null
+
+    # exports: async + wdelay (NO no_wdelay) - allow write batching
+    [ -f /volume0/etc/exports ] &amp;&amp; sed -i "s/no_wdelay,//" /volume0/etc/exports 2&gt;/dev/null
+    /volume0/usr/builtin/sbin/exportfs -ra 2&gt;/dev/null
+    ;;
+  stop)
+    ;;
+esac
+exit 0
+</span><span class="no">EOF
+</span></code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo chmod</span> +x /usr/local/etc/init.d/S98nfstune
+<span class="nb">sudo</span> /usr/local/etc/init.d/S98nfstune start
+</code></pre></div></div>
+
+<p>Controleer na het uitvoeren van het script of de hash-policy is gewijzigd:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> /sys/class/net/bond0/bonding/xmit_hash_policy
+<span class="c"># Expected: layer3+4</span>
+</code></pre></div></div>
+
+<p><strong>De NAS mounten op de Spark-nodes</strong></p>
+
+<p>Maak op elke Spark een NFS-mountpoint aan en maak verbinding met de NAS:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo mkdir</span> <span class="nt">-p</span> /mnt/asustor
+<span class="nb">sudo </span>mount <span class="nt">-t</span> nfs <span class="se">\</span>
+  <span class="nt">-o</span> <span class="nv">vers</span><span class="o">=</span>4.2,nconnect<span class="o">=</span>8,rsize<span class="o">=</span>1048576,wsize<span class="o">=</span>1048576,hard,noatime <span class="se">\</span>
+  192.168.1.31:/volume1/aetherix /mnt/asustor
+</code></pre></div></div>
+
+<p><strong>Eenvoudige schrijf- en leestest</strong></p>
+
+<p>Test na het mounten van de NAS de basisprestaties voor schrijven en lezen. Schrijftest:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">dd </span><span class="k">if</span><span class="o">=</span>/dev/zero <span class="nv">of</span><span class="o">=</span>/mnt/asustor/testfile <span class="nv">bs</span><span class="o">=</span>1M <span class="nv">count</span><span class="o">=</span>10240 <span class="nv">conv</span><span class="o">=</span>fdatasync
+</code></pre></div></div>
+
+<p>Leestest:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Flush cache:</span>
+<span class="nb">sync</span><span class="p">;</span> <span class="nb">echo </span>3 | <span class="nb">sudo tee</span> /proc/sys/vm/drop_caches
+
+<span class="c"># Read:</span>
+<span class="nb">dd </span><span class="k">if</span><span class="o">=</span>/mnt/asustor/testfile <span class="nv">of</span><span class="o">=</span>/dev/null <span class="nv">bs</span><span class="o">=</span>1M
+</code></pre></div></div>
+
+<p>Opruimen:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">rm</span> /mnt/asustor/testfile
+</code></pre></div></div>
+<h2 id="resultaten-en-verificatie">
+  
+  
+    <a href="#resultaten-en-verificatie" class="anchor-heading" aria-labelledby="resultaten-en-verificatie"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Resultaten en verificatie
+  
+  
+</h2>
+    
+
+<p>Door de stappen in dit document te volgen, wordt een volledig functioneel DGX Spark AI-cluster opgezet dat uit de volgende componenten bestaat:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th><strong>Component</strong></th>
+      <th><strong>Status</strong></th>
+      <th><strong>Verificatiemethode</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Managementnetwerk (10GbE)</td>
+      <td>Gereed</td>
+      <td>Ping tussen nodes geslaagd</td>
+    </tr>
+    <tr>
+      <td>Compute-netwerk (200GbE QSFP)</td>
+      <td>Gereed</td>
+      <td>ib_write_bw ~100-111 Gbps</td>
+    </tr>
+    <tr>
+      <td>RoCEv2 / RDMA</td>
+      <td>Gereed</td>
+      <td>ib_write_lat ~1-3 µs</td>
+    </tr>
+    <tr>
+      <td>sparkrun-cluster</td>
+      <td>Gereed</td>
+      <td>sparkrun setup voltooid</td>
+    </tr>
+    <tr>
+      <td>DCB / PFC</td>
+      <td>Gereed</td>
+      <td>uitvoer van dcb pfc show: TC3:on</td>
+    </tr>
+    <tr>
+      <td>NAS (NFS)</td>
+      <td>Gereed</td>
+      <td>dd-schrijf-/leestest</td>
+    </tr>
+    <tr>
+      <td>Modelservice</td>
+      <td>Gereed</td>
+      <td>melding “Application startup complete.”</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Samenvatting van de statuscontrole van het cluster</strong></p>
+
+<p>Om te controleren of de installatie voltooid is, kunt u de volgende controles uitvoeren:</p>
+
+<ol>
+  <li>
+    <p><strong>Managementnetwerk:</strong> kunnen alle nodes elkaar pingen?</p>
+  </li>
+  <li>
+    <p><strong>Compute-netwerk:</strong> geeft de test ib_write_bw ~100 Gbps voor elk subnet?</p>
+  </li>
+  <li>
+    <p><strong>MTU:</strong> slaagt de test ping -M do -s 8972 zonder pakketverlies?</p>
+  </li>
+  <li>
+    <p><strong>sparkrun-mesh:</strong> werkt SSH-toegang zonder wachtwoord naar alle nodes?</p>
+  </li>
+  <li>
+    <p><strong>DCB-service:</strong> toont systemctl status dcb-roce.service de status active?</p>
+  </li>
+  <li>
+    <p><strong>NAS-mount:</strong> toont df -h /mnt/asustor het mountpoint?</p>
+  </li>
+  <li>
+    <p><strong>Model:</strong> komen de benchmarkresultaten overeen met de bovenstaande tabel?</p>
+  </li>
+</ol>
+
+<p>Als al deze controles slagen, is het cluster klaar voor AI-workloads.</p>
+<h2 id="probleemoplossing">
+  
+  
+    <a href="#probleemoplossing" class="anchor-heading" aria-labelledby="probleemoplossing"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Probleemoplossing
+  
+  
+</h2>
+    
+
+<p><strong>Docker toont overlay2 als storage driver</strong></p>
+
+<p>Als u overlay2 ziet in de uitvoer van docker info, voeg dan de functie containerd-snapshotter toe aan het bestand /etc/docker/daemon.json en start Docker opnieuw (zie Docker-configuratie).</p>
+
+<p><strong>Jumboframetest met ping -M do mislukt</strong></p>
+
+<ul>
+  <li>
+    <p>Controleer of de instellingen l2mtu=9500 mtu=9000 aan de kant van de switch op de QSFP-DD-poorten zijn geconfigureerd.</p>
+  </li>
+  <li>
+    <p>Controleer of de MTU-waarden van de CX7-interfaces aan de kant van de Spark 9000 zijn: ip link show.</p>
+  </li>
+</ul>
+
+<p><strong>RDMA-bandbreedte laag (onder ~100 Gbps)</strong></p>
+
+<ul>
+  <li>
+    <p>Controleer of alle systeem- en firmware-updates zijn uitgevoerd (zie Updates van systeem en firmware).</p>
+  </li>
+  <li>
+    <p>Controleer of QoS-hardware-offloading aan de kant van de switch is ingeschakeld: qos-hw-offloading=yes.</p>
+  </li>
+  <li>
+    <p>Controleer of de DCB-instellingen zijn toegepast: dcb pfc show dev enp1s0f1np1.</p>
+  </li>
+  <li>
+    <p>Controleer of de service dcb-roce.service draait: systemctl status dcb-roce.service.</p>
+  </li>
+</ul>
+
+<p><strong>SSH-autorisatiefout bij sparkrun</strong></p>
+
+<p>Als u bij het uitvoeren van sparkrun een autorisatiefout krijgt:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> ~/.ssh/id_ed25519.pub <span class="o">&gt;&gt;</span> ~/.ssh/authorized_keys
+</code></pre></div></div>
+
+<p>Voer de opdracht uit en start sparkrun opnieuw.</p>
+
+<p><strong>Fout “unknown error (ref. 5052)” bij een NFS-export</strong></p>
+
+<p>Start de NAS opnieuw op nadat u de NFS-service hebt ingeschakeld. U krijgt deze fout als u een export probeert toe te voegen voordat de NFS-service volledig is gestart.</p>
+
+<p><strong>Bond-hash-policy van de NAS toont geen layer3+4</strong></p>
+
+<p>Voer het script voor prestatie-afstemming uit en controleer het resultaat:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo</span> /usr/local/etc/init.d/S98nfstune start
+<span class="nb">cat</span> /sys/class/net/bond0/bonding/xmit_hash_policy
+<span class="c"># Expected: layer3+4</span>
+</code></pre></div></div>
+<p><strong>Breakoutpoorten van de CRS804 maken geen link</strong></p>
+
+<ul>
+  <li>
+    <p>Controleer of de vergrendelingen van de breakoutkabel volledig vastzitten.</p>
+  </li>
+  <li>
+    <p>Controleer of de instellingen auto-negotiation=no en speed=200G-baseCR4 op de juiste poorten zijn toegepast.</p>
+  </li>
+  <li>
+    <p>Verwijder de kabel, steek hem opnieuw in en controleer de poortstatus: /interface/ethernet/print.</p>
+  </li>
+</ul><hr />
+
+<div class="product-card">
+  <div class="product-card-image">
+<img src="/papers/dgx-spark-8node-cluster-setup/images/spark-8-1.2.png" alt="NVIDIA DGX Spark 8-Node AI Cluster" />
+</div>
+  <div class="product-card-body">
+<h3>
+  
+  
+    <a href="#probleemoplossing" class="anchor-heading" aria-labelledby="probleemoplossing"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> NVIDIA DGX Spark 8-Node AI Cluster – 8 nodes, 1 TB, 200GbE
+  
+  
+</h3>
+    
+<p>8 DGX Spark-nodes, 200GbE RoCEv2 RDMA en clusterbeheer met sparkrun voor een end-to-end AI-infrastructuur.</p>
+
+</div>
+</div>
+
+          
+
+          
+        </main>
+        
+
+
+      </div>
+    </div>
+    
+      
+
+<div class="search-overlay"></div>
+
+    
+  </div>
+
+  
+
+  <script>
+    window.JTD_I18N = {
+      search_no_results: "Geen resultaten gevonden",
+      copy_code: "Code naar klembord kopiëren"
+    };
+  </script>
+
+  
+
+
+<div id="cookie-consent-banner" class="cookie-consent" role="dialog"
+     aria-modal="false" aria-label="Cookie consent"
+     data-consent-state="pending" hidden>
+  <div class="cookie-consent__body">
+    <div class="cookie-consent__text">
+      <span class="cookie-consent__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+          <path d="M21 12a9 9 0 1 1-9-9 4.5 4.5 0 0 0 4.5 4.5A4.5 4.5 0 0 0 21 12zm-9-3.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-1.5 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm6-1.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-3 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0z"/>
+        </svg>
+      </span>
+      <p>Wij gebruiken cookies om het websiteverkeer te analyseren en uw ervaring te verbeteren. Door op 'Accepteren' te klikken, stemt u in met het gebruik van analytische cookies zoals beschreven in ons privacybeleid.
+        <a href="https://aetherix.com/privacy-policy/" target="_blank" rel="noopener noreferrer"
+           class="cookie-consent__link">Privacybeleid</a>
+      </p>
+    </div>
+    <div class="cookie-consent__actions">
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--reject"
+              data-consent-action="rejected">Weigeren</button>
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--accept"
+              data-consent-action="accepted">Accepteren</button>
+    </div>
+  </div>
+</div>
+<script>
+  // Eski karar önbellekte varsa bannerı gösterme
+  (function() {
+    try {
+      var v = localStorage.getItem('cookieConsent');
+      if (v === 'accepted' || v === 'rejected') {
+        document.documentElement.dataset.cookieConsent = v;
+      }
+    } catch (e) {}
+  })();
+</script>
+<script src="/assets/js/cookie-banner.js" defer></script>
+
+</body>
+</html>
+

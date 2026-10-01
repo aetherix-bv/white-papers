@@ -1,0 +1,2370 @@
+
+
+<!DOCTYPE html>
+
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-default.css">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet">
+
+  <style id="jtd-nav-activation">
+  
+
+.site-nav > ul.nav-list:first-child > li > a,
+.site-nav > ul.nav-list:first-child > li > ul > li:not(:nth-child(3)) > a,
+.site-nav > ul.nav-list:first-child > li > ul > li > ul > li > a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:not(:first-child) a,
+.site-nav li.external a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(3) > a {
+  font-weight: 600;
+  text-decoration: none;
+}.site-nav > ul.nav-list:first-child > li:nth-child(3) > button svg,
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(3) > button svg {
+  transform: rotate(-90deg);
+}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list,
+.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list > li.nav-list-item:nth-child(3) > ul.nav-list {
+  display: block;
+}
+  </style>
+
+  
+
+  
+    <script src="/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="icon" href="/nl/favicon.ico" type="image/x-icon">
+
+
+
+  <!-- Begin Jekyll SEO tag v2.9.1 -->
+<title>NVIDIA DGX B300 vs GB300 NVL72: vergelijking van clusterarchitecturen | Aetherix White Papers</title>
+<meta name="generator" content="Jekyll v4.3.4" />
+<meta property="og:title" content="NVIDIA DGX B300 vs GB300 NVL72: vergelijking van clusterarchitecturen" />
+<meta property="og:locale" content="nl" />
+<meta name="description" content="Technische vergelijking van twee NVIDIA Blackwell Ultra-architecturen, DGX B300 en GB300 NVL72: systeemontwerp, schaalaanpak, netwerkfabric, stroom en koeling, en welke workloads bij welk platform passen." />
+<meta name="twitter:description" property="og:description" content="Technische vergelijking van twee NVIDIA Blackwell Ultra-architecturen, DGX B300 en GB300 NVL72: systeemontwerp, schaalaanpak, netwerkfabric, stroom en koeling, en welke workloads bij welk platform passen." />
+<link rel="canonical" href="https://whitepapers.aetherix.com/nl/papers/b300-gb300-cluster-architecture/" />
+<meta property="og:url" content="https://whitepapers.aetherix.com/nl/papers/b300-gb300-cluster-architecture/" />
+<meta property="og:site_name" content="Aetherix White Papers" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-08-03T06:01:15+00:00" />
+<meta property="article:modified_time" content="2026-08-03T06:01:15+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="NVIDIA DGX B300 vs GB300 NVL72: vergelijking van clusterarchitecturen" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2026-08-03T06:01:15+00:00","datePublished":"2026-08-03T06:01:15+00:00","description":"Technische vergelijking van twee NVIDIA Blackwell Ultra-architecturen, DGX B300 en GB300 NVL72: systeemontwerp, schaalaanpak, netwerkfabric, stroom en koeling, en welke workloads bij welk platform passen.","headline":"NVIDIA DGX B300 vs GB300 NVL72: vergelijking van clusterarchitecturen","mainEntityOfPage":{"@type":"WebPage","@id":"https://whitepapers.aetherix.com/nl/papers/b300-gb300-cluster-architecture/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://whitepapers.aetherix.com/assets/images/aetherix-logo.png"}},"url":"https://whitepapers.aetherix.com/nl/papers/b300-gb300-cluster-architecture/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  
+<!-- Google tag (gtag.js) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JWLN33085T"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+
+  // Consent Mode v2 — default DENIED. Banner onayı ile GRANTED olur.
+  // KVKK/GDPR uyumu: ziyaretçi onay vermeden çerez set edilmez.
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    functionality_storage: 'granted',
+    security_storage: 'granted',
+    wait_for_update: 500
+  });
+
+  gtag('js', new Date());
+  gtag('config', 'G-JWLN33085T', {
+    anonymize_ip: true
+  });
+</script>
+
+<link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/papers/b300-gb300-cluster-architecture/">
+<link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/papers/b300-gb300-cluster-architecture/">
+<link rel="alternate" hreflang="x-default" href="https://whitepapers.aetherix.com/papers/b300-gb300-cluster-architecture/">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/images/favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+<script>
+(function () {
+  var open = XMLHttpRequest.prototype.open;
+  var own = "/nl/search-data.json";
+  XMLHttpRequest.prototype.open = function (method, url) {
+    if (typeof url === "string" && /assets\/js\/search-data\.json$/.test(url)) arguments[1] = own;
+    return open.apply(this, arguments);
+  };
+})();
+</script>
+
+
+</head>
+
+<body>
+  <a class="skip-to-main" href="#main-content">Naar de hoofdinhoud</a>
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="svg-link" viewBox="0 0 24 24">
+  <title>Link</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+</symbol>
+
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+  <title>Menu</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+    <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</symbol>
+
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+  <title>Expand</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</symbol>
+
+  <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
+<symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+  <title id="svg-external-link-title">(external link)</title>
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+</symbol>
+
+  
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+  <title>Document</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+</symbol>
+
+    <symbol id="svg-search" viewBox="0 0 24 24">
+  <title>Search</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</symbol>
+
+  
+  
+    <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+<symbol id="svg-copy" viewBox="0 0 16 16">
+  <title>Copy</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+</symbol>
+<symbol id="svg-copied" viewBox="0 0 16 16">
+  <title>Copied</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"/>
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"/>
+  </svg>
+</symbol>
+
+  
+</svg>
+
+  
+    <div class="side-bar">
+  <div class="site-header" role="banner">
+    <a href="/nl/" class="site-title lh-tight">
+  <div class="site-logo" role="img" aria-label="Aetherix White Papers"></div>
+
+</a>
+    <button id="menu-button" class="site-button btn-reset" aria-label="Toggle menu" aria-pressed="false">
+      <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  <nav aria-label="Main" id="site-nav" class="site-nav">
+  
+  
+    <ul class="nav-list"><li class="nav-list-item"><a href="/nl/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/nl/about/" class="nav-list-link">Over ons</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in White Papers category" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+    </button><a href="/nl/papers/" class="nav-list-link">White Papers</a><ul class="nav-list"><li class="nav-list-item"><a href="/nl/papers/local-llm-guide/" class="nav-list-link">Handleiding voor lokaal LLM-gebruik</a></li><li class="nav-list-item"><a href="/nl/papers/conditional-memory-offloading/" class="nav-list-link">Conditional memory en offloading bij LLM-inferentie</a></li><li class="nav-list-item"><a href="/nl/papers/b300-gb300-cluster-architecture/" class="nav-list-link">NVIDIA DGX B300 vs GB300 NVL72: vergelijking van clusterarchitecturen</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-2node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 2 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-3node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 3 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-4node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 4 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-8node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 8 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/qwen3.6-27b-dgx-spark-benchmark/" class="nav-list-link">Qwen3.6-27B DGX Spark-benchmark</a></li><li class="nav-list-item"><a href="/nl/papers/qwen3.6-27b-dgx-spark-scaling/" class="nav-list-link">Schaling van Qwen3.6-27B op een DGX Spark-cluster</a></li><li class="nav-list-item"><a href="/nl/papers/deepseek-v4.1-flash-4spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash-deployment op 4× DGX Spark</a></li><li class="nav-list-item"><a href="/nl/papers/deepseek-v4.1-flash-8spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash-deployment op 8× DGX Spark met TP8</a></li><li class="nav-list-item"><a href="/nl/papers/kimi-k3-dgx-b300-inference-benchmark/" class="nav-list-link">Kimi K3-inferentiebenchmark op DGX-B300</a></li></ul></li><li class="nav-list-item"><a href="/nl/llm-inference-benchmarks/" class="nav-list-link">LLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/nl/cv-inference-benchmarks/" class="nav-list-link">CV Inference Benchmark Explorer</a></li></ul>
+
+  
+</nav>
+
+
+  
+  
+    <div class="lang-switcher">
+  
+    
+    
+      <a class="lang-switcher-item" href="/papers/b300-gb300-cluster-architecture/">EN</a>
+    
+  
+    
+    
+      <span class="lang-switcher-item active">NL</span>
+    
+  
+</div>
+<script src="/assets/js/lang-switch.js"></script>
+
+  
+</div>
+
+  
+  <div class="main" id="top">
+    <div id="main-header" class="main-header">
+  
+    
+
+<div class="search" role="search">
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Zoeken" aria-label="Zoeken" autocomplete="off">
+    <label for="search-input" class="search-label"><svg viewBox="0 0 24 24" class="search-icon"><use xlink:href="#svg-search"></use></svg></label>
+  </div>
+  <div id="search-results" class="search-results"></div>
+</div>
+
+  
+  
+  
+    <nav aria-label="Auxiliary" class="aux-nav">
+  <ul class="aux-nav-list">
+    
+      <li class="aux-nav-list-item">
+        <a href="https://aetherix.com" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          aetherix.com
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://github.com/aetherix-bv" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          GitHub
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+  
+</div>
+
+    <div class="main-content-wrap">
+      <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+  <ol class="breadcrumb-nav-list">
+    <li class="breadcrumb-nav-list-item"><a href="/nl/papers/">White Papers</a></li>
+    <li class="breadcrumb-nav-list-item"><span>NVIDIA DGX B300 vs GB300 NVL72: vergelijking van clusterarchitecturen</span></li>
+  </ol>
+</nav>
+      <div id="main-content" class="main-content">
+        <main>
+          
+            <p><em>Opgesteld door: <strong>Aetherix B.V.</strong> — Trusted Jetson Hardware Provider for Edge AI</em></p>
+
+<p><em>Platform: NVIDIA Blackwell Ultra (B300 SXM) · juli 2026</em></p><hr />
+<h2 id="inhoud">
+  
+  
+    <a href="#inhoud" class="anchor-heading" aria-labelledby="inhoud"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Inhoud
+  
+  
+</h2>
+    
+
+<ul id="markdown-toc">
+  <li><a href="#inhoud" id="markdown-toc-inhoud">Inhoud</a></li>
+  <li><a href="#1-doel-en-reikwijdte" id="markdown-toc-1-doel-en-reikwijdte">1. Doel en reikwijdte</a></li>
+  <li><a href="#2-algemene-architectuur-van-nvidia-dgx-b300" id="markdown-toc-2-algemene-architectuur-van-nvidia-dgx-b300">2. Algemene architectuur van NVIDIA DGX B300</a></li>
+  <li><a href="#3-algemene-architectuur-van-nvidia-gb300-nvl72" id="markdown-toc-3-algemene-architectuur-van-nvidia-gb300-nvl72">3. Algemene architectuur van NVIDIA GB300 NVL72</a>    <ul>
+      <li><a href="#een-compute-tray" id="markdown-toc-een-compute-tray">Een compute tray</a></li>
+    </ul>
+  </li>
+  <li><a href="#4-technische-specificaties-en-mogelijkheden-van-de-b300-gpu" id="markdown-toc-4-technische-specificaties-en-mogelijkheden-van-de-b300-gpu">4. Technische specificaties en mogelijkheden van de B300-GPU</a>    <ul>
+      <li><a href="#41-specificaties-per-gpu" id="markdown-toc-41-specificaties-per-gpu">4.1 Specificaties per GPU</a></li>
+      <li><a href="#42-functiematrix" id="markdown-toc-42-functiematrix">4.2 Functiematrix</a>        <ul>
+          <li><a href="#mig-multi-instance-gpu" id="markdown-toc-mig-multi-instance-gpu">MIG (Multi-Instance GPU)</a></li>
+          <li><a href="#confidential-computing--tee-io" id="markdown-toc-confidential-computing--tee-io">Confidential Computing / TEE-I/O</a></li>
+        </ul>
+      </li>
+      <li><a href="#43-interconnect-en-netwerken" id="markdown-toc-43-interconnect-en-netwerken">4.3 Interconnect en netwerken</a></li>
+    </ul>
+  </li>
+  <li><a href="#5-het-belangrijkste-onderscheidende-kenmerk-van-gb300-nvl72-een-nvlink-domein-van-72-gpus" id="markdown-toc-5-het-belangrijkste-onderscheidende-kenmerk-van-gb300-nvl72-een-nvlink-domein-van-72-gpus">5. Het belangrijkste onderscheidende kenmerk van GB300 NVL72: een NVLink-domein van 72 GPU’s</a></li>
+  <li><a href="#6-netwerkarchitectuur-van-dgx-b300" id="markdown-toc-6-netwerkarchitectuur-van-dgx-b300">6. Netwerkarchitectuur van DGX B300</a>    <ul>
+      <li><a href="#61-computenetwerk" id="markdown-toc-61-computenetwerk">6.1 Computenetwerk</a></li>
+      <li><a href="#62-in-band--en-opslagnetwerk" id="markdown-toc-62-in-band--en-opslagnetwerk">6.2 In-band- en opslagnetwerk</a></li>
+      <li><a href="#63-oob--en-fabricbeheer" id="markdown-toc-63-oob--en-fabricbeheer">6.3 OOB- en fabricbeheer</a></li>
+      <li><a href="#64-voorbeeldtopologie-dgx-b300" id="markdown-toc-64-voorbeeldtopologie-dgx-b300">6.4 Voorbeeldtopologie DGX B300</a></li>
+    </ul>
+  </li>
+  <li><a href="#7-netwerkarchitectuur-van-gb300-nvl72" id="markdown-toc-7-netwerkarchitectuur-van-gb300-nvl72">7. Netwerkarchitectuur van GB300 NVL72</a>    <ul>
+      <li><a href="#71-gpu-computenetwerk-eastwest" id="markdown-toc-71-gpu-computenetwerk-eastwest">7.1 GPU-computenetwerk (east/west)</a></li>
+      <li><a href="#72-cpu-converged-netwerk-northsouth" id="markdown-toc-72-cpu-converged-netwerk-northsouth">7.2 CPU converged-netwerk (north/south)</a></li>
+      <li><a href="#73-oob-netwerk" id="markdown-toc-73-oob-netwerk">7.3 OOB-netwerk</a></li>
+      <li><a href="#74-voorbeeldtopologie-gb300-nvl72" id="markdown-toc-74-voorbeeldtopologie-gb300-nvl72">7.4 Voorbeeldtopologie GB300 NVL72</a></li>
+    </ul>
+  </li>
+  <li><a href="#8-stroom--en-koelingsvereisten" id="markdown-toc-8-stroom--en-koelingsvereisten">8. Stroom- en koelingsvereisten</a>    <ul>
+      <li><a href="#81-stroom-en-koeling-van-gb300-nvl72" id="markdown-toc-81-stroom-en-koeling-van-gb300-nvl72">8.1 Stroom en koeling van GB300 NVL72</a></li>
+      <li><a href="#82-stroom-en-datacentercompatibiliteit-van-dgx-b300" id="markdown-toc-82-stroom-en-datacentercompatibiliteit-van-dgx-b300">8.2 Stroom en datacentercompatibiliteit van DGX B300</a></li>
+      <li><a href="#83-vereisten-aan-de-dc-infrastructuur" id="markdown-toc-83-vereisten-aan-de-dc-infrastructuur">8.3 Vereisten aan de DC-infrastructuur</a></li>
+    </ul>
+  </li>
+  <li><a href="#9-virtualisatie-en-het-delen-van-gpus" id="markdown-toc-9-virtualisatie-en-het-delen-van-gpus">9. Virtualisatie en het delen van GPU’s</a>    <ul>
+      <li><a href="#91-dgx-b300" id="markdown-toc-91-dgx-b300">9.1 DGX B300</a></li>
+      <li><a href="#92-gb300-nvl72" id="markdown-toc-92-gb300-nvl72">9.2 GB300 NVL72</a></li>
+    </ul>
+  </li>
+  <li><a href="#10-technische-vergelijking-dgx-b300-vs-gb300-nvl72" id="markdown-toc-10-technische-vergelijking-dgx-b300-vs-gb300-nvl72">10. Technische vergelijking DGX B300 vs GB300 NVL72</a></li>
+  <li><a href="#11-platformkeuze-op-basis-van-workload" id="markdown-toc-11-platformkeuze-op-basis-van-workload">11. Platformkeuze op basis van workload</a></li>
+  <li><a href="#12-vergelijking-vanuit-trainingsperspectief" id="markdown-toc-12-vergelijking-vanuit-trainingsperspectief">12. Vergelijking vanuit trainingsperspectief</a></li>
+  <li><a href="#13-vergelijking-vanuit-inferentieperspectief" id="markdown-toc-13-vergelijking-vanuit-inferentieperspectief">13. Vergelijking vanuit inferentieperspectief</a>    <ul>
+      <li><a href="#131-inferentie-over-meerdere-nodes" id="markdown-toc-131-inferentie-over-meerdere-nodes">13.1 Inferentie over meerdere nodes</a></li>
+    </ul>
+  </li>
+  <li><a href="#14-simulatie-en-hpc" id="markdown-toc-14-simulatie-en-hpc">14. Simulatie en HPC</a></li>
+  <li><a href="#15-operationele-flexibiliteit" id="markdown-toc-15-operationele-flexibiliteit">15. Operationele flexibiliteit</a></li>
+  <li><a href="#16-de-keuze-tussen-arm64-en-x86" id="markdown-toc-16-de-keuze-tussen-arm64-en-x86">16. De keuze tussen ARM64 en x86</a>    <ul>
+      <li><a href="#dgx-b300" id="markdown-toc-dgx-b300">DGX B300</a></li>
+      <li><a href="#gb300" id="markdown-toc-gb300">GB300</a></li>
+    </ul>
+  </li>
+  <li><a href="#17-wanneer-kiest-u-voor-dgx-b300" id="markdown-toc-17-wanneer-kiest-u-voor-dgx-b300">17. Wanneer kiest u voor DGX B300</a>    <ul>
+      <li><a href="#1-heterogene-omgeving-met-veel-gebruikers" id="markdown-toc-1-heterogene-omgeving-met-veel-gebruikers">1. Heterogene omgeving met veel gebruikers</a></li>
+      <li><a href="#2-virtualisatie-is-belangrijk" id="markdown-toc-2-virtualisatie-is-belangrijk">2. Virtualisatie is belangrijk</a></li>
+      <li><a href="#3-er-is-een-afhankelijkheid-van-x86" id="markdown-toc-3-er-is-een-afhankelijkheid-van-x86">3. Er is een afhankelijkheid van x86</a></li>
+      <li><a href="#4-stapsgewijze-groei-is-gewenst" id="markdown-toc-4-stapsgewijze-groei-is-gewenst">4. Stapsgewijze groei is gewenst</a></li>
+      <li><a href="#5-de-vermogensdichtheid-van-het-datacenter-is-beperkt" id="markdown-toc-5-de-vermogensdichtheid-van-het-datacenter-is-beperkt">5. De vermogensdichtheid van het datacenter is beperkt</a></li>
+      <li><a href="#6-hpc-en-ai-naast-elkaar" id="markdown-toc-6-hpc-en-ai-naast-elkaar">6. HPC en AI naast elkaar</a></li>
+    </ul>
+  </li>
+  <li><a href="#18-wanneer-kiest-u-voor-gb300-nvl72" id="markdown-toc-18-wanneer-kiest-u-voor-gb300-nvl72">18. Wanneer kiest u voor GB300 NVL72</a>    <ul>
+      <li><a href="#1-training-van-zeer-grote-llms" id="markdown-toc-1-training-van-zeer-grote-llms">1. Training van zeer grote LLM’s</a></li>
+      <li><a href="#2-grote-moe-modellen" id="markdown-toc-2-grote-moe-modellen">2. Grote MoE-modellen</a></li>
+      <li><a href="#3-grote-inferentie---reasoningmodellen" id="markdown-toc-3-grote-inferentie---reasoningmodellen">3. Grote inferentie- / reasoningmodellen</a></li>
+      <li><a href="#4-minder-netwerkcommunicatie" id="markdown-toc-4-minder-netwerkcommunicatie">4. Minder netwerkcommunicatie</a></li>
+      <li><a href="#5-er-is-een-groter-enkelvoudig-computedomein-nodig" id="markdown-toc-5-er-is-een-groter-enkelvoudig-computedomein-nodig">5. Er is een groter enkelvoudig computedomein nodig</a></li>
+    </ul>
+  </li>
+  <li><a href="#19-welk-platform-wanneer" id="markdown-toc-19-welk-platform-wanneer">19. Welk platform wanneer?</a>    <ul>
+      <li><a href="#kies-dgx-b300-als" id="markdown-toc-kies-dgx-b300-als">Kies DGX B300 als:</a></li>
+      <li><a href="#kies-gb300-nvl72-als" id="markdown-toc-kies-gb300-nvl72-als">Kies GB300 NVL72 als:</a></li>
+    </ul>
+  </li>
+  <li><a href="#20-wanneer-is-een-hybride-architectuur-zinvol" id="markdown-toc-20-wanneer-is-een-hybride-architectuur-zinvol">20. Wanneer is een hybride architectuur zinvol?</a>    <ul>
+      <li><a href="#dgx-b300-pool" id="markdown-toc-dgx-b300-pool">DGX B300-pool</a></li>
+      <li><a href="#gb300-nvl72-pool" id="markdown-toc-gb300-nvl72-pool">GB300 NVL72-pool</a></li>
+    </ul>
+  </li>
+  <li><a href="#21-beknopte-beslissingstabel" id="markdown-toc-21-beknopte-beslissingstabel">21. Beknopte beslissingstabel</a></li>
+  <li><a href="#22-conclusie" id="markdown-toc-22-conclusie">22. Conclusie</a></li>
+</ul><hr />
+<h2 id="1-doel-en-reikwijdte">
+  
+  
+    <a href="#1-doel-en-reikwijdte" class="anchor-heading" aria-labelledby="1-doel-en-reikwijdte"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1. Doel en reikwijdte
+  
+  
+</h2>
+    
+
+<p>Dit document geeft een technische vergelijking van twee op NVIDIA Blackwell Ultra gebaseerde architecturen — <strong>NVIDIA DGX B300</strong> en <strong>NVIDIA GB300 NVL72</strong> — voor AI-infrastructuur van de volgende generatie.</p>
+
+<p>Hoewel beide platforms dezelfde NVIDIA Blackwell Ultra-GPU-architectuur gebruiken, verschillen ze aanzienlijk in systeemontwerp, schaalaanpak, processorarchitectuur, GPU-interconnectmodel, netwerkarchitectuur, virtualisatieaanpak, eisen aan stroom en koeling in het datacenter, en doelworkloads.</p>
+
+<p>Daarom moeten DGX B300 en GB300 NVL72 niet als directe alternatieven voor elkaar worden beschouwd, maar als twee afzonderlijke infrastructuurbenaderingen die zijn geoptimaliseerd voor verschillende workloadprofielen.</p>
+
+<p>Dit document bespreekt beide platforms aan de hand van een voorbeeldontwerp van een cluster:</p>
+
+<ul>
+  <li>DGX B300-zijde: <strong>meerdere DGX B300-servers</strong> (voorbeeld: ~40 nodes)</li>
+  <li>GB300-zijde: <strong>meerdere GB300 NVL72-racks</strong> (voorbeeld: ~4 racks)</li>
+  <li>gedeelde, krachtige opslag</li>
+  <li>gescheiden Compute-, Storage/In-band- en OOB-netwerken</li>
+  <li>beheerlaag met NVIDIA Mission Control / BCM / Run:ai</li>
+</ul><hr />
+<h2 id="2-algemene-architectuur-van-nvidia-dgx-b300">
+  
+  
+    <a href="#2-algemene-architectuur-van-nvidia-dgx-b300" class="anchor-heading" aria-labelledby="2-algemene-architectuur-van-nvidia-dgx-b300"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2. Algemene architectuur van NVIDIA DGX B300
+  
+  
+</h2>
+    
+
+<p>NVIDIA DGX B300 is een AI-systeem met <strong>8 NVIDIA B300 Blackwell Ultra-GPU’s</strong> in één server, qua ontwerp dichter bij een klassieke x86-server. NVIDIA omschrijft het systeem als een platform dat is ontworpen voor algemene AI-infrastructuurworkloads, waaronder training, inferentie (inference) en analytics.</p>
+
+<p>Elk DGX B300-systeem:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Kenmerk</th>
+      <th>DGX B300</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>GPU</td>
+      <td>8 × NVIDIA B300 Blackwell Ultra</td>
+    </tr>
+    <tr>
+      <td>GPU-geheugen</td>
+      <td>~2.3 TB HBM in totaal</td>
+    </tr>
+    <tr>
+      <td>CPU</td>
+      <td>2 × Intel Xeon Platinum 6776P</td>
+    </tr>
+    <tr>
+      <td>Systeemgeheugen</td>
+      <td>2 TB, tot 4 TB</td>
+    </tr>
+    <tr>
+      <td>GPU-interconnect</td>
+      <td>NVLink / NVSwitch van de 5e generatie</td>
+    </tr>
+    <tr>
+      <td>Computenetwerk</td>
+      <td>8 × ConnectX-8</td>
+    </tr>
+    <tr>
+      <td>Poortsnelheid compute</td>
+      <td>8 × 800 Gb/s</td>
+    </tr>
+    <tr>
+      <td>Opslag / beheer</td>
+      <td>2 × dual-port BlueField-3</td>
+    </tr>
+    <tr>
+      <td>Lokale cache</td>
+      <td>8 × 3.84 TB E1.S NVMe</td>
+    </tr>
+    <tr>
+      <td>Vormfactor</td>
+      <td>10 RU</td>
+    </tr>
+    <tr>
+      <td>Stroomverbruik</td>
+      <td>~14.5 kW</td>
+    </tr>
+    <tr>
+      <td>Processorarchitectuur</td>
+      <td>x86</td>
+    </tr>
+    <tr>
+      <td>Koeling</td>
+      <td>Lucht- of vloeistofgekoeld (luchtgekoeld in dit ontwerp)</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>De acht GPU’s in de DGX B300 zijn met elkaar verbonden via de interne NVSwitch-fabric van het systeem, met snelle NVLink. Het NVLink-domein is echter <strong>beperkt tot één DGX B300-server</strong>. Tussen twee DGX B300-systemen verloopt de GPU-communicatie over de externe Compute Fabric.</p>
+
+<p>In het voorbeeldontwerp van het cluster is deze fabric <strong>Quantum-X800 InfiniBand</strong>.</p>
+
+<p>De NVIDIA DGX B300 SuperPOD-referentiearchitectuur ondersteunt ook een 800 Gb/s XDR InfiniBand-computefabric en gebruikt Q3400-RA-switches.</p>
+
+<p>DGX B300 is leverbaar in luchtgekoelde en vloeistofgekoelde configuraties. De architectuur in dit document gebruikt de <strong>luchtgekoelde DGX B300</strong>. Ondanks een TDP van 1,400 W per GPU kan het systeem in een vormfactor van 10 RU met luchtkoeling worden gebruikt. Dat is een belangrijk voordeel: in de bestaande datacenterinfrastructuur is geen investering in vloeistofkoeling (DLC) nodig.</p><hr />
+<h2 id="3-algemene-architectuur-van-nvidia-gb300-nvl72">
+  
+  
+    <a href="#3-algemene-architectuur-van-nvidia-gb300-nvl72" class="anchor-heading" aria-labelledby="3-algemene-architectuur-van-nvidia-gb300-nvl72"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. Algemene architectuur van NVIDIA GB300 NVL72
+  
+  
+</h2>
+    
+
+<p>GB300 NVL72 verschilt architectonisch van DGX B300 — het is ontworpen als een <strong>computesysteem op rackschaal, niet op serverschaal</strong>.</p>
+
+<p>Eén NVL72-rack bevat:</p>
+
+<ul>
+  <li>18 × compute tray</li>
+  <li>72 × Blackwell Ultra-GPU</li>
+  <li>36 × NVIDIA Grace-CPU</li>
+  <li>9 × NVLink Switch Tray</li>
+  <li>passieve koperen NVLink-backplane</li>
+  <li>power shelves</li>
+  <li>manifolds voor vloeistofkoeling</li>
+</ul>
+<h3 id="een-compute-tray">
+  
+  
+    <a href="#een-compute-tray" class="anchor-heading" aria-labelledby="een-compute-tray"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Een compute tray
+  
+  
+</h3>
+    
+
+<p>Elke GB300-compute tray bevat:</p>
+
+<ul>
+  <li>2 × NVIDIA Grace-CPU</li>
+  <li>4 × B300 Blackwell Ultra-GPU</li>
+  <li>4 × ConnectX-8</li>
+  <li>1 × dual-port BlueField-3 B3240</li>
+  <li>lokale NVMe-cache</li>
+  <li>NVMe voor het opstarten</li>
+</ul>
+
+<p>Eén NVL72-rack levert dus:</p>
+
+<p><strong>18 trays × 4 GPU = 72 GPU</strong></p>
+
+<p>Op rackniveau heeft GB300 NVL72:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Kenmerk</th>
+      <th>GB300 NVL72</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>GPU</td>
+      <td>72 × B300 Blackwell Ultra / rack</td>
+    </tr>
+    <tr>
+      <td>CPU</td>
+      <td>36 × NVIDIA Grace (2592 Neoverse V2-cores)</td>
+    </tr>
+    <tr>
+      <td>Totale NVLink-BW</td>
+      <td>130 TB/s</td>
+    </tr>
+    <tr>
+      <td>Rackgeheugen</td>
+      <td>20 TB HBM</td>
+    </tr>
+    <tr>
+      <td>FP4 sparse (rack)</td>
+      <td>1,440 PF</td>
+    </tr>
+    <tr>
+      <td>FP4 dense (rack)</td>
+      <td>1,080 PF</td>
+    </tr>
+    <tr>
+      <td>Rackvermogen</td>
+      <td>~135 kW (132–142 kW; piek ~155 kW)</td>
+    </tr>
+    <tr>
+      <td>Koeling</td>
+      <td>Volledige vloeistofkoeling (DLC verplicht)</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>NVIDIA omschrijft de GB300 NVL72 als “fully liquid-cooled”. Dat betekent niet dat 100% van de warmte naar de vloeistof gaat; in NVL72-racks wordt ongeveer <strong>90% van de warmte aan de vloeistof en 10% aan de lucht afgegeven</strong> (OSFP-modules, opslag, PDB).</p><hr />
+<h2 id="4-technische-specificaties-en-mogelijkheden-van-de-b300-gpu">
+  
+  
+    <a href="#4-technische-specificaties-en-mogelijkheden-van-de-b300-gpu" class="anchor-heading" aria-labelledby="4-technische-specificaties-en-mogelijkheden-van-de-b300-gpu"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. Technische specificaties en mogelijkheden van de B300-GPU
+  
+  
+</h2>
+    
+
+<p>Beide platforms gebruiken dezelfde B300 Blackwell Ultra-GPU. Deze sectie behandelt de technische specificaties en mogelijkheden per GPU.</p>
+<h3 id="41-specificaties-per-gpu">
+  
+  
+    <a href="#41-specificaties-per-gpu" class="anchor-heading" aria-labelledby="41-specificaties-per-gpu"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.1 Specificaties per GPU
+  
+  
+</h3>
+    
+
+<p>Alle rekenwaarden zijn in <strong>PFLOPS (PF)</strong>. De waarden komen van NVIDIA’s HGX-productpagina.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Kenmerk</th>
+      <th>B300 SXM</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Architectuur</td>
+      <td>Blackwell Ultra</td>
+    </tr>
+    <tr>
+      <td>VRAM</td>
+      <td>288 GB (capaciteit van de die)</td>
+    </tr>
+    <tr>
+      <td>Bruikbaar VRAM (HGX)</td>
+      <td>~262 GB/GPU (2.3 TB ÷ 8)</td>
+    </tr>
+    <tr>
+      <td>HBM-type</td>
+      <td>HBM3e</td>
+    </tr>
+    <tr>
+      <td>Geheugenbandbreedte</td>
+      <td>8 TB/s</td>
+    </tr>
+    <tr>
+      <td>FP4 sparse</td>
+      <td>18 PF</td>
+    </tr>
+    <tr>
+      <td>FP4 dense</td>
+      <td>13.5 PF</td>
+    </tr>
+    <tr>
+      <td>FP8 sparse</td>
+      <td>9 PF</td>
+    </tr>
+    <tr>
+      <td>FP8 dense</td>
+      <td>4.5 PF</td>
+    </tr>
+    <tr>
+      <td>FP16/BF16 sparse</td>
+      <td>4.5 PF</td>
+    </tr>
+    <tr>
+      <td>FP16/BF16 dense</td>
+      <td>2.25 PF</td>
+    </tr>
+    <tr>
+      <td>TDP</td>
+      <td>1,400 W</td>
+    </tr>
+    <tr>
+      <td>NVLink</td>
+      <td>NVLink 5 (1.8 TB/s)</td>
+    </tr>
+    <tr>
+      <td>ConnectX</td>
+      <td>ConnectX-8 (800G)</td>
+    </tr>
+    <tr>
+      <td>Procesnode</td>
+      <td>TSMC 4NP</td>
+    </tr>
+    <tr>
+      <td>Transistors</td>
+      <td>208 B</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Belangrijke opmerkingen:</strong></p>
+
+<ul>
+  <li>
+    <p><strong>Sparse vs dense:</strong> sparse waarden zijn gemeten met 2:4 structured sparsity (van elke 4 opeenvolgende waarden zijn er hoogstens 2 ongelijk aan nul) en weerspiegelen een theoretische winst van ~2×. Dense is de werkelijke doorvoer (throughput) zonder deze aanname. <strong>Selectiebeslissingen moeten op de dense waarden worden gebaseerd</strong>; sparse waarden geven alleen de theoretische piekcapaciteit aan en zijn voor de meeste workloads in productie niet volledig haalbaar.</p>
+  </li>
+  <li>
+    <p><strong>Verschil in basis voor de FP4-waarde van B300:</strong> NVIDIA’s technische blog over Blackwell Ultra noemt 15 PF dense / 20 PF sparse NVFP4 per die; op basis van het HGX-systeem met 8 GPU’s is dat 13.5 PF dense / 18 PF sparse (108 PF ÷ 8 en 144 PF ÷ 8). Die × 8 = 120/160 PF, HGX = 108/144 PF — er is een consistent verschil van ~10% op systeemniveau.</p>
+  </li>
+  <li>
+    <p><strong>Waarom BF16 belangrijk is:</strong> het grootste deel van pretraining, master weights/optimizer state en SFT/LoRA-fine-tuning gebeurt nog steeds in BF16; veel inferentiepijplijnen in productie draaien ook in BF16.</p>
+  </li>
+  <li>
+    <p><strong>2× attention-prestaties van B300:</strong> de 2× hogere attention-prestaties van B300 ten opzichte van Blackwell komen voort uit <strong>een verdubbeling van de doorvoer van de SFU (Special Function Unit)</strong> voor belangrijke instructies die in attention-lagen worden gebruikt — niet uit een toename van de ruwe FP4-rekenkracht. De winst is daarom het grootst bij workloads met lange context en reasoning.</p>
+  </li>
+  <li>
+    <p><strong>Geheugenarchitectuur van B300:</strong> de capaciteit van 288 GB komt van <strong>12-high HBM3e</strong>-stacks. De toename van het geheugen is geen nieuwe HBM-generatie, maar wordt bereikt door de stacks hoger te maken.</p>
+  </li>
+</ul>
+<h3 id="42-functiematrix">
+  
+  
+    <a href="#42-functiematrix" class="anchor-heading" aria-labelledby="42-functiematrix"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.2 Functiematrix
+  
+  
+</h3>
+    
+
+<p>De volgende matrix geeft het <strong>datacenter-SXM-segment</strong> weer.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Kenmerk</th>
+      <th>B300</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FP4 (NVFP4)</td>
+      <td>✓</td>
+    </tr>
+    <tr>
+      <td>FP6</td>
+      <td>✓</td>
+    </tr>
+    <tr>
+      <td>FP8</td>
+      <td>✓</td>
+    </tr>
+    <tr>
+      <td>FP16/BF16</td>
+      <td>✓</td>
+    </tr>
+    <tr>
+      <td>TF32</td>
+      <td>✓</td>
+    </tr>
+    <tr>
+      <td>MIG</td>
+      <td>✓ (2×140 / 4×70 / 7×34 GB)</td>
+    </tr>
+    <tr>
+      <td>Confidential Computing</td>
+      <td>✓ TEE-I/O (1/2/4/8 GPU)</td>
+    </tr>
+    <tr>
+      <td>GPUDirect RDMA</td>
+      <td>✓</td>
+    </tr>
+    <tr>
+      <td>Tensor Core-generatie</td>
+      <td>5e generatie</td>
+    </tr>
+    <tr>
+      <td>Transformer Engine</td>
+      <td>2e generatie (FP4/NVFP4)</td>
+    </tr>
+    <tr>
+      <td>NVLink-generatie</td>
+      <td>5 (1.8 TB/s)</td>
+    </tr>
+    <tr>
+      <td>ConnectX</td>
+      <td>CX-8 (800G)</td>
+    </tr>
+    <tr>
+      <td>Procesnode</td>
+      <td>TSMC 4NP</td>
+    </tr>
+    <tr>
+      <td>Transistors</td>
+      <td>208 B</td>
+    </tr>
+  </tbody>
+</table></div>
+<h4 id="mig-multi-instance-gpu">
+  
+  
+    <a href="#mig-multi-instance-gpu" class="anchor-heading" aria-labelledby="mig-multi-instance-gpu"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> MIG (Multi-Instance GPU)
+  
+  
+</h4>
+    
+
+<p>Verdeelt één GPU in instances die op hardwareniveau van elkaar zijn geïsoleerd. Voor Blackwell Ultra (B300) publiceert NVIDIA specifieke partitie-opties: <strong>2×140 GB, 4×70 GB of 7×34 GB</strong>. Dit is een cruciale isolatiefunctie voor multi-tenant workloads in datacenter en cloud; in hoeveel geheugen per tenant een GPU van 288 GB wordt verdeeld, is een directe input voor de capaciteitsplanning.</p>
+<h4 id="confidential-computing--tee-io">
+  
+  
+    <a href="#confidential-computing--tee-io" class="anchor-heading" aria-labelledby="confidential-computing--tee-io"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Confidential Computing / TEE-I/O
+  
+  
+</h4>
+    
+
+<p>Blackwell is de eerste GPU met TEE-I/O-functionaliteit en breidt het beveiligde domein via NVLink/NVSwitch uit naar meerdere GPU’s: via NVLink verbonden Blackwell HGX/DGX-systemen ondersteunen beveiligde deployments van <strong>1, 2, 4 of 8 GPU’s</strong> in TEE-modus. <strong>De prestatie-overhead is in de praktijk nul:</strong> NVIDIA’s technische blog over Blackwell Ultra vermeldt voor TEE-I/O “nearly identical throughput compared to unencrypted modes”; metingen van derden bevestigen dit in cijfers (BF16-matmul 0.998×, CUDA graph met 96,000 matmuls 1.0012×). Dit is een bepalende functie voor gereguleerde workloads (financiële sector, zorg, overheid).</p>
+<h3 id="43-interconnect-en-netwerken">
+  
+  
+    <a href="#43-interconnect-en-netwerken" class="anchor-heading" aria-labelledby="43-interconnect-en-netwerken"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.3 Interconnect en netwerken
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>NVLink 5:</strong> 1.8 TB/s per GPU. Op rackniveau levert GB300 NVL72 in totaal 130 TB/s.</li>
+  <li><strong>ConnectX-8:</strong> 800G. Verdubbelt de bandbreedte (bandwidth) tussen nodes ten opzichte van ConnectX-7 (400G).</li>
+  <li><strong>NVLink vs NVSwitch:</strong> NVLink is een point-to-point-verbinding van GPU naar GPU. NVSwitch is de chip die NVLink-poorten bundelt tot een fabric, waardoor één domein mogelijk wordt op de schaal van 8 GPU’s per node (HGX) of 72 GPU’s per NVL72-rack. NVL72-racks zijn afhankelijk van NVSwitch; deze schaal is met alleen NVLink niet mogelijk. <strong>Op beide schalen</strong> (node met 8 GPU’s en rack met 72 GPU’s) is NVSwitch aanwezig, zodat Fabric Manager nodig is (zie sectie 8).</li>
+  <li><strong>NVLink-C2C:</strong> de coherente verbinding op chipniveau tussen Grace-CPU en GPU (900 GB/s). Het is een ander protocol dan NVLink van GPU naar GPU; het vormt de basis van de GB300-superchiparchitectuur (1 Grace-CPU + 2 Blackwell-GPU’s) en daarmee van GB300 NVL72-racks. Unified memory — CPU- en GPU-geheugen dat als één adresruimte verschijnt — wordt via deze verbinding geleverd.</li>
+  <li><strong>GPUDirect RDMA:</strong> stelt de NIC in staat GPU-geheugen rechtstreeks te benaderen zonder te kopiëren via het CPU-geheugen. Een fundamentele functie voor scale-out-prestaties bij gedistribueerde training en inferentie; verkort het datapad van NCCL.</li>
+</ul><hr />
+<h2 id="5-het-belangrijkste-onderscheidende-kenmerk-van-gb300-nvl72-een-nvlink-domein-van-72-gpus">
+  
+  
+    <a href="#5-het-belangrijkste-onderscheidende-kenmerk-van-gb300-nvl72-een-nvlink-domein-van-72-gpus" class="anchor-heading" aria-labelledby="5-het-belangrijkste-onderscheidende-kenmerk-van-gb300-nvl72-een-nvlink-domein-van-72-gpus"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5. Het belangrijkste onderscheidende kenmerk van GB300 NVL72: een NVLink-domein van 72 GPU’s
+  
+  
+</h2>
+    
+
+<p>Dit is het grootste architectonische voordeel van GB300 NVL72 ten opzichte van DGX B300.</p>
+
+<p>Binnen een DGX B300 omvat het NVLink-domein:</p>
+
+<p><strong>8 GPU’s</strong></p>
+
+<p>terwijl GB300 NVL72 beschikt over:</p>
+
+<p><strong>72 GPU’s in één NVLink-domein</strong></p>
+
+<p>Dankzij NVIDIA’s GB300-rackontwerp kunnen 72 GPU’s binnen het rack via NVLink/NVSwitch met zeer hoge bandbreedte en lage latentie (latency) communiceren. Op rackniveau is in totaal <strong>130 TB/s</strong> NVLink-bandbreedte beschikbaar.</p>
+
+<p>Dit is vooral belangrijk voor toepassingen die grootschalig modelparallellisme vereisen.</p>
+
+<p>Bijvoorbeeld:</p>
+
+<ul>
+  <li>tensorparallellisme (tensor parallelism)</li>
+  <li>pipelineparallellisme (pipeline parallelism)</li>
+  <li>expertparallellisme (expert parallelism)</li>
+  <li>MoE-modellen</li>
+  <li>training van zeer grote LLM’s</li>
+  <li>inferentie met grote context</li>
+  <li>reasoningmodellen</li>
+</ul>
+
+<p>Deze veroorzaken intensieve communicatie tussen GPU’s.</p>
+
+<p>In een DGX B300-cluster loopt dit verkeer tussen servers over InfiniBand, terwijl het bij GB300-GPU’s in hetzelfde rack op de NVLink-fabric blijft.</p>
+
+<p>Dit is de kern van de architectonische waardepropositie van GB300.</p><hr />
+<h2 id="6-netwerkarchitectuur-van-dgx-b300">
+  
+  
+    <a href="#6-netwerkarchitectuur-van-dgx-b300" class="anchor-heading" aria-labelledby="6-netwerkarchitectuur-van-dgx-b300"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6. Netwerkarchitectuur van DGX B300
+  
+  
+</h2>
+    
+
+<p>Het voorbeeldontwerp van ~40 nodes omvat drie primaire fysieke netwerken.</p>
+<h3 id="61-computenetwerk">
+  
+  
+    <a href="#61-computenetwerk" class="anchor-heading" aria-labelledby="61-computenetwerk"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.1 Computenetwerk
+  
+  
+</h3>
+    
+
+<p>Elke DGX B300 heeft:</p>
+
+<p><strong>8 × 800 Gb/s ConnectX-8-computeverbindingen</strong></p>
+
+<p>Voor 40 DGX-nodes:</p>
+
+<p><strong>40 × 8 = 320 × 800 Gb/s computeverbindingen</strong></p>
+
+<p>Het voorbeeldontwerp van de computefabric:</p>
+
+<ul>
+  <li>8 × Q3400-RA leaf</li>
+  <li>4 × Q3400-RA spine</li>
+  <li>Totaal: 12 × Q3400-RA</li>
+</ul>
+
+<p>Deze structuur biedt hoge bandbreedte en lage latentie voor:</p>
+
+<ul>
+  <li>training over meerdere nodes</li>
+  <li>gedistribueerde inferentie</li>
+  <li>collectieve communicatie via NCCL</li>
+  <li>MPI/HPC</li>
+  <li>RDMA van GPU naar GPU</li>
+</ul>
+
+<p>Totale scale-out-bandbreedte per node: 8 × 800G = <strong>6.4 TB/s</strong> (8 × ConnectX-8).</p>
+<h3 id="62-in-band--en-opslagnetwerk">
+  
+  
+    <a href="#62-in-band--en-opslagnetwerk" class="anchor-heading" aria-labelledby="62-in-band--en-opslagnetwerk"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.2 In-band- en opslagnetwerk
+  
+  
+</h3>
+    
+
+<p>Los van de computefabric wordt een apart, op Ethernet gebaseerd in-band-/opslagnetwerk ontworpen.</p>
+
+<p>Voorbeeldstructuur:</p>
+
+<ul>
+  <li>4 × SN5610 leaf</li>
+  <li>2 × SN5610 spine</li>
+</ul>
+
+<p>Totaal:</p>
+
+<p><strong>6 × SN5610</strong></p>
+
+<p>Dit netwerk transporteert:</p>
+
+<ul>
+  <li>provisioning</li>
+  <li>gebruikerstoegang</li>
+  <li>Kubernetes-/Run:ai-verkeer</li>
+  <li>beheer</li>
+  <li>toegang tot opslag</li>
+  <li>serviceverkeer</li>
+</ul>
+<h3 id="63-oob--en-fabricbeheer">
+  
+  
+    <a href="#63-oob--en-fabricbeheer" class="anchor-heading" aria-labelledby="63-oob--en-fabricbeheer"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.3 OOB- en fabricbeheer
+  
+  
+</h3>
+    
+
+<p>Voor het OOB-beheernetwerk:</p>
+
+<p><strong>4 × SN2201</strong></p>
+
+<p>Omdat de computefabric InfiniBand is, daarnaast:</p>
+
+<p><strong>2 × UFM</strong></p>
+
+<p>voor InfiniBand-fabricbeheer met HA.</p>
+
+<p>UFM verzorgt:</p>
+
+<ul>
+  <li>topologie van de InfiniBand-fabric</li>
+  <li>subnet management</li>
+  <li>statusmonitoring</li>
+  <li>congestiemonitoring</li>
+  <li>fabrictelemetrie</li>
+  <li>probleemoplossing (troubleshooting)</li>
+</ul>
+
+<p>Aan de Ethernet-zijde kunnen netwerktelemetrie en monitoring via NetQ/Mission Control worden uitgevoerd.</p>
+<h3 id="64-voorbeeldtopologie-dgx-b300">
+  
+  
+    <a href="#64-voorbeeldtopologie-dgx-b300" class="anchor-heading" aria-labelledby="64-voorbeeldtopologie-dgx-b300"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.4 Voorbeeldtopologie DGX B300
+  
+  
+</h3>
+    
+
+<p>Hieronder staat een voorbeeld van een DGX B300-clustertopologie:</p>
+
+<p><img src="/papers/b300-gb300-cluster-architecture/images/dgx-b300.png" alt="Voorbeeld van een DGX B300-clustertopologie" width="720" /></p>
+<p><sub><i>Figuur 1: Voorbeeld van een DGX B300-clustertopologie — Compute Fabric (Quantum-X800 IB), In-band/Storage- en OOB-netwerken</i></sub></p>
+
+<p>In deze topologie is elke DGX B300-node via 8 × 800 Gb/s InfiniBand-links verbonden met de Compute Fabric. Opslag- en beheerverkeer loopt over een apart Ethernet-netwerk. Het OOB-netwerk transporteert al het BMC- en switchbeheerverkeer.</p><hr />
+<h2 id="7-netwerkarchitectuur-van-gb300-nvl72">
+  
+  
+    <a href="#7-netwerkarchitectuur-van-gb300-nvl72" class="anchor-heading" aria-labelledby="7-netwerkarchitectuur-van-gb300-nvl72"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7. Netwerkarchitectuur van GB300 NVL72
+  
+  
+</h2>
+    
+
+<p>Voor de voorbeeldconfiguratie met vier racks:</p>
+
+<p><strong>72 compute trays / 288 GPU’s</strong></p>
+
+<p>NVIDIA Enterprise RA gebruikt <strong>Spectrum-X Ethernet</strong> voor de computefabric.</p>
+<h3 id="71-gpu-computenetwerk-eastwest">
+  
+  
+    <a href="#71-gpu-computenetwerk-eastwest" class="anchor-heading" aria-labelledby="71-gpu-computenetwerk-eastwest"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7.1 GPU-computenetwerk (east/west)
+  
+  
+</h3>
+    
+
+<p>Voorbeeldstructuur die compatibel is met NVIDIA Enterprise RA:</p>
+
+<ul>
+  <li>16 × SN5610 leaf</li>
+  <li>8 × SN5610 spine</li>
+</ul>
+
+<p>Totaal:</p>
+
+<p><strong>24 × SN5610</strong></p>
+
+<p>Het computenetwerk is ontworpen als twee gescheiden planes.</p>
+
+<p>Elke ConnectX-8-verbinding van 800G wordt opgesplitst in:</p>
+
+<p><strong>2 × 400G</strong></p>
+
+<p>verdeeld over twee gescheiden planes.</p>
+
+<p>Deze structuur zorgt voor:</p>
+
+<ul>
+  <li>minder SPOF’s</li>
+  <li>padredundantie</li>
+  <li>load balancing voor NCCL</li>
+  <li>railoptimalisatie</li>
+</ul>
+<h3 id="72-cpu-converged-netwerk-northsouth">
+  
+  
+    <a href="#72-cpu-converged-netwerk-northsouth" class="anchor-heading" aria-labelledby="72-cpu-converged-netwerk-northsouth"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7.2 CPU converged-netwerk (north/south)
+  
+  
+</h3>
+    
+
+<p>GB300 Enterprise RA omvat een aparte <strong>CPU Converged North/South Fabric</strong>.</p>
+
+<p>Voorbeeld voor vier racks:</p>
+
+<ul>
+  <li>4 × SN5610 leaf</li>
+  <li>2 × SN5610 spine</li>
+</ul>
+
+<p>Totaal:</p>
+
+<p><strong>6 × SN5610</strong></p>
+
+<p>Deze fabric transporteert:</p>
+
+<ul>
+  <li>in-band-beheer</li>
+  <li>opslag</li>
+  <li>klantnetwerk</li>
+  <li>supportserver</li>
+  <li>CPU-communicatie</li>
+</ul>
+
+<p>De dual-port BlueField-3-DPU op elke compute tray is voor padredundantie aangesloten op twee afzonderlijke switches.</p>
+
+<p>De compute- en converged fabrics samen:</p>
+
+<p><strong>24 + 6 = 30 × SN5610</strong></p>
+<h3 id="73-oob-netwerk">
+  
+  
+    <a href="#73-oob-netwerk" class="anchor-heading" aria-labelledby="73-oob-netwerk"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7.3 OOB-netwerk
+  
+  
+</h3>
+    
+
+<p>NVIDIA gebruikt twee SN2201-switches per NVL72-rack.</p>
+
+<p>Voor vier racks:</p>
+
+<p><strong>4 × 2 = 8 × SN2201</strong></p>
+
+<p>Het OOB-netwerk biedt fysiek gescheiden 1 GbE-beheertoegang voor:</p>
+
+<ul>
+  <li>BMC van de compute trays</li>
+  <li>BlueField-BMC</li>
+  <li>beheer van de NVLink-switches</li>
+  <li>overige beheerendpoints in het rack</li>
+</ul>
+<h3 id="74-voorbeeldtopologie-gb300-nvl72">
+  
+  
+    <a href="#74-voorbeeldtopologie-gb300-nvl72" class="anchor-heading" aria-labelledby="74-voorbeeldtopologie-gb300-nvl72"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7.4 Voorbeeldtopologie GB300 NVL72
+  
+  
+</h3>
+    
+
+<p>Hieronder staat een voorbeeld van een GB300 NVL72-clustertopologie:</p>
+
+<p><img src="/papers/b300-gb300-cluster-architecture/images/rack.png" alt="Voorbeeld van een GB300 NVL72-clustertopologie" width="720" /></p>
+<p><sub><i>Figuur 2: Voorbeeld van een GB300 NVL72-clustertopologie — GPU Compute Fabric (Spectrum-X), CPU Converged- en OOB-netwerken</i></sub></p>
+
+<p>In deze topologie zijn de 18 compute trays van elk NVL72-rack met elkaar en met andere racks verbonden via een Spectrum-X Ethernet-fabric met twee planes. Het NVLink-domein omvat de 72 GPU’s binnen het rack; communicatie tussen racks verloopt via Ethernet.</p><hr />
+<h2 id="8-stroom--en-koelingsvereisten">
+  
+  
+    <a href="#8-stroom--en-koelingsvereisten" class="anchor-heading" aria-labelledby="8-stroom--en-koelingsvereisten"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8. Stroom- en koelingsvereisten
+  
+  
+</h2>
+    
+<h3 id="81-stroom-en-koeling-van-gb300-nvl72">
+  
+  
+    <a href="#81-stroom-en-koeling-van-gb300-nvl72" class="anchor-heading" aria-labelledby="81-stroom-en-koeling-van-gb300-nvl72"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8.1 Stroom en koeling van GB300 NVL72
+  
+  
+</h3>
+    
+
+<p>GB300 NVL72 is geen traditioneel serverrack. Het is een systeem op rackschaal met geïntegreerde componenten voor stroomdistributie met hoge dichtheid en vloeistofkoeling.</p>
+
+<p>Het systeem omvat:</p>
+
+<ul>
+  <li>vloeistofgekoelde compute trays,</li>
+  <li>vloeistofgekoelde NVLink-switch trays,</li>
+  <li>een koelmanifold in het rack,</li>
+  <li>power shelves,</li>
+  <li>stroomdistributie in het rack op basis van een DC-busbar</li>
+</ul>
+
+<p>Volgens NVIDIA’s huidige Enterprise RA kan een volledig GB300 NVL72-rack tot <strong>142 kW</strong> vermogen vereisen. Volgens OEM- en analistenbronnen ligt het rackvermogen tussen <strong>132–142 kW</strong>, met een piekvermogen van ongeveer <strong>155 kW</strong>.</p>
+
+<p><strong>DLC (Direct Liquid Cooling) is verplicht</strong> voor GB300 NVL72. “Fully liquid-cooled” betekent niet dat 100% van de warmte naar de vloeistof gaat; in NVL72-racks wordt ongeveer <strong>90% van de warmte aan de vloeistof en 10% aan de lucht afgegeven</strong> (OSFP-modules, opslag, PDB).</p>
+
+<p>De voedingsstroom van het rack bedraagt <strong>60 A</strong>.</p>
+
+<p>Bij de keuze voor GB300 moet de datacenterinfrastructuur worden beoordeeld op:</p>
+
+<ul>
+  <li>AC-stroomcapaciteit met hoge dichtheid naar het rack,</li>
+  <li>CDU-capaciteit,</li>
+  <li>infrastructuur voor aan- en afvoer van koelwater van de faciliteit,</li>
+  <li>vloeistofkoelingsaansluitingen die compatibel zijn met het geïntegreerde manifold van het rack,</li>
+  <li>gewicht van het rack,</li>
+  <li>draagvermogen van de vloer,</li>
+  <li>A/B-voeding en redundantie van de stroomvoorziening stroomopwaarts</li>
+</ul>
+
+<p>De <strong>power shelf, DC-busbar en koelmanifold maken deel uit van het systeem</strong> en hoeven niet apart te worden geïnstalleerd.</p>
+
+<p>De belangrijkste fysieke geschiktheidscriteria voor de keuze van GB300 zijn daarom of de faciliteit kan voldoen aan de vereiste <strong>vermogensdichtheid per rack, stroomredundantie en eisen voor vloeistofkoeling</strong>.</p>
+<h3 id="82-stroom-en-datacentercompatibiliteit-van-dgx-b300">
+  
+  
+    <a href="#82-stroom-en-datacentercompatibiliteit-van-dgx-b300" class="anchor-heading" aria-labelledby="82-stroom-en-datacentercompatibiliteit-van-dgx-b300"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8.2 Stroom en datacentercompatibiliteit van DGX B300
+  
+  
+</h3>
+    
+
+<p>DGX B300 verbruikt ongeveer <strong>14.5 kW</strong> en is 10 RU groot. De TDP per GPU is 1,400 W.</p>
+
+<p>DGX B300 is leverbaar in luchtgekoelde en vloeistofgekoelde configuraties. De architectuur in dit document gebruikt de <strong>luchtgekoelde DGX B300</strong>. Ondanks een TDP van 1,400 W per GPU kan het systeem in een vormfactor van 10 RU met luchtkoeling worden gebruikt. Dat is een belangrijk voordeel: in de bestaande datacenterinfrastructuur is geen investering in vloeistofkoeling (DLC) nodig.</p>
+
+<p>Het referentieontwerp van NVIDIA SuperPOD plaatst vier DGX B300’s per rack, wat neerkomt op een vermogensdichtheid van ongeveer <strong>56 kW/rack</strong>. NVIDIA vermeldt uitdrukkelijk dat het aantal DGX-eenheden per rack kan worden verlaagd op basis van de bestaande stroom- en koelingslimieten van het datacenter. Als de vermogensdichtheid per rack onvoldoende is, kan het aantal DGX B300’s per rack dienovereenkomstig worden verminderd.</p>
+
+<p>Dit document gebruikt <strong>4 GB300 NVL72-racks en 40 DGX B300-servers</strong> als referentie voor de vergelijking.</p>
+<h3 id="83-vereisten-aan-de-dc-infrastructuur">
+  
+  
+    <a href="#83-vereisten-aan-de-dc-infrastructuur" class="anchor-heading" aria-labelledby="83-vereisten-aan-de-dc-infrastructuur"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8.3 Vereisten aan de DC-infrastructuur
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Vereiste</th>
+      <th>DGX B300</th>
+      <th>GB300 NVL72</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Rackvermogen</td>
+      <td>~14.5 kW/node</td>
+      <td>132–142 kW/rack (piek ~155)</td>
+    </tr>
+    <tr>
+      <td>Koeling</td>
+      <td>Luchtgekoeld</td>
+      <td>DLC verplicht (90% vloeistof / 10% lucht)</td>
+    </tr>
+    <tr>
+      <td>Voeding rack</td>
+      <td>Standaard</td>
+      <td>60 A</td>
+    </tr>
+    <tr>
+      <td>Rackstandaard</td>
+      <td>Traditioneel EIA-rack mogelijk</td>
+      <td>Speciale OCP-/rackschaalinfrastructuur</td>
+    </tr>
+    <tr>
+      <td>CDU</td>
+      <td>Niet vereist</td>
+      <td>Vereist</td>
+    </tr>
+    <tr>
+      <td>Koelwater van de faciliteit</td>
+      <td>Niet vereist</td>
+      <td>Vereist (aan- en afvoer)</td>
+    </tr>
+  </tbody>
+</table></div><hr />
+<h2 id="9-virtualisatie-en-het-delen-van-gpus">
+  
+  
+    <a href="#9-virtualisatie-en-het-delen-van-gpus" class="anchor-heading" aria-labelledby="9-virtualisatie-en-het-delen-van-gpus"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 9. Virtualisatie en het delen van GPU’s
+  
+  
+</h2>
+    
+
+<p>Dit onderwerp vormt een van de belangrijkste verschillen tussen de twee systemen.</p>
+<h3 id="91-dgx-b300">
+  
+  
+    <a href="#91-dgx-b300" class="anchor-heading" aria-labelledby="91-dgx-b300"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 9.1 DGX B300
+  
+  
+</h3>
+    
+
+<p>DGX B300 gedraagt zich meer als een klassieke x86-server, waardoor het een logischere keuze is voor virtualisatie en integratie met diverse infrastructuurplatforms.</p>
+
+<p>Voor B300 publiceert NVIDIA specifieke MIG-partitie-opties:</p>
+
+<ul>
+  <li><strong>2×140 GB</strong></li>
+  <li><strong>4×70 GB</strong></li>
+  <li><strong>7×34 GB</strong></li>
+</ul>
+
+<p>Deze partities bieden isolatie op hardwareniveau voor multi-tenant workloads in datacenter en cloud. In hoeveel geheugen per tenant een GPU van 288 GB wordt verdeeld, is een directe input voor de capaciteitsplanning.</p>
+
+<p>Aan de bare-metal Kubernetes-/Run:ai-zijde is GPU-toewijzing (allocation) als:</p>
+
+<ul>
+  <li>volledige GPU</li>
+  <li>MIG</li>
+  <li>delen op basis van de scheduler</li>
+</ul>
+
+<p>een natuurlijker gebruiksmodel.</p>
+<h3 id="92-gb300-nvl72">
+  
+  
+    <a href="#92-gb300-nvl72" class="anchor-heading" aria-labelledby="92-gb300-nvl72"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 9.2 GB300 NVL72
+  
+  
+</h3>
+    
+
+<p>Aan de GB300-zijde is de aanpak anders.</p>
+
+<p>NVIDIA Enterprise RA definieert de GB300-oplossing uitdrukkelijk voor:</p>
+
+<p><strong>Kubernetes, Slurm en niet-gevirtualiseerde workloads</strong></p>
+
+<p>Het is daarom niet juist om GB300 te zien als een klassiek:</p>
+
+<blockquote>
+  <p>“72 GPU’s beschikbaar, laten we ze op VMware in honderden vGPU’s opdelen”</p>
+</blockquote>
+
+<p>platform.</p>
+
+<p>Het primaire mechanisme om GB300 te delen is workloadscheduling via:</p>
+
+<ul>
+  <li>Slurm</li>
+  <li>Run:ai</li>
+  <li>Kubernetes</li>
+  <li>rekening houden met NVLink-domeinen / -partities</li>
+</ul>
+
+<p>De documentatie van Mission Control vermeldt uitdrukkelijk dat bij Multi-Node NVLink-systemen zoals GB300 rekening moet worden gehouden met de concepten <strong>NVLink Domains en NVLink Partitions</strong> wanneer ze via Run:ai en Slurm als gedeelde resources worden gebruikt.</p>
+
+<p>Daarom:</p>
+
+<p><strong>DGX B300 = flexibeler voor partitionering op GPU-niveau en traditionele pooling van serverresources</strong></p>
+
+<p><strong>GB300 = sterker in het partitioneren van GPU-domeinen op rackschaal en scheduling op jobniveau</strong></p><hr />
+<h2 id="10-technische-vergelijking-dgx-b300-vs-gb300-nvl72">
+  
+  
+    <a href="#10-technische-vergelijking-dgx-b300-vs-gb300-nvl72" class="anchor-heading" aria-labelledby="10-technische-vergelijking-dgx-b300-vs-gb300-nvl72"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 10. Technische vergelijking DGX B300 vs GB300 NVL72
+  
+  
+</h2>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Kenmerk</th>
+      <th>DGX B300</th>
+      <th>GB300 NVL72</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Architectuureenheid</td>
+      <td>Zelfstandige server</td>
+      <td>Systeem op rackschaal</td>
+    </tr>
+    <tr>
+      <td>GPU / systeem</td>
+      <td>8 × B300</td>
+      <td>72 × B300 / rack</td>
+    </tr>
+    <tr>
+      <td>CPU</td>
+      <td>2 × Intel Xeon 6776P</td>
+      <td>36 × NVIDIA Grace (2592 Neoverse V2)</td>
+    </tr>
+    <tr>
+      <td>CPU-architectuur</td>
+      <td><strong>x86</strong></td>
+      <td><strong>ARM64</strong></td>
+    </tr>
+    <tr>
+      <td>VRAM per GPU</td>
+      <td>288 GB (HGX: ~262 GB bruikbaar)</td>
+      <td>288 GB (HGX: ~262 GB bruikbaar)</td>
+    </tr>
+    <tr>
+      <td>Totaal geheugen systeem/rack</td>
+      <td>~2.3 TB (HGX)</td>
+      <td><strong>20 TB</strong></td>
+    </tr>
+    <tr>
+      <td>Geheugen-BW per GPU</td>
+      <td>8 TB/s</td>
+      <td>8 TB/s</td>
+    </tr>
+    <tr>
+      <td>NVLink-domein</td>
+      <td>8 GPU’s</td>
+      <td><strong>72 GPU’s</strong></td>
+    </tr>
+    <tr>
+      <td>Totale NVLink-BW (systeem/rack)</td>
+      <td>14.4 TB/s</td>
+      <td><strong>130 TB/s</strong></td>
+    </tr>
+    <tr>
+      <td>FP4 sparse (systeem/rack)</td>
+      <td>144 PF</td>
+      <td><strong>1,440 PF</strong></td>
+    </tr>
+    <tr>
+      <td>FP4 dense (systeem/rack)</td>
+      <td>108 PF</td>
+      <td><strong>1,080 PF</strong></td>
+    </tr>
+    <tr>
+      <td>TDP per GPU</td>
+      <td>1,400 W</td>
+      <td>1,400 W</td>
+    </tr>
+    <tr>
+      <td>Scale-up</td>
+      <td>8 GPU’s</td>
+      <td><strong>72 GPU’s</strong></td>
+    </tr>
+    <tr>
+      <td>Scale-out</td>
+      <td>Quantum-X800 IB</td>
+      <td>Spectrum-X Ethernet</td>
+    </tr>
+    <tr>
+      <td>Compute-NIC</td>
+      <td>8 × CX-8 / DGX</td>
+      <td>4 × CX-8 / tray</td>
+    </tr>
+    <tr>
+      <td>Computefabric</td>
+      <td>Quantum-X800 IB</td>
+      <td>Spectrum-X Ethernet</td>
+    </tr>
+    <tr>
+      <td>Computeswitch</td>
+      <td>Q3400-RA</td>
+      <td>SN5610</td>
+    </tr>
+    <tr>
+      <td>Storage/In-band</td>
+      <td>SN5610</td>
+      <td>SN5610</td>
+    </tr>
+    <tr>
+      <td>OOB</td>
+      <td>SN2201</td>
+      <td>SN2201</td>
+    </tr>
+    <tr>
+      <td>Fabricmanager</td>
+      <td>UFM + <code class="language-plaintext highlighter-rouge">nv-fabricmanager</code></td>
+      <td><code class="language-plaintext highlighter-rouge">nv-fabricmanager</code> + NetQ / Mission Control</td>
+    </tr>
+    <tr>
+      <td>UFM</td>
+      <td><strong>Vereist, IB wordt gebruikt</strong></td>
+      <td><strong>Niet vereist, Spectrum-X-ontwerp</strong></td>
+    </tr>
+    <tr>
+      <td>NetQ</td>
+      <td>Voor Ethernet-monitoring</td>
+      <td><strong>Kerncomponent voor netwerkobservability</strong></td>
+    </tr>
+    <tr>
+      <td>MIG</td>
+      <td>✓ (2×140 / 4×70 / 7×34 GB)</td>
+      <td>Afhankelijk van de architectuur</td>
+    </tr>
+    <tr>
+      <td>Confidential Computing</td>
+      <td>✓ TEE-I/O (1/2/4/8 GPU)</td>
+      <td>✓ TEE-I/O</td>
+    </tr>
+    <tr>
+      <td>Transformer Engine</td>
+      <td>2e generatie (FP4/NVFP4)</td>
+      <td>2e generatie (FP4/NVFP4)</td>
+    </tr>
+    <tr>
+      <td>Tensor Core</td>
+      <td>5e generatie</td>
+      <td>5e generatie</td>
+    </tr>
+    <tr>
+      <td>Procesnode</td>
+      <td>TSMC 4NP</td>
+      <td>TSMC 4NP</td>
+    </tr>
+    <tr>
+      <td>Koeling</td>
+      <td>Luchtgekoeld (in dit ontwerp)</td>
+      <td><strong>Rack met directe vloeistofkoeling (DLC verplicht)</strong></td>
+    </tr>
+    <tr>
+      <td>Vermogen</td>
+      <td>~14.5 kW / DGX</td>
+      <td><strong>132–142 kW/rack (piek ~155)</strong></td>
+    </tr>
+    <tr>
+      <td>Rackstandaard</td>
+      <td>Traditioneel EIA-rack mogelijk</td>
+      <td>Speciale OCP-/rackschaalinfrastructuur</td>
+    </tr>
+    <tr>
+      <td>Granulariteit van deployment</td>
+      <td>1 server tegelijk</td>
+      <td>Gericht op rack/SU</td>
+    </tr>
+    <tr>
+      <td>CPU-ISA van het OS</td>
+      <td>x86</td>
+      <td>ARM64</td>
+    </tr>
+    <tr>
+      <td>Fysieke service-isolatie</td>
+      <td>Per server</td>
+      <td>Per tray/rack</td>
+    </tr>
+    <tr>
+      <td>Scale-up voor grote modellen</td>
+      <td>8 GPU’s, daarna netwerk</td>
+      <td><strong>Tot 72 GPU’s via NVLink</strong></td>
+    </tr>
+  </tbody>
+</table></div><hr />
+<h2 id="11-platformkeuze-op-basis-van-workload">
+  
+  
+    <a href="#11-platformkeuze-op-basis-van-workload" class="anchor-heading" aria-labelledby="11-platformkeuze-op-basis-van-workload"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 11. Platformkeuze op basis van workload
+  
+  
+</h2>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Workload / vereiste</th>
+      <th>DGX B300</th>
+      <th>GB300 NVL72</th>
+      <th>Aanbeveling</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Inferentie op één GPU</td>
+      <td>★★★★★</td>
+      <td>★★</td>
+      <td><strong>B300</strong></td>
+    </tr>
+    <tr>
+      <td>Inferentie op 2-8 GPU’s</td>
+      <td>★★★★★</td>
+      <td>★★★</td>
+      <td><strong>B300</strong></td>
+    </tr>
+    <tr>
+      <td>Inferentie van grote modellen</td>
+      <td>★★★★</td>
+      <td>★★★★★</td>
+      <td><strong>GB300</strong></td>
+    </tr>
+    <tr>
+      <td>Zeer groot reasoningmodel</td>
+      <td>★★★</td>
+      <td>★★★★★</td>
+      <td><strong>GB300</strong></td>
+    </tr>
+    <tr>
+      <td>Training op één node</td>
+      <td>★★★★★</td>
+      <td>★★★★</td>
+      <td><strong>B300</strong></td>
+    </tr>
+    <tr>
+      <td>Training tot 8 GPU’s</td>
+      <td>★★★★★</td>
+      <td>★★★★</td>
+      <td><strong>B300</strong></td>
+    </tr>
+    <tr>
+      <td>Training over meerdere nodes</td>
+      <td>★★★★★</td>
+      <td>★★★★★</td>
+      <td>Afhankelijk van de workload</td>
+    </tr>
+    <tr>
+      <td>Training van zeer grote LLM’s</td>
+      <td>★★★★</td>
+      <td>★★★★★</td>
+      <td><strong>GB300</strong></td>
+    </tr>
+    <tr>
+      <td>Model met een biljoen parameters</td>
+      <td>★★★</td>
+      <td>★★★★★</td>
+      <td><strong>GB300</strong></td>
+    </tr>
+    <tr>
+      <td>MoE-training</td>
+      <td>★★★★</td>
+      <td>★★★★★</td>
+      <td><strong>GB300</strong></td>
+    </tr>
+    <tr>
+      <td>Fine-tuning</td>
+      <td>★★★★★</td>
+      <td>★★★★★</td>
+      <td>Beide</td>
+    </tr>
+    <tr>
+      <td>Kleine LoRA-/QLoRA-jobs</td>
+      <td>★★★★★</td>
+      <td>★★★</td>
+      <td><strong>B300</strong></td>
+    </tr>
+    <tr>
+      <td>Veel onafhankelijke gebruikers</td>
+      <td>★★★★★</td>
+      <td>★★★★</td>
+      <td><strong>B300</strong></td>
+    </tr>
+    <tr>
+      <td>GPU-partitionering / MIG</td>
+      <td>★★★★★</td>
+      <td>Afhankelijk van de architectuur</td>
+      <td><strong>B300</strong></td>
+    </tr>
+    <tr>
+      <td>Kubernetes</td>
+      <td>★★★★★</td>
+      <td>★★★★★</td>
+      <td>Beide</td>
+    </tr>
+    <tr>
+      <td>Run:ai</td>
+      <td>★★★★★</td>
+      <td>★★★★★</td>
+      <td>Beide</td>
+    </tr>
+    <tr>
+      <td>Slurm</td>
+      <td>★★★★★</td>
+      <td>★★★★★</td>
+      <td>Beide</td>
+    </tr>
+    <tr>
+      <td>HPC</td>
+      <td>★★★★★</td>
+      <td>★★★★★</td>
+      <td>Afhankelijk van de workload</td>
+    </tr>
+    <tr>
+      <td>x86-HPC-applicatie</td>
+      <td>★★★★★</td>
+      <td>★★</td>
+      <td><strong>B300</strong></td>
+    </tr>
+    <tr>
+      <td>ARM-native HPC</td>
+      <td>★★★</td>
+      <td>★★★★★</td>
+      <td><strong>GB300</strong></td>
+    </tr>
+    <tr>
+      <td>CFD-/CAE-simulatie</td>
+      <td>★★★★★</td>
+      <td>★★★</td>
+      <td>Doorgaans <strong>B300</strong></td>
+    </tr>
+    <tr>
+      <td>AI + simulatie</td>
+      <td>★★★★★</td>
+      <td>★★★★</td>
+      <td>Doorgaans <strong>B300</strong></td>
+    </tr>
+    <tr>
+      <td>Omvangrijk cluster uitsluitend voor AI</td>
+      <td>★★★★</td>
+      <td>★★★★★</td>
+      <td><strong>GB300</strong></td>
+    </tr>
+    <tr>
+      <td>Zeer groot NVLink-domein</td>
+      <td>★★</td>
+      <td>★★★★★</td>
+      <td><strong>GB300</strong></td>
+    </tr>
+    <tr>
+      <td>Lage vermogensdichtheid per rack</td>
+      <td>★★★★</td>
+      <td>★</td>
+      <td><strong>B300</strong></td>
+    </tr>
+    <tr>
+      <td>AI-fabriek met zeer hoge dichtheid</td>
+      <td>★★★</td>
+      <td>★★★★★</td>
+      <td><strong>GB300</strong></td>
+    </tr>
+    <tr>
+      <td>Stapsgewijze uitbreiding</td>
+      <td>★★★★★</td>
+      <td>★★</td>
+      <td><strong>B300</strong></td>
+    </tr>
+    <tr>
+      <td>Kant-en-klare compute op rackschaal</td>
+      <td>★★★</td>
+      <td>★★★★★</td>
+      <td><strong>GB300</strong></td>
+    </tr>
+  </tbody>
+</table></div><hr />
+<h2 id="12-vergelijking-vanuit-trainingsperspectief">
+  
+  
+    <a href="#12-vergelijking-vanuit-trainingsperspectief" class="anchor-heading" aria-labelledby="12-vergelijking-vanuit-trainingsperspectief"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 12. Vergelijking vanuit trainingsperspectief
+  
+  
+</h2>
+    
+
+<p>Voor training moet de keuze worden gebaseerd op de modelgrootte en de communicatiepatronen.</p>
+
+<p>Als het model:</p>
+
+<ul>
+  <li>binnen 8 GPU’s past</li>
+  <li>veel onafhankelijke jobs heeft</li>
+  <li>honderden kleine/middelgrote trainingsjobs gelijktijdig draaien</li>
+</ul>
+
+<p>kan DGX B300 een efficiënter gebruik van de resources opleveren.</p>
+
+<p>Als het model daarentegen:</p>
+
+<ul>
+  <li>tientallen GPU’s vereist</li>
+  <li>een hoge mate van tensorparallellisme heeft</li>
+  <li>expertparallellisme gebruikt</li>
+  <li>veel all-reduce-/all-to-all-verkeer genereert</li>
+</ul>
+
+<p>wordt het voordeel van GB300 NVL72 met zijn NVLink-domein van 72 GPU’s duidelijk.</p>
+
+<p><strong>Perspectief van dense FP4:</strong></p>
+
+<p>B300 levert 13.5 PF dense FP4 per GPU. Een DGX B300-systeem heeft 8 × 13.5 = <strong>108 PF</strong>, terwijl een GB300 NVL72-rack 72 × 13.5 = <strong>1,080 PF</strong> aan dense FP4-rekenkracht heeft. Selectiebeslissingen moeten op de dense waarden worden gebaseerd; sparse waarden geven alleen de theoretische piekcapaciteit aan en zijn voor de meeste workloads in productie niet volledig haalbaar.</p>
+
+<p>De 2× hogere attention-prestaties van B300 ten opzichte van Blackwell zijn het duidelijkst bij trainingsworkloads met lange context en reasoning. Deze winst komt voort uit een verdubbeling van de doorvoer van de SFU (Special Function Unit) voor belangrijke instructies die in attention-lagen worden gebruikt.</p><hr />
+<h2 id="13-vergelijking-vanuit-inferentieperspectief">
+  
+  
+    <a href="#13-vergelijking-vanuit-inferentieperspectief" class="anchor-heading" aria-labelledby="13-vergelijking-vanuit-inferentieperspectief"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 13. Vergelijking vanuit inferentieperspectief
+  
+  
+</h2>
+    
+
+<p>Voor inferentie is het niet juist om te generaliseren dat “GB300 altijd sneller is”.</p>
+
+<p>Voor kleine en middelgrote modellen die het volgende vereisen:</p>
+
+<ul>
+  <li>veel onafhankelijke replica’s</li>
+  <li>endpoints met lage latentie</li>
+  <li>MIG</li>
+  <li>GPU-isolatie</li>
+  <li>multi-tenant serving</li>
+</ul>
+
+<p>is DGX B300 een zeer geschikt platform.</p>
+
+<p>Als echter:</p>
+
+<ul>
+  <li>het model niet op één GPU past</li>
+  <li>het meer dan 8 GPU’s vereist</li>
+  <li>een grote KV-cache nodig is</li>
+  <li>een zeer grote context wordt gebruikt</li>
+  <li>het reasoningmodel over tientallen GPU’s moet draaien</li>
+</ul>
+
+<p>wordt de scale-up-architectuur van GB300 NVL72 voordeliger.</p>
+<h3 id="131-inferentie-over-meerdere-nodes">
+  
+  
+    <a href="#131-inferentie-over-meerdere-nodes" class="anchor-heading" aria-labelledby="131-inferentie-over-meerdere-nodes"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 13.1 Inferentie over meerdere nodes
+  
+  
+</h3>
+    
+
+<p>LLM-inferentie van de volgende generatie gaat verder dan de aanpak “laad het model op één GPU”.</p>
+
+<p>Vooral bij methoden zoals:</p>
+
+<ul>
+  <li>scheiding van prefill en decode</li>
+  <li>tensorparallellisme</li>
+  <li>pipelineparallellisme</li>
+  <li>expertparallellisme</li>
+  <li>gedistribueerde KV-cache</li>
+  <li>multi-node serving</li>
+</ul>
+
+<p>worden de prestaties van de interconnect belangrijk.</p>
+
+<p>De huidige integratie van NVIDIA Run:ai met Mission Control omvat ondersteuning voor gedistribueerde inferentie en NVIDIA Dynamo.</p>
+
+<p>GB300 is daarom voordelig voor zeer grote inferentiedeployments over meerdere nodes.</p>
+
+<p>Voor inferentiefarms van middelgrote schaal kan de zelfstandige serverstructuur van B300 flexibeler zijn.</p><hr />
+<h2 id="14-simulatie-en-hpc">
+  
+  
+    <a href="#14-simulatie-en-hpc" class="anchor-heading" aria-labelledby="14-simulatie-en-hpc"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 14. Simulatie en HPC
+  
+  
+</h2>
+    
+
+<p>Voor simulatieworkloads is de CPU-architectuur bijzonder belangrijk.</p>
+
+<p>DGX B300 gebruikt:</p>
+
+<p><strong>Intel Xeon / x86</strong></p>
+
+<p>GB300 gebruikt:</p>
+
+<p><strong>Grace / ARM64</strong></p>
+
+<p>Daarom moet de compatibiliteit met ARM64 worden gecontroleerd voor:</p>
+
+<ul>
+  <li>Ansys</li>
+  <li>Abaqus</li>
+  <li>LS-DYNA</li>
+  <li>afgeleiden van OpenFOAM</li>
+  <li>propriëtaire solvers</li>
+  <li>eigen MPI-applicaties</li>
+  <li>simulatiebibliotheken</li>
+</ul>
+
+<p>Als GPU-versnelde simulatiesoftware is geoptimaliseerd voor Grace/ARM64, kan GB300 een zeer krachtig HPC-platform worden.</p>
+
+<p>Als de applicatie echter alleen op x86 is gecertificeerd, is DGX B300 de veiligere keuze.</p><hr />
+<h2 id="15-operationele-flexibiliteit">
+  
+  
+    <a href="#15-operationele-flexibiliteit" class="anchor-heading" aria-labelledby="15-operationele-flexibiliteit"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 15. Operationele flexibiliteit
+  
+  
+</h2>
+    
+
+<p>Een van de belangrijkste voordelen van DGX B300 is het kleinere storingsdomein.</p>
+
+<p>Als een DGX B300 voor onderhoud offline wordt gehaald, worden:</p>
+
+<p><strong>8 GPU’s</strong></p>
+
+<p>getroffen.</p>
+
+<p>In het GB300-systeem op rackschaal moet de workloadscheduler rekening houden met het gedrag van trays, NVLink-partities en de rackfabric.</p>
+
+<p>Omgekeerd is GB300 ontworpen om resources op rackschaal per job te beheren via de mechanismen van Mission Control/NVLink-partities.</p>
+
+<p><strong>Risicofactoren:</strong></p>
+
+<ol>
+  <li>
+    <p><strong>Levertijd en beschikbaarheid:</strong> het aanbod is beperkt — de vraag van hyperscalers overtreft de productiecapaciteit, en grote clusters hebben na levering nog eens ~3 maanden nodig voor de deployment. De tijd van bestelling tot verzending verschilt per product en regio; hiervoor moet bevestiging van de distributeur worden verkregen. Omdat deze architectuur de luchtgekoelde DGX B300 gebruikt, is geen infrastructuur voor vloeistofkoeling nodig.</p>
+  </li>
+  <li>
+    <p><strong>Knelpunt in de koeling (rackschaal):</strong> GB300 NVL72 vereist naast de GPU-kosten een investering in DLC (CDU, manifold, drycooler) — een CapEx-post. De luchtgekoelde DGX B300 (node met 8 GPU’s) die in deze architectuur wordt gebruikt, vereist deze investering niet.</p>
+  </li>
+  <li>
+    <p><strong>Koppeling van driverbranch en Fabric Manager:</strong> het datacenter-SXM/PCIe-segment gebruikt de LTS-branch (Long-Term-Support). De LTS-branch en de versie van Fabric Manager moeten samen worden beheerd; voor de op NVSwitch gebaseerde DGX B300 en GB300 NVL72 moet de bijpassende versie van het pakket <code class="language-plaintext highlighter-rouge">nv-fabricmanager</code> beschikbaar zijn vóór een driverupgrade.</p>
+  </li>
+</ol><hr />
+<h2 id="16-de-keuze-tussen-arm64-en-x86">
+  
+  
+    <a href="#16-de-keuze-tussen-arm64-en-x86" class="anchor-heading" aria-labelledby="16-de-keuze-tussen-arm64-en-x86"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 16. De keuze tussen ARM64 en x86
+  
+  
+</h2>
+    
+
+<p>Deze keuze gaat niet alleen over CPU-prestaties.</p>
+<h3 id="dgx-b300">
+  
+  
+    <a href="#dgx-b300" class="anchor-heading" aria-labelledby="dgx-b300"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> DGX B300
+  
+  
+</h3>
+    
+
+<p>Doordat het x86 is, hebben:</p>
+
+<ul>
+  <li>bestaande bedrijfssoftware</li>
+  <li>traditionele virtualisatie</li>
+  <li>legacy HPC</li>
+  <li>veel commerciële applicaties</li>
+</ul>
+
+<p>een lager integratierisico.</p>
+<h3 id="gb300">
+  
+  
+    <a href="#gb300" class="anchor-heading" aria-labelledby="gb300"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> GB300
+  
+  
+</h3>
+    
+
+<p>Met Grace ARM64 bieden:</p>
+
+<ul>
+  <li>hoge CPU-geheugenefficiëntie</li>
+  <li>een CPU-architectuur dicht bij de GPU</li>
+  <li>energie-efficiëntie op rackschaal</li>
+  <li>NVIDIA’s nauw geïntegreerde computearchitectuur</li>
+</ul>
+
+<p>voordelen.</p>
+
+<p>Softwarepijplijnen moeten echter <strong>multi-architectuur of ARM64-compatibel</strong> zijn.</p>
+
+<p>Daarom wordt aanbevolen de software-inventaris op ARM64-compatibiliteit te analyseren voordat voor GB300 wordt gekozen.</p><hr />
+<h2 id="17-wanneer-kiest-u-voor-dgx-b300">
+  
+  
+    <a href="#17-wanneer-kiest-u-voor-dgx-b300" class="anchor-heading" aria-labelledby="17-wanneer-kiest-u-voor-dgx-b300"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 17. Wanneer kiest u voor DGX B300
+  
+  
+</h2>
+    
+
+<p>DGX B300 is in de volgende scenario’s een geschiktere keuze.</p>
+<h3 id="1-heterogene-omgeving-met-veel-gebruikers">
+  
+  
+    <a href="#1-heterogene-omgeving-met-veel-gebruikers" class="anchor-heading" aria-labelledby="1-heterogene-omgeving-met-veel-gebruikers"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1. Heterogene omgeving met veel gebruikers
+  
+  
+</h3>
+    
+
+<p>Als onderzoekers, datawetenschappers, verschillende afdelingen, uiteenlopende GPU-behoeften en onafhankelijke projecten dezelfde infrastructuur delen, biedt DGX B300 een fijnmazigere toewijzing van resources.</p>
+<h3 id="2-virtualisatie-is-belangrijk">
+  
+  
+    <a href="#2-virtualisatie-is-belangrijk" class="anchor-heading" aria-labelledby="2-virtualisatie-is-belangrijk"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2. Virtualisatie is belangrijk
+  
+  
+</h3>
+    
+
+<p>Als een VM-gebaseerde infrastructuur en een meer klassieke cloudaanpak gewenst zijn, is de op B300 gebaseerde architectuur met zelfstandige servers geschikter.</p>
+<h3 id="3-er-is-een-afhankelijkheid-van-x86">
+  
+  
+    <a href="#3-er-is-een-afhankelijkheid-van-x86" class="anchor-heading" aria-labelledby="3-er-is-een-afhankelijkheid-van-x86"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. Er is een afhankelijkheid van x86
+  
+  
+</h3>
+    
+
+<p>Als eigen software, simulatieapplicaties, legacy HPC-code, binaries van leveranciers en x86-containerimages niet op ARM64 zijn gevalideerd, is DGX B300 de keuze met het laagste risico.</p>
+<h3 id="4-stapsgewijze-groei-is-gewenst">
+  
+  
+    <a href="#4-stapsgewijze-groei-is-gewenst" class="anchor-heading" aria-labelledby="4-stapsgewijze-groei-is-gewenst"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. Stapsgewijze groei is gewenst
+  
+  
+</h3>
+    
+
+<p>De uitbreidingsgranulariteit van DGX B300 is:</p>
+
+<p><strong>8 GPU’s</strong></p>
+
+<p>terwijl de natuurlijke bouwsteen van GB300 op het niveau ligt van:</p>
+
+<p><strong>een rack met 72 GPU’s</strong></p>
+
+<p>Als de capaciteit naar verwachting over meerdere jaren groeit, kan DGX flexibeler zijn.</p>
+<h3 id="5-de-vermogensdichtheid-van-het-datacenter-is-beperkt">
+  
+  
+    <a href="#5-de-vermogensdichtheid-van-het-datacenter-is-beperkt" class="anchor-heading" aria-labelledby="5-de-vermogensdichtheid-van-het-datacenter-is-beperkt"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5. De vermogensdichtheid van het datacenter is beperkt
+  
+  
+</h3>
+    
+
+<p>De rackdichtheid van DGX B300 kan worden verlaagd om aan te sluiten bij de bestaande faciliteitsinfrastructuur.</p>
+
+<p>GB300 vereist een faciliteitsinfrastructuur die een rackdichtheid van ~100 kW+ ondersteunt.</p>
+<h3 id="6-hpc-en-ai-naast-elkaar">
+  
+  
+    <a href="#6-hpc-en-ai-naast-elkaar" class="anchor-heading" aria-labelledby="6-hpc-en-ai-naast-elkaar"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6. HPC en AI naast elkaar
+  
+  
+</h3>
+    
+
+<p>Workflows die simulatie en AI combineren en een x86-CPU vereisen, vormen een sterke use case voor DGX B300.</p>
+
+<p>Bijvoorbeeld:</p>
+
+<p>CFD → AI-surrogaatmodel → inferentie</p>
+
+<p>of:</p>
+
+<p>CAE → synthetische data → training</p>
+
+<p>Zulke workflows kunnen profiteren van compatibiliteit met x86-CPU’s.</p><hr />
+<h2 id="18-wanneer-kiest-u-voor-gb300-nvl72">
+  
+  
+    <a href="#18-wanneer-kiest-u-voor-gb300-nvl72" class="anchor-heading" aria-labelledby="18-wanneer-kiest-u-voor-gb300-nvl72"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 18. Wanneer kiest u voor GB300 NVL72
+  
+  
+</h2>
+    
+
+<p>GB300 NVL72 biedt duidelijke voordelen in de volgende scenario’s.</p>
+<h3 id="1-training-van-zeer-grote-llms">
+  
+  
+    <a href="#1-training-van-zeer-grote-llms" class="anchor-heading" aria-labelledby="1-training-van-zeer-grote-llms"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1. Training van zeer grote LLM’s
+  
+  
+</h3>
+    
+
+<p>Als het model niet op één node of binnen 8 GPU’s past, nemen de communicatiekosten toe.</p>
+
+<p>GB300 heeft <strong>72 GPU’s in hetzelfde NVLink-domein</strong> en biedt zo een hoge scale-up-bandbreedte voor zeer grote modellen.</p>
+<h3 id="2-grote-moe-modellen">
+  
+  
+    <a href="#2-grote-moe-modellen" class="anchor-heading" aria-labelledby="2-grote-moe-modellen"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2. Grote MoE-modellen
+  
+  
+</h3>
+    
+
+<p>Mixture-of-Experts-modellen genereren veel all-to-all-communicatie tussen GPU’s.</p>
+
+<p>Een groot NVLink-domein biedt hier een aanzienlijk voordeel.</p>
+<h3 id="3-grote-inferentie---reasoningmodellen">
+  
+  
+    <a href="#3-grote-inferentie---reasoningmodellen" class="anchor-heading" aria-labelledby="3-grote-inferentie---reasoningmodellen"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. Grote inferentie- / reasoningmodellen
+  
+  
+</h3>
+    
+
+<p>Op de schaal van honderden miljarden of biljoenen parameters kunnen workloads zoals:</p>
+
+<ul>
+  <li>modelparallelle inferentie</li>
+  <li>reasoning</li>
+  <li>inferentie met lange context</li>
+  <li>gedisaggregeerde inferentie</li>
+</ul>
+
+<p>profiteren van zeer grote GPU-groepen.</p>
+
+<p>NVIDIA positioneert Enterprise RA specifiek voor realtime inferentie en training/fine-tuning met biljoenen parameters. GB300 NVL72 levert ten opzichte van Hopper 5× TPS per MW, 10× TPS per gebruiker en 50× de output van een AI-fabriek.</p>
+<h3 id="4-minder-netwerkcommunicatie">
+  
+  
+    <a href="#4-minder-netwerkcommunicatie" class="anchor-heading" aria-labelledby="4-minder-netwerkcommunicatie"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. Minder netwerkcommunicatie
+  
+  
+</h3>
+    
+
+<p>Bij DGX B300 gaat het verkeer na 8 GPU’s naar de externe fabric.</p>
+
+<p>Bij GB300:</p>
+
+<p><strong>kan het verkeer tot 72 GPU’s binnen het NVLink-domein blijven.</strong></p>
+
+<p>Dit verschil is aanzienlijk voor modelparallelle workloads.</p>
+<h3 id="5-er-is-een-groter-enkelvoudig-computedomein-nodig">
+  
+  
+    <a href="#5-er-is-een-groter-enkelvoudig-computedomein-nodig" class="anchor-heading" aria-labelledby="5-er-is-een-groter-enkelvoudig-computedomein-nodig"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5. Er is een groter enkelvoudig computedomein nodig
+  
+  
+</h3>
+    
+
+<p>Bij GB300 gaat het minder om “72 afzonderlijke GPU’s kopen” en meer om:</p>
+
+<blockquote>
+  <p><strong>een computer op rackschaal met 72 GPU’s kopen</strong></p>
+</blockquote>
+
+<p>Voor workloads die een zeer groot acceleratordomein vereisen, is het een klasse apart.</p><hr />
+<h2 id="19-welk-platform-wanneer">
+  
+  
+    <a href="#19-welk-platform-wanneer" class="anchor-heading" aria-labelledby="19-welk-platform-wanneer"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 19. Welk platform wanneer?
+  
+  
+</h2>
+    
+<h3 id="kies-dgx-b300-als">
+  
+  
+    <a href="#kies-dgx-b300-als" class="anchor-heading" aria-labelledby="kies-dgx-b300-als"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Kies DGX B300 als:
+  
+  
+</h3>
+    
+
+<ul>
+  <li>het bestaande datacenter geen hoge vermogensdichtheid per rack ondersteunt,</li>
+  <li>x86 vereist is,</li>
+  <li>VM’s belangrijk zijn,</li>
+  <li>GPU-resources in kleine delen over gebruikers moeten worden verdeeld,</li>
+  <li>de workloads heterogeen zijn,</li>
+  <li>jobs op 1-8 GPU’s de meerderheid vormen,</li>
+  <li>capaciteitsuitbreiding in de loop van de tijd gewenst is,</li>
+  <li>simulatie/HPC en AI op dezelfde infrastructuur draaien,</li>
+  <li>veel onafhankelijke onderzoeksgroepen worden bediend.</li>
+</ul>
+<h3 id="kies-gb300-nvl72-als">
+  
+  
+    <a href="#kies-gb300-nvl72-als" class="anchor-heading" aria-labelledby="kies-gb300-nvl72-als"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Kies GB300 NVL72 als:
+  
+  
+</h3>
+    
+
+<ul>
+  <li>training van grote en zeer grote LLM’s de primaire workload is,</li>
+  <li>de grens van 8 GPU’s vaak wordt overschreden,</li>
+  <li>een scale-up-domein van 72 GPU’s kan worden benut,</li>
+  <li>zeer grote reasoning-/inferentiemodellen worden uitgerold,</li>
+  <li>er MoE-workloads en workloads met intensieve communicatie tussen GPU’s zijn,</li>
+  <li>een vermogen van de klasse 120-142 kW per rack beschikbaar is,</li>
+  <li>infrastructuur voor directe vloeistofkoeling aanwezig is of kan worden gebouwd,</li>
+  <li>compatibiliteit van de software met ARM64 is gewaarborgd,</li>
+  <li>het primaire doel van de AI-fabriek maximale scale-up-prestaties is.</li>
+</ul><hr />
+<h2 id="20-wanneer-is-een-hybride-architectuur-zinvol">
+  
+  
+    <a href="#20-wanneer-is-een-hybride-architectuur-zinvol" class="anchor-heading" aria-labelledby="20-wanneer-is-een-hybride-architectuur-zinvol"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 20. Wanneer is een hybride architectuur zinvol?
+  
+  
+</h2>
+    
+
+<p>Een hybride aanpak is een optie die het overwegen waard is wanneer beide platforms nodig zijn.</p>
+
+<p>In een hybride structuur:</p>
+<h3 id="dgx-b300-pool">
+  
+  
+    <a href="#dgx-b300-pool" class="anchor-heading" aria-labelledby="dgx-b300-pool"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> DGX B300-pool
+  
+  
+</h3>
+    
+
+<ul>
+  <li>werkruimte voor onderzoekers</li>
+  <li>ontwikkeling</li>
+  <li>fine-tuning</li>
+  <li>LoRA/QLoRA</li>
+  <li>kleine/middelgrote inferentie</li>
+  <li>simulatie</li>
+  <li>MIG</li>
+  <li>VM’s</li>
+  <li>onafhankelijke projectworkloads</li>
+</ul>
+<h3 id="gb300-nvl72-pool">
+  
+  
+    <a href="#gb300-nvl72-pool" class="anchor-heading" aria-labelledby="gb300-nvl72-pool"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> GB300 NVL72-pool
+  
+  
+</h3>
+    
+
+<ul>
+  <li>training van foundation models</li>
+  <li>grootschalige gedistribueerde training</li>
+  <li>grootschalige reasoning</li>
+  <li>omvangrijke inferentie</li>
+  <li>MoE</li>
+  <li>modelparallelle workloads</li>
+</ul>
+
+<p>In de bovenste laag kunnen:</p>
+
+<ul>
+  <li>Mission Control</li>
+  <li>BCM</li>
+  <li>Run:ai</li>
+  <li>Kubernetes</li>
+  <li>Slurm</li>
+</ul>
+
+<p>gebruikers naar de juiste resourcepool leiden, zonder dat zij de fysieke infrastructuur hoeven te kennen.</p>
+
+<p>Deze aanpak combineert de sterke punten van beide platforms.</p><hr />
+<h2 id="21-beknopte-beslissingstabel">
+  
+  
+    <a href="#21-beknopte-beslissingstabel" class="anchor-heading" aria-labelledby="21-beknopte-beslissingstabel"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 21. Beknopte beslissingstabel
+  
+  
+</h2>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Prioriteit</th>
+      <th>Aanbevolen platform</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Maximale prestaties voor grote modellen</td>
+      <td><strong>GB300 NVL72</strong></td>
+    </tr>
+    <tr>
+      <td>Maximale flexibiliteit in gebruik</td>
+      <td><strong>DGX B300</strong></td>
+    </tr>
+    <tr>
+      <td>Veel gebruikers / veel workloads</td>
+      <td><strong>DGX B300</strong></td>
+    </tr>
+    <tr>
+      <td>NVLink-domein van 72 GPU’s</td>
+      <td><strong>GB300 NVL72</strong></td>
+    </tr>
+    <tr>
+      <td>VM’s</td>
+      <td><strong>DGX B300</strong></td>
+    </tr>
+    <tr>
+      <td>Intensief gebruik van MIG</td>
+      <td><strong>DGX B300</strong></td>
+    </tr>
+    <tr>
+      <td>Traditionele HPC</td>
+      <td><strong>DGX B300</strong></td>
+    </tr>
+    <tr>
+      <td>ARM-native HPC</td>
+      <td><strong>GB300 NVL72</strong></td>
+    </tr>
+    <tr>
+      <td>Training met biljoenen parameters</td>
+      <td><strong>GB300 NVL72</strong></td>
+    </tr>
+    <tr>
+      <td>Grootschalige reasoning-inferentie</td>
+      <td><strong>GB300 NVL72</strong></td>
+    </tr>
+    <tr>
+      <td>Simulatie + AI</td>
+      <td><strong>DGX B300</strong></td>
+    </tr>
+    <tr>
+      <td>Bestaand bedrijfsdatacenter</td>
+      <td><strong>DGX B300</strong></td>
+    </tr>
+    <tr>
+      <td>Speciaal gebouwde AI-fabriek</td>
+      <td><strong>GB300 NVL72</strong></td>
+    </tr>
+    <tr>
+      <td>Stapsgewijze investering</td>
+      <td><strong>DGX B300</strong></td>
+    </tr>
+    <tr>
+      <td>Maximale computedichtheid per rack</td>
+      <td><strong>GB300 NVL72</strong></td>
+    </tr>
+    <tr>
+      <td>Diverse workloads in dezelfde organisatie</td>
+      <td><strong>Hybride</strong></td>
+    </tr>
+  </tbody>
+</table></div><hr />
+<h2 id="22-conclusie">
+  
+  
+    <a href="#22-conclusie" class="anchor-heading" aria-labelledby="22-conclusie"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 22. Conclusie
+  
+  
+</h2>
+    
+
+<p>DGX B300 en GB300 NVL72 gebruiken dezelfde GPU-generatie, maar vertegenwoordigen twee verschillende ontwerpfilosofieën.</p>
+
+<p><strong>DGX B300 is een AI-server.</strong></p>
+
+<p>Het systeem is zelfstandig, op x86 gebaseerd en schaalt in kleine stappen. Het is zeer flexibel voor het verdelen van GPU-resources in kleinere eenheden over verschillende gebruikers en workloads, voor integratie met de bestaande bedrijfsinfrastructuur en voor het draaien van uiteenlopende AI-/HPC-applicaties op hetzelfde platform.</p>
+
+<p><strong>GB300 NVL72 is een AI-computer op rackschaal.</strong></p>
+
+<p>Het belangrijkste voordeel is niet het aantal GPU’s, maar <strong>dat 72 GPU’s binnen één NVLink-domein kunnen werken.</strong> Dit levert aanzienlijke schaalvoordelen op voor de training van grote modellen, reasoning, MoE en gedistribueerde workloads met intensieve communicatie.</p>
+
+<p>De keuze moet daarom niet simpelweg zijn:</p>
+
+<blockquote>
+  <p>“Afzonderlijke servers met 8 GPU’s of racks met 72 GPU’s?”</p>
+</blockquote>
+
+<p>De werkelijke vergelijking moet zijn:</p>
+
+<blockquote>
+  <p><strong>Worden de GPU’s gebruikt als onafhankelijke NVLink-domeinen van 8 GPU’s of als NVLink-domeinen van 72 GPU’s — en wat past het best bij de doelworkloads?</strong></p>
+</blockquote>
+
+<p>Als het workloadportfolio breed is, het aantal gebruikers hoog is en de resourcebehoeften heterogeen zijn, is <strong>DGX B300</strong> de evenwichtigere keuze.</p>
+
+<p>Als het primaire doel zeer grote foundation models, gedistribueerde training, MoE en grootschalige inferentie is, en het datacenter de vereiste infrastructuur voor stroom en vloeistofkoeling kan leveren, is <strong>GB300 NVL72</strong> de geschiktere architectuur.</p>
+
+<p>Als beide klassen workloads belangrijk zijn, biedt <strong>een hybride architectuur met DGX B300 + GB300 NVL72 de meest flexibele technische aanpak.</strong></p>
+
+          
+
+          
+        </main>
+        
+
+
+      </div>
+    </div>
+    
+      
+
+<div class="search-overlay"></div>
+
+    
+  </div>
+
+  
+
+  <script>
+    window.JTD_I18N = {
+      search_no_results: "Geen resultaten gevonden",
+      copy_code: "Code naar klembord kopiëren"
+    };
+  </script>
+
+  
+
+
+<div id="cookie-consent-banner" class="cookie-consent" role="dialog"
+     aria-modal="false" aria-label="Cookie consent"
+     data-consent-state="pending" hidden>
+  <div class="cookie-consent__body">
+    <div class="cookie-consent__text">
+      <span class="cookie-consent__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+          <path d="M21 12a9 9 0 1 1-9-9 4.5 4.5 0 0 0 4.5 4.5A4.5 4.5 0 0 0 21 12zm-9-3.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-1.5 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm6-1.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-3 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0z"/>
+        </svg>
+      </span>
+      <p>Wij gebruiken cookies om het websiteverkeer te analyseren en uw ervaring te verbeteren. Door op 'Accepteren' te klikken, stemt u in met het gebruik van analytische cookies zoals beschreven in ons privacybeleid.
+        <a href="https://aetherix.com/privacy-policy/" target="_blank" rel="noopener noreferrer"
+           class="cookie-consent__link">Privacybeleid</a>
+      </p>
+    </div>
+    <div class="cookie-consent__actions">
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--reject"
+              data-consent-action="rejected">Weigeren</button>
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--accept"
+              data-consent-action="accepted">Accepteren</button>
+    </div>
+  </div>
+</div>
+<script>
+  // Eski karar önbellekte varsa bannerı gösterme
+  (function() {
+    try {
+      var v = localStorage.getItem('cookieConsent');
+      if (v === 'accepted' || v === 'rejected') {
+        document.documentElement.dataset.cookieConsent = v;
+      }
+    } catch (e) {}
+  })();
+</script>
+<script src="/assets/js/cookie-banner.js" defer></script>
+
+</body>
+</html>
+

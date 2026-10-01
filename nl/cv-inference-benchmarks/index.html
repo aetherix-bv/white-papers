@@ -1,0 +1,688 @@
+
+
+<!DOCTYPE html>
+
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-default.css">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet">
+
+  <style id="jtd-nav-activation">
+  
+
+.site-nav > ul.nav-list:first-child > li:not(:nth-child(5)) > a,
+.site-nav > ul.nav-list:first-child > li > ul > li > a,
+.site-nav > ul.nav-list:first-child > li > ul > li > ul > li > a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:not(:first-child) a,
+.site-nav li.external a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:first-child > li:nth-child(5) > a {
+  font-weight: 600;
+  text-decoration: none;
+}.site-nav > ul.nav-list:first-child > li:nth-child(5) > button svg {
+  transform: rotate(-90deg);
+}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(5) > ul.nav-list {
+  display: block;
+}
+  </style>
+
+  
+
+  
+    <script src="/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="icon" href="/nl/favicon.ico" type="image/x-icon">
+
+
+
+  <!-- Begin Jekyll SEO tag v2.9.1 -->
+<title>CV Inference Benchmark Explorer | Aetherix White Papers</title>
+<meta name="generator" content="Jekyll v4.3.4" />
+<meta property="og:title" content="CV Inference Benchmark Explorer" />
+<meta property="og:locale" content="nl" />
+<meta name="description" content="Verken de inferentiebenchmarks voor computer vision op NVIDIA GPU’s en Jetson-apparaten. Kies een GPU en een detectiemodel om te zien welke framerate het volhoudt, hoe die daalt naarmate er camera’s bijkomen, en hoeveel camera’s het draagt bij uw doel-FPS." />
+<meta name="twitter:description" property="og:description" content="Verken de inferentiebenchmarks voor computer vision op NVIDIA GPU’s en Jetson-apparaten. Kies een GPU en een detectiemodel om te zien welke framerate het volhoudt, hoe die daalt naarmate er camera’s bijkomen, en hoeveel camera’s het draagt bij uw doel-FPS." />
+<link rel="canonical" href="https://whitepapers.aetherix.com/nl/cv-inference-benchmarks/" />
+<meta property="og:url" content="https://whitepapers.aetherix.com/nl/cv-inference-benchmarks/" />
+<meta property="og:site_name" content="Aetherix White Papers" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-09-16T13:07:02+00:00" />
+<meta property="article:modified_time" content="2026-09-16T13:07:02+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="CV Inference Benchmark Explorer" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2026-09-16T13:07:02+00:00","datePublished":"2026-09-16T13:07:02+00:00","description":"Verken de inferentiebenchmarks voor computer vision op NVIDIA GPU’s en Jetson-apparaten. Kies een GPU en een detectiemodel om te zien welke framerate het volhoudt, hoe die daalt naarmate er camera’s bijkomen, en hoeveel camera’s het draagt bij uw doel-FPS.","headline":"CV Inference Benchmark Explorer","mainEntityOfPage":{"@type":"WebPage","@id":"https://whitepapers.aetherix.com/nl/cv-inference-benchmarks/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://whitepapers.aetherix.com/assets/images/aetherix-logo.png"}},"url":"https://whitepapers.aetherix.com/nl/cv-inference-benchmarks/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  
+<!-- Google tag (gtag.js) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JWLN33085T"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+
+  // Consent Mode v2 — default DENIED. Banner onayı ile GRANTED olur.
+  // KVKK/GDPR uyumu: ziyaretçi onay vermeden çerez set edilmez.
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    functionality_storage: 'granted',
+    security_storage: 'granted',
+    wait_for_update: 500
+  });
+
+  gtag('js', new Date());
+  gtag('config', 'G-JWLN33085T', {
+    anonymize_ip: true
+  });
+</script>
+
+<link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/cv-inference-benchmarks/">
+<link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/cv-inference-benchmarks/">
+<link rel="alternate" hreflang="x-default" href="https://whitepapers.aetherix.com/cv-inference-benchmarks/">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/images/favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+<script>
+(function () {
+  var open = XMLHttpRequest.prototype.open;
+  var own = "/nl/search-data.json";
+  XMLHttpRequest.prototype.open = function (method, url) {
+    if (typeof url === "string" && /assets\/js\/search-data\.json$/.test(url)) arguments[1] = own;
+    return open.apply(this, arguments);
+  };
+})();
+</script>
+
+
+</head>
+
+<body>
+  <a class="skip-to-main" href="#main-content">Naar de hoofdinhoud</a>
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="svg-link" viewBox="0 0 24 24">
+  <title>Link</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+</symbol>
+
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+  <title>Menu</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+    <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</symbol>
+
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+  <title>Expand</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</symbol>
+
+  <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
+<symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+  <title id="svg-external-link-title">(external link)</title>
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+</symbol>
+
+  
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+  <title>Document</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+</symbol>
+
+    <symbol id="svg-search" viewBox="0 0 24 24">
+  <title>Search</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</symbol>
+
+  
+  
+    <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+<symbol id="svg-copy" viewBox="0 0 16 16">
+  <title>Copy</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+</symbol>
+<symbol id="svg-copied" viewBox="0 0 16 16">
+  <title>Copied</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"/>
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"/>
+  </svg>
+</symbol>
+
+  
+</svg>
+
+  
+    <div class="side-bar">
+  <div class="site-header" role="banner">
+    <a href="/nl/" class="site-title lh-tight">
+  <div class="site-logo" role="img" aria-label="Aetherix White Papers"></div>
+
+</a>
+    <button id="menu-button" class="site-button btn-reset" aria-label="Toggle menu" aria-pressed="false">
+      <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  <nav aria-label="Main" id="site-nav" class="site-nav">
+  
+  
+    <ul class="nav-list"><li class="nav-list-item"><a href="/nl/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/nl/about/" class="nav-list-link">Over ons</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in White Papers category" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+    </button><a href="/nl/papers/" class="nav-list-link">White Papers</a><ul class="nav-list"><li class="nav-list-item"><a href="/nl/papers/local-llm-guide/" class="nav-list-link">Handleiding voor lokaal LLM-gebruik</a></li><li class="nav-list-item"><a href="/nl/papers/conditional-memory-offloading/" class="nav-list-link">Conditional memory en offloading bij LLM-inferentie</a></li><li class="nav-list-item"><a href="/nl/papers/b300-gb300-cluster-architecture/" class="nav-list-link">NVIDIA DGX B300 vs GB300 NVL72: vergelijking van clusterarchitecturen</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-2node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 2 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-3node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 3 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-4node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 4 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-8node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 8 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/qwen3.6-27b-dgx-spark-benchmark/" class="nav-list-link">Qwen3.6-27B DGX Spark-benchmark</a></li><li class="nav-list-item"><a href="/nl/papers/qwen3.6-27b-dgx-spark-scaling/" class="nav-list-link">Schaling van Qwen3.6-27B op een DGX Spark-cluster</a></li><li class="nav-list-item"><a href="/nl/papers/deepseek-v4.1-flash-4spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash-deployment op 4× DGX Spark</a></li><li class="nav-list-item"><a href="/nl/papers/deepseek-v4.1-flash-8spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash-deployment op 8× DGX Spark met TP8</a></li><li class="nav-list-item"><a href="/nl/papers/kimi-k3-dgx-b300-inference-benchmark/" class="nav-list-link">Kimi K3-inferentiebenchmark op DGX-B300</a></li></ul></li><li class="nav-list-item"><a href="/nl/llm-inference-benchmarks/" class="nav-list-link">LLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/nl/cv-inference-benchmarks/" class="nav-list-link">CV Inference Benchmark Explorer</a></li></ul>
+
+  
+</nav>
+
+
+  
+  
+    <div class="lang-switcher">
+  
+    
+    
+      <a class="lang-switcher-item" href="/cv-inference-benchmarks/">EN</a>
+    
+  
+    
+    
+      <span class="lang-switcher-item active">NL</span>
+    
+  
+</div>
+<script src="/assets/js/lang-switch.js"></script>
+
+  
+</div>
+
+  
+  <div class="main" id="top">
+    <div id="main-header" class="main-header">
+  
+    
+
+<div class="search" role="search">
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Zoeken" aria-label="Zoeken" autocomplete="off">
+    <label for="search-input" class="search-label"><svg viewBox="0 0 24 24" class="search-icon"><use xlink:href="#svg-search"></use></svg></label>
+  </div>
+  <div id="search-results" class="search-results"></div>
+</div>
+
+  
+  
+  
+    <nav aria-label="Auxiliary" class="aux-nav">
+  <ul class="aux-nav-list">
+    
+      <li class="aux-nav-list-item">
+        <a href="https://aetherix.com" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          aetherix.com
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://github.com/aetherix-bv" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          GitHub
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+  
+</div>
+
+    <div class="main-content-wrap">
+      
+      <div id="main-content" class="main-content">
+        <main>
+          
+            <h1 id="cv-inference-benchmark-explorer">
+  
+  
+    <a href="#cv-inference-benchmark-explorer" class="anchor-heading" aria-labelledby="cv-inference-benchmark-explorer"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> CV Inference Benchmark Explorer
+  
+  
+</h1>
+    
+
+<p>Hoeveel camera’s kan dit apparaat met dit model verwerken, en bij welke
+framerate? Kies een apparaat en een model, stel de framerate in die u acceptabel
+vindt, en de tabel geeft het antwoord voor elke configuratie die we hebben
+gemeten. Klap een rij uit om de volledige camerareeks en de bijbehorende curve te
+zien.</p>
+
+<details class="bt-howto">
+<summary>Hoe u de benchmark explorer gebruikt</summary>
+<div class="bt-howto-body">
+<h3 id="wat-een-rij-is">
+  
+  
+    <a href="#wat-een-rij-is" class="anchor-heading" aria-labelledby="wat-een-rij-is"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Wat een rij is
+  
+  
+</h3>
+    
+
+    <p>Een rij is een <strong>volledige deploymentconfiguratie</strong>, geen model: één
+detectiemodel, in één precisie en inputresolutie, op één apparaat, geserveerd
+door de Cordatus Inference Engine op DeepStream. Hetzelfde model komt daardoor één
+keer voor per apparaat waarop het is gemeten, en het vergelijken van twee rijen is
+pas zinvol als u weet welke van die kolommen tussen hen verschillen.</p>
+<h3 id="hoe-de-getallen-zijn-gemeten">
+  
+  
+    <a href="#hoe-de-getallen-zijn-gemeten" class="anchor-heading" aria-labelledby="hoe-de-getallen-zijn-gemeten"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Hoe de getallen zijn gemeten
+  
+  
+</h3>
+    
+
+    <p>Elk getal is gemaakt met de tool
+<a href="https://github.com/CordatusAI">cordatus-benchmark</a> tegen de Cordatus Inference
+Engine, op NVIDIA Jetson Orin Nano, Jetson AGX Thor, GB10 (DGX Spark) en GeForce
+RTX 3060 en RTX 3090. De verzameling groeit naarmate we meer apparaten en modellen
+testen.</p>
+
+    <p>Elke camera is een <strong>live 1080p H.264 IP-camera die met een vaste 20 FPS streamt</strong>.
+Elke configuratie wordt doorgemeten over een oplopend aantal camera’s, doorgaans
+1, 2, 4 en 8 en daarna in stappen van twee, tot 32. Niet elke configuratie heeft
+elk aantal: een aantal dat niet is gemeten, of waarvan de meting is verworpen,
+ontbreekt simpelweg in de reeks van die rij.</p>
+
+    <p>Voor elk aantal camera’s start de tool een job, wacht tot elke camera de pipeline
+bereikt en er frames binnenkomen, laat de pipeline stabiliseren, en bemonstert
+daarna de profiler van de engine gedurende <strong>30 seconden</strong>. De tellers van de
+engine vormen een voortschrijdend venster dat elke twee seconden wordt gereset,
+dus de metingen worden per venster gegroepeerd, per venster wordt de meest
+volgroeide meting bewaard, en vensters die te kort zijn om te vertrouwen worden
+verworpen. De eigen placeholder-bron van de engine is van elk getal uitgesloten.</p>
+
+    <p>Twee soorten metingen bereiken deze pagina nooit. Een aantal camera’s waarbij
+niet elke camera daadwerkelijk streamde, valt af, omdat het minder camera’s heeft
+gemeten dan het label zegt. Hetzelfde geldt voor een resultaat waarin een camera
+duidelijk sneller lijkt te worden verwerkt dan ze streamt, wat fysiek onmogelijk
+is en op hetzelfde probleem wijst.</p>
+<h3 id="wat-de-parameters-betekenen">
+  
+  
+    <a href="#wat-de-parameters-betekenen" class="anchor-heading" aria-labelledby="wat-de-parameters-betekenen"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Wat de parameters betekenen
+  
+  
+</h3>
+    
+
+    <p><strong>FPS (frames per seconde)</strong> — hoeveel videoframes er per seconde worden
+verwerkt.</p>
+
+    <p><strong>Camera’s</strong> — het aantal camera’s waarbij de getallen van de rij zijn gemeten.
+Elke rij rapporteert de zwaarste belasting waaronder ze is gemeten, op of onder de
+cameralimiet in het filterpaneel, dus rijen kunnen hierin verschillen; daarom
+staat het aantal naast de getallen in plaats van in een kop.</p>
+
+    <p><strong>FPS / camera</strong> — de framerate waarmee elke camera wordt verwerkt, bij dat
+aantal camera’s. Dit is het getal om te lezen voor “houdt dit mijn camera’s
+bij”. Hoger is beter, en 20 is het plafond, omdat de camera’s dat versturen.</p>
+
+    <p><strong>Totale FPS</strong> — de doorvoer (throughput) van de hele pipeline bij dat aantal
+camera’s: ruwweg FPS per camera × camera’s.</p>
+
+    <p><strong>Drop %</strong> — frames die de pipeline binnenkwamen maar er niet uitkwamen, als
+aandeel van de input. Bijna nul is gezond. Kleine negatieve waarden komen ook
+voor — iets meer frames uitgaand dan inkomend geteld tijdens het
+bemonsteringsvenster — en betekenen hetzelfde als nul. Drop % wordt ter
+informatie getoond; het heeft geen invloed op PASS/FAIL of Max. camera’s.</p>
+
+    <p><strong>Inputresolutie</strong> — de grootte waarnaar elk frame wordt geschaald voordat het
+model het ziet, breedte × hoogte. Het is de eigen input van het model, niet die
+van de camera: de camera’s versturen 1080p, en de pipeline schaalt elk frame
+omlaag. Een grotere input kost meer rekenwerk per frame.</p>
+
+    <p><strong>Precisie</strong> — het getalformaat waarin de engine van het model is gebouwd,
+getoond naast de modelnaam waar het is vastgelegd. INT8 slaat gewichten en
+activaties op in 8-bits gehele getallen; een lagere precisie betekent doorgaans
+snellere inferentie (inference), met enig risico voor de nauwkeurigheid.</p>
+
+    <p><strong>Apparaat</strong> — de hardware waarop de pipeline draaide: een Jetson-module (Orin
+Nano, AGX Thor), een op GB10 gebaseerde DGX Spark, of een GeForce-desktop-GPU. De
+versies van DeepStream, CUDA en JetPack/L4T, en de CPU waar die is vastgelegd,
+staan in de uitgeklapte rij.</p>
+<h3 id="twee-onderscheiden-om-eerst-goed-te-begrijpen">
+  
+  
+    <a href="#twee-onderscheiden-om-eerst-goed-te-begrijpen" class="anchor-heading" aria-labelledby="twee-onderscheiden-om-eerst-goed-te-begrijpen"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Twee onderscheiden om eerst goed te begrijpen
+  
+  
+</h3>
+    
+
+    <p><strong>Filters bepalen welke rijen verschijnen. Het doel verandert wat de getallen
+betekenen.</strong> Filteren op één apparaat maakt de tabel korter; het verhogen van de
+doel-FPS laat het aantal rijen ongemoeid, maar berekent Max. camera’s en het
+PASS/FAIL-resultaat van elke meting opnieuw.</p>
+
+    <p><strong>FPS per camera en totale FPS beantwoorden verschillende vragen.</strong> Camera’s
+toevoegen verhoogt het totaal meestal een tijdlang, zelfs terwijl elke camera
+minder frames krijgt. Een apparaat kan op het totaal drukker en productiever
+lijken terwijl al zijn camera’s onder uw behoefte zijn gezakt, dus lees het getal
+per camera voor “houdt het bij” en het totaal voor “hoe hard werkt het apparaat”.</p>
+<h3 id="stel-de-cameralimiet-in">
+  
+  
+    <a href="#stel-de-cameralimiet-in" class="anchor-heading" aria-labelledby="stel-de-cameralimiet-in"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1. Stel de cameralimiet in
+  
+  
+</h3>
+    
+
+    <p>De schuifregelaar boven in het filterpaneel is een bovengrens, geen selectie. Hij
+verbergt alles wat daarboven is gemeten en stopt bij het grootste aantal camera’s
+dat tot nu toe is gemeten. Stel hem in op 12, en elke rij rapporteert de zwaarste
+belasting waarbij ze is gemeten tot 12 camera’s — de reeks, de curve en de
+streampreview volgen. Een configuratie waarvoor niets zo laag is gemeten, valt uit
+de tabel tot de limiet weer wordt verhoogd.</p>
+
+    <p>Stel hem in op het aantal camera’s dat u daadwerkelijk wilt draaien, en elke rij
+beantwoordt uw vraag bij uw belasting.</p>
+<h3 id="verfijn-de-configuraties">
+  
+  
+    <a href="#verfijn-de-configuraties" class="anchor-heading" aria-labelledby="verfijn-de-configuraties"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2. Verfijn de configuraties
+  
+  
+</h3>
+    
+
+    <p>De apparaat- en modelfilters worden gecombineerd, en elke kolom is sorteerbaar —
+zo kunt u de tabel benaderen vanuit de hardware, vanuit het model of vanuit de
+framerate. De leerzaamste vergelijkingen wijzigen één variabele: hetzelfde model
+op twee apparaten, of de vier YOLO11-groottes op hetzelfde apparaat.</p>
+<h3 id="stel-uw-doel-fps-in">
+  
+  
+    <a href="#stel-uw-doel-fps-in" class="anchor-heading" aria-labelledby="stel-uw-doel-fps-in"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. Stel uw doel-FPS in
+  
+  
+</h3>
+    
+
+    <p>Het doel (target) is de framerate per camera die u acceptabel vindt. Het opent
+met elke uitgeklapte rij, naast de reeks waarop het van toepassing is, en het is
+één waarde voor de hele tabel: verschuift u het in één rij, dan verschuift het
+voor alle rijen. De standaardwaarde is <strong>15 FPS</strong>, en de grens is <strong>inclusief</strong> —
+precies 15.0 slaagt nog.</p>
+
+    <p>Een wijziging beoordeelt elke configuratie direct opnieuw. Ze werkt de groene en
+rode kleuring van FPS / camera bij, het PASS/FAIL-resultaat op elk punt van de
+uitgeklapte reeks, en Max. camera’s.</p>
+
+    <p>Het juiste doel hangt af van waarvoor de video dient. Snel bewegende onderwerpen
+— voertuigen, of alles wat u moet tellen of volgen — vragen meer frames dan
+bevestigen dat er iemand in een ruimte aanwezig is. Omdat de camera’s 20 FPS
+versturen, kan een doel boven 20 in deze metingen niet worden gehaald.</p>
+<h3 id="lees-max-cameras">
+  
+  
+    <a href="#lees-max-cameras" class="anchor-heading" aria-labelledby="lees-max-cameras"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. Lees Max. camera’s
+  
+  
+</h3>
+    
+
+    <p><strong>Max. camera’s</strong> is het hoogste <em>gemeten</em> aantal camera’s waarbij de configuratie
+uw doel nog haalt, tot de cameralimiet. Het wordt alleen uit de gemeten punten
+afgeleid — er wordt niets geëxtrapoleerd — en als geen enkel gemeten punt het doel
+haalt, is het 0.</p>
+
+    <p>Omdat u het doel zelf instelt, is Max. camera’s geen vaste eigenschap van een
+configuratie, en evenmin een belofte over de aantallen tussen twee metingen.</p>
+
+    <div class="bt-howto-example">
+      <p><strong>Voorbeeld.</strong> PeopleNet op GB10 levert 15.5 FPS per camera bij 30 camera’s en
+14.1 bij 32, dus bij het standaarddoel van 15 FPS is Max. camera’s 30. Verhoog het
+doel naar 18 FPS en het daalt naar 26, het laatste aantal dat nog op 19.0 staat.
+Intussen stopt de totale FPS met groeien: ongeveer 494 bij 26 en 28 camera’s, 452
+bij 32 — de extra camera’s delen dezelfde doorvoer in plaats van eraan bij te
+dragen.</p>
+    </div>
+
+    <p>Een <strong>≥</strong> naast het getal betekent dat het apparaat zijn eigen limiet nog niet had
+bereikt: bij het grootste getoonde aantal camera’s leverde het nog de 20 FPS van
+de camera’s, binnen 10%. Die getallen zijn ondergrenzen, geen plafonds. De ≥
+hangt ook af van de cameralimiet — verlaag de limiet, en een apparaat dat bij 28
+camera’s terugvalt, toont ≥ bij 16, omdat het bij 16 nog bijhield.</p>
+<h3 id="open-een-rij-voor-de-details">
+  
+  
+    <a href="#open-een-rij-voor-de-details" class="anchor-heading" aria-labelledby="open-een-rij-voor-de-details"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5. Open een rij voor de details
+  
+  
+</h3>
+    
+
+    <p>De hele rij is klikbaar. Als u er een opent, ziet u de volledige camerareeks, met
+PASS/FAIL dat aangeeft of uw doel bij elk aantal wordt gehaald — het gedrag dat
+één enkel kerngetal verbergt.</p>
+
+    <p>Naast de reeks speelt een <strong>streampreview</strong> dezelfde korte clip twee keer naast
+elkaar af: het linkerpaneel met de eigen 20 FPS van de camera, het rechter met de
+framerate die die configuratie volhield. Het kiezen van een aantal camera’s in de
+reeks verandert het rechterpaneel, zodat de kosten van extra camera’s zichtbaar
+zijn in plaats van afgeleid. De clip toont snel bewegende voertuigen langs een
+vaste camera, omdat framerate het makkelijkst te beoordelen is bij snelle
+beweging. Het is geen beeldmateriaal van een benchmarkrun, en er wordt geen
+detectie op uitgevoerd.</p>
+
+    <p>De grafiek bevat twee curves:</p>
+
+    <ul>
+      <li><strong>FPS per camera</strong> — die meestal rond 20 blijft en daarna daalt zodra het
+apparaat geen marge meer heeft.</li>
+      <li><strong>Totale FPS</strong> — die met elke toegevoegde camera stijgt en daarna op hetzelfde
+punt afvlakt.</li>
+    </ul>
+
+    <p>Het aantal camera’s waarbij de twee curves van richting veranderen, is de
+werkgrens van het apparaat voor dat model; de stippellijn markeert uw doel. De
+hardware- en softwareversies van het apparaat, en de benchmarkruns waaruit de rij
+afkomstig is, staan onder de grafiek.</p>
+<h3 id="waar-te-beginnen">
+  
+  
+    <a href="#waar-te-beginnen" class="anchor-heading" aria-labelledby="waar-te-beginnen"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Waar te beginnen
+  
+  
+</h3>
+    
+
+    <p><strong>“We hebben 16 camera’s nodig met PeopleNet op 15 FPS — welk apparaat?”</strong>
+Selecteer het model, stel de cameralimiet in op 16, en sorteer op FPS / camera.
+Elke rij die 16 toont in de kolom Camera’s en 15 of meer per camera, antwoordt
+ja. Een rij met minder camera’s is nooit bij 16 gemeten, dus die heeft de vraag
+hoe dan ook niet beantwoord.</p>
+
+    <p><strong>“We hebben al een Jetson AGX Thor; welke YOLO11-grootte kunnen we ons
+veroorloven?”</strong> Selecteer het apparaat en sorteer op Max. camera’s. De vier
+groottes verschillen alleen in het model, dus het verschil ertussen is de prijs
+van een groter model.</p>
+
+    <p><strong>“Hoe presteert hetzelfde model op verschillende hardware?”</strong> Selecteer één
+model en vergelijk de apparaten bij dezelfde cameralimiet. Door de limiet te
+verschuiven, ziet u waar elk apparaat achterop begint te raken.</p>
+<h3 id="wat-dit-u-niet-vertelt">
+  
+  
+    <a href="#wat-dit-u-niet-vertelt" class="anchor-heading" aria-labelledby="wat-dit-u-niet-vertelt"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Wat dit u niet vertelt
+  
+  
+</h3>
+    
+
+    <p>De tabel gebruikt bewust één vaste, vergelijkbare workload, zodat een eerste
+vergelijking mogelijk is zonder een locatieonderzoek. Ze is <strong>geen vervanging
+voor een test op uw eigen camera’s</strong>.</p>
+
+    <p>Elk getal komt van live 1080p H.264-camera’s op 20 FPS. Camera’s met een andere
+resolutie, codec of framerate veranderen de decodeer- en schaalbelasting. Een
+productiepipeline voegt vaak tracking, secundaire classifiers, opname of analyse
+toe bovenop detectie, en wat de gemeten pipeline niet draaide, zit niet in deze
+getallen. Elke meting beslaat 30 seconden stabiele toestand, dus ze zegt niets
+over het gedrag over uren — thermische limieten in een behuizing zonder
+ventilator, bijvoorbeeld. En dit zijn alleen snelheidsmetingen: niets hier meet
+hoe nauwkeurig een model detecteert.</p>
+
+    <p>Hogere aantallen camera’s op de desktop-GPU’s, waar de RTX 3060 en RTX 3090 bij
+het hoogste geteste aantal nog bijhielden, vereisen een camerabron die niet eerder
+opraakt dan de GPU. Die runs staan nog gepland, en de tabel groeit wanneer ze
+binnen zijn.</p>
+
+  </div>
+</details>
+
+<link rel="stylesheet" href="/assets/css/benchmark-table.css" />
+
+<link rel="stylesheet" href="/assets/css/cv-benchmark-table.css" />
+
+<div data-cvbt-src="/assets/data/cv-benchmarks/index.json" data-cvbt-video="/assets/video/cv-preview.mp4"></div>
+
+<p class="bt-attribution">Elk getal op deze pagina is gemeten met de
+cordatus-benchmark-tool.</p>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "name": "CV Inference Benchmark Explorer",
+  "description": "Verken de inferentiebenchmarks voor computer vision op NVIDIA GPU's en Jetson-apparaten. Kies een GPU en een detectiemodel om te zien welke framerate het volhoudt, hoe die daalt naarmate er camera's bijkomen, en hoeveel camera's het draagt bij uw doel-FPS.",
+  "url": "https://whitepapers.aetherix.com/nl/cv-inference-benchmarks/",
+  "inLanguage": "nl",
+  "dateModified": "2026-09-24",
+  "creator": { "@type": "Organization", "name": "Aetherix B.V.", "url": "https://aetherix.com" },
+  "isAccessibleForFree": true,
+  "keywords": ["PeopleNet","YOLO11-N","YOLO11L","YOLO11M","YOLO11S","GB10","Jetson AGX Thor","Jetson Orin Nano","RTX 3060","RTX 3090"],
+  "variableMeasured": ["Frames per second per camera", "Total frames per second", "Frame drop (%)", "Camera count", "Max cameras holding the target frame rate"],
+  "distribution": [{ "@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": "https://whitepapers.aetherix.com/assets/data/cv-benchmarks/index.json" }, { "@type": "DataDownload", "encodingFormat": "text/plain", "contentUrl": "https://whitepapers.aetherix.com/llms-full.txt" }]
+}
+</script>
+
+<div class="cvbt-permalinks-src" hidden="">
+<span data-cvbt-permalink="gb10-peoplenet-int8"><a href="/nl/cv-inference-benchmarks/gb10/peoplenet-int8/">Permanente pagina van dit resultaat</a></span>
+<span data-cvbt-permalink="jetson-agx-thor-peoplenet-int8"><a href="/nl/cv-inference-benchmarks/jetson-agx-thor/peoplenet-int8/">Permanente pagina van dit resultaat</a></span>
+<span data-cvbt-permalink="jetson-agx-thor-yolo11-n"><a href="/nl/cv-inference-benchmarks/jetson-agx-thor/yolo11-n/">Permanente pagina van dit resultaat</a></span>
+<span data-cvbt-permalink="jetson-agx-thor-yolo11l"><a href="/nl/cv-inference-benchmarks/jetson-agx-thor/yolo11l/">Permanente pagina van dit resultaat</a></span>
+<span data-cvbt-permalink="jetson-agx-thor-yolo11m"><a href="/nl/cv-inference-benchmarks/jetson-agx-thor/yolo11m/">Permanente pagina van dit resultaat</a></span>
+<span data-cvbt-permalink="jetson-agx-thor-yolo11s"><a href="/nl/cv-inference-benchmarks/jetson-agx-thor/yolo11s/">Permanente pagina van dit resultaat</a></span>
+<span data-cvbt-permalink="jetson-orin-nano-peoplenet-int8"><a href="/nl/cv-inference-benchmarks/jetson-orin-nano/peoplenet-int8/">Permanente pagina van dit resultaat</a></span>
+<span data-cvbt-permalink="rtx-3060-peoplenet-int8"><a href="/nl/cv-inference-benchmarks/rtx-3060/peoplenet-int8/">Permanente pagina van dit resultaat</a></span>
+<span data-cvbt-permalink="rtx-3090-peoplenet-int8"><a href="/nl/cv-inference-benchmarks/rtx-3090/peoplenet-int8/">Permanente pagina van dit resultaat</a></span>
+<span data-cvbt-permalink="rtx-3090-yolo11-n"><a href="/nl/cv-inference-benchmarks/rtx-3090/yolo11-n/">Permanente pagina van dit resultaat</a></span>
+</div>
+
+<script src="/assets/js/cv-benchmark-table.nl.js"></script>
+
+          
+
+          
+        </main>
+        
+
+
+      </div>
+    </div>
+    
+      
+
+<div class="search-overlay"></div>
+
+    
+  </div>
+
+  
+
+  <script>
+    window.JTD_I18N = {
+      search_no_results: "Geen resultaten gevonden",
+      copy_code: "Code naar klembord kopiëren"
+    };
+  </script>
+
+  
+
+
+<div id="cookie-consent-banner" class="cookie-consent" role="dialog"
+     aria-modal="false" aria-label="Cookie consent"
+     data-consent-state="pending" hidden>
+  <div class="cookie-consent__body">
+    <div class="cookie-consent__text">
+      <span class="cookie-consent__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+          <path d="M21 12a9 9 0 1 1-9-9 4.5 4.5 0 0 0 4.5 4.5A4.5 4.5 0 0 0 21 12zm-9-3.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-1.5 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm6-1.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-3 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0z"/>
+        </svg>
+      </span>
+      <p>Wij gebruiken cookies om het websiteverkeer te analyseren en uw ervaring te verbeteren. Door op 'Accepteren' te klikken, stemt u in met het gebruik van analytische cookies zoals beschreven in ons privacybeleid.
+        <a href="https://aetherix.com/privacy-policy/" target="_blank" rel="noopener noreferrer"
+           class="cookie-consent__link">Privacybeleid</a>
+      </p>
+    </div>
+    <div class="cookie-consent__actions">
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--reject"
+              data-consent-action="rejected">Weigeren</button>
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--accept"
+              data-consent-action="accepted">Accepteren</button>
+    </div>
+  </div>
+</div>
+<script>
+  // Eski karar önbellekte varsa bannerı gösterme
+  (function() {
+    try {
+      var v = localStorage.getItem('cookieConsent');
+      if (v === 'accepted' || v === 'rejected') {
+        document.documentElement.dataset.cookieConsent = v;
+      }
+    } catch (e) {}
+  })();
+</script>
+<script src="/assets/js/cookie-banner.js" defer></script>
+
+</body>
+</html>
+

@@ -1,0 +1,1513 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-default.css">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet">
+
+  <style id="jtd-nav-activation">
+  
+
+.site-nav > ul.nav-list:first-child > li > a,
+.site-nav > ul.nav-list:first-child > li > ul > li:not(:nth-child(2)) > a,
+.site-nav > ul.nav-list:first-child > li > ul > li > ul > li > a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:not(:first-child) a,
+.site-nav li.external a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(2) > a {
+  font-weight: 600;
+  text-decoration: none;
+}.site-nav > ul.nav-list:first-child > li:nth-child(3) > button svg,
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(2) > button svg {
+  transform: rotate(-90deg);
+}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list,
+.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list > li.nav-list-item:nth-child(2) > ul.nav-list {
+  display: block;
+}
+  </style>
+
+  
+
+  
+    <script src="/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+
+
+  <!-- Begin Jekyll SEO tag v2.9.1 -->
+<title>Conditional Memory and Offloading in LLM Inference | Aetherix White Papers</title>
+<meta name="generator" content="Jekyll v4.3.4" />
+<meta property="og:title" content="Conditional Memory and Offloading in LLM Inference" />
+<meta property="og:locale" content="en" />
+<meta name="description" content="How model architecture decides what must remain in GPU memory and what can move to host RAM or NVMe: conditional memory, memory hierarchies of DGX Spark, RTX PRO 6000 and DGX B300, and measured results with DeepSeek-V4.1-Flash and Qwen3.8-Flash-Next." />
+<meta name="twitter:description" property="og:description" content="How model architecture decides what must remain in GPU memory and what can move to host RAM or NVMe: conditional memory, memory hierarchies of DGX Spark, RTX PRO 6000 and DGX B300, and measured results with DeepSeek-V4.1-Flash and Qwen3.8-Flash-Next." />
+<link rel="canonical" href="https://whitepapers.aetherix.com/papers/conditional-memory-offloading/" />
+<meta property="og:url" content="https://whitepapers.aetherix.com/papers/conditional-memory-offloading/" />
+<meta property="og:site_name" content="Aetherix White Papers" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-09-29T00:00:00+00:00" />
+<meta property="article:modified_time" content="2026-09-29T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Conditional Memory and Offloading in LLM Inference" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2026-09-29T00:00:00+00:00","datePublished":"2026-09-29T00:00:00+00:00","description":"How model architecture decides what must remain in GPU memory and what can move to host RAM or NVMe: conditional memory, memory hierarchies of DGX Spark, RTX PRO 6000 and DGX B300, and measured results with DeepSeek-V4.1-Flash and Qwen3.8-Flash-Next.","headline":"Conditional Memory and Offloading in LLM Inference","mainEntityOfPage":{"@type":"WebPage","@id":"https://whitepapers.aetherix.com/papers/conditional-memory-offloading/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://whitepapers.aetherix.com/assets/images/aetherix-logo.png"}},"url":"https://whitepapers.aetherix.com/papers/conditional-memory-offloading/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  
+<!-- Google tag (gtag.js) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JWLN33085T"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+
+  // Consent Mode v2 — default DENIED. Banner onayı ile GRANTED olur.
+  // KVKK/GDPR uyumu: ziyaretçi onay vermeden çerez set edilmez.
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    functionality_storage: 'granted',
+    security_storage: 'granted',
+    wait_for_update: 500
+  });
+
+  gtag('js', new Date());
+  gtag('config', 'G-JWLN33085T', {
+    anonymize_ip: true
+  });
+</script>
+
+<link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/papers/conditional-memory-offloading/">
+<link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/papers/conditional-memory-offloading/">
+<link rel="alternate" hreflang="x-default" href="https://whitepapers.aetherix.com/papers/conditional-memory-offloading/">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/images/favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+
+
+</head>
+
+<body>
+  <a class="skip-to-main" href="#main-content">Skip to main content</a>
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="svg-link" viewBox="0 0 24 24">
+  <title>Link</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+</symbol>
+
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+  <title>Menu</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+    <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</symbol>
+
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+  <title>Expand</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</symbol>
+
+  <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
+<symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+  <title id="svg-external-link-title">(external link)</title>
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+</symbol>
+
+  
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+  <title>Document</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+</symbol>
+
+    <symbol id="svg-search" viewBox="0 0 24 24">
+  <title>Search</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</symbol>
+
+  
+  
+    <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+<symbol id="svg-copy" viewBox="0 0 16 16">
+  <title>Copy</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+</symbol>
+<symbol id="svg-copied" viewBox="0 0 16 16">
+  <title>Copied</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"/>
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"/>
+  </svg>
+</symbol>
+
+  
+</svg>
+
+  
+    <div class="side-bar">
+  <div class="site-header" role="banner">
+    <a href="/" class="site-title lh-tight">
+  <div class="site-logo" role="img" aria-label="Aetherix White Papers"></div>
+
+</a>
+    <button id="menu-button" class="site-button btn-reset" aria-label="Toggle menu" aria-pressed="false">
+      <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  <nav aria-label="Main" id="site-nav" class="site-nav">
+  
+  
+    <ul class="nav-list"><li class="nav-list-item"><a href="/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/about/" class="nav-list-link">About</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in White Papers category" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+    </button><a href="/papers/" class="nav-list-link">White Papers</a><ul class="nav-list"><li class="nav-list-item"><a href="/papers/local-llm-guide/" class="nav-list-link">Local LLM Usage Guide</a></li><li class="nav-list-item"><a href="/papers/conditional-memory-offloading/" class="nav-list-link">Conditional Memory and Offloading in LLM Inference</a></li><li class="nav-list-item"><a href="/papers/b300-gb300-cluster-architecture/" class="nav-list-link">NVIDIA DGX B300 vs GB300 NVL72 Cluster Architecture Comparison</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-2node-cluster-setup/" class="nav-list-link">DGX Spark 2-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-3node-cluster-setup/" class="nav-list-link">DGX Spark 3-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-4node-cluster-setup/" class="nav-list-link">DGX Spark 4-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-8node-cluster-setup/" class="nav-list-link">DGX Spark 8-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/qwen3.6-27b-dgx-spark-benchmark/" class="nav-list-link">Qwen3.6-27B DGX Spark Benchmark</a></li><li class="nav-list-item"><a href="/papers/qwen3.6-27b-dgx-spark-scaling/" class="nav-list-link">Qwen3.6-27B DGX Spark Cluster Scaling</a></li><li class="nav-list-item"><a href="/papers/deepseek-v4.1-flash-4spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash 4× DGX Spark Deployment</a></li><li class="nav-list-item"><a href="/papers/deepseek-v4.1-flash-8spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash 8× DGX Spark TP8 Deployment</a></li><li class="nav-list-item"><a href="/papers/kimi-k3-dgx-b300-inference-benchmark/" class="nav-list-link">Kimi K3 Inference Benchmark on DGX-B300</a></li></ul></li><li class="nav-list-item"><a href="/llm-inference-benchmarks/" class="nav-list-link">LLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/cv-inference-benchmarks/" class="nav-list-link">CV Inference Benchmark Explorer</a></li></ul>
+
+  
+</nav>
+
+
+  
+  
+    <div class="lang-switcher">
+  
+    
+    
+      <span class="lang-switcher-item active">EN</span>
+    
+  
+    
+    
+      <a class="lang-switcher-item" href="/nl/papers/conditional-memory-offloading/">NL</a>
+    
+  
+</div>
+<script src="/assets/js/lang-switch.js"></script>
+
+  
+</div>
+
+  
+  <div class="main" id="top">
+    <div id="main-header" class="main-header">
+  
+    
+
+<div class="search" role="search">
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Search" aria-label="Search" autocomplete="off">
+    <label for="search-input" class="search-label"><svg viewBox="0 0 24 24" class="search-icon"><use xlink:href="#svg-search"></use></svg></label>
+  </div>
+  <div id="search-results" class="search-results"></div>
+</div>
+
+  
+  
+  
+    <nav aria-label="Auxiliary" class="aux-nav">
+  <ul class="aux-nav-list">
+    
+      <li class="aux-nav-list-item">
+        <a href="https://aetherix.com" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          aetherix.com
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://github.com/aetherix-bv" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          GitHub
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+  
+</div>
+
+    <div class="main-content-wrap">
+      <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+  <ol class="breadcrumb-nav-list">
+    <li class="breadcrumb-nav-list-item"><a href="/papers/">White Papers</a></li>
+    <li class="breadcrumb-nav-list-item"><span>Conditional Memory and Offloading in LLM Inference</span></li>
+  </ol>
+</nav>
+      <div id="main-content" class="main-content">
+        <main>
+          
+            <blockquote>
+  <p><strong>Publication date:</strong> September 2026
+<strong>Scope:</strong> How an LLM uses memory during inference, which architectural choices change that, how the memory hierarchies of DGX Spark, RTX PRO 6000 and DGX B300 differ, and what offloading can and cannot achieve — evaluated with measurements of DeepSeek-V4.1-Flash and Qwen3.8-Flash-Next.
+<strong>Note:</strong> Model names, software versions and measured results are valid as of September 2026. Support for offloading in inference engines is changing quickly; the enduring question is how much data each step needs and when it must arrive.</p>
+</blockquote><hr />
+<h2 class="no_toc" id="table-of-contents">
+  
+  
+    <a href="#table-of-contents" class="anchor-heading" aria-labelledby="table-of-contents"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Table of contents
+  
+  
+</h2>
+    
+
+<ul id="markdown-toc">
+  <li><a href="#executive-summary" id="markdown-toc-executive-summary">Executive Summary</a></li>
+  <li><a href="#1-introduction" id="markdown-toc-1-introduction">1. Introduction</a></li>
+  <li><a href="#2-how-an-llm-uses-memory" id="markdown-toc-2-how-an-llm-uses-memory">2. How an LLM Uses Memory</a>    <ul>
+      <li><a href="#21-memory-capacity-bandwidth-and-latency" id="markdown-toc-21-memory-capacity-bandwidth-and-latency">2.1. Memory capacity, bandwidth and latency</a></li>
+      <li><a href="#22-what-occupies-memory-during-inference" id="markdown-toc-22-what-occupies-memory-during-inference">2.2. What occupies memory during inference</a></li>
+      <li><a href="#23-why-frequently-accessed-data-stays-close-to-the-gpu" id="markdown-toc-23-why-frequently-accessed-data-stays-close-to-the-gpu">2.3. Why frequently accessed data stays close to the GPU</a></li>
+    </ul>
+  </li>
+  <li><a href="#3-architecture-and-memory-access" id="markdown-toc-3-architecture-and-memory-access">3. Architecture and Memory Access</a>    <ul>
+      <li><a href="#31-standard-attention-and-moe-what-is-read-at-each-step" id="markdown-toc-31-standard-attention-and-moe-what-is-read-at-each-step">3.1. Standard attention and MoE: what is read at each step?</a></li>
+      <li><a href="#32-attention-architectures-that-reduce-memory-requirements" id="markdown-toc-32-attention-architectures-that-reduce-memory-requirements">3.2. Attention architectures that reduce memory requirements</a></li>
+      <li><a href="#33-conditional-memory-from-token-ids-to-learned-vectors" id="markdown-toc-33-conditional-memory-from-token-ids-to-learned-vectors">3.3. Conditional memory: from token IDs to learned vectors</a></li>
+      <li><a href="#34-comparison-what-makes-offloading-practical" id="markdown-toc-34-comparison-what-makes-offloading-practical">3.4. Comparison: what makes offloading practical?</a></li>
+    </ul>
+  </li>
+  <li><a href="#4-the-memory-hierarchy-of-the-devices" id="markdown-toc-4-the-memory-hierarchy-of-the-devices">4. The Memory Hierarchy of the Devices</a>    <ul>
+      <li><a href="#41-memory-tiers" id="markdown-toc-41-memory-tiers">4.1. Memory tiers</a></li>
+      <li><a href="#42-unified-memory-vs-dedicated-gpu-memory" id="markdown-toc-42-unified-memory-vs-dedicated-gpu-memory">4.2. Unified memory vs dedicated GPU memory</a></li>
+      <li><a href="#43-device-comparison" id="markdown-toc-43-device-comparison">4.3. Device comparison</a></li>
+      <li><a href="#44-why-conditional-memory-offloading-can-have-low-overhead" id="markdown-toc-44-why-conditional-memory-offloading-can-have-low-overhead">4.4. Why conditional-memory offloading can have low overhead</a></li>
+    </ul>
+  </li>
+  <li><a href="#5-the-models-examined" id="markdown-toc-5-the-models-examined">5. The Models Examined</a>    <ul>
+      <li><a href="#51-deepseek-v41-flash" id="markdown-toc-51-deepseek-v41-flash">5.1. DeepSeek-V4.1-Flash</a></li>
+      <li><a href="#52-qwen38-flash-next" id="markdown-toc-52-qwen38-flash-next">5.2. Qwen3.8-Flash-Next</a></li>
+      <li><a href="#53-model-size-and-memory-requirements" id="markdown-toc-53-model-size-and-memory-requirements">5.3. Model size and memory requirements</a></li>
+    </ul>
+  </li>
+  <li><a href="#6-benchmark-results" id="markdown-toc-6-benchmark-results">6. Benchmark Results</a>    <ul>
+      <li><a href="#61-methodology" id="markdown-toc-61-methodology">6.1. Methodology</a></li>
+      <li><a href="#62-deepseek-v41-flash-on-4-dgx-spark-fitting-the-model-with-engram-on-disk" id="markdown-toc-62-deepseek-v41-flash-on-4-dgx-spark-fitting-the-model-with-engram-on-disk">6.2. DeepSeek-V4.1-Flash on 4× DGX Spark: fitting the model with Engram-on-disk</a></li>
+      <li><a href="#63-deepseek-v41-flash-on-8-dgx-spark-the-table-in-memory-vs-on-nvme" id="markdown-toc-63-deepseek-v41-flash-on-8-dgx-spark-the-table-in-memory-vs-on-nvme">6.3. DeepSeek-V4.1-Flash on 8× DGX Spark: the table in memory vs on NVMe</a></li>
+      <li><a href="#64-qwen38-flash-next-on-one-dgx-spark-fitting-a-1327-gb-checkpoint" id="markdown-toc-64-qwen38-flash-next-on-one-dgx-spark-fitting-a-1327-gb-checkpoint">6.4. Qwen3.8-Flash-Next on one DGX Spark: fitting a 132.7 GB checkpoint</a></li>
+      <li><a href="#65-qwen38-flash-next-on-one-rtx-pro-6000-fitting-the-model-with-host-memory-offloading" id="markdown-toc-65-qwen38-flash-next-on-one-rtx-pro-6000-fitting-the-model-with-host-memory-offloading">6.5. Qwen3.8-Flash-Next on one RTX PRO 6000: fitting the model with host-memory offloading</a></li>
+    </ul>
+  </li>
+  <li><a href="#7-discussion" id="markdown-toc-7-discussion">7. Discussion</a>    <ul>
+      <li><a href="#71-memory-versus-nvme-when-the-model-already-fits" id="markdown-toc-71-memory-versus-nvme-when-the-model-already-fits">7.1. Memory versus NVMe when the model already fits</a></li>
+      <li><a href="#72-running-models-that-exceed-gpu-memory" id="markdown-toc-72-running-models-that-exceed-gpu-memory">7.2. Running models that exceed GPU memory</a></li>
+      <li><a href="#73-model-capability" id="markdown-toc-73-model-capability">7.3. Model capability</a></li>
+      <li><a href="#74-operational-requirements" id="markdown-toc-74-operational-requirements">7.4. Operational requirements</a></li>
+    </ul>
+  </li>
+  <li><a href="#8-sizing-with-conditional-memory" id="markdown-toc-8-sizing-with-conditional-memory">8. Sizing With Conditional Memory</a>    <ul>
+      <li><a href="#81-the-revised-memory-budget" id="markdown-toc-81-the-revised-memory-budget">8.1. The revised memory budget</a></li>
+      <li><a href="#82-sizing-checklist" id="markdown-toc-82-sizing-checklist">8.2. Sizing checklist</a></li>
+    </ul>
+  </li>
+  <li><a href="#9-conclusion-and-outlook" id="markdown-toc-9-conclusion-and-outlook">9. Conclusion and Outlook</a></li>
+  <li><a href="#glossary-terms" id="markdown-toc-glossary-terms">Glossary (Terms)</a></li>
+  <li><a href="#resources" id="markdown-toc-resources">Resources</a>    <ul>
+      <li><a href="#notes" id="markdown-toc-notes">Notes</a></li>
+    </ul>
+  </li>
+</ul><hr />
+<h2 id="executive-summary">
+  
+  
+    <a href="#executive-summary" class="anchor-heading" aria-labelledby="executive-summary"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Executive Summary
+  
+  
+</h2>
+    
+
+<ul>
+  <li><strong>Start with the memory budget.</strong> Our <a href="/papers/local-llm-guide/">Local LLM Usage Guide</a> treats VRAM as the central sizing constraint. Conditional memory changes which model parameters need to remain in GPU memory.</li>
+  <li><strong>Not every parameter is read on every token.</strong> Some recent models, including the two examined here, add what DeepSeek calls <strong>conditional memory</strong>: large lookup tables of hashed n-gram embeddings (<em>Engram</em> in DeepSeek-V4.1-Flash, the <em>n-gram embedding table</em> in Qwen3.8-Flash-Next, called PLE in SGLang). Each token requires only a few kilobytes of embedding data, and the required rows can be identified from token IDs before the forward pass.</li>
+  <li><strong>Storage requirements and memory traffic differ.</strong> Large tables supply only a few rows per token. Small transfers and prefetching make low-overhead offloading possible, while repeatedly moving active weight matrices or attention caches is more demanding.</li>
+  <li><strong>Where it can go depends on the device’s memory design.</strong> On <strong>DGX Spark</strong> (unified memory) host RAM and GPU memory are the same pool, so the table is backed by NVMe with frequently accessed pages cached in RAM. On <strong>RTX PRO 6000</strong> (dedicated GPU memory) the table goes to pinned host RAM across PCIe. On <strong>DGX B300</strong>, the four-GPU DeepSeek configuration has enough GPU memory to hold the tables as well.</li>
+  <li><strong>Measured results:</strong> the tested 763B DeepSeek-V4.1-Flash configuration runs on 4× DGX Spark by placing its 196B-parameter Engram tables on NVMe; on 8× DGX Spark, moving them to NVMe increased the reported KV-cache allocation by ~21 GB per node and raised the configured context limit from 300K to 1M tokens. Qwen3.8-Flash-Next, with a 132.7 GB quantized checkpoint, runs on a single DGX Spark and a single RTX PRO 6000, with measured performance suitable for interactive use at the concurrency levels discussed below.</li>
+  <li><strong>Two practical outcomes.</strong> The two 8× DGX Spark configurations show the trade-off between keeping Engram in memory and placing it on disk. The 4× Spark and single-device Qwen runs demonstrate useful service from checkpoints that exceed the memory available for model weights.</li>
+  <li><strong>Sizing consequence:</strong> include the remaining model weights, KV cache, recurrent state and runtime buffers in the GPU memory budget; include offloaded tables in the host RAM or NVMe budget. If more models adopt this design, the same device could run larger models than its GPU memory alone would suggest.</li>
+</ul><hr />
+<h2 id="1-introduction">
+  
+  
+    <a href="#1-introduction" class="anchor-heading" aria-labelledby="1-introduction"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1. Introduction
+  
+  
+</h2>
+    
+
+<p>The <a href="/papers/local-llm-guide/">Local LLM Usage Guide</a> starts hardware sizing with GPU memory: model weights, KV cache, recurrent state and runtime buffers must fit. Conditional memory adds a useful distinction to that budget. Some learned parameters form large tables from which each token retrieves only a few rows; keeping those tables outside GPU memory can make a previously oversized model practical on the same device.</p>
+
+<p>This paper follows that distinction from <strong>architecture to deployment</strong>: why attention, experts and embeddings have different access patterns; how those patterns affect offloading; and what the DeepSeek-V4.1-Flash and Qwen3.8-Flash-Next runs demonstrate on DGX Spark and RTX PRO 6000. DGX B300 provides an example of a system with separate CPU and GPU memory in the hardware discussion.</p>
+
+<p>The focus is the mechanism and its sizing consequences. Launch instructions remain in the linked deployment papers and SGLang cookbook.</p><hr />
+<h2 id="2-how-an-llm-uses-memory">
+  
+  
+    <a href="#2-how-an-llm-uses-memory" class="anchor-heading" aria-labelledby="2-how-an-llm-uses-memory"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2. How an LLM Uses Memory
+  
+  
+</h2>
+    
+<h3 id="21-memory-capacity-bandwidth-and-latency">
+  
+  
+    <a href="#21-memory-capacity-bandwidth-and-latency" class="anchor-heading" aria-labelledby="21-memory-capacity-bandwidth-and-latency"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.1. Memory capacity, bandwidth and latency
+  
+  
+</h3>
+    
+
+<p><strong>Memory capacity</strong> determines how much data fits; <strong>memory bandwidth</strong> determines how quickly it can be read. Offloading frees GPU memory by placing data in host RAM or storage, accessed through a slower connection. Whether that works well depends on the bytes needed at each step, the latency of accessing them, and whether the fetch can overlap useful computation.</p>
+
+<p>A 50 GB table that supplies a few kilobytes per token requires much less data transfer than 50 GB of matrices repeatedly used in computation. The storage requirement alone does not tell us the cost of moving either out of GPU memory.</p>
+<h3 id="22-what-occupies-memory-during-inference">
+  
+  
+    <a href="#22-what-occupies-memory-during-inference" class="anchor-heading" aria-labelledby="22-what-occupies-memory-during-inference"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.2. What occupies memory during inference
+  
+  
+</h3>
+    
+
+<p>The memory budget from §4.3 of the Local LLM Usage Guide still applies:</p>
+
+<blockquote>
+  <p><strong>Total memory = Model weights + KV cache + Recurrent state + Activations + Overhead</strong></p>
+</blockquote>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Component</th>
+      <th>What it is</th>
+      <th>Grows with</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Model weights</strong></td>
+      <td>The parameters: attention projections, experts, embeddings, output head</td>
+      <td>Model size and precision</td>
+    </tr>
+    <tr>
+      <td><strong>KV cache</strong></td>
+      <td>Cached keys and values, stored so attention layers do not have to recompute them</td>
+      <td>Context length × concurrent requests</td>
+    </tr>
+    <tr>
+      <td><strong>Recurrent state</strong></td>
+      <td>Fixed-size memory of linear-attention layers (e.g. Gated DeltaNet), plus serving buffers and saved copies</td>
+      <td>Active requests, cache policy and speculative settings</td>
+    </tr>
+    <tr>
+      <td><strong>Activations and overhead</strong></td>
+      <td>Temporary buffers, CUDA context, allocator fragmentation</td>
+      <td>Batch and prompt sizes, engine settings</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>This paper adds one distinction to the table: <strong>not all model weights behave the same way.</strong> Some are used as full matrices; others supply only selected rows. Section 3 explains which is which.</p>
+<h3 id="23-why-frequently-accessed-data-stays-close-to-the-gpu">
+  
+  
+    <a href="#23-why-frequently-accessed-data-stays-close-to-the-gpu" class="anchor-heading" aria-labelledby="23-why-frequently-accessed-data-stays-close-to-the-gpu"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.3. Why frequently accessed data stays close to the GPU
+  
+  
+</h3>
+    
+
+<p><strong>Prefill (prompt processing)</strong> processes the input tokens; <strong>decode (token generation)</strong> produces the response. At small batch sizes, reading weights often dominates decode, making memory bandwidth a useful first estimate:</p>
+
+<blockquote>
+  <p><strong>Memory-bound decode speed (tokens/s) ≈ Effective memory bandwidth (bytes/s) ÷ Bytes read per generated token</strong></p>
+</blockquote>
+
+<p>Compute, kernel overhead, communication and KV-cache or recurrent-state access can also limit speed. Batching and speculative decoding reuse weights across tokens, so a weight read is not necessarily repeated for every output token.</p>
+
+<p>Keeping frequently accessed data in GPU memory avoids a slower transfer on the execution path. CPU execution and weight streaming can make larger models run, but their performance depends on the workload and implementation. Conditional memory offers a different opportunity: keep the computation on the GPU while retrieving a small amount of data from a much larger table in host RAM or storage.</p><hr />
+<h2 id="3-architecture-and-memory-access">
+  
+  
+    <a href="#3-architecture-and-memory-access" class="anchor-heading" aria-labelledby="3-architecture-and-memory-access"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. Architecture and Memory Access
+  
+  
+</h2>
+    
+<h3 id="31-standard-attention-and-moe-what-is-read-at-each-step">
+  
+  
+    <a href="#31-standard-attention-and-moe-what-is-read-at-each-step" class="anchor-heading" aria-labelledby="31-standard-attention-and-moe-what-is-read-at-each-step"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.1. Standard attention and MoE: what is read at each step?
+  
+  
+</h3>
+    
+
+<p>In a Transformer, a token’s current representation is multiplied by learned matrices to form a <strong>query, key and value</strong>. The query is compared with the keys of the current and preceding tokens. After normalization, the attention weights determine how their value vectors are combined. The output then passes through further projections and a feed-forward network.</p>
+
+<p>This creates two different memory demands:</p>
+
+<ul>
+  <li><strong>Weights</strong> are learned during training and reused across requests. Dense projections and feed-forward layers use large matrices at each forward step.</li>
+  <li><strong>KV cache</strong> holds keys and values computed for the current conversation. Full attention consults the preceding context at each decode step, so this traffic grows with context length.</li>
+</ul>
+
+<p>For fast GPU execution, these frequently accessed matrices and active caches are normally kept in GPU memory. Offloading them is possible, but repeated transfers can dominate inference latency.</p>
+
+<p><strong>Mixture-of-Experts (MoE)</strong> changes the feed-forward part: a router selects a few expert networks for each token. Total parameters determine the storage requirement, while selected experts determine much of the weight traffic. This reduces computation, but selecting an expert still means using its matrices. A learned router chooses experts from the current hidden state, so the selection is only known during the forward pass. Expert caching and prefetching can help, but a cache miss is much more expensive than fetching a few embedding rows.</p>
+<h3 id="32-attention-architectures-that-reduce-memory-requirements">
+  
+  
+    <a href="#32-attention-architectures-that-reduce-memory-requirements" class="anchor-heading" aria-labelledby="32-attention-architectures-that-reduce-memory-requirements"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.2. Attention architectures that reduce memory requirements
+  
+  
+</h3>
+    
+
+<p>Several architecture changes reduce the cache or the amount of it read:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Architecture</th>
+      <th>What changes</th>
+      <th>Consequence for memory placement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Grouped-query attention (GQA)</strong></td>
+      <td>Several query heads share keys and values</td>
+      <td>Smaller KV cache; the active cache is still consulted during decode</td>
+    </tr>
+    <tr>
+      <td><strong>Compressed / sparse attention</strong></td>
+      <td>Stores compressed representations or selects a subset of positions</td>
+      <td>Less storage or fewer reads; selection and cache layout determine transfer costs</td>
+    </tr>
+    <tr>
+      <td><strong>Linear-attention hybrids</strong></td>
+      <td>Some layers update a fixed-size recurrent state instead of retaining a key and value for every token</td>
+      <td>Less context-dependent storage; the state must still be read and updated each step</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Qwen3.8-Flash-Next, for example, uses Gated DeltaNet in three of every four layers and sparse attention in the remaining layers. DeepSeek-V4.1-Flash compresses and shares attention caches. These changes leave more room for requests, but do not by themselves make the remaining state cheap to offload.</p>
+
+<p><strong>Conditional memory is an additional component alongside these layers.</strong> Its offloading advantage comes from the lookup pattern described next; it does not require moving attention computation off the GPU.</p>
+<h3 id="33-conditional-memory-from-token-ids-to-learned-vectors">
+  
+  
+    <a href="#33-conditional-memory-from-token-ids-to-learned-vectors" class="anchor-heading" aria-labelledby="33-conditional-memory-from-token-ids-to-learned-vectors"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.3. Conditional memory: from token IDs to learned vectors
+  
+  
+</h3>
+    
+
+<p>An <strong>embedding</strong> is a learned vector of numbers. An ordinary input embedding table maps each token ID to a row. Conditional memory extends that idea to short sequences of tokens, or <strong>n-grams</strong>, providing learned information about local token combinations alongside the representation computed by the network.</p>
+
+<p>The term was introduced by DeepSeek in the <a href="https://arxiv.org/abs/2601.07372">Engram paper</a> and is not yet a general name for the technique: Qwen describes its version as n-gram embeddings, and SGLang calls the table PLE. This paper uses <em>conditional memory</em> for both.</p>
+
+<p>The lookup and the computation that uses it are separate operations:</p>
+
+<ol>
+  <li><strong>Form the key.</strong> Take the recent token IDs: two for a bigram, three for a trigram. For example, IDs <code class="language-plaintext highlighter-rouge">[a, b, c]</code> give the suffixes <code class="language-plaintext highlighter-rouge">[b, c]</code> and <code class="language-plaintext highlighter-rouge">[a, b, c]</code>. A token may be a word, part of a word or another text fragment.</li>
+  <li><strong>Hash into tables.</strong> Each hash head converts that short sequence into a row address. Multiple heads provide several learned vectors even when two sequences collide in one table. No search across all rows is needed.</li>
+  <li><strong>Fetch the embeddings.</strong> Read the addressed rows and concatenate them. The table is learned model data, fixed during inference; it is not a conversation cache or a document database.</li>
+  <li><strong>Fuse with the hidden state.</strong> Projections transform the retrieved vector; a gate computed from the current hidden state controls how strongly it contributes. The same retrieved rows can therefore contribute differently in different contexts. This computation stays on the GPU; the large table can be elsewhere.</li>
+</ol>
+
+<p>This separation of embedding lookup and context-dependent gating is described in the <a href="https://arxiv.org/html/2601.07372v2#S2">Engram architecture</a>. Qwen’s <a href="https://arxiv.org/html/2608.30320#S2.SS3">n-gram embedding design</a> uses the same broad approach.</p>
+
+<p><strong>Example — Qwen3.8-Flash-Next.</strong> Each input position reads sixteen rows (bigrams and trigrams, eight hash heads each) of 160 one-byte FP8 values: about <strong>2.5 KB</strong>, from a table of about <strong>47.7 GiB</strong>. Adding rows to the table adds learned parameters without adding reads per token.</p>
+
+<p><strong>Why prefetching is possible.</strong> Row addresses depend on token IDs, which are available before the forward pass. An engine can start retrieving rows while preceding GPU layers execute. In ordinary decode this applies to the current known token, not to unknown future outputs. During prefill, all prompt IDs are already available. Placement after the first layers creates time for the fetch to overlap computation; whether that overlap is sufficient depends on the engine and memory tier.</p>
+
+<p>Ordinary input embeddings also use row lookups. The large size of conditional-memory tables makes offloading them particularly useful for reducing GPU memory requirements. If input embeddings share weights with the output layer, that layer also uses the table to compute scores for the vocabulary; its memory access is therefore different from an input lookup.</p>
+<h3 id="34-comparison-what-makes-offloading-practical">
+  
+  
+    <a href="#34-comparison-what-makes-offloading-practical" class="anchor-heading" aria-labelledby="34-comparison-what-makes-offloading-practical"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.4. Comparison: what makes offloading practical?
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Data</th>
+      <th>Access pattern</th>
+      <th>Implication for offloading</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Dense projections and feed-forward weights</strong></td>
+      <td>Large matrix reads during each forward step</td>
+      <td>Streaming weights can put the transfer link on the critical path</td>
+    </tr>
+    <tr>
+      <td><strong>MoE experts</strong></td>
+      <td>Only selected matrices, with selection usually dependent on hidden states</td>
+      <td>Smaller active set, but expensive misses and less advance notice</td>
+    </tr>
+    <tr>
+      <td><strong>Active KV cache</strong></td>
+      <td>Context-dependent reads; full attention consults the preceding context</td>
+      <td>Long contexts can create substantial transfer traffic</td>
+    </tr>
+    <tr>
+      <td><strong>Recurrent state</strong></td>
+      <td>Read and updated each step</td>
+      <td>Repeated reads and writes can introduce transfer overhead</td>
+    </tr>
+    <tr>
+      <td><strong>Conditional-memory tables</strong></td>
+      <td>A few rows addressed from token IDs</td>
+      <td>Small transfers and predictable addresses allow prefetching to overlap computation</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Practical takeaway:</strong> Large tables, small transfers and enough time to fetch them make a component a good offloading candidate. Conditional memory combines small transfers with addresses known before the layer executes. Attention and expert offloading require different trade-offs.</p>
+</blockquote><hr />
+<h2 id="4-the-memory-hierarchy-of-the-devices">
+  
+  
+    <a href="#4-the-memory-hierarchy-of-the-devices" class="anchor-heading" aria-labelledby="4-the-memory-hierarchy-of-the-devices"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. The Memory Hierarchy of the Devices
+  
+  
+</h2>
+    
+<h3 id="41-memory-tiers">
+  
+  
+    <a href="#41-memory-tiers" class="anchor-heading" aria-labelledby="41-memory-tiers"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.1. Memory tiers
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Tier</th>
+      <th>Typical capacity</th>
+      <th>Access characteristic</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>GPU memory</strong> (HBM, GDDR, unified LPDDR)</td>
+      <td>Tens to hundreds of GB per device</td>
+      <td>High bandwidth for repeated matrix and cache reads</td>
+    </tr>
+    <tr>
+      <td><strong>Host RAM</strong> on a discrete-GPU system</td>
+      <td>Hundreds of GB to TBs</td>
+      <td>PCIe Gen5 x16 offers about 64 GB/s per direction theoretically, before protocol and software overhead</td>
+    </tr>
+    <tr>
+      <td><strong>Local NVMe</strong></td>
+      <td>Several TB</td>
+      <td>Larger capacity; random access and page faults cost more than resident-memory reads</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Transfer time is roughly <strong>bytes ÷ bandwidth</strong>, plus latency and software overhead; only the part not hidden behind computation slows the model. For small scattered reads, latency and caching can matter more than peak bandwidth.</p>
+<h3 id="42-unified-memory-vs-dedicated-gpu-memory">
+  
+  
+    <a href="#42-unified-memory-vs-dedicated-gpu-memory" class="anchor-heading" aria-labelledby="42-unified-memory-vs-dedicated-gpu-memory"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.2. Unified memory vs dedicated GPU memory
+  
+  
+</h3>
+    
+
+<p>The memory architecture determines which offloading destination frees GPU memory.</p>
+
+<p><strong>Dedicated GPU memory (RTX PRO 6000, DGX B300).</strong> The GPU has its own memory; the CPU has separate system RAM, reached across PCIe. Moving a table from GPU memory to host RAM frees GPU memory. The offloading implementation used here allocates the table in <strong>pinned (page-locked) host memory</strong>, allowing the GPU to gather rows directly without the operating system swapping those pages out.</p>
+
+<p><strong>Unified memory (DGX Spark).</strong> The GB10 chip’s CPU and GPU share one 128 GB pool of LPDDR5X with cache-coherent access from both processors. There is no separate host RAM: allocating the table as CPU memory does not reduce its use of the shared pool, and pinning a table in host memory still consumes the same 128 GB. The file-backed implementation uses GB10’s access to pageable memory through host page tables. The table is backed by local NVMe; fetched pages still occupy unified memory while cached. Only a portion of the table needs to remain in RAM at a time.</p>
+<h3 id="43-device-comparison">
+  
+  
+    <a href="#43-device-comparison" class="anchor-heading" aria-labelledby="43-device-comparison"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.3. Device comparison
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th>DGX Spark (GB10)</th>
+      <th>RTX PRO 6000 Blackwell</th>
+      <th>DGX B300</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Memory design</td>
+      <td>128 GB pool shared by CPU and GPU</td>
+      <td>96 GB dedicated GPU memory, separate host RAM</td>
+      <td>Eight GPUs with dedicated HBM, separate host RAM</td>
+    </tr>
+    <tr>
+      <td>GPU memory bandwidth</td>
+      <td>273 GB/s</td>
+      <td>1.79 TB/s</td>
+      <td>8 TB/s per GPU</td>
+    </tr>
+    <tr>
+      <td>Table location</td>
+      <td>Local NVMe with an in-memory page cache</td>
+      <td>Pinned host RAM over PCIe</td>
+      <td>Stored in GPU memory in the four-GPU DeepSeek configuration</td>
+    </tr>
+    <tr>
+      <td>Sizing consequence</td>
+      <td>Allow for OS, page cache and runtime in the shared pool</td>
+      <td>Budget host RAM separately from GPU memory</td>
+      <td>Sufficient GPU memory for these checkpoints in multi-GPU configurations</td>
+    </tr>
+  </tbody>
+</table></div>
+<h3 id="44-why-conditional-memory-offloading-can-have-low-overhead">
+  
+  
+    <a href="#44-why-conditional-memory-offloading-can-have-low-overhead" class="anchor-heading" aria-labelledby="44-why-conditional-memory-offloading-can-have-low-overhead"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.4. Why conditional-memory offloading can have low overhead
+  
+  
+</h3>
+    
+
+<p>Transferring gigabytes of active weights per step can consume much of the available PCIe bandwidth. Qwen’s ~2.5 KB of embedding data per token position requires far less transfer bandwidth. Its addresses can also be prepared before the layer that uses the embeddings, allowing an asynchronous fetch to finish while other layers run.</p>
+
+<p>That is the architectural reason <strong>a large table can be offloaded at low cost</strong>. It requires an implementation that exploits the access pattern. Host RAM and NVMe are also different cases: a file-backed table may hit the page cache or wait for storage. Page reads can be much larger than the requested rows, and prefill, batching and speculative verification multiply the number of positions looked up.</p>
+
+<p><strong>Evidence that the mechanism can work.</strong> In the Engram paper’s H800 experiment, adding a 100B-parameter host-resident table to 4B and 8B dense backbones reduced throughput by about 1.9% and 2.8% relative to their respective baselines without Engram. The implementation overlapped fetching with the first block. The result applies to that host-memory implementation and workload (<a href="https://arxiv.org/html/2601.07372v2#S6.SS4">Engram, §6.4</a>).</p>
+
+<p>Offloading a table without changing its values preserves its learned information: the same rows are supplied to the GPU. The practical question is whether they arrive in time. Section 6 shows the resulting deployment choices: an in-memory versus NVMe comparison on 8× DGX Spark, and usable inference from otherwise oversized checkpoints on smaller configurations.</p><hr />
+<h2 id="5-the-models-examined">
+  
+  
+    <a href="#5-the-models-examined" class="anchor-heading" aria-labelledby="5-the-models-examined"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5. The Models Examined
+  
+  
+</h2>
+    
+<h3 id="51-deepseek-v41-flash">
+  
+  
+    <a href="#51-deepseek-v41-flash" class="anchor-heading" aria-labelledby="51-deepseek-v41-flash"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.1. DeepSeek-V4.1-Flash
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Total parameters</td>
+      <td>763B</td>
+    </tr>
+    <tr>
+      <td>— backbone</td>
+      <td>552B</td>
+    </tr>
+    <tr>
+      <td>— Engram conditional memory</td>
+      <td>196B</td>
+    </tr>
+    <tr>
+      <td>— vision encoder, projector, draft model</td>
+      <td>~15B</td>
+    </tr>
+    <tr>
+      <td>Active parameters per token</td>
+      <td>~16B in decode (~8B in prefill)</td>
+    </tr>
+    <tr>
+      <td>Attention</td>
+      <td>Compressed sparse attention with a 128-token sliding window; KV cache shared across layers</td>
+    </tr>
+    <tr>
+      <td>Engram</td>
+      <td>Layer indices 1 and 14 (zero-based); bigrams, trigrams and 4-grams; 8 hash heads per n-gram order; 256 values per row</td>
+    </tr>
+    <tr>
+      <td>Maximum context length</td>
+      <td>1,048,576 tokens (approximately 1M)</td>
+    </tr>
+    <tr>
+      <td>Checkpoint size</td>
+      <td>510.3 GB; mixed precision, including FP8 dense and Engram weights and FP4 experts</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>The <a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash">model card</a> distinguishes the 552B backbone from Engram and the auxiliary modules.</p>
+<h3 id="52-qwen38-flash-next">
+  
+  
+    <a href="#52-qwen38-flash-next" class="anchor-heading" aria-labelledby="52-qwen38-flash-next"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.2. Qwen3.8-Flash-Next
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Parameters</td>
+      <td>125B base model + 51B n-gram embeddings + 4B multi-token prediction (MTP) module</td>
+    </tr>
+    <tr>
+      <td>Active parameters per token</td>
+      <td>6B</td>
+    </tr>
+    <tr>
+      <td>Attention</td>
+      <td>36 Gated DeltaNet layers and 12 Qwen Sparse Attention (QSA) layers; QSA selects up to 512 four-token blocks plus the final incomplete block</td>
+    </tr>
+    <tr>
+      <td>N-gram table</td>
+      <td>Layer index 2 (zero-based); bigrams and trigrams; 8 hash heads each; 16 rows of 160 values form a 2,560-dimensional vector</td>
+    </tr>
+    <tr>
+      <td>Configured context limit</td>
+      <td>262,144 tokens</td>
+    </tr>
+    <tr>
+      <td>Served checkpoint</td>
+      <td><code class="language-plaintext highlighter-rouge">nvidia/Qwen3.8-Flash-Next-NVFP4</code>; 132.7 GB (123.6 GiB) of safetensors files</td>
+    </tr>
+    <tr>
+      <td>Weight precision</td>
+      <td>NVFP4 routed experts in the main model; BF16 attention and shared experts; FP8 MTP routed experts and n-gram table</td>
+    </tr>
+  </tbody>
+</table></div>
+<h3 id="53-model-size-and-memory-requirements">
+  
+  
+    <a href="#53-model-size-and-memory-requirements" class="anchor-heading" aria-labelledby="53-model-size-and-memory-requirements"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.3. Model size and memory requirements
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>Checkpoint size</th>
+      <th>Conditional-memory table</th>
+      <th>Rest of checkpoint</th>
+      <th>Configurations that require table offloading here</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>DeepSeek-V4.1-Flash</td>
+      <td>510.3 GB</td>
+      <td>~196.6 GB</td>
+      <td>~313.7 GB</td>
+      <td>4× DGX Spark</td>
+    </tr>
+    <tr>
+      <td>Qwen3.8-Flash-Next, NVIDIA NVFP4</td>
+      <td>132.7 GB</td>
+      <td>~51.2 GB (47.7 GiB)</td>
+      <td>~81.5 GB</td>
+      <td>1× DGX Spark; 1× RTX PRO 6000</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>GB means 10⁹ bytes and GiB 2³⁰ bytes. Checkpoint sizes are the safetensors file totals at the recorded revisions (for Qwen, the <a href="https://huggingface.co/nvidia/Qwen3.8-Flash-Next-NVFP4/tree/fc694b54fb0174e0913e6adf86691ef85a4ead47">NVIDIA checkpoint files</a>). The remaining size is a subtraction, not a measurement of GPU memory after loading; runtime memory figures are given in Section 6.</p>
+
+<p>Offloading moves the table to another memory tier; it remains part of the model. The smaller configurations can then hold the remaining weights together with the memory needed for inference.</p><hr />
+<h2 id="6-benchmark-results">
+  
+  
+    <a href="#6-benchmark-results" class="anchor-heading" aria-labelledby="6-benchmark-results"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6. Benchmark Results
+  
+  
+</h2>
+    
+<h3 id="61-methodology">
+  
+  
+    <a href="#61-methodology" class="anchor-heading" aria-labelledby="61-methodology"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.1. Methodology
+  
+  
+</h3>
+    
+
+<p>The deployment results below are measurements made with the open-source <a href="https://github.com/CordatusAI/llm-benchmark">CordatusAI LLM Benchmark Tool</a>, with approximately 128 input tokens and an output limit of 128 tokens, ten rounds per concurrency level, and mean values reported. <strong>Concurrency (C)</strong> is the number of simultaneous requests. <strong>TTFT (time to first token)</strong> includes queueing and prompt processing; the first reasoning token also counts when streamed. <strong>TPS (tokens per second)</strong> is the output token count divided by total request time, including TTFT. It is reported per request, not as aggregate throughput. All results are also available in the <a href="/llm-inference-benchmarks/">LLM Inference Benchmark Explorer</a>.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Run</th>
+      <th>Hardware</th>
+      <th>Engine, tensor parallelism (TP)</th>
+      <th>Speculative decoding</th>
+      <th>Conditional memory</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>DeepSeek-V4.1-Flash</td>
+      <td>4× DGX Spark</td>
+      <td>vLLM, TP=4</td>
+      <td>DSpark, k=5</td>
+      <td>NVMe</td>
+    </tr>
+    <tr>
+      <td>DeepSeek-V4.1-Flash, 300K</td>
+      <td>8× DGX Spark</td>
+      <td>vLLM, TP=8</td>
+      <td>DSpark, k=5</td>
+      <td>In memory</td>
+    </tr>
+    <tr>
+      <td>DeepSeek-V4.1-Flash, 1M</td>
+      <td>8× DGX Spark</td>
+      <td>vLLM, TP=8</td>
+      <td>DSpark, k=5</td>
+      <td>NVMe</td>
+    </tr>
+    <tr>
+      <td>Qwen3.8-Flash-Next</td>
+      <td>1× DGX Spark</td>
+      <td>SGLang, TP=1</td>
+      <td>MTP, 3 speculative steps / 4 draft tokens</td>
+      <td>NVMe</td>
+    </tr>
+    <tr>
+      <td>Qwen3.8-Flash-Next</td>
+      <td>1× RTX PRO 6000</td>
+      <td>SGLang, TP=1</td>
+      <td>MTP, 3 speculative steps / 4 draft tokens</td>
+      <td>Pinned host RAM</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>The <strong>two 8× DGX Spark DeepSeek configurations</strong> compare table placement on the same hardware. The other runs answer a different sizing question: once the model fits with offloading, what inference performance does the configuration deliver? Their results are evaluated individually below.</p>
+<h3 id="62-deepseek-v41-flash-on-4-dgx-spark-fitting-the-model-with-engram-on-disk">
+  
+  
+    <a href="#62-deepseek-v41-flash-on-4-dgx-spark-fitting-the-model-with-engram-on-disk" class="anchor-heading" aria-labelledby="62-deepseek-v41-flash-on-4-dgx-spark-fitting-the-model-with-engram-on-disk"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.2. DeepSeek-V4.1-Flash on 4× DGX Spark: fitting the model with Engram-on-disk
+  
+  
+</h3>
+    
+
+<p>Split over four nodes, the full 510 GB checkpoint needs about 128 GB per node — more than a DGX Spark can give the model once the operating system, CUDA context and KV cache are accounted for. With <strong>Engram-on-disk</strong>, each node keeps its share of the Engram rows on local NVMe and stages the rows each step needs into GPU memory before the forward pass. The remaining weights can then be loaded, with the following benchmark results:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Concurrency (C)</th>
+      <th>TTFT (ms)</th>
+      <th>TPS per request (tok/s)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>271.6</td>
+      <td>29.5</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>395.8</td>
+      <td>21.3</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>577.4</td>
+      <td>13.1</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>805.9</td>
+      <td>8.8</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Why this is useful.</strong> A 763B-parameter model runs across four desktop devices with <strong>29.5 tok/s per request and 272 ms TTFT at C=1</strong>. At C=2 it maintains <strong>21.3 tok/s and 396 ms TTFT</strong>, meeting the Explorer’s default targets of at least 20 tok/s and at most 1,000 ms TTFT. Higher concurrency remains possible, reaching 13.1 tok/s at C=4 and 8.8 tok/s at C=8, but with slower responses. For this workload, the configuration supports interactive use at low concurrency.</p>
+<h3 id="63-deepseek-v41-flash-on-8-dgx-spark-the-table-in-memory-vs-on-nvme">
+  
+  
+    <a href="#63-deepseek-v41-flash-on-8-dgx-spark-the-table-in-memory-vs-on-nvme" class="anchor-heading" aria-labelledby="63-deepseek-v41-flash-on-8-dgx-spark-the-table-in-memory-vs-on-nvme"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.3. DeepSeek-V4.1-Flash on 8× DGX Spark: the table in memory vs on NVMe
+  
+  
+</h3>
+    
+
+<p>On eight nodes the checkpoint fits either way, allowing a comparison of two deployment configurations. On DGX Spark, holding the table in “host memory” still uses the shared 128 GB memory pool. Moving the table to NVMe reduces that usage, apart from cached pages and staging buffers.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Metric</th>
+      <th>Engram in memory</th>
+      <th>Engram on NVMe</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Engram memory per node (reported)</td>
+      <td>23.6 GB</td>
+      <td>Rows and staging buffers only</td>
+    </tr>
+    <tr>
+      <td>KV-cache allocation per node (reported)</td>
+      <td>~8.7 GB</td>
+      <td>~30 GB</td>
+    </tr>
+    <tr>
+      <td>Configured context limit</td>
+      <td>300K tokens</td>
+      <td><strong>1M tokens</strong></td>
+    </tr>
+    <tr>
+      <td>TTFT at C=1</td>
+      <td>213 ms</td>
+      <td>199 ms</td>
+    </tr>
+    <tr>
+      <td>TPS per request at C=1 / C=8 (tok/s)</td>
+      <td>36.0 / 13.6</td>
+      <td>33.3 / 11.7</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>The practical trade-off:</strong> the disk configuration offers roughly <strong>21 GB more reported KV-cache allocation per node</strong>, while retaining <strong>33.3 tok/s at C=1</strong> and <strong>11.7 tok/s per request at C=8</strong>. Against the in-memory configuration, that is a 7.5% and 14% reduction in TPS, respectively. The in-memory configuration has higher measured TPS; the disk configuration leaves more memory for KV cache.</p>
+
+<p>This is a comparison of the two deployment configurations: context limits, memory settings and execution paths also differ (see the <a href="/papers/deepseek-v4.1-flash-8spark-deployment/">8× paper</a>). The configured context limit rises from 300K to 1M tokens. The benchmark used short prompts and did not test the maximum context length.</p>
+<h3 id="64-qwen38-flash-next-on-one-dgx-spark-fitting-a-1327-gb-checkpoint">
+  
+  
+    <a href="#64-qwen38-flash-next-on-one-dgx-spark-fitting-a-1327-gb-checkpoint" class="anchor-heading" aria-labelledby="64-qwen38-flash-next-on-one-dgx-spark-fitting-a-1327-gb-checkpoint"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.4. Qwen3.8-Flash-Next on one DGX Spark: fitting a 132.7 GB checkpoint
+  
+  
+</h3>
+    
+
+<p>The <strong>132.7 GB NVIDIA NVFP4 checkpoint</strong> cannot be kept entirely in a single Spark’s memory alongside the OS, KV cache and runtime buffers. Storing the <strong>47.7 GiB FP8 n-gram table</strong> in a memory-mapped file on local NVMe lets the remaining weights stay in unified memory.</p>
+
+<p>The GPU accesses the memory-mapped table through the CPU’s page tables. Recently accessed file pages remain in unified memory, with an 8 GiB page-cache budget in this implementation. The configuration leaves roughly 12–18 GB for KV cache and recurrent-state pools and caps running requests at eight.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Concurrency (C)</th>
+      <th>TTFT (ms)</th>
+      <th>TPS per request (tok/s)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>301.9</td>
+      <td>28.5</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>392.7</td>
+      <td>23.6</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>566.0</td>
+      <td>17.1</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>762.6</td>
+      <td>11.8</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Why this is useful.</strong> The model runs on one desktop device at <strong>28.5 tok/s and 302 ms TTFT at C=1</strong>. At C=2 it delivers <strong>23.6 tok/s per request and 393 ms TTFT</strong>, meeting the Explorer’s default targets. At C=4 it still delivers <strong>17.1 tok/s per request</strong>; at C=8, 11.8 tok/s. Mean TTFT stays below one second at every tested level. The measured results support interactive local inference at low concurrency.</p>
+
+<p>Startup time is an operational consideration: this implementation rewrites the table file on each launch, taking about 10 minutes on a fresh file or 55 minutes when the previous populated file remains. That matters for restarts, even though the running service provides the response speeds above.</p>
+<h3 id="65-qwen38-flash-next-on-one-rtx-pro-6000-fitting-the-model-with-host-memory-offloading">
+  
+  
+    <a href="#65-qwen38-flash-next-on-one-rtx-pro-6000-fitting-the-model-with-host-memory-offloading" class="anchor-heading" aria-labelledby="65-qwen38-flash-next-on-one-rtx-pro-6000-fitting-the-model-with-host-memory-offloading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.5. Qwen3.8-Flash-Next on one RTX PRO 6000: fitting the model with host-memory offloading
+  
+  
+</h3>
+    
+
+<p>The same <strong>132.7 GB NVFP4 checkpoint</strong> exceeds the card’s <strong>96 GB dedicated memory</strong>. The pinned-memory offloading implementation places the 47.7 GiB FP8 table in separate system RAM, allowing the remaining model weights to fit on the GPU. The host needs at least 64 GB free for the pinned allocation and headroom; requested rows reach the GPU across PCIe.</p>
+
+<p>The cookbook reports <strong>8.3 GiB</strong> allocated to KV cache and recurrent-state pools. The tested configuration allows 16 running requests, using BF16 recurrent state and an adjusted cache policy.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Concurrency (C)</th>
+      <th>TTFT (ms)</th>
+      <th>TPS per request (tok/s)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>139.2</td>
+      <td>155.8</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>195.8</td>
+      <td>120.0</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>220.6</td>
+      <td>90.8</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>252.3</td>
+      <td>63.7</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>257.2</td>
+      <td>43.2</td>
+    </tr>
+    <tr>
+      <td>32</td>
+      <td>3,222.7</td>
+      <td>22.2</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Why this is useful.</strong> The deployment delivers <strong>155.8 tok/s at C=1</strong> and <strong>43.2 tok/s per request at C=16</strong>, with mean TTFT below 260 ms throughout that range. All tested levels through C=16 meet the Explorer’s default latency and TPS targets while serving a model whose full checkpoint exceeds the card’s memory. At C=32, requests queue behind the 16 running slots and mean TTFT rises above three seconds; C=32 therefore fails the default TTFT target even though TPS remains above 20 tok/s.</p>
+
+<p>These observations apply to the measured short-prompt workload. Longer prompts, output lengths and conversation histories should be evaluated against the application’s latency targets.</p><hr />
+<h2 id="7-discussion">
+  
+  
+    <a href="#7-discussion" class="anchor-heading" aria-labelledby="7-discussion"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7. Discussion
+  
+  
+</h2>
+    
+<h3 id="71-memory-versus-nvme-when-the-model-already-fits">
+  
+  
+    <a href="#71-memory-versus-nvme-when-the-model-already-fits" class="anchor-heading" aria-labelledby="71-memory-versus-nvme-when-the-model-already-fits"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7.1. Memory versus NVMe when the model already fits
+  
+  
+</h3>
+    
+
+<p>The 8× Spark DeepSeek comparison is useful when choosing how to allocate memory. Both configurations serve the same model on the same hardware: keeping Engram in memory gives the higher measured TPS, while moving it to disk makes more memory available for KV cache. The choice depends on whether the application values the additional KV-cache capacity enough to accept the observed speed difference.</p>
+<h3 id="72-running-models-that-exceed-gpu-memory">
+  
+  
+    <a href="#72-running-models-that-exceed-gpu-memory" class="anchor-heading" aria-labelledby="72-running-models-that-exceed-gpu-memory"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7.2. Running models that exceed GPU memory
+  
+  
+</h3>
+    
+
+<p>The 4× Spark DeepSeek and single-device Qwen runs demonstrate a different benefit: their checkpoints and runtime memory requirements exceed the available memory, yet offloading the lookup tables enables inference at useful per-request speeds. The individual results in Section 6 show both the single-request experience and what happens as concurrency rises.</p>
+
+<p>For workload-specific planning, the <a href="/llm-inference-benchmarks/">LLM Inference Benchmark Explorer</a> provides the measured TTFT/TPS curves and evaluation against TTFT and TPS targets. Its capacity estimates are planning aids; check whether an estimate accounts for the actual table placement and state pools before applying it to an offloaded run. Use the measured concurrency sweep to check latency and TPS targets; validate memory capacity separately for the offloading configuration.</p>
+<h3 id="73-model-capability">
+  
+  
+    <a href="#73-model-capability" class="anchor-heading" aria-labelledby="73-model-capability"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7.3. Model capability
+  
+  
+</h3>
+    
+
+<p>Qwen3.8-Flash-Next has an <strong>Artificial Analysis Intelligence Index of 39.8</strong> in the Explorer’s recorded data. This external benchmark score provides context for model selection alongside the measured inference performance. It describes the model rather than validating the quantized deployment on a particular task.</p>
+
+<p><em>Intelligence Index v4.3, published by <a href="https://artificialanalysis.ai">Artificial Analysis</a>, retrieved 28 September 2026 and reproduced with attribution.</em></p>
+
+<p>Evaluate the served checkpoint on the intended tasks as well as its response speed. The practical gain is access to a capable model with performance that meets the application’s requirements on the available device.</p>
+<h3 id="74-operational-requirements">
+  
+  
+    <a href="#74-operational-requirements" class="anchor-heading" aria-labelledby="74-operational-requirements"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7.4. Operational requirements
+  
+  
+</h3>
+    
+
+<p>The following requirements are in addition to storing the downloaded checkpoint:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Requirement</th>
+      <th>DeepSeek-V4.1-Flash, DGX Spark</th>
+      <th>Qwen3.8-Flash-Next, DGX Spark</th>
+      <th>Qwen3.8-Flash-Next, RTX PRO 6000</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Additional storage for offloading</td>
+      <td>Engram tables on each node’s NVMe</td>
+      <td>~51.2 GB (47.7 GiB) for the table, plus free space for loading</td>
+      <td>None beyond the checkpoint files</td>
+    </tr>
+    <tr>
+      <td>Host memory</td>
+      <td>Staging buffers in the shared pool</td>
+      <td>Page cache in the shared pool</td>
+      <td>≥64 GB free for pinned allocation and headroom</td>
+    </tr>
+    <tr>
+      <td>Startup</td>
+      <td>Patched loader prepares tables on NVMe</td>
+      <td>Table file written at every start (10–55 min)</td>
+      <td>Table loaded into RAM</td>
+    </tr>
+    <tr>
+      <td>Software support</td>
+      <td>Required community patches on GB10, including the Engram-on-disk path</td>
+      <td>File-backed offloading requires the compatible SGLang build</td>
+      <td>Supported in the SGLang cookbook image</td>
+    </tr>
+  </tbody>
+</table></div><hr />
+<h2 id="8-sizing-with-conditional-memory">
+  
+  
+    <a href="#8-sizing-with-conditional-memory" class="anchor-heading" aria-labelledby="8-sizing-with-conditional-memory"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8. Sizing With Conditional Memory
+  
+  
+</h2>
+    
+<h3 id="81-the-revised-memory-budget">
+  
+  
+    <a href="#81-the-revised-memory-budget" class="anchor-heading" aria-labelledby="81-the-revised-memory-budget"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8.1. The revised memory budget
+  
+  
+</h3>
+    
+
+<p>For supported conditional-memory models, budget GPU memory and the offloading destination separately:</p>
+
+<blockquote>
+  <p><strong>Required GPU memory (or unified memory) = Remaining model weights + KV cache + Recurrent-state pools + Activations + Offloading buffers and cached pages + Runtime overhead</strong></p>
+
+  <p><strong>Additional host RAM or NVMe storage = Offloaded tables + Loading buffers / free-space allowance</strong></p>
+</blockquote>
+
+<p>On Spark, the OS also uses unified memory. Cached file pages must be included in that shared budget. On a discrete GPU, pinned tables occupy separate host RAM. Freed table space therefore does not translate one-for-one into request capacity.</p>
+
+<p>Use the Local LLM Usage Guide’s headroom advice as a planning allowance, then check the engine’s actual allocation and peak usage. A configured memory fraction is not interchangeable with a blanket percentage added to checkpoint size.</p>
+<h3 id="82-sizing-checklist">
+  
+  
+    <a href="#82-sizing-checklist" class="anchor-heading" aria-labelledby="82-sizing-checklist"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8.2. Sizing checklist
+  
+  
+</h3>
+    
+
+<ul>
+  <li>☐ Identify the served checkpoint’s remaining model weights and conditional-memory tables separately, including their precision.</li>
+  <li>☐ Verify engine support for the model and destination: pinned host RAM or file-backed storage in the configurations examined here.</li>
+  <li>☐ Budget resident caches, buffers and OS memory as well as the offloaded table.</li>
+  <li>☐ Reserve KV and recurrent-state pools for the required context and concurrency; check effective engine limits.</li>
+  <li>☐ Measure response speed for that workload, including startup and cold-cache performance where relevant.</li>
+  <li>☐ Validate model quality on the intended tasks; an external capability score is only a starting point.</li>
+</ul>
+
+<p>One sizing mistake to avoid is treating all offloading as equivalent. Check <strong>which data moves, how much is accessed, and when it must arrive</strong> before deciding whether a larger model is practical.</p><hr />
+<h2 id="9-conclusion-and-outlook">
+  
+  
+    <a href="#9-conclusion-and-outlook" class="anchor-heading" aria-labelledby="9-conclusion-and-outlook"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 9. Conclusion and Outlook
+  
+  
+</h2>
+    
+
+<p><strong>Summary of findings:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Question</th>
+      <th>Answer</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Can conditional memory leave GPU memory?</td>
+      <td>Yes — the tables are large, but each token retrieves only a few kilobytes, at addresses known in advance</td>
+    </tr>
+    <tr>
+      <td>Where does it go?</td>
+      <td>Local NVMe on DGX Spark; separate pinned host RAM on RTX PRO 6000</td>
+    </tr>
+    <tr>
+      <td>What does the same-hardware comparison show?</td>
+      <td>On 8× Spark, the disk configuration reports ~21 GB more KV-cache allocation per node with 7.5% lower TPS at C=1 and 14% lower TPS at C=8</td>
+    </tr>
+    <tr>
+      <td>What performance do the smaller configurations achieve?</td>
+      <td>DeepSeek on 4× Spark: 29.5 tok/s at C=1; Qwen on one Spark: 28.5 tok/s at C=1; Qwen on RTX PRO 6000: 43.2 tok/s per request at C=16</td>
+    </tr>
+    <tr>
+      <td>What does it gain?</td>
+      <td>Models that otherwise do not fit (763B on 4× DGX Spark, 132.7 GB checkpoint on one DGX Spark or RTX PRO 6000), and more KV capacity (300K → 1M configured limit on 8× DGX Spark)</td>
+    </tr>
+    <tr>
+      <td>What does it cost?</td>
+      <td>Startup time, NVMe space or locked host RAM, and dependence on engine support</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Outlook.</strong> Some recent architectures separate what must be computed from what only needs to be stored. Mixture-of-Experts separated active from total parameters; conditional memory, as used in the two models examined here, adds a large parameter pool whose access pattern suits slower memory tiers. Whether other models adopt it remains to be seen. If they do, and inference engines support it, the same hardware may run more capable models by using host RAM and storage for suitable components. Realizing that benefit requires enough GPU memory for the remaining weights and request state, efficient data transfers, and acceptable measured latency.</p><hr />
+<h2 id="glossary-terms">
+  
+  
+    <a href="#glossary-terms" class="anchor-heading" aria-labelledby="glossary-terms"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Glossary (Terms)
+  
+  
+</h2>
+    
+
+<ul>
+  <li><strong>Active parameters:</strong> Parameters used for a token; their precision and reuse help determine weight traffic.</li>
+  <li><strong>Checkpoint:</strong> Saved model weights and associated metadata; file size and runtime memory usage are different quantities.</li>
+  <li><strong>Conditional memory:</strong> A lookup table of learned vectors, addressed by hashed n-grams of the input tokens and combined with the hidden state at selected layers. The term was introduced in DeepSeek’s Engram paper.</li>
+  <li><strong>Decode:</strong> Incremental response generation; often limited by memory bandwidth at small batch sizes.</li>
+  <li><strong>Embedding:</strong> A learned vector representing a token or token sequence.</li>
+  <li><strong>Engram:</strong> DeepSeek’s conditional-memory module, used in DeepSeek-V4.1-Flash.</li>
+  <li><strong>Gated DeltaNet:</strong> A linear-attention layer that keeps a fixed-size state per request instead of a growing KV cache.</li>
+  <li><strong>Hash head:</strong> One of several independent hash functions that map an n-gram to a row of the table.</li>
+  <li><strong>Hidden state:</strong> The vector representation of a token as it passes through the model’s layers.</li>
+  <li><strong>KV cache:</strong> Cached attention keys and values; its size depends on the attention architecture, context length, precision and concurrent requests.</li>
+  <li><strong>Lookup table:</strong> A table read by fetching the rows addressed by a key; conditional-memory tables are read this way.</li>
+  <li><strong>Memory-mapped file:</strong> A file made accessible as memory; pages are loaded from disk on first access and kept in the page cache.</li>
+  <li><strong>N-gram:</strong> A sequence of n consecutive tokens (bigram: 2, trigram: 3).</li>
+  <li><strong>Offloading:</strong> Placing part of a model’s data in a slower, larger memory tier (host RAM, NVMe) instead of GPU memory.</li>
+  <li><strong>Page cache:</strong> The operating system’s in-memory cache of recently read file pages.</li>
+  <li><strong>Pinned (page-locked) memory:</strong> Host memory the operating system may not move or swap, so a discrete GPU can read it directly.</li>
+  <li><strong>PLE table:</strong> The name SGLang uses for Qwen3.8-Flash-Next’s n-gram embedding table.</li>
+  <li><strong>Prefetching:</strong> Fetching data before the layer that needs it executes, so transfer can overlap computation.</li>
+  <li><strong>Prefill:</strong> Processing the prompt before response generation; contributes to TTFT alongside queueing and other overhead.</li>
+  <li><strong>Recurrent state:</strong> Fixed-size state updated by a linear-attention layer for each sequence; serving may require additional copies for caching and speculative decoding.</li>
+  <li><strong>Total parameters:</strong> All parameters of the model; they determine memory capacity requirements.</li>
+  <li><strong>TPS (tokens per second):</strong> Here, output tokens divided by total request time, including TTFT.</li>
+  <li><strong>TTFT (time to first token):</strong> Time from request submission to the first streamed token, including a reasoning token when present.</li>
+  <li><strong>Unified memory:</strong> A single memory pool shared by CPU and GPU, as in DGX Spark (GB10).</li>
+</ul><hr />
+<h2 id="resources">
+  
+  
+    <a href="#resources" class="anchor-heading" aria-labelledby="resources"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Resources
+  
+  
+</h2>
+    
+
+<blockquote>
+  <p>Hardware figures follow the NVIDIA datasheets as used in the Local LLM Usage Guide. Architecture details come from the model cards, technical reports and model configurations. Inference results are measurements in the LLM Inference Benchmark Explorer; memory allocations and startup observations come from the linked deployment reports and SGLang cookbook.</p>
+</blockquote>
+
+<p><strong>Models and architecture:</strong></p>
+
+<ul>
+  <li>DeepSeek-V4.1-Flash model card — <a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash">https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash</a></li>
+  <li>DeepSeek-V4.1-Flash technical report — <a href="https://arxiv.org/abs/2609.19969">https://arxiv.org/abs/2609.19969</a></li>
+  <li>Conditional Memory via Scalable Lookup: A New Axis of Sparsity for Large Language Models (Engram) — <a href="https://arxiv.org/abs/2601.07372">https://arxiv.org/abs/2601.07372</a></li>
+  <li>NVIDIA Qwen3.8-Flash-Next NVFP4 model card and precision breakdown — <a href="https://huggingface.co/nvidia/Qwen3.8-Flash-Next-NVFP4">https://huggingface.co/nvidia/Qwen3.8-Flash-Next-NVFP4</a></li>
+  <li>Qwen3.8-Flash-Next model card — <a href="https://huggingface.co/Qwen/Qwen3.8-Flash-Next">https://huggingface.co/Qwen/Qwen3.8-Flash-Next</a></li>
+  <li>Qwen3.8-Flash-Next technical report — <a href="https://arxiv.org/abs/2608.30320">https://arxiv.org/abs/2608.30320</a></li>
+</ul>
+
+<p><strong>Inference engines and offloading:</strong></p>
+
+<ul>
+  <li>SGLang cookbook, Qwen3.8-Flash-Next (verified single-device configurations) — <a href="https://docs.sglang.io/cookbook/autoregressive/Qwen/Qwen3.8-Flash-Next">https://docs.sglang.io/cookbook/autoregressive/Qwen/Qwen3.8-Flash-Next</a></li>
+  <li>SGLang: file-backed n-gram table on DGX Spark — <a href="https://github.com/sgl-project/sglang/pull/39126">https://github.com/sgl-project/sglang/pull/39126</a></li>
+</ul>
+
+<p><strong>Hardware:</strong></p>
+
+<ul>
+  <li>NVIDIA DGX Spark — <a href="https://www.nvidia.com/en-us/products/workstations/dgx-spark/">https://www.nvidia.com/en-us/products/workstations/dgx-spark/</a></li>
+  <li>NVIDIA RTX PRO 6000 Blackwell Workstation Edition — <a href="https://www.nvidia.com/en-us/products/workstations/professional-desktop-gpus/rtx-pro-6000/">https://www.nvidia.com/en-us/products/workstations/professional-desktop-gpus/rtx-pro-6000/</a></li>
+  <li>NVIDIA DGX B300 — <a href="https://www.nvidia.com/en-us/data-center/dgx-b300/">https://www.nvidia.com/en-us/data-center/dgx-b300/</a></li>
+</ul>
+
+<p><strong>Related papers and tools:</strong></p>
+
+<ul>
+  <li><a href="/papers/local-llm-guide/">Local LLM Usage Guide</a></li>
+  <li><a href="/papers/deepseek-v4.1-flash-4spark-deployment/">DeepSeek-V4.1-Flash 4× DGX Spark Deployment</a></li>
+  <li><a href="/papers/deepseek-v4.1-flash-8spark-deployment/">DeepSeek-V4.1-Flash 8× DGX Spark TP8 Deployment</a></li>
+  <li><a href="/llm-inference-benchmarks/">LLM Inference Benchmark Explorer</a></li>
+  <li>CordatusAI LLM Benchmark Tool — <a href="https://github.com/CordatusAI/llm-benchmark">https://github.com/CordatusAI/llm-benchmark</a></li>
+</ul>
+
+<p><strong>Capability scores:</strong></p>
+
+<ul>
+  <li>Artificial Analysis Intelligence Index — <a href="https://artificialanalysis.ai">https://artificialanalysis.ai</a></li>
+</ul><hr />
+<h3 id="notes">
+  
+  
+    <a href="#notes" class="anchor-heading" aria-labelledby="notes"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Notes
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>Measurements:</strong> The deployment speed figures come from runs with the CordatusAI LLM Benchmark Tool (approximately 128 input tokens, up to 128 output tokens, mean values). The DeepSeek-V4.1-Flash launch configurations are documented in the two DeepSeek papers; the Qwen3.8-Flash-Next runs used the SGLang cookbook’s verified single-device configurations.</li>
+  <li><strong>Estimates:</strong> Embedding bytes per token are calculated from model configurations; actual memory and storage traffic depends on caching and transfer granularity. Checkpoint file sizes are not runtime memory measurements.</li>
+  <li><strong>Currency:</strong> Engine support for offloading is evolving quickly; flags and limitations described here are valid as of September 2026.</li>
+</ul><hr />
+
+<p><img src="/assets/images/aetherix-logo.png" alt="Aetherix" width="220" /></p>
+
+<p><strong>Let’s plan your LLM infrastructure together.</strong> For hardware sizing that accounts for model architecture, memory hierarchy and offloading, contact Aetherix: <a href="mailto:info@aetherix.com">info@aetherix.com</a> · <a href="https://aetherix.com">aetherix.com</a></p>
+
+          
+
+          
+        </main>
+        
+
+
+      </div>
+    </div>
+    
+      
+
+<div class="search-overlay"></div>
+
+    
+  </div>
+
+  
+
+  <script>
+    window.JTD_I18N = {
+      search_no_results: "No results found",
+      copy_code: "Copy code to clipboard"
+    };
+  </script>
+
+  
+
+
+<div id="cookie-consent-banner" class="cookie-consent" role="dialog"
+     aria-modal="false" aria-label="Cookie consent"
+     data-consent-state="pending" hidden>
+  <div class="cookie-consent__body">
+    <div class="cookie-consent__text">
+      <span class="cookie-consent__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+          <path d="M21 12a9 9 0 1 1-9-9 4.5 4.5 0 0 0 4.5 4.5A4.5 4.5 0 0 0 21 12zm-9-3.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-1.5 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm6-1.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-3 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0z"/>
+        </svg>
+      </span>
+      <p>We use cookies to analyze site traffic and improve your experience. By clicking 'Accept', you consent to the use of analytics cookies as described in our Privacy Policy.
+        <a href="https://aetherix.com/privacy-policy/" target="_blank" rel="noopener noreferrer"
+           class="cookie-consent__link">Privacy Policy</a>
+      </p>
+    </div>
+    <div class="cookie-consent__actions">
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--reject"
+              data-consent-action="rejected">Reject</button>
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--accept"
+              data-consent-action="accepted">Accept</button>
+    </div>
+  </div>
+</div>
+<script>
+  // Eski karar önbellekte varsa bannerı gösterme
+  (function() {
+    try {
+      var v = localStorage.getItem('cookieConsent');
+      if (v === 'accepted' || v === 'rejected') {
+        document.documentElement.dataset.cookieConsent = v;
+      }
+    } catch (e) {}
+  })();
+</script>
+<script src="/assets/js/cookie-banner.js" defer></script>
+
+</body>
+</html>
+

@@ -1,0 +1,1216 @@
+/* ── Benchmark Table — bt- prefixed, self-contained ── */
+
+/* Declared on :root, not on .bt-container, because the how-to disclosure sits
+   on the page outside the widget and needs the same palette. */
+:root {
+  /* Values mirror the site's own tokens (--site-*) rather than
+     referencing them, because this stylesheet also ships to aetherix.com
+     where those variables do not exist. */
+  --bt-green: #76b900;
+  --bt-green-dark: #5a8c00;
+  --bt-dark: #1a1a1a;
+  --bt-border: #e3e6ea;
+  --bt-bg: #ffffff;
+  --bt-bg-alt: #f6f8fa;
+  --bt-bg-hover: #eef5e6;
+  --bt-text: #1a1a1a;
+  --bt-text-muted: #525f7a;
+  --bt-radius: 6px;
+}
+
+.bt-container {
+  font-family: inherit;
+  color: var(--bt-text);
+  font-size: 14px;
+  line-height: 1.5;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* ── Filters ── */
+
+.bt-filters {
+  background: var(--bt-bg-alt);
+  border: 1px solid var(--bt-border);
+  border-radius: var(--bt-radius);
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+
+.bt-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 8px 12px;
+  margin-bottom: 12px;
+}
+
+.bt-filter-row:last-child {
+  margin-bottom: 0;
+}
+
+.bt-filter-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--bt-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 6px;
+  min-width: 90px;
+}
+
+.bt-filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.bt-btn {
+  padding: 5px 12px;
+  border: 1px solid var(--bt-border);
+  border-radius: 20px;
+  background: var(--bt-bg);
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--bt-text);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.bt-btn:hover {
+  border-color: var(--bt-green);
+  color: var(--bt-green);
+}
+
+.bt-btn.bt-active {
+  background: var(--bt-green);
+  border-color: var(--bt-green);
+  color: #fff;
+}
+
+/* ── Sliders ── */
+
+.bt-slider-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 160px;
+}
+
+.bt-slider-group label {
+  font-size: 12px;
+  color: var(--bt-text-muted);
+  font-weight: 500;
+}
+
+.bt-slider-group .bt-slider-value {
+  font-size: 12px;
+  color: var(--bt-text);
+  font-weight: 600;
+}
+
+.bt-slider-group input[type="range"] {
+  width: 100%;
+  accent-color: var(--bt-green);
+  cursor: pointer;
+}
+
+/* ── Model search + checkbox list ── */
+
+/* The model picker and the parameter-count slider sit side by side; the slider
+   aligns to the top so it lands beside the search box, not the checkbox list. */
+.bt-model-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 10px 20px;
+}
+
+.bt-model-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bt-model-search {
+  padding: 5px 10px;
+  border: 1px solid var(--bt-border);
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--bt-text);
+  background: var(--bt-bg);
+  min-width: 220px;
+}
+
+.bt-model-search:focus {
+  outline: 2px solid var(--bt-green);
+  border-color: var(--bt-green);
+}
+
+.bt-model-list {
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid var(--bt-border);
+  border-radius: 4px;
+  background: var(--bt-bg);
+  padding: 4px 0;
+}
+
+.bt-model-option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  font-size: 13px;
+  color: var(--bt-text);
+  cursor: pointer;
+}
+
+.bt-model-option:hover {
+  background: var(--bt-bg-hover);
+}
+
+.bt-model-option input[type="checkbox"] {
+  accent-color: var(--bt-green);
+  cursor: pointer;
+}
+
+/* ── Performance filter row (merged C + TPS + TTFT) ── */
+
+.bt-filter-row-perf {
+  align-items: flex-end;
+}
+
+.bt-slider-perf {
+  min-width: 180px;
+}
+
+/* ── Results count ── */
+
+.bt-results-count {
+  font-size: 13px;
+  color: var(--bt-text-muted);
+  margin-bottom: 8px;
+  padding-left: 4px;
+}
+
+.bt-results-count strong {
+  color: var(--bt-text);
+}
+
+/* The capacity legend shares the count's line and drops below it when the
+   line is too narrow for both. A separate class, because the CV explorer
+   loads this stylesheet too and its count line is plain inline text. */
+.bt-results-split {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 16px;
+}
+
+.bt-cap-legend {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  margin-left: auto;
+  font-size: 12px;
+}
+
+.bt-cap-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.bt-cap-legend .bt-cap-icon { margin-left: 0; }
+
+/* ── Capacity: which estimate set the number ── */
+
+.bt-cap-icon {
+  display: inline-block;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin-left: 4px;
+  vertical-align: -3px;
+}
+
+.bt-cap-perf { color: #b07800; }
+.bt-cap-mem { color: #2f6db5; }
+.bt-cap-shortctx { color: #c0392b; }
+
+.bt-table tbody td.bt-cap { cursor: help; }
+
+/* ── Table ── */
+
+/* Bounded height, scrolling on both axes: whenever the table is on screen its
+   horizontal scrollbar is on screen too, instead of only at the table's far
+   end — several rows down once sweeps are expanded. It is also what makes the
+   sticky header work: sticky needs a scrolling ancestor to stick to, and a
+   box that only scrolled sideways gave it nothing. Shared by both explorers. */
+.bt-table-wrap {
+  overflow: auto;
+  max-height: calc(100vh - 120px);
+  border: 1px solid var(--bt-border);
+  border-radius: var(--bt-radius);
+}
+
+.bt-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  white-space: nowrap;
+  table-layout: auto;
+}
+
+.bt-table thead th {
+  background: var(--bt-dark);
+  color: #fff;
+  font-weight: 600;
+  padding: 10px 14px;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  border-bottom: 2px solid var(--bt-green);
+}
+
+.bt-table thead th:hover {
+  background: #333;
+}
+
+.bt-table thead th.bt-sorted-asc::after {
+  content: " ▲";
+  font-size: 10px;
+  color: var(--bt-green);
+}
+
+.bt-table thead th.bt-sorted-desc::after {
+  content: " ▼";
+  font-size: 10px;
+  color: var(--bt-green);
+}
+
+.bt-table thead th.bt-no-sort {
+  cursor: default;
+}
+
+.bt-table thead th.bt-no-sort:hover {
+  background: var(--bt-dark);
+}
+
+.bt-table tbody tr {
+  border-bottom: 1px solid var(--bt-border);
+  transition: background 0.1s;
+}
+
+.bt-table tbody tr:nth-child(even) {
+  background: var(--bt-bg-alt);
+}
+
+.bt-table tbody tr:hover {
+  background: var(--bt-bg-hover);
+}
+
+.bt-table tbody td {
+  padding: 8px 14px;
+  text-align: center;
+}
+
+.bt-table tbody td.bt-num {
+  font-variant-numeric: tabular-nums;
+}
+
+.bt-table tbody td.bt-num.bt-good {
+  color: #2d8a2d;
+  font-weight: 600;
+}
+
+.bt-table tbody td.bt-num.bt-bad {
+  color: #c0392b;
+}
+
+.bt-table tbody td.bt-muted {
+  color: var(--bt-text-muted);
+}
+
+.bt-table tbody td.bt-mtp-yes {
+  color: var(--bt-green);
+  font-weight: 600;
+}
+
+.bt-table tbody td.bt-expand-cell {
+  text-align: center;
+  cursor: pointer;
+  width: 32px;
+}
+
+.bt-table tbody td.bt-expand-cell:hover {
+  color: var(--bt-green);
+}
+
+/* ── Expanded row ── */
+
+.bt-detail-row td {
+  padding: 0 !important;
+  border-bottom: 1px solid var(--bt-border);
+  background: #fafafa;
+}
+
+.bt-detail-content {
+  padding: 16px 20px;
+  display: none;
+  /* .bt-table sets white-space: nowrap and text-align: center for the grid.
+     Both are inherited here; prose must wrap, and must start at the left edge
+     rather than growing outward from the centre of its box. */
+  white-space: normal;
+  text-align: left;
+}
+
+.bt-detail-content.bt-visible {
+  display: block;
+}
+
+.bt-detail-table {
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.bt-detail-table th,
+.bt-detail-table td {
+  padding: 6px 16px;
+  text-align: center;
+  white-space: nowrap;
+  border-bottom: 1px solid #eee;
+}
+
+/* The sweep table sits inside .bt-table, so `.bt-table thead th` reaches it
+   and made its header sticky too. Harmless while the wrap only scrolled
+   sideways; with the wrap scrolling vertically, every expanded sweep's header
+   would pin itself over the main one. */
+.bt-table .bt-detail-table thead th {
+  position: static;
+}
+
+.bt-detail-table th {
+  color: var(--bt-text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+.bt-detail-table .bt-detail-fail {
+  color: #c0392b;
+}
+
+.bt-detail-table .bt-detail-pass {
+  color: #2d8a2d;
+  font-weight: 600;
+}
+
+.bt-detail-notes {
+  font-size: 12px;
+  color: var(--bt-text-muted);
+  margin-top: 8px;
+}
+
+/* ── Chart Card ── */
+
+.bt-chart-card {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 16px;
+  padding: 36px 40px;
+  margin: 16px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.bt-chart-header {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #1a1a2e;
+  margin-bottom: 16px;
+}
+
+.bt-chart-legend {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 12px;
+}
+
+.bt-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #555;
+}
+
+.bt-legend-swatch {
+  display: inline-block;
+  width: 28px;
+  height: 4px;
+  border-radius: 2px;
+}
+
+.bt-chart-axis-titles {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.bt-axis-title-left,
+.bt-axis-title-right {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.bt-chart-canvas-wrap {
+  position: relative;
+  height: 280px;
+  width: 100%;
+}
+
+.bt-chart-x-title {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+  margin-top: 8px;
+}
+
+.bt-chart-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #eee;
+}
+
+.bt-chart-logo-img {
+  height: 72px;
+  width: auto;
+}
+
+.bt-chart-download {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 6px 16px;
+  border: 1px solid var(--bt-border);
+  border-radius: 4px;
+  background: var(--bt-bg);
+  font-family: inherit;
+  font-size: 12px;
+  color: var(--bt-text);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.bt-chart-download:hover {
+  border-color: var(--bt-green);
+  color: var(--bt-green);
+}
+
+/* ── Empty state ── */
+
+.bt-empty {
+  padding: 32px;
+  text-align: center;
+  color: var(--bt-text-muted);
+  font-size: 14px;
+}
+
+/* ── Loading state ── */
+
+.bt-loading {
+  padding: 40px;
+  text-align: center;
+  color: var(--bt-text-muted);
+  font-size: 14px;
+}
+
+.bt-loading::after {
+  content: "";
+  display: block;
+  width: 24px;
+  height: 24px;
+  margin: 12px auto 0;
+  border: 3px solid var(--bt-border);
+  border-top-color: var(--bt-green);
+  border-radius: 50%;
+  animation: bt-spin 0.8s linear infinite;
+}
+
+@keyframes bt-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Error state ── */
+
+.bt-error {
+  padding: 20px;
+  text-align: center;
+  color: #c0392b;
+  font-size: 14px;
+  background: #fdf2f2;
+  border: 1px solid #f5c6cb;
+  border-radius: var(--bt-radius);
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 768px) {
+  .bt-container {
+    font-size: 13px;
+  }
+
+  .bt-table {
+    font-size: 12px;
+  }
+
+  .bt-table thead th,
+  .bt-table tbody td {
+    padding: 6px 10px;
+  }
+
+  .bt-filter-label {
+    min-width: 70px;
+  }
+
+  .bt-assumptions-body {
+    gap: 12px;
+  }
+}
+
+/* ── Controls shell ── */
+
+.bt-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.bt-filter-row-perf {
+  flex-wrap: wrap;
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--bt-border);
+}
+
+.bt-filter-row-perf .bt-btn.bt-active {
+  font-weight: 700;
+}
+
+.bt-perf-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bt-inline-label {
+  margin-left: 14px;
+}
+
+.bt-slider-perf {
+  min-width: 160px;
+}
+
+.bt-reset-row {
+  justify-content: flex-start;
+  gap: 6px;
+}
+
+.bt-reset {
+  padding: 6px 14px;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--bt-text);
+  background: var(--bt-bg);
+  border: 1px solid var(--bt-border);
+  border-radius: var(--bt-radius);
+  cursor: pointer;
+}
+
+.bt-reset:hover {
+  border-color: var(--bt-green);
+  color: var(--bt-green-dark, #5a8c00);
+}
+
+/* ── Performance targets / capacity assumptions ──
+   Visually distinct from filters: filters choose which rows are shown, these
+   decide what counts as acceptable and how capacity is estimated. */
+
+.bt-targets {
+  background: var(--bt-bg-alt);
+  border: 1px solid var(--bt-border);
+  border-radius: var(--bt-radius);
+}
+
+.bt-targets-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 16px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--bt-text);
+  background: transparent;
+  border: 0;
+  border-radius: var(--bt-radius);
+  cursor: pointer;
+}
+
+.bt-targets-toggle:hover { color: var(--bt-green-dark, #5a8c00); }
+
+.bt-targets-toggle .bt-arrow {
+  display: inline-block;
+  font-size: 10px;
+  color: var(--bt-green);
+  transition: transform 0.15s;
+}
+
+.bt-targets-toggle.bt-open .bt-arrow { transform: rotate(90deg); }
+
+.bt-targets-body {
+  padding: 0 16px 16px;
+}
+
+.bt-targets-body[hidden] { display: none; }
+
+.bt-targets-intro {
+  margin: 0 0 14px;
+  max-width: 78ch;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--bt-text-muted);
+}
+
+.bt-targets-group + .bt-targets-group {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--bt-border);
+}
+
+.bt-targets-group-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--bt-text);
+  margin-bottom: 2px;
+}
+
+.bt-targets-group-intro {
+  margin: 0 0 10px;
+  max-width: 78ch;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--bt-text-muted);
+}
+
+.bt-targets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 12px 20px;
+}
+
+.bt-target-item {
+  display: flex;
+  flex-direction: column;
+  /* bottom-aligned, so a label that wraps to two lines does not push its
+     input below the others in the row */
+  justify-content: flex-end;
+  gap: 5px;
+}
+
+.bt-target-item label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--bt-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.bt-target-item select,
+.bt-target-item input[type="number"] {
+  width: 100%;
+  padding: 6px 8px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--bt-text);
+  background: var(--bt-bg);
+  border: 1px solid var(--bt-border);
+  border-radius: 4px;
+  /* one height for both, so the two groups line up row by row */
+  box-sizing: border-box;
+  height: 32px;
+}
+
+.bt-target-item select:focus,
+.bt-target-item input[type="number"]:focus {
+  outline: none;
+  border-color: var(--bt-green);
+}
+
+.bt-preview-open {
+  align-self: flex-start;
+  margin-top: 2px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-family: inherit;
+  color: var(--bt-green-dark, #5a8c00);
+  background: transparent;
+  border: 1px solid var(--bt-green);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.bt-preview-open:hover {
+  background: var(--bt-bg-hover);
+}
+
+/* ── Info tooltips ── */
+
+.bt-tip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  margin-left: 5px;
+  padding: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 11px;
+  font-style: italic;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--bt-text-muted);
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  cursor: help;
+  flex: none;
+  vertical-align: middle;
+}
+
+.bt-table thead th .bt-tip {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.bt-tip:hover,
+.bt-tip:focus-visible {
+  color: var(--bt-green);
+  outline: none;
+}
+
+.bt-tooltip {
+  position: fixed;
+  z-index: 40;
+  max-width: min(340px, calc(100vw - 32px));
+  padding: 10px 12px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  font-weight: 400;
+  text-align: left;
+  text-transform: none;
+  letter-spacing: 0;
+  white-space: normal;
+  color: #f5f5f5;
+  background: #262626;
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
+  pointer-events: none;
+}
+
+.bt-tooltip strong { color: #fff; }
+.bt-tooltip p { margin: 6px 0 0; }
+.bt-tooltip p:first-of-type { margin-top: 4px; }
+.bt-tooltip em { color: var(--bt-green); font-style: normal; font-weight: 600; }
+
+/* ── Results count ── */
+
+.bt-count-label {
+  font-weight: 600;
+  color: var(--bt-text);
+}
+
+/* ── Clickable rows ──
+   The whole row is the control, so it needs to look like one. */
+
+.bt-table tbody tr.bt-row {
+  cursor: pointer;
+}
+
+.bt-table tbody tr.bt-row:focus-visible {
+  outline: 2px solid var(--bt-green);
+  outline-offset: -2px;
+}
+
+.bt-table tbody tr.bt-row[aria-expanded="true"] {
+  background: var(--bt-bg-hover);
+}
+
+.bt-table tbody tr.bt-row[aria-expanded="true"] td:first-child {
+  box-shadow: inset 3px 0 0 var(--bt-green);
+}
+
+/* ── TPS speed preview — always on, inline under the targets ── */
+
+.bt-tps-preview {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--bt-border);
+}
+
+.bt-tps-preview-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 7px;
+}
+
+.bt-tps-preview-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--bt-text);
+}
+
+.bt-preview-sub {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--bt-green-dark, #5a8c00);
+}
+
+/* the picked speed misses the TPS target */
+.bt-preview-sub.bt-sub-bad {
+  color: #c0392b;
+}
+
+.bt-preview-text {
+  /* 110.5px is 6.5em at the 17px this box used before; pinned in px so the
+     panel keeps its height now that the type is table-sized. */
+  min-height: 110.5px;
+  padding: 16px 18px;
+  /* Matches the sweep table beside it. Note that is 14px, NOT the 13px on
+     .bt-table below — just-the-docs styles bare `td`/`th` at 14px and wins,
+     so every cell in both tables actually renders at 14px. Measured, not
+     inferred: reading .bt-table alone gives the wrong number. */
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--bt-text);
+  background: var(--bt-bg);
+  border: 1px solid var(--bt-border);
+  border-radius: 6px;
+}
+
+.bt-preview-text.bt-streaming::after {
+  content: "▍";
+  font-size: 0.9em;
+  color: var(--bt-green);
+  animation: bt-blink 1s steps(2, start) infinite;
+}
+
+@keyframes bt-blink { to { visibility: hidden; } }
+
+.bt-preview-note {
+  margin: 8px 0 0;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--bt-text-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bt-preview-text.bt-streaming::after { animation: none; }
+}
+
+/* ── How-to disclosure ──
+   Deliberately not a panel: it is page copy, and must not read as a third
+   control surface stacked above the targets and filters. */
+
+details.bt-howto {
+  margin: 0 0 22px;
+}
+
+/* Several explanation panels stack as one group above the widget. */
+details.bt-howto + details.bt-howto { margin-top: -14px; }
+
+details.bt-howto > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--bt-green-dark);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+details.bt-howto > summary::-webkit-details-marker { display: none; }
+
+details.bt-howto > summary::before {
+  content: "\25B6";
+  font-size: 0.7em;
+  color: var(--bt-green);
+  transition: transform 0.15s;
+}
+
+details.bt-howto[open] > summary::before { transform: rotate(90deg); }
+
+details.bt-howto > summary:hover { color: var(--bt-green); }
+
+details.bt-howto > summary:focus-visible {
+  outline: 2px solid var(--bt-green);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+.bt-howto-body {
+  margin-top: 10px;
+  padding-left: 18px;
+  border-left: 2px solid var(--bt-border);
+  max-width: 76ch;
+}
+
+.bt-howto-body h3 {
+  margin: 22px 0 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--bt-text);
+}
+
+.bt-howto-body h3:first-child { margin-top: 4px; }
+
+.bt-howto-body p {
+  margin: 0 0 10px;
+  line-height: 1.65;
+}
+
+.bt-howto-body ul { margin: 0 0 10px; }
+
+.bt-howto-example {
+  margin: 4px 0 12px;
+  padding: 12px 14px;
+  background: var(--bt-bg-alt);
+  border-radius: var(--bt-radius);
+  font-size: 0.95em;
+}
+
+.bt-howto-example p:last-child { margin-bottom: 0; }
+
+/* ── Expanded row: sweep table beside the speed preview ── */
+
+.bt-detail-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 18px;
+  margin-bottom: 16px;
+}
+
+.bt-detail-top .bt-detail-table {
+  flex: 0 1 auto;
+  margin-bottom: 0;
+}
+
+.bt-detail-preview {
+  display: flex;
+  flex-direction: column;
+  /* No max-width: the preview takes whatever the sweep table leaves, so the
+     pair spans the same width as the chart below and their right edges line
+     up instead of the preview stopping short. */
+  flex: 1 1 340px;
+  min-width: 0;
+}
+
+/* Fixed box: it fills the space beside the sweep table and does not grow as
+   text arrives, so nothing on the page shifts while it streams.
+   flex-basis must be 0 — with `auto` the base size is the content, which is
+   exactly what made the box grow token by token. */
+.bt-detail-preview .bt-preview-text {
+  flex: 1 1 0;
+  /* 6em at the previous 17px */
+  min-height: 102px;
+  overflow: hidden;
+}
+
+.bt-detail-preview .bt-preview-note {
+  flex: none;
+}
+
+/* The metric that caused a FAIL, marked on the number itself. Colour only —
+   the STATUS column keeps the bold, so the row still reads status-first. */
+.bt-detail-table td.bt-dp-good {
+  color: #2d8a2d;
+}
+
+.bt-detail-table td.bt-dp-bad {
+  color: #c0392b;
+}
+
+/* measurement rows are pickable: each one drives the preview */
+.bt-detail-table tbody tr.bt-dp-row {
+  cursor: pointer;
+}
+
+.bt-detail-table tbody tr.bt-dp-row:hover {
+  background: var(--bt-bg-hover);
+}
+
+.bt-detail-table tbody tr.bt-dp-row:focus-visible {
+  outline: 2px solid var(--bt-green);
+  outline-offset: -2px;
+}
+
+.bt-detail-table tbody tr.bt-dp-active {
+  background: var(--bt-bg-hover);
+}
+
+/* The picked measurement is framed on all four sides, so it is clear which
+   row the preview is playing. Inset shadows on the cells rather than a border
+   on the row: with border-collapse a row border would shift the columns. */
+.bt-detail-table tbody tr.bt-dp-active > td {
+  box-shadow: inset 0 2px 0 var(--bt-green), inset 0 -2px 0 var(--bt-green);
+}
+
+.bt-detail-table tbody tr.bt-dp-active > td:first-child {
+  box-shadow: inset 2px 0 0 var(--bt-green), inset 0 2px 0 var(--bt-green), inset 0 -2px 0 var(--bt-green);
+}
+
+.bt-detail-table tbody tr.bt-dp-active > td:last-child {
+  box-shadow: inset -2px 0 0 var(--bt-green), inset 0 2px 0 var(--bt-green), inset 0 -2px 0 var(--bt-green);
+}
+
+/* Columns whose values are names, not numbers: Model, Device, Quantization,
+   Engine. Centring made them ragged — "1× DGX Spark" against "4× DGX Spark"
+   against "RTX PRO 6000" reads as a list only when the left edges line up.
+   Parameters, Intelligence and Agentic stay centred with the rest of the
+   numbers.
+
+   Selected by class, not by position, so adding or reordering a column cannot
+   re-align the wrong one. Child combinators throughout: the expanded row nests
+   a second table inside .bt-table, so a descendant selector here also caught
+   the sweep table's cells. */
+.bt-table > thead > tr > th.bt-th-left,
+.bt-table > tbody > tr.bt-row > td.bt-left {
+  text-align: left;
+}
+
+/* ── Attribution ──
+   Artificial Analysis require credit wherever their index values are shown, so
+   this line is a licensing obligation, not decoration: it must stay visible and
+   must stay next to the table. Sits outside .bt-container because the widget
+   replaces its own innerHTML on every filter change. */
+.bt-attribution {
+  max-width: 100%;
+  margin: 10px 0 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--bt-text-muted);
+}
+
+/* ── Expanded row: capacity breakdown ──
+   A grid, not a table: a nested table would inherit the outer table's dark
+   header, centring and zeroed cell padding. .bt-table's nowrap and centring
+   are inherited by everything inside it, so both are reset here. */
+
+.bt-capacity {
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  background: var(--bt-bg);
+  border: 1px solid var(--bt-border);
+  border-radius: var(--bt-radius);
+  text-align: left;
+  white-space: normal;
+  cursor: auto;
+}
+
+.bt-capacity-title {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.bt-capacity-grid {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 10px 28px;
+  align-items: baseline;
+  font-size: 13px;
+}
+
+.bt-capacity-grid .bt-cap-label { font-weight: 600; }
+
+.bt-cap-result strong { font-size: 15px; }
+
+.bt-cap-result { cursor: help; }
+
+.bt-cap-by { color: var(--bt-text-muted); }
+
+.bt-cap-detail {
+  display: block;
+  margin-top: 2px;
+  font-size: 12.5px;
+  color: var(--bt-text-muted);
+}
+
+.bt-capacity-note {
+  margin: 12px 0 0;
+  max-width: 100ch;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--bt-text-muted);
+}
+
+/* ── Expanded row: results explanation (left) beside the capacity box (right) ──
+   Only when the page carries an explanation for the row (see explanation() in
+   the widget); otherwise the capacity box stands alone as before. Stacks on
+   narrow screens. */
+
+.bt-detail-pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+  margin: 0 0 16px;
+}
+
+.bt-detail-pair > .bt-detail-pair-col > .bt-capacity { margin: 0; height: 100%; box-sizing: border-box; }
+
+.bt-explained {
+  height: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  background: var(--bt-bg);
+  border: 1px solid var(--bt-border);
+  border-radius: var(--bt-radius);
+  text-align: left;
+  white-space: normal;
+  cursor: auto;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.bt-explained p { margin: 0 0 8px; }
+.bt-explained p:last-child { margin-bottom: 0; }
+
+@media (max-width: 900px) {
+  .bt-detail-pair { grid-template-columns: minmax(0, 1fr); }
+}

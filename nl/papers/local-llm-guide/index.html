@@ -1,0 +1,1988 @@
+
+
+<!DOCTYPE html>
+
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-default.css">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet">
+
+  <style id="jtd-nav-activation">
+  
+
+.site-nav > ul.nav-list:first-child > li > a,
+.site-nav > ul.nav-list:first-child > li > ul > li:not(:nth-child(1)) > a,
+.site-nav > ul.nav-list:first-child > li > ul > li > ul > li > a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:not(:first-child) a,
+.site-nav li.external a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(1) > a {
+  font-weight: 600;
+  text-decoration: none;
+}.site-nav > ul.nav-list:first-child > li:nth-child(3) > button svg,
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(1) > button svg {
+  transform: rotate(-90deg);
+}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list,
+.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list > li.nav-list-item:nth-child(1) > ul.nav-list {
+  display: block;
+}
+  </style>
+
+  
+
+  
+    <script src="/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="icon" href="/nl/favicon.ico" type="image/x-icon">
+
+
+
+  <!-- Begin Jekyll SEO tag v2.9.1 -->
+<title>Handleiding voor lokaal LLM-gebruik | Aetherix White Papers</title>
+<meta name="generator" content="Jekyll v4.3.4" />
+<meta property="og:title" content="Handleiding voor lokaal LLM-gebruik" />
+<meta property="og:locale" content="nl" />
+<meta name="description" content="Integrale beslisgids voor lokaal LLM-gebruik: hardware (NVIDIA Jetson, RTX PRO, DGX Spark, DGX/HGX), modelkeuze, softwarestack en koppeling aan scenario’s." />
+<meta name="twitter:description" property="og:description" content="Integrale beslisgids voor lokaal LLM-gebruik: hardware (NVIDIA Jetson, RTX PRO, DGX Spark, DGX/HGX), modelkeuze, softwarestack en koppeling aan scenario’s." />
+<link rel="canonical" href="https://whitepapers.aetherix.com/nl/papers/local-llm-guide/" />
+<meta property="og:url" content="https://whitepapers.aetherix.com/nl/papers/local-llm-guide/" />
+<meta property="og:site_name" content="Aetherix White Papers" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-06-30T09:00:00+00:00" />
+<meta property="article:modified_time" content="2026-06-30T09:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Handleiding voor lokaal LLM-gebruik" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2026-06-30T09:00:00+00:00","datePublished":"2026-06-30T09:00:00+00:00","description":"Integrale beslisgids voor lokaal LLM-gebruik: hardware (NVIDIA Jetson, RTX PRO, DGX Spark, DGX/HGX), modelkeuze, softwarestack en koppeling aan scenario’s.","headline":"Handleiding voor lokaal LLM-gebruik","mainEntityOfPage":{"@type":"WebPage","@id":"https://whitepapers.aetherix.com/nl/papers/local-llm-guide/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://whitepapers.aetherix.com/assets/images/aetherix-logo.png"}},"url":"https://whitepapers.aetherix.com/nl/papers/local-llm-guide/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  
+<!-- Google tag (gtag.js) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JWLN33085T"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+
+  // Consent Mode v2 — default DENIED. Banner onayı ile GRANTED olur.
+  // KVKK/GDPR uyumu: ziyaretçi onay vermeden çerez set edilmez.
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    functionality_storage: 'granted',
+    security_storage: 'granted',
+    wait_for_update: 500
+  });
+
+  gtag('js', new Date());
+  gtag('config', 'G-JWLN33085T', {
+    anonymize_ip: true
+  });
+</script>
+
+<link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/papers/local-llm-guide/">
+<link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/papers/local-llm-guide/">
+<link rel="alternate" hreflang="x-default" href="https://whitepapers.aetherix.com/papers/local-llm-guide/">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/images/favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+<script>
+(function () {
+  var open = XMLHttpRequest.prototype.open;
+  var own = "/nl/search-data.json";
+  XMLHttpRequest.prototype.open = function (method, url) {
+    if (typeof url === "string" && /assets\/js\/search-data\.json$/.test(url)) arguments[1] = own;
+    return open.apply(this, arguments);
+  };
+})();
+</script>
+
+
+</head>
+
+<body>
+  <a class="skip-to-main" href="#main-content">Naar de hoofdinhoud</a>
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="svg-link" viewBox="0 0 24 24">
+  <title>Link</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+</symbol>
+
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+  <title>Menu</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+    <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</symbol>
+
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+  <title>Expand</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</symbol>
+
+  <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
+<symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+  <title id="svg-external-link-title">(external link)</title>
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+</symbol>
+
+  
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+  <title>Document</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+</symbol>
+
+    <symbol id="svg-search" viewBox="0 0 24 24">
+  <title>Search</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</symbol>
+
+  
+  
+    <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+<symbol id="svg-copy" viewBox="0 0 16 16">
+  <title>Copy</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+</symbol>
+<symbol id="svg-copied" viewBox="0 0 16 16">
+  <title>Copied</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"/>
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"/>
+  </svg>
+</symbol>
+
+  
+</svg>
+
+  
+    <div class="side-bar">
+  <div class="site-header" role="banner">
+    <a href="/nl/" class="site-title lh-tight">
+  <div class="site-logo" role="img" aria-label="Aetherix White Papers"></div>
+
+</a>
+    <button id="menu-button" class="site-button btn-reset" aria-label="Toggle menu" aria-pressed="false">
+      <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  <nav aria-label="Main" id="site-nav" class="site-nav">
+  
+  
+    <ul class="nav-list"><li class="nav-list-item"><a href="/nl/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/nl/about/" class="nav-list-link">Over ons</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in White Papers category" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+    </button><a href="/nl/papers/" class="nav-list-link">White Papers</a><ul class="nav-list"><li class="nav-list-item"><a href="/nl/papers/local-llm-guide/" class="nav-list-link">Handleiding voor lokaal LLM-gebruik</a></li><li class="nav-list-item"><a href="/nl/papers/conditional-memory-offloading/" class="nav-list-link">Conditional memory en offloading bij LLM-inferentie</a></li><li class="nav-list-item"><a href="/nl/papers/b300-gb300-cluster-architecture/" class="nav-list-link">NVIDIA DGX B300 vs GB300 NVL72: vergelijking van clusterarchitecturen</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-2node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 2 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-3node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 3 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-4node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 4 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-8node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 8 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/qwen3.6-27b-dgx-spark-benchmark/" class="nav-list-link">Qwen3.6-27B DGX Spark-benchmark</a></li><li class="nav-list-item"><a href="/nl/papers/qwen3.6-27b-dgx-spark-scaling/" class="nav-list-link">Schaling van Qwen3.6-27B op een DGX Spark-cluster</a></li><li class="nav-list-item"><a href="/nl/papers/deepseek-v4.1-flash-4spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash-deployment op 4× DGX Spark</a></li><li class="nav-list-item"><a href="/nl/papers/deepseek-v4.1-flash-8spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash-deployment op 8× DGX Spark met TP8</a></li><li class="nav-list-item"><a href="/nl/papers/kimi-k3-dgx-b300-inference-benchmark/" class="nav-list-link">Kimi K3-inferentiebenchmark op DGX-B300</a></li></ul></li><li class="nav-list-item"><a href="/nl/llm-inference-benchmarks/" class="nav-list-link">LLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/nl/cv-inference-benchmarks/" class="nav-list-link">CV Inference Benchmark Explorer</a></li></ul>
+
+  
+</nav>
+
+
+  
+  
+    <div class="lang-switcher">
+  
+    
+    
+      <a class="lang-switcher-item" href="/papers/local-llm-guide/">EN</a>
+    
+  
+    
+    
+      <span class="lang-switcher-item active">NL</span>
+    
+  
+</div>
+<script src="/assets/js/lang-switch.js"></script>
+
+  
+</div>
+
+  
+  <div class="main" id="top">
+    <div id="main-header" class="main-header">
+  
+    
+
+<div class="search" role="search">
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Zoeken" aria-label="Zoeken" autocomplete="off">
+    <label for="search-input" class="search-label"><svg viewBox="0 0 24 24" class="search-icon"><use xlink:href="#svg-search"></use></svg></label>
+  </div>
+  <div id="search-results" class="search-results"></div>
+</div>
+
+  
+  
+  
+    <nav aria-label="Auxiliary" class="aux-nav">
+  <ul class="aux-nav-list">
+    
+      <li class="aux-nav-list-item">
+        <a href="https://aetherix.com" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          aetherix.com
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://github.com/aetherix-bv" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          GitHub
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+  
+</div>
+
+    <div class="main-content-wrap">
+      <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+  <ol class="breadcrumb-nav-list">
+    <li class="breadcrumb-nav-list-item"><a href="/nl/papers/">White Papers</a></li>
+    <li class="breadcrumb-nav-list-item"><span>Handleiding voor lokaal LLM-gebruik</span></li>
+  </ol>
+</nav>
+      <div id="main-content" class="main-content">
+        <main>
+          
+            <blockquote>
+  <p><strong>Publicatiedatum:</strong> juni 2026
+<strong>Reikwijdte:</strong> Een integrale beslisgids die begint bij de vraag waarom een lokale LLM nodig is en voor wie, en doorloopt tot en met de keuze van hardware → model → software.
+<strong>Opmerking:</strong> Dit vakgebied verandert zelfs op korte termijn zeer sterk. De productnamen, prijzen en benchmarkresultaten hieronder gelden per juni 2026; wat blijft, zijn niet de namen, maar de categorieën en de beslislogica. Aan de hardwarekant wordt bewust alleen NVIDIA behandeld — de belangrijkste reden is het CUDA-ecosysteem (zie paragraaf 4.1).</p>
+</blockquote><hr />
+<h2 class="no_toc" id="inhoudsopgave">
+  
+  
+    <a href="#inhoudsopgave" class="anchor-heading" aria-labelledby="inhoudsopgave"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Inhoudsopgave
+  
+  
+</h2>
+    
+
+<ul id="markdown-toc">
+  <li><a href="#managementsamenvatting" id="markdown-toc-managementsamenvatting">Managementsamenvatting</a></li>
+  <li><a href="#1-inleiding" id="markdown-toc-1-inleiding">1. Inleiding</a>    <ul>
+      <li><a href="#over-aetherix" id="markdown-toc-over-aetherix">Over Aetherix</a></li>
+    </ul>
+  </li>
+  <li><a href="#2-waarom-een-lokale-llm-motivatie" id="markdown-toc-2-waarom-een-lokale-llm-motivatie">2. Waarom een lokale LLM? (Motivatie)</a>    <ul>
+      <li><a href="#voordelen" id="markdown-toc-voordelen">Voordelen</a></li>
+      <li><a href="#aandachtspunten" id="markdown-toc-aandachtspunten">Aandachtspunten</a></li>
+    </ul>
+  </li>
+  <li><a href="#3-wie-heeft-het-nodig-doelgroepen-en-scenarios" id="markdown-toc-3-wie-heeft-het-nodig-doelgroepen-en-scenarios">3. Wie heeft het nodig? (Doelgroepen en scenario’s)</a></li>
+  <li><a href="#4-hardwarekeuze-nvidia" id="markdown-toc-4-hardwarekeuze-nvidia">4. Hardwarekeuze (NVIDIA)</a>    <ul>
+      <li><a href="#41-waarom-nvidia-in-één-woord-cuda" id="markdown-toc-41-waarom-nvidia-in-één-woord-cuda">4.1. Waarom NVIDIA? In één woord: CUDA</a></li>
+      <li><a href="#42-eerste-beslissing-training-of-inferentie" id="markdown-toc-42-eerste-beslissing-training-of-inferentie">4.2. Eerste beslissing: training of inferentie?</a></li>
+      <li><a href="#43-de-doorslaggevende-maatstaf-vram-en-het-totale-geheugenbudget" id="markdown-toc-43-de-doorslaggevende-maatstaf-vram-en-het-totale-geheugenbudget">4.3. De doorslaggevende maatstaf: VRAM (en het totale geheugenbudget)</a></li>
+      <li><a href="#44-hoe-inferentie-werkt-en-metrieken-voor-de-servicekwaliteit" id="markdown-toc-44-hoe-inferentie-werkt-en-metrieken-voor-de-servicekwaliteit">4.4. Hoe inferentie werkt en metrieken voor de servicekwaliteit</a></li>
+      <li><a href="#45-hardwareklassen-aetherix-catalogus" id="markdown-toc-45-hardwareklassen-aetherix-catalogus">4.5. Hardwareklassen (Aetherix-catalogus)</a></li>
+      <li><a href="#46-multi-gpu" id="markdown-toc-46-multi-gpu">4.6. Multi-GPU</a></li>
+      <li><a href="#47-alleen-cpu--ram" id="markdown-toc-47-alleen-cpu--ram">4.7. Alleen CPU + RAM</a></li>
+      <li><a href="#48-koppeling-van-scenario-aan-hardware" id="markdown-toc-48-koppeling-van-scenario-aan-hardware">4.8. Koppeling van scenario aan hardware</a></li>
+      <li><a href="#49-operationele-kosten-en-totale-eigendomskosten-tco" id="markdown-toc-49-operationele-kosten-en-totale-eigendomskosten-tco">4.9. Operationele kosten en totale eigendomskosten (TCO)</a></li>
+    </ul>
+  </li>
+  <li><a href="#5-modelkeuze" id="markdown-toc-5-modelkeuze">5. Modelkeuze</a>    <ul>
+      <li><a href="#51-wat-kunt-u-met-een-lokale-llm-doen-toepassingen-van-inferentie" id="markdown-toc-51-wat-kunt-u-met-een-lokale-llm-doen-toepassingen-van-inferentie">5.1. Wat kunt u met een lokale LLM doen? (toepassingen van inferentie)</a></li>
+      <li><a href="#52-criteria-voor-de-modelkeuze" id="markdown-toc-52-criteria-voor-de-modelkeuze">5.2. Criteria voor de modelkeuze</a></li>
+      <li><a href="#53-actuele-families-van-open-weight-modellen-medio-2026" id="markdown-toc-53-actuele-families-van-open-weight-modellen-medio-2026">5.3. Actuele families van open-weight modellen (medio 2026)</a></li>
+      <li><a href="#54-balans-tussen-parametergrootte-en-prestaties" id="markdown-toc-54-balans-tussen-parametergrootte-en-prestaties">5.4. Balans tussen parametergrootte en prestaties</a></li>
+      <li><a href="#55-kwantisatie" id="markdown-toc-55-kwantisatie">5.5. Kwantisatie</a></li>
+      <li><a href="#56-keuze-per-taak-inclusief-turks" id="markdown-toc-56-keuze-per-taak-inclusief-turks">5.6. Keuze per taak (inclusief Turks)</a></li>
+      <li><a href="#57-licentie-commercieel-gebruik" id="markdown-toc-57-licentie-commercieel-gebruik">5.7. Licentie (commercieel gebruik)</a></li>
+      <li><a href="#58-waar-vergelijkt-u-modellen-in-2026" id="markdown-toc-58-waar-vergelijkt-u-modellen-in-2026">5.8. Waar vergelijkt u modellen in 2026?</a></li>
+      <li><a href="#59-stel-uw-eigen-evaluatieset-benchmarkset-samen" id="markdown-toc-59-stel-uw-eigen-evaluatieset-benchmarkset-samen">5.9. Stel uw eigen evaluatieset (benchmarkset) samen</a></li>
+    </ul>
+  </li>
+  <li><a href="#6-softwarekeuze" id="markdown-toc-6-softwarekeuze">6. Softwarekeuze</a>    <ul>
+      <li><a href="#6a-inferentie-engines-backend" id="markdown-toc-6a-inferentie-engines-backend">6.A. Inferentie-engines (backend)</a></li>
+      <li><a href="#6b-alles-in-één-desktopapplicaties" id="markdown-toc-6b-alles-in-één-desktopapplicaties">6.B. Alles-in-één desktopapplicaties</a></li>
+      <li><a href="#6c-self-hosted-ai-werkruimtes-van-de-nieuwe-generatie" id="markdown-toc-6c-self-hosted-ai-werkruimtes-van-de-nieuwe-generatie">6.C. Self-hosted AI-werkruimtes van de nieuwe generatie</a></li>
+      <li><a href="#6d-klassieke-web-uis-en-rag-oplossingen" id="markdown-toc-6d-klassieke-web-uis-en-rag-oplossingen">6.D. Klassieke web-UI’s en RAG-oplossingen</a></li>
+      <li><a href="#6e-api-gateways--routering-gateway--router" id="markdown-toc-6e-api-gateways--routering-gateway--router">6.E. API-gateways / routering (gateway &amp; router)</a></li>
+      <li><a href="#6f-tools-voor-fine-tuning--training-opensource" id="markdown-toc-6f-tools-voor-fine-tuning--training-opensource">6.F. Tools voor fine-tuning &amp; training (opensource)</a></li>
+      <li><a href="#6g-code-assistenten--agents-opensource" id="markdown-toc-6g-code-assistenten--agents-opensource">6.G. Code-assistenten &amp; agents (opensource)</a></li>
+    </ul>
+  </li>
+  <li><a href="#7-voorbeeldscenarios-voor-deployment" id="markdown-toc-7-voorbeeldscenarios-voor-deployment">7. Voorbeeldscenario’s voor deployment</a></li>
+  <li><a href="#8-risicos-en-aandachtspunten" id="markdown-toc-8-risicos-en-aandachtspunten">8. Risico’s en aandachtspunten</a>    <ul>
+      <li><a href="#veelgemaakte-fouten-bij-het-dimensioneren-van-hardware" id="markdown-toc-veelgemaakte-fouten-bij-het-dimensioneren-van-hardware">Veelgemaakte fouten bij het dimensioneren van hardware</a></li>
+      <li><a href="#proces-voor-het-dimensioneren-van-hardware" id="markdown-toc-proces-voor-het-dimensioneren-van-hardware">Proces voor het dimensioneren van hardware</a></li>
+      <li><a href="#checklist-voor-het-dimensioneren-van-hardware" id="markdown-toc-checklist-voor-het-dimensioneren-van-hardware">Checklist voor het dimensioneren van hardware</a></li>
+    </ul>
+  </li>
+  <li><a href="#9-conclusie-en-aanbevelingen" id="markdown-toc-9-conclusie-en-aanbevelingen">9. Conclusie en aanbevelingen</a></li>
+  <li><a href="#woordenlijst-begrippen" id="markdown-toc-woordenlijst-begrippen">Woordenlijst (begrippen)</a></li>
+  <li><a href="#bronnen" id="markdown-toc-bronnen">Bronnen</a>    <ul>
+      <li><a href="#opmerkingen" id="markdown-toc-opmerkingen">Opmerkingen</a></li>
+    </ul>
+  </li>
+</ul><hr />
+<h2 id="managementsamenvatting">
+  
+  
+    <a href="#managementsamenvatting" class="anchor-heading" aria-labelledby="managementsamenvatting"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Managementsamenvatting
+  
+  
+</h2>
+    
+
+<ul>
+  <li><strong>Lokale LLM</strong> betekent dat u het model op uw eigen hardware draait: data verlaten het apparaat nooit, internet is niet nodig en er zijn geen kosten per gebruik. De sterkste reden is <strong>dataprivacy en datasoevereiniteit</strong> (overheid, zorg, juridisch, financiën, defensie).</li>
+  <li><strong>De enige harde beperking is VRAM.</strong> Werkelijke behoefte = modelgewichten (weights) + KV-cache + activaties + ~20% reserve (headroom); modelgrootte en contextlengte bepalen de hardwareklasse (zie 4.3).</li>
+  <li><strong>Hardware (alleen NVIDIA — reden: CUDA):</strong> aan de edge <strong>Jetson</strong> → op het werkstation <strong>RTX PRO Blackwell (16–96 GB)</strong> → in het datacenter <strong>L40S / H100·H200 NVL</strong> → op grote schaal <strong>DGX Spark / B200·B300</strong>. De eerste vraag: <strong>training of inferentie (inference)?</strong></li>
+  <li><strong>Model:</strong> voor de meeste workloads is <strong>7–14B dense</strong> of <strong>~30B MoE</strong> de optimale balans; voor commercieel gebruik zijn families met een <strong>Apache 2.0- / MIT</strong>-licentie (Qwen, DeepSeek, GLM) de veiligste basis. Bepaal eerst <strong>wat u gaat doen</strong> (5.1) en de <strong>selectiecriteria</strong> (5.2).</li>
+  <li><strong>Software:</strong> eenvoudige start met <strong>Ollama / LM Studio</strong>; productie met <strong>vLLM / TensorRT-LLM</strong>; voor agents + geheugen <strong>AI-werkruimtes</strong>; bij meerdere gebruikers zet u een <strong>gateway</strong> (LiteLLM e.d.) vooraan.</li>
+  <li><strong>Beslismethode:</strong> begin klein, meet op <strong>uw eigen evaluatieset</strong> (5.9) en schaal op naarmate de behoeften duidelijker worden. Vergeet bij de kosten de <strong>TCO</strong> niet (de GPU-kosten zijn slechts 30–40% van het totaal).</li>
+</ul><hr />
+<h2 id="1-inleiding">
+  
+  
+    <a href="#1-inleiding" class="anchor-heading" aria-labelledby="1-inleiding"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1. Inleiding
+  
+  
+</h2>
+    
+
+<p>Een <strong>LLM (Large Language Model)</strong> is een AI-model dat is getraind op zeer grote hoeveelheden tekstdata en dat natuurlijke taal kan begrijpen en genereren. De meesten van ons gebruiken deze modellen via de cloud: diensten als ChatGPT, Claude en Gemini draaien het model op hun eigen servers, en wij benaderen het via internet.</p>
+
+<p><strong>Lokale LLM</strong> betekent dat u het model op uw eigen hardware draait — een laptop, een desktopwerkstation of een bedrijfsserver. Data verlaten het apparaat nooit, een internetverbinding is niet nodig en er zijn geen kosten per gebruik.</p>
+
+<p>Het belangrijkste verschil tussen de twee benaderingen:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th>Cloud-LLM</th>
+      <th>Lokale LLM</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Waar data worden verwerkt</td>
+      <td>Op de server van de aanbieder</td>
+      <td>Op uw eigen hardware</td>
+    </tr>
+    <tr>
+      <td>Kostenmodel</td>
+      <td>Gebruik/abonnement (doorlopend)</td>
+      <td>Hardware (eenmalig) + elektriciteit</td>
+    </tr>
+    <tr>
+      <td>Internet</td>
+      <td>Vereist</td>
+      <td>Niet vereist</td>
+    </tr>
+    <tr>
+      <td>Privacy</td>
+      <td>Vertrouwen op de aanbieder</td>
+      <td>Volledige controle</td>
+    </tr>
+    <tr>
+      <td>Toegang tot modellen</td>
+      <td>Beperkt tot wat de aanbieder biedt</td>
+      <td>Vrije keuze uit honderden open modellen</td>
+    </tr>
+    <tr>
+      <td>Aanpassing</td>
+      <td>Beperkt</td>
+      <td>Volledig (fine-tuning, RAG, eigen data)</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Het doel van deze handleiding is een actueel en bruikbaar antwoord te geven op de vraag: “Is een lokale LLM geschikt voor mij / mijn organisatie, en zo ja, welke combinatie van hardware, model en software moet ik kiezen?”</p>
+<h4 id="over-aetherix">
+  
+  
+    <a href="#over-aetherix" class="anchor-heading" aria-labelledby="over-aetherix"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Over Aetherix
+  
+  
+</h4>
+    
+
+<p><img src="/assets/images/aetherix-logo.png" alt="Aetherix" /></p>
+
+<p><strong>Aetherix B.V.</strong> is een in Nederland gevestigde leverancier van NVIDIA Jetson™-hardware voor edge AI, gespecialiseerd in Jetson-platforms voor robotica, automatisering en embedded systemen.</p>
+
+<ul>
+  <li><strong>Hardware:</strong> NVIDIA Jetson-developerkits, AI-kits, carrierboards en accessoires; NVIDIA DGX Spark-systemen; NVIDIA RTX PRO grafische kaarten.</li>
+  <li><strong>Expertise:</strong> een team met jarenlange praktijkervaring met Jetson en professionele GPU’s, en NVIDIA-systemen die zijn geselecteerd voor AI in de praktijk.</li>
+  <li><strong>Actief in de EU:</strong> conforme facturering, btw-validatie en transparante logistiek, met verzending door heel Europa vanuit Nederland.</li>
+</ul>
+
+<p>De hardwareaanbevelingen in deze handleiding zijn gebaseerd op dit portfolio.</p><hr />
+<h2 id="2-waarom-een-lokale-llm-motivatie">
+  
+  
+    <a href="#2-waarom-een-lokale-llm-motivatie" class="anchor-heading" aria-labelledby="2-waarom-een-lokale-llm-motivatie"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2. Waarom een lokale LLM? (Motivatie)
+  
+  
+</h2>
+    
+
+<p><img src="/papers/local-llm-guide/images/sema-2-advantages.png" alt="Belangrijkste voordelen van een lokale LLM" width="320" /></p>
+<p><sub><i>Figuur: Belangrijkste voordelen van een lokale LLM</i></sub></p>
+<h3 id="voordelen">
+  
+  
+    <a href="#voordelen" class="anchor-heading" aria-labelledby="voordelen"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Voordelen
+  
+  
+</h3>
+    
+
+<p><strong>Dataprivacy en -beveiliging.</strong> Dit is de sterkste reden. In sectoren als juridisch, zorg, financiën en defensie verlaten data het apparaat nooit; naleving van de regelgeving voor gegevensbescherming wordt aanzienlijk eenvoudiger. Gevoelige klantgegevens, contracten of patiëntendossiers worden niet naar de server van een derde partij gestuurd.</p>
+
+<p><strong>Datasoevereiniteit — overheid en publieke instellingen.</strong> Voor overheidsinstanties, kritieke infrastructuur en publieke instellingen is dit een van de meest doorslaggevende redenen: met een lokale LLM kan bedrijfs- of gerubriceerde informatie onder geen enkele omstandigheid naar buitenlandse servers of servers van derden lekken. Data worden volledig binnen de grenzen van de instelling, op haar eigen hardware, verwerkt; dit voldoet rechtstreeks aan de eisen van datasoevereiniteit en nationale veiligheid. Dat het zelfs op volledig geïsoleerde (air-gapped) en gerubriceerde netwerken kan draaien, is voor deze instellingen een cruciaal voordeel.</p>
+
+<p><strong>Kosten.</strong> Bij intensief en continu gebruik komt een eenmalige hardware-investering uiteindelijk onder de operationele kosten van cloudalternatieven uit; voor teams die grote aantallen aanroepen doen, bestaan de marginale kosten van een lokale opstelling vrijwel alleen uit elektriciteit.</p>
+
+<p><strong>Offline werking.</strong> Het werkt in omgevingen zonder internet (in het veld, op beveiligde netwerken, op air-gapped/geïsoleerde systemen).</p>
+
+<p><strong>Aanpassing.</strong> U kunt fine-tunen op uw eigen data, het model met RAG aan uw eigen documenten koppelen en het gedrag van het systeem volledig beheersen. Open-weight modellen leggen niet de beperkingen op die gesloten diensten afdwingen.</p>
+
+<p><strong>Voorspelbare latentie (latency).</strong> De snelheid hangt af van uw hardware; u bent niet afhankelijk van drukte bij de aanbieder, quotalimieten of storingen.</p>
+<h3 id="aandachtspunten">
+  
+  
+    <a href="#aandachtspunten" class="anchor-heading" aria-labelledby="aandachtspunten"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Aandachtspunten
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>De juiste hardware kiezen.</strong> Uw beoogde modelgrootte vereist de juiste VRAM-/hardwareklasse; voor de zwaarste workloads en de grootste modellen zijn kaarten met meer geheugen of multi-GPU-plannen nodig (zie paragraaf 4).</li>
+  <li><strong>Initiële investering.</strong> Hardware is een eenmalige investering; bij de juiste dimensionering verdient die zich op de lange termijn terug.</li>
+  <li><strong>Technische kennis.</strong> Installatie, de keuze van kwantisatie (quantization) en het beheer van drivers/CUDA vergen een leercurve. (Tools van de nieuwe generatie hebben dit aanzienlijk eenvoudiger gemaakt.)</li>
+  <li><strong>Onderhoudslast.</strong> Updates, modelwisselingen en hardwareonderhoud zijn de verantwoordelijkheid van de instelling.</li>
+</ul>
+
+<p><strong>Samenvatting:</strong> Waar zorgen over privacy en datasoevereiniteit spelen, bij intensief gebruik of wanneer aanpassing nodig is, is een lokale LLM een sterke en duurzame keuze. Met de juiste combinatie van hardware, model en software kan de schaal naar behoefte van klein naar groot worden aangepast.</p><hr />
+<h2 id="3-wie-heeft-het-nodig-doelgroepen-en-scenarios">
+  
+  
+    <a href="#3-wie-heeft-het-nodig-doelgroepen-en-scenarios" class="anchor-heading" aria-labelledby="3-wie-heeft-het-nodig-doelgroepen-en-scenarios"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. Wie heeft het nodig? (Doelgroepen en scenario’s)
+  
+  
+</h2>
+    
+
+<p><img src="/papers/local-llm-guide/images/sema-3-target-audience.png" alt="Wie heeft een lokale LLM nodig?" width="760" /></p>
+<p><sub><i>Figuur: Wie heeft een lokale LLM nodig?</i></sub></p>
+
+<p><strong>Overheid en publieke instellingen.</strong> Ministeries, overheidsinstanties, kritieke infrastructuur en defensie — data binnen het land en binnen de grenzen van de eigen instelling houden en voorkomen dat ze naar buiten lekken, is een vereiste van datasoevereiniteit en nationale veiligheid. Voor deze instellingen is een lokale LLM vaak de enige geschikte optie.</p>
+
+<p><strong>Bedrijven (gevoelige data).</strong> Advocatenkantoren, ziekenhuizen/zorgaanbieders, financiële instellingen en de defensie-industrie — wanneer het intern houden van data een wettelijke of contractuele verplichting is, is een lokale LLM vrijwel de enige optie.</p>
+
+<p><strong>Ontwikkelaars.</strong> Onbeperkt prototypen zonder API-kosten; IDE-integratie als code-assistent; workflows met veel geautomatiseerde tests/aanroepen.</p>
+
+<p><strong>Onderzoekers en academici.</strong> Het bestuderen van modelgedrag, experimenten uitvoeren, fine-tuningstudies en wetenschappelijk werk dat volledige controle over het model vereist.</p>
+
+<p><strong>Mkb.</strong> Kleine en middelgrote ondernemingen die klantenservice, documentverwerking en interne automatisering willen opzetten zonder klantgegevens bloot te stellen.</p>
+
+<p><strong>Individuele/privacybewuste gebruikers.</strong> Persoonlijke assistent, beheer van notities/e-mail, hobbygebruik; wie zijn data aan geen enkel bedrijf wil geven.</p>
+
+<p><strong>Voor wie een kleine schaal volstaat:</strong> Bij uitsluitend incidenteel en licht gebruik is een instapkaart of een bestaand werkstation vaak voldoende; naarmate de behoeften groeien, kan de hardware stapsgewijs worden opgeschaald (zie paragraaf 4).</p><hr />
+<h2 id="4-hardwarekeuze-nvidia">
+  
+  
+    <a href="#4-hardwarekeuze-nvidia" class="anchor-heading" aria-labelledby="4-hardwarekeuze-nvidia"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. Hardwarekeuze (NVIDIA)
+  
+  
+</h2>
+    
+<h3 id="41-waarom-nvidia-in-één-woord-cuda">
+  
+  
+    <a href="#41-waarom-nvidia-in-één-woord-cuda" class="anchor-heading" aria-labelledby="41-waarom-nvidia-in-één-woord-cuda"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.1. Waarom NVIDIA? In één woord: CUDA
+  
+  
+</h3>
+    
+
+<p>De belangrijkste reden om voor lokale LLM-hardware voor NVIDIA te kiezen, is <strong>CUDA</strong>. CUDA is het softwareplatform dat NVIDIA biedt voor parallel rekenen op GPU’s, en het is de de-factostandaard van de AI-wereld geworden. De praktische gevolgen:</p>
+
+<ul>
+  <li><strong>Compatibiliteit met het ecosysteem.</strong> Vrijwel alle LLM-tools en -bibliotheken — PyTorch, TensorFlow, vLLM, TensorRT-LLM, llama.cpp, Ollama — worden primair op CUDA ontwikkeld en draaien het best op NVIDIA-hardware. Nieuw uitgebrachte modellen, kwantisatieformaten en optimalisaties verschijnen als eerste voor CUDA.</li>
+  <li><strong>Volwassenheid en verbreiding.</strong> CUDA wordt al meer dan tien jaar ontwikkeld; het biedt uitgebreide documentatie, ondersteuning vanuit de community en een overvloed aan kant-en-klare oplossingen. Loopt u tegen een probleem aan, dan bestaat de oplossing hoogstwaarschijnlijk al.</li>
+  <li><strong>Probleemloze installatie.</strong> Een “werkt direct uit de doos”-ervaring; het risico op incompatibiliteit van drivers, bibliotheken en toolchain wordt tot een minimum beperkt.</li>
+</ul>
+
+<p>Daarom wordt in deze hele handleiding aan de hardwarekant alleen NVIDIA behandeld; alternatieve platforms hebben dit niveau van volwassenheid en ecosysteembreedte nog niet bereikt. Waar in de klassieke IT CPU + RAM + opslag vaak volstaat, bepaalt bij LLM’s <strong>de GPU-keuze rechtstreeks of het model überhaupt kan draaien</strong>: VRAM bepaalt de modelgrootte die kan draaien, geheugenbandbreedte (memory bandwidth) bepaalt de snelheid van tokengeneratie en FLOPS bepalen de snelheid van training en inferentie. Verkeerde GPU = het model draait helemaal niet of zeer traag.</p>
+<h3 id="42-eerste-beslissing-training-of-inferentie">
+  
+  
+    <a href="#42-eerste-beslissing-training-of-inferentie" class="anchor-heading" aria-labelledby="42-eerste-beslissing-training-of-inferentie"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.2. Eerste beslissing: training of inferentie?
+  
+  
+</h3>
+    
+
+<p>Dit is de <strong>belangrijkste vraag</strong> die de hardwarevereisten bepaalt. Het antwoord op “Wordt er getraind?” bepaalt vanaf het begin de schaal van de hardware die u nodig hebt.</p>
+
+<p><img src="/papers/local-llm-guide/images/sema-4-training-inference.png" alt="Eerste beslissing: training of inferentie?" width="640" /></p>
+<p><sub><i>Figuur: Eerste beslissing: training of inferentie?</i></sub></p>
+
+<p><strong>Voor de meeste organisaties is inferentie het startpunt</strong> — een kant-en-klaar open model op uw eigen server draaien. Training/aanpassing komt pas in beeld wanneer het model aan uw eigen data moet worden aangepast, en kent vier niveaus:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th>Pre-training (vanaf nul)</th>
+      <th>Full fine-tune</th>
+      <th>Fine-tune (LoRA)</th>
+      <th>Fine-tune (QLoRA)</th>
+      <th>Inferentie</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>VRAM-behoefte</td>
+      <td>Zeer hoog (~16× params)</td>
+      <td>Hoog (~12–14× params)</td>
+      <td>Gemiddeld (~2–3× params)</td>
+      <td>Laag (~0.6–1× params)</td>
+      <td>Model + KV-cache</td>
+    </tr>
+    <tr>
+      <td>7B-model</td>
+      <td>8× B200 (1 team)</td>
+      <td>1× H200 (~85–100 GB)</td>
+      <td>1× L40S / RTX PRO 6000</td>
+      <td>1× L40S</td>
+      <td>1× L40S / RTX PRO 6000</td>
+    </tr>
+    <tr>
+      <td>70B-model</td>
+      <td>8–16× B300 (1–2 teams)</td>
+      <td>4–8× H200 (ZeRO-3)</td>
+      <td>2–4× H200</td>
+      <td>1× DGX Spark / 1× H200</td>
+      <td>1× H200 (INT8) / 1× DGX Spark (INT8) — voor FP16 2× H200 (zie 4.8)</td>
+    </tr>
+    <tr>
+      <td>Duur</td>
+      <td>Weken–maanden</td>
+      <td>Dagen–1 week</td>
+      <td>Uren</td>
+      <td>Uren</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>Databehoefte</td>
+      <td>Biljoenen tokens</td>
+      <td>Miljoenen voorbeelden</td>
+      <td>Duizenden voorbeelden</td>
+      <td>Duizenden voorbeelden</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>Kosten</td>
+      <td>Zeer hoog</td>
+      <td>Hoog</td>
+      <td>Gemiddeld</td>
+      <td>Laag</td>
+      <td>Gemiddeld</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<ul>
+  <li><strong>Pre-training (vanaf nul):</strong> Het zwaarste scenario; alleen voor instellingen die hun eigen basismodel trainen. Vereist een B200/B300-cluster. <strong>Opmerking:</strong> De getallen “8×/16×” in de tabel zijn niet de werkelijke rekenbehoefte, maar de <strong>minimale verkoopeenheid van B200/B300</strong> (een team van 8 GPU’s — zie 4.5/D). De werkelijke VRAM-behoefte is ruwweg 16× de modelgrootte (FP16-gewichten + gradiënten + toestanden van de Adam-optimizer): <strong>volledige training van 7B ≈ 120–150 GB</strong>, <strong>70B ≈ 1 TB+</strong> (plus activaties). Volledige training van 7B vraagt dus veel minder geheugen dan één team van 8 GPU’s biedt; ook als niet het hele team wordt gebruikt, is dit de kleinste verkoopeenheid.</li>
+  <li><strong>Full fine-tune:</strong> Werkt <strong>alle parameters</strong> van een voorgetraind model bij op uw eigen data. De VRAM-behoefte ligt dicht bij die van pre-training (~12–14× params — iets lager dankzij gradient checkpointing en doorgaans kortere sequenties), maar <strong>duur en data zijn veel minder</strong>. Geschikt voor diepgaande domeinaanpassing (specialistische gebieden zoals Turks, medisch, juridisch); komt in beeld wanneer LoRA tekortschiet. <strong>Risico — catastrofaal vergeten (catastrophic forgetting):</strong> Het bijwerken van alle parameters kan de algemene vaardigheden die tijdens pre-training zijn geleerd (andere talen, algemene kennis, redeneren) aantasten of overschrijven. <strong>LoRA/QLoRA beperkt dit risico grotendeels</strong> — de gewichten van het basismodel blijven bevroren en alleen kleine adapterlagen worden getraind; domeinaanpassing wordt toegevoegd terwijl de algemene vaardigheden behouden blijven. In de praktijk doen de meeste organisaties er goed aan met LoRA/QLoRA te beginnen. Kiest u voor volledige fine-tuning, beperk het risico dan met: een lage learning rate, <strong>datamenging</strong> (domeindata + algemene data samen), <strong>regularisatie</strong> (KL/L2) en een beperkt aantal epochs. (Opensourcetools: zie 6.F.)</li>
+  <li><strong>LoRA / QLoRA fine-tune:</strong> De praktische manier om een bestaand model aan uw eigen data aan te passen. Niet het hele model wordt getraind, alleen kleine extra lagen. <strong>Geheugenberekening:</strong> Bij LoRA zijn de basisgewichten bevroren, dus dragen alleen de FP16-gewichten (~2× params) + activaties met gradient checkpointing + kleine adaptergradiënten/Adam-toestanden bij → <strong>~2–3× params</strong>; bij QLoRA worden de basisgewichten gekwantiseerd naar 4-bit NF4 (~0.5× params), plus activaties en een kleine adapteroverhead → <strong>~0.6–1× params</strong>. Een 70B-model fine-tunen is zelfs met één <strong>DGX Spark</strong> mogelijk (met QLoRA — bij LoRA op FP16-basis zijn de 70B-gewichten alleen al ~140 GB en passen ze dus niet in 128 GB). (Opensourcetools: zie 6.F.)</li>
+  <li><strong>Inferentie:</strong> Alleen het model draaien. Hier is het <strong>extra VRAM dat voor de KV-cache wordt toegewezen cruciaal</strong> (zie 4.3); naarmate het aantal gelijktijdige gebruikers (concurrent users) groeit, neemt deze belasting toe.</li>
+</ul>
+<h3 id="43-de-doorslaggevende-maatstaf-vram-en-het-totale-geheugenbudget">
+  
+  
+    <a href="#43-de-doorslaggevende-maatstaf-vram-en-het-totale-geheugenbudget" class="anchor-heading" aria-labelledby="43-de-doorslaggevende-maatstaf-vram-en-het-totale-geheugenbudget"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.3. De doorslaggevende maatstaf: VRAM (en het totale geheugenbudget)
+  
+  
+</h3>
+    
+
+<p>Bij een lokale LLM is de enige harde beperking VRAM (het geheugen van de grafische kaart). Passen de modelgewichten + KV-cache niet in het GPU-geheugen, dan loopt het over naar het systeem-RAM (~10x trager) of draait het model helemaal niet.</p>
+
+<p><strong>Vuistregel (alleen gewichten):</strong></p>
+<ul>
+  <li><strong>FP16 (16-bit):</strong> ~2 GB VRAM / miljard parameters</li>
+  <li><strong>8-bit (Q8):</strong> de helft daarvan (~1 GB / miljard)</li>
+  <li><strong>4-bit (Q4, bijv. Q4_K_M):</strong> een kwart (~0.5 GB / miljard). Q4_K_M geldt als de optimale balans tussen kwaliteit en geheugen, omdat het ~92–95% van de volledige precisie behoudt en het geheugen ~4× verkleint.</li>
+</ul>
+
+<p><strong>Geschat VRAM per modelgrootte (gewichten; tel daar KV-cache + reserve bij op):</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>FP16</th>
+      <th>8-bit</th>
+      <th>4-bit (Q4_K_M)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>7B / 8B</td>
+      <td>~14–16 GB</td>
+      <td>~8 GB</td>
+      <td>~5 GB</td>
+    </tr>
+    <tr>
+      <td>14B</td>
+      <td>~28 GB</td>
+      <td>~15 GB</td>
+      <td>~9–10 GB</td>
+    </tr>
+    <tr>
+      <td>32B</td>
+      <td>~64 GB</td>
+      <td>~34 GB</td>
+      <td>~18–20 GB</td>
+    </tr>
+    <tr>
+      <td>70B</td>
+      <td>~140 GB</td>
+      <td>~70 GB</td>
+      <td>~38–48 GB</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Invloed van KV-cache / contextlengte (vaak over het hoofd gezien).</strong> De KV-cache groeit lineair met de contextlengte en het aantal gelijktijdige verzoeken; bij lange contexten kan hij zelfs groter worden dan de modelgewichten. Voorbeeld: Llama 3.1 70B kan bij één verzoek met 128K context alleen al ~40 GB KV-cache verbruiken — en deze waarde gaat er al van uit dat het model <strong>GQA (Grouped-Query Attention)</strong> gebruikt; een klassieke (MHA-)architectuur zonder GQA zou voor hetzelfde scenario ~8× meer nodig hebben. Oplossing: <strong>de KV-cache kwantiseren naar FP8/INT8</strong> halveert het geheugen ongeveer.</p>
+
+<p><strong>Totaal VRAM-budget.</strong> De werkelijke behoefte bestaat niet alleen uit de gewichten:</p>
+
+<blockquote>
+  <p><strong>Totaal VRAM = modelgewichten + KV-cache + activaties + overhead</strong></p>
+</blockquote>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Component</th>
+      <th>Berekening</th>
+      <th>Voorbeeld</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Modelgewichten</td>
+      <td>parameters × bytes/param</td>
+      <td>7B FP16 = 14 GB · 70B FP16 = 140 GB</td>
+    </tr>
+    <tr>
+      <td>Max. context (max_len)</td>
+      <td>bepaalt rechtstreeks de grootte van de KV-cache</td>
+      <td>4K → 128K tokens = ~32× verschil in KV-cache</td>
+    </tr>
+    <tr>
+      <td>KV-cache</td>
+      <td>2 × lagen × kv_heads × head_dim × max_len × batch × 2 bytes</td>
+      <td>70B (GQA, 8 KV-heads), 4096 tokens, batch 32 ≈ 20–40 GB</td>
+    </tr>
+    <tr>
+      <td>Activaties</td>
+      <td>batch × max_len × hidden_dim × lagen</td>
+      <td>Groot bij training, klein bij inferentie</td>
+    </tr>
+    <tr>
+      <td>Overhead</td>
+      <td>~10–20% extra</td>
+      <td>Fragmentatie, tijdelijke buffers</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Opmerking bij de formule:</strong> In GQA-modellen is <code class="language-plaintext highlighter-rouge">kv_heads</code> een klein deel van het totale aantal attention-heads (bijv. Llama 3.1 70B: 64 heads → 8 KV-heads); het voorbeeld van 20–40 GB in de tabel is daarom laag. In een klassieke (MHA-)architectuur zonder GQA geldt <code class="language-plaintext highlighter-rouge">kv_heads = aantal heads</code>, en vraagt hetzelfde scenario ~8× meer geheugen.</p>
+</blockquote>
+
+<blockquote>
+  <p><strong>Regel:</strong> Houd altijd <strong>~20% extra VRAM als reserve</strong> aan. Om de berekening te vereenvoudigen kunt u de gratis tool gebruiken: <strong>Cordatus VRAM Calculator</strong> — <a href="https://app.cordatus.ai/#/vram-calculator">https://app.cordatus.ai/#/vram-calculator</a></p>
+</blockquote>
+<h3 id="44-hoe-inferentie-werkt-en-metrieken-voor-de-servicekwaliteit">
+  
+  
+    <a href="#44-hoe-inferentie-werkt-en-metrieken-voor-de-servicekwaliteit" class="anchor-heading" aria-labelledby="44-hoe-inferentie-werkt-en-metrieken-voor-de-servicekwaliteit"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.4. Hoe inferentie werkt en metrieken voor de servicekwaliteit
+  
+  
+</h3>
+    
+
+<p><strong>Inferentie in twee fasen — waarom zijn er twee afzonderlijke knelpunten?</strong> Een LLM-verzoek wordt in twee fasen verwerkt:</p>
+
+<ul>
+  <li><strong>Prefill (verwerking van de prompt):</strong> Alle tokens in de invoerprompt worden <strong>in één keer (parallel)</strong> verwerkt; zware matrixvermenigvuldigingen overheersen → <strong>rekengebonden (compute-bound; afhankelijk van FLOPS)</strong>. Deze fase bepaalt de <strong>TTFT</strong> — een lange prompt = een lange TTFT.</li>
+  <li><strong>Decode (tokengeneratie):</strong> Het antwoord wordt <strong>token voor token, sequentieel</strong> gegenereerd; omdat elk token afhangt van het vorige (<strong>autoregressief</strong>), is dit binnen één verzoek <strong>niet te paralleliseren</strong>. Bij elke stap worden alle modelgewichten opnieuw uit het geheugen gelezen, maar de rekenlast is relatief klein → <strong>geheugengebonden (memory-bound; afhankelijk van de geheugenbandbreedte)</strong>. Deze fase bepaalt de <strong>TPS</strong>. De generatie gaat door totdat een <strong>EOS-token (end-of-sequence)</strong> wordt geproduceerd of de <strong>maximale tokenlimiet</strong> is bereikt.</li>
+</ul>
+
+<blockquote>
+  <p>Daarom zijn twee verschillende hardware-eigenschappen van belang: FLOPS voor prefill/TTFT en geheugenbandbreedte voor decode/TPS. Hoewel decode binnen één verzoek niet paralleliseert, verdeelt <strong>batching</strong> het lezen van de gewichten over veel verzoeken, waardoor de totale doorvoer (throughput) toeneemt.</p>
+</blockquote>
+
+<p>De hardwarekeuze wordt niet alleen bepaald door “past het model”, maar ook door “welke gebruikerservaring streven we na”. Vier kernmetrieken:</p>
+
+<ul>
+  <li><strong>TTFT (Time to First Token):</strong> Hoe lang na het versturen van de prompt komt het eerste token binnen? <strong>Rekengebonden</strong> — afhankelijk van FLOPS.</li>
+  <li><strong>TPS (Tokens Per Second):</strong> Hoeveel tokens worden er per seconde gegenereerd? Heeft rechtstreeks invloed op de gebruikerservaring. <strong>Geheugengebonden</strong> — afhankelijk van de geheugenbandbreedte.</li>
+  <li><strong>Doorvoer:</strong> Hoeveel verzoeken worden er per tijdseenheid verwerkt? Neemt toe naarmate de batch groeit.</li>
+  <li><strong>Batchgrootte — de fundamentele afweging:</strong> Grote batch → hoge doorvoer maar hoge latentie; kleine batch → lage latentie maar lage doorvoer. Het optimale punt vinden is cruciaal.</li>
+</ul>
+
+<blockquote>
+  <p>Praktische conclusie: wilt u <strong>snelle antwoorden voor één gebruiker</strong>, dan zijn hoge bandbreedte (TPS) en FLOPS (TTFT) van belang; wilt u <strong>hoge doorvoer voor meerdere gebruikers</strong>, dan moet u de batch opschalen en dus ook het VRAM (KV-cache).</p>
+</blockquote>
+
+<p><strong>Technieken die het systeem versnellen (2026).</strong> Er bestaan diverse methoden op de softwarelaag om deze twee fasen te versnellen; de meeste worden ondersteund door <strong>vLLM / SGLang / TensorRT-LLM</strong> en werken doorgaans <strong>zonder het model te wijzigen</strong>:</p>
+
+<ul>
+  <li><strong>Speculatieve decodering (speculative decoding):</strong> Een klein “draft”-model stelt meerdere tokens voor, en het grote model verifieert ze in één pass → <strong>2–3× versnelling</strong> bij decode. De huidige sterkste aanpak is <strong>EAGLE-3 / EAGLE 3.1</strong> (een lichte voorspellingskop die aan de binnenste lagen van het model is gekoppeld en geen apart draftmodel vereist) en de parallelle variant <strong>P-EAGLE</strong>.</li>
+  <li><strong>MTP (Multi-Token Prediction):</strong> Het model voorspelt meerdere tokens in één stap (bijv. de DeepSeek-architectuur); wordt zowel bij training als als draft bij speculatieve decodering gebruikt.</li>
+  <li><strong>Disaggregated prefill (scheiding van prefill en decode):</strong> Verdeelt de rekengebonden prefill en de geheugengebonden decode over <strong>aparte GPU-pools</strong>; elke fase schaalt volgens haar eigen knelpunt, wat latentie en doorvoer tegelijk verbetert (bijv. <strong>NVIDIA Dynamo</strong>).</li>
+  <li><strong>Continuous / in-flight batching:</strong> Voegt verzoeken dynamisch toe aan en verwijdert ze uit de batch, zodat de GPU bezig blijft → hoge doorvoer.</li>
+  <li><strong>Chunked prefill &amp; prefix caching:</strong> Splitst een lange prefill op en wisselt die af met decode om de TTFT te verlagen; de KV-cache wordt hergebruikt voor gemeenschappelijke prefixen (systeemprompt) (PagedAttention / RadixAttention — zie 6.A).</li>
+  <li><strong>Kwantisatie van de KV-cache (FP8/INT8):</strong> Verlaagt de geheugenbelasting van decode (zie 4.3).</li>
+</ul>
+
+<blockquote>
+  <p>Met de juiste inferentie-engine en configuratie kunnen deze technieken in productieomgevingen een verschil van <strong>2–4× in snelheid/doorvoer</strong> opleveren — de softwareconfiguratie is net zo belangrijk als de hardware.</p>
+</blockquote>
+<h3 id="45-hardwareklassen-aetherix-catalogus">
+  
+  
+    <a href="#45-hardwareklassen-aetherix-catalogus" class="anchor-heading" aria-labelledby="45-hardwareklassen-aetherix-catalogus"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.5. Hardwareklassen (Aetherix-catalogus)
+  
+  
+</h3>
+    
+
+<p>We hebben de hardwareaanbevelingen in deze handleiding beperkt tot de NVIDIA-producten <strong>die wij als Aetherix leveren</strong>. Consumentenkaarten uit de GeForce-reeks (RTX 3090/4090/5090) voeren wij niet; in plaats daarvan leveren wij <strong>professionele werkstations (RTX PRO Blackwell), datacenter-GPU’s, DGX-systemen en Jetson-edgemodules</strong>. De doorslaggevende maatstaf is ook hier VRAM; de klassen hieronder zijn ingedeeld naar VRAM en toepassing.</p>
+
+<p><strong>Waarom raden we consumenten-GPU’s (gaming-GPU’s) niet aan?</strong> Een RTX 4090/5090 draait op hobby- of individueel niveau zeker LLM’s; voor <strong>zakelijk gebruik, productie en 24/7-gebruik</strong> is de professionele/datacenterklasse echter nodig, om de volgende concrete redenen:</p>
+
+<ul>
+  <li><strong>Laag VRAM-plafond.</strong> De beste consumentenkaart (RTX 5090) blijft steken op ~32 GB; onvoldoende voor grote modellen, lange contexten en de KV-cache. De RTX PRO 6000 biedt 96 GB en de H200 141 GB.</li>
+  <li><strong>Geen ECC-geheugen.</strong> Consumentenkaarten missen foutcorrigerend (ECC-)geheugen; bij langdurig/continu gebruik bestaat het risico op stille geheugenfouten. Professionele kaarten en datacenterkaarten zijn voorzien van ECC.</li>
+  <li><strong>Beperking door driver/licentie.</strong> De licentie van NVIDIA’s GeForce-driver <strong>beperkt het gebruik in datacenters</strong>; een zakelijke/DC-deployment vereist officieel professionele kaarten of datacenterkaarten.</li>
+  <li><strong>Beperkte multi-GPU-schaalbaarheid.</strong> NVLink is van nieuwe consumentenkaarten verwijderd; snelle verbindingen tussen GPU’s en serverdichtheid zijn voorbehouden aan de professionele/DC-reeks (zie 4.6).</li>
+  <li><strong>Koeling &amp; vormfactor.</strong> Consumentenkaarten zijn niet geschikt voor de luchtstroom in servers en zijn niet ontworpen voor langdurige volle belasting; datacenterkaarten werken met passieve koeling die in het serverchassis is geïntegreerd (zie 4.9).</li>
+  <li><strong>Garantie &amp; duurzaamheid.</strong> Professionele kaarten worden geleverd met zakelijke garantie, een lange levensduur en stabiele driverondersteuning; consumentenkaarten bieden deze garanties niet voor productieworkloads.</li>
+</ul>
+
+<blockquote>
+  <p>Kortom: consumentenkaarten “werken”, maar voor een <strong>betrouwbare, schaalbare en conforme</strong> zakelijke infrastructuur voor lokale LLM’s is de professionele/datacenterklasse de juiste keuze. De Aetherix-catalogus is daarom tot deze klassen beperkt.</p>
+</blockquote>
+
+<blockquote>
+  <p><strong>Opmerking over prijzen:</strong> Deze producten worden doorgaans op offerte-/projectbasis aangeboden en de prijzen variëren; in deze handleiding vermelden we bewust geen prijzen. Neem voor actuele prijzen en beschikbaarheid contact met ons op. De vermogenswaarden (W) hieronder zijn de referentie-TDP’s van NVIDIA.</p>
+</blockquote>
+
+<p><strong>A) Jetson — lokale AI aan de edge / embedded / in robotica.</strong> Voor het draaien van kleine/middelgrote modellen in het veld of op het apparaat zelf, zonder dat internet nodig is. Gebruikt unified memory (CPU en GPU delen dezelfde pool).</p>
+<ul>
+  <li><strong>Jetson Orin Nano (4 GB / 8 GB)</strong> — instapniveau; kleine modellen van de 1–4B-klasse, assistenten voor beeld en spraak. Zeer laag vermogen.</li>
+  <li><strong>Jetson AGX Orin (64 GB)</strong> — serieus werk aan de edge; met 64 GB unified memory middelgrote modellen en multimodale workloads.</li>
+  <li><strong>Jetson AGX Thor / T5000 (128 GB-klasse, Blackwell-generatie)</strong> — het vlaggenschip van de volgende generatie voor physical AI en robotica; grote modellen en gelijktijdige workloads aan de edge. De optie met het “meeste geheugen” aan de edgekant.</li>
+</ul>
+
+<p>
+<img src="/papers/local-llm-guide/images/jetson-orin-nano.png" alt="NVIDIA Jetson Orin Nano AI-kit" width="300" />
+<img src="/papers/local-llm-guide/images/jetson-agx-thor.png" alt="NVIDIA Jetson AGX Thor Developer Kit" width="300" />
+</p>
+<p><sub><i>Jetson Orin Nano AI-kit en Jetson AGX Thor Developer Kit</i></sub></p>
+
+<p><strong>B) RTX PRO Blackwell — werkstation-/server-GPU (de hoofdklasse voor lokale LLM’s).</strong> ECC-GDDR7, past in een desktopwerkstation of server. Deze reeks vervangt de consumentenkaarten.</p>
+<ul>
+  <li><strong>RTX PRO 2000 Blackwell — 16 GB.</strong> Instap; ruim voldoende voor 7B–14B (Q4). Zeer laag vermogen (~70 W), geschikt voor een kleine vormfactor.</li>
+  <li><strong>RTX PRO 4000 Blackwell — 24 GB</strong> (ook in een SFF-/compacte variant). Optimale instap: 14B ruim, 32B in Q4. ~140 W.</li>
+  <li><strong>RTX PRO 4500 Blackwell — 32 GB.</strong> Draait 32B ruim; 70B past niet op deze kaart (zie PRO 6000). ~200 W.</li>
+  <li><strong>RTX PRO 5000 Blackwell — 48 GB.</strong> 32B ruim met lange context; 70B in Q4 alleen met korte context, op de grens (70B Q4 ≈ 38–48 GB — zie 4.3; voor 70B met ruimte gebruikt u de PRO 6000). ~300 W.</li>
+  <li><strong>RTX PRO 6000 Blackwell — 96 GB</strong> (drie uitvoeringen: <strong>Workstation</strong>, <strong>Max-Q Workstation</strong>, <strong>Server</strong>). Op één kaart 70B in FP16/8-bit of zeer grote contexten. Workstation/Server ~600 W; <strong>Max-Q</strong> met ~300 W is de efficiënte keuze voor omgevingen met beperkingen in vermogen/warmte. Het “single-card”-vlaggenschip voor lokale LLM’s.</li>
+</ul>
+
+<blockquote>
+  <p><strong>Als kant-en-klaar werkstation (Aetherix):</strong> We leveren deze GPU’s niet alleen als losse kaarten, maar ook als <strong>vooraf geïnstalleerde en geteste complete werkstations</strong> (RTX PRO 4000 / 4500 / 5000 / 6000 Workstation en Max-Q). De systemen worden geleverd met een CPU uit de Intel Core i9-14900KF-klasse; <strong>Ubuntu + een geoptimaliseerde NVIDIA-softwarestack vooraf geïnstalleerd</strong>, na het doorstaan van prestatie- en temperatuurtests, en met <strong>2 jaar garantie</strong> — dat wil zeggen “werkt direct uit de doos” voor lokale LLM’s. Details: <a href="https://aetherix.com/product-category/graphics-cards/">aetherix.com/product-category/graphics-cards</a>.</p>
+</blockquote>
+
+<p><img src="/papers/local-llm-guide/images/rtx-pro-6000.webp" alt="NVIDIA RTX PRO 6000 Blackwell Workstation" width="360" /></p>
+<p><sub><i>NVIDIA RTX PRO 6000 Blackwell Workstation Edition — 96 GB</i></sub></p>
+
+<p><strong>C) Datacenter-GPU’s (één / enkele) — productiedienst met hoog volume en meerdere gebruikers.</strong> Passief gekoelde kaarten voor montage in servers; voor veel gelijktijdige verzoeken met vLLM/TensorRT-LLM. Anders dan de B200/B300 <strong>kunnen ze afzonderlijk worden verkocht (of met 2–8 per server).</strong></p>
+<ul>
+  <li><strong>NVIDIA L4 — 24 GB.</strong> Inferentiekaart met laag vermogen (~72 W); een efficiënte basis voor het serveren van kleine/middelgrote modellen.</li>
+  <li><strong>NVIDIA L40 / L40S — 48 GB.</strong> Veelzijdig voor inferentie + fine-tuning; serveert middelgrote modellen met hoge doorvoer (één kaart is niet genoeg voor 70B — zie “veelgemaakte fouten”, paragraaf 8; de 70B-klasse vereist een H100/H200 of 2× kaarten).</li>
+  <li><strong>NVIDIA H100 NVL — 94 GB</strong> en <strong>H200 NVL — 141 GB.</strong> Het hoogste niveau dat als losse kaart wordt verkocht; grote MoE-modellen, lange context, intensieve gelijktijdigheid. De 141 GB van de H200 biedt de hoogste modelcapaciteit op één kaart.</li>
+</ul>
+
+<p><img src="/papers/local-llm-guide/images/dgx-sunucu.webp" alt="NVIDIA DGX AI-server" width="420" /></p>
+<p><sub><i>NVIDIA DGX/HGX-serverinfrastructuur van datacenterklasse</i></sub></p>
+
+<p><strong>D) Blackwell-topklasse — kant-en-klare datacentersystemen (HGX / DGX, team van 8 GPU’s).</strong> Voor volledige training en inferentie met veel verkeer (500+ gelijktijdige gebruikers). Deze klasse <strong>wordt niet als losse kaarten verkocht</strong>; ze komt als een vooraf geïnstalleerde, bekabelde en gekoelde server/rack met 8 GPU’s — budget en infrastructuur moeten daarop worden afgestemd.</p>
+<ul>
+  <li><strong>NVIDIA B200 — 192 GB HBM3e</strong>, 8 TB/s. Blackwell-generatie; clustertraining en hoge doorvoer.</li>
+  <li><strong>NVIDIA B300 — 288 GB HBM3e</strong>, 8 TB/s. Blackwell Ultra; voor het trainen en serveren van de grootste modellen (405B+) met NVFP4.</li>
+  <li><strong>Kant-en-klare systemen — NVIDIA DGX B200 / DGX B300.</strong> Servers van NVIDIA uit de klasse “AI-fabriek” met 8 van de bovenstaande GPU’s; het hoogste niveau voor training + inferentie op bedrijfsschaal. (<strong>DGX</strong> = het kant-en-klare systeem van NVIDIA; <strong>HGX</strong> = de vorm waarin hetzelfde blok van 8 GPU’s in servers van OEM’s wordt geïntegreerd.)</li>
+</ul>
+
+<p><strong>E) DGX Spark — desktop-“AI-mini-pc” (een klasse apart).</strong></p>
+
+<blockquote>
+  <p><strong>Belangrijk — let op de naamsverwarring:</strong> Hoewel DGX Spark “DGX” in de naam draagt, behoort het <strong>niet tot dezelfde familie/klasse</strong> als de rackgemonteerde DGX/HGX-servers onder (D) hierboven. Het is een op zichzelf staande, handpalmgrote <strong>desktop-mini-pc</strong> die u gewoon aansluit. “DGX” is hier alleen NVIDIA’s merknaam voor AI-apparaten voor de desktop; hardwareklasse, geheugenbandbreedte en toepassing verschillen volledig van de B200/B300-datacentersystemen.</p>
+</blockquote>
+
+<ul>
+  <li><strong>NVIDIA DGX Spark (GB10 Grace-Blackwell) — 128 GB unified memory, 1 PetaFLOP AI, slechts 240 W, 150×150×50 mm / 1.2 kg.</strong> Een desktop-“AI-supercomputer”; houdt modellen tot ~200B in het geheugen en kan 70B fine-tunen. <strong>Belangrijkste beperking:</strong> de geheugenbandbreedte is relatief laag (~273 GB/s) → het genereren van tokens voor één stream is trager dan wanneer hetzelfde model op een H200 draait. De echte kracht: zeer grote modellen compact en met laag vermogen in het geheugen houden, voor lokale ontwikkeling/tests en stapsgewijze groei. <strong>Geen vereiste van een team van 8 GPU’s — kan net als een mini-pc stuk voor stuk worden aangeschaft en opgeschaald.</strong> Schaalt zonder switch met QSFP-kabels:
+    <ul>
+      <li><strong>1× Spark</strong> — 128 GB, fine-tune van 70B / inferentie van 200B, 3–5 gelijktijdige gebruikers, lokale tests.</li>
+      <li><strong>2× Spark</strong> (ConnectX-7 QSFP, directe verbinding van 200 Gbps) — 256 GB, inferentie van 405B, middelgroot team.</li>
+      <li><strong>3× Spark (ringtopologie)</strong> — 384 GB, fine-tune van 405B+ / hoge doorvoer, geen switch nodig.</li>
+    </ul>
+  </li>
+</ul>
+
+<p>
+<img src="/papers/local-llm-guide/images/dgx-spark.png" alt="NVIDIA DGX Spark" width="320" />
+<img src="/papers/local-llm-guide/images/dgx-spark-3x.png" alt="Ringtopologie met 3x DGX Spark" width="320" />
+</p>
+<p><sub><i>NVIDIA DGX Spark (128 GB, 240 W) en een 3× ringtopologie die een pool van 384 GB oplevert</i></sub></p>
+
+<p><strong>GPU-vergelijkingsmatrix (2026).</strong> De belangrijkste LLM-opties van Aetherix:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>Architectuur</th>
+      <th>VRAM</th>
+      <th>FP16/BF16 (sparse)</th>
+      <th>FP8 (sparse)</th>
+      <th>FP4 (sparse)</th>
+      <th>Geheugen-BW</th>
+      <th>Verkoopeenheid</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>B300 288GB</strong></td>
+      <td>Blackwell Ultra</td>
+      <td>288 GB HBM3e</td>
+      <td>4,500 TFLOPS</td>
+      <td>9,000 TFLOPS</td>
+      <td>30,000 TFLOPS (15 PFLOPS dense)</td>
+      <td>8 TB/s</td>
+      <td>Team van 8 GPU’s</td>
+    </tr>
+    <tr>
+      <td><strong>B200 192GB</strong></td>
+      <td>Blackwell</td>
+      <td>192 GB HBM3e</td>
+      <td>4,500 TFLOPS</td>
+      <td>9,000 TFLOPS</td>
+      <td>18,000 TFLOPS</td>
+      <td>8 TB/s</td>
+      <td>Team van 8 GPU’s</td>
+    </tr>
+    <tr>
+      <td><strong>H200 141GB</strong></td>
+      <td>Hopper</td>
+      <td>141 GB HBM3e</td>
+      <td>1,979 TFLOPS</td>
+      <td>3,958 TFLOPS</td>
+      <td>—</td>
+      <td>4.8 TB/s</td>
+      <td>Los (2–8/server)</td>
+    </tr>
+    <tr>
+      <td><strong>DGX Spark (GB10)</strong></td>
+      <td>Grace Blackwell</td>
+      <td>128 GB LPDDR5x (unified)</td>
+      <td>—</td>
+      <td>—</td>
+      <td>1,000 AI TOPS</td>
+      <td>273 GB/s</td>
+      <td>Los (desktop)</td>
+    </tr>
+    <tr>
+      <td><strong>RTX PRO 6000 Blackwell</strong></td>
+      <td>Blackwell</td>
+      <td>96 GB GDDR7</td>
+      <td>~1,000 TFLOPS</td>
+      <td>~2,000 TFLOPS</td>
+      <td>4,000 AI TOPS</td>
+      <td>1.79 TB/s</td>
+      <td>Los (werkstation)</td>
+    </tr>
+    <tr>
+      <td><strong>L40S 48GB</strong></td>
+      <td>Ada Lovelace</td>
+      <td>48 GB GDDR6</td>
+      <td>362 TFLOPS</td>
+      <td>733 TFLOPS</td>
+      <td>—</td>
+      <td>864 GB/s</td>
+      <td>Los (server)</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p>De waarden komen uit de officiële datasheets van NVIDIA (2:4-sparsity / “with sparsity”). <strong>De echte sprong van de B300 ten opzichte van de B200 zit in het geheugen (192→288 GB) en in NVFP4</strong> (FP4 ~67% hoger: 15 PFLOPS dense / ~30,000 TFLOPS sparse); FP8/FP16 zijn vergelijkbaar met de B200 en de bandbreedte is bij beide 8 TB/s. Voor de RTX PRO 6000 noemt NVIDIA “up to 4 PFLOPS FP4 (4,000 AI TOPS), 2 PFLOPS FP8, 1 PFLOP FP16”.</p>
+</blockquote>
+
+<p><strong>DGX Spark — voorbeeldsnelheden (decode-benchmark met vLLM).</strong> Dankzij unified memory draaien enorme modellen op een op zichzelf staand desktopapparaat:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>Grootte</th>
+      <th>Kwantisatie</th>
+      <th>Configuratie</th>
+      <th>Tok/s (decode)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>gpt-oss-120b</td>
+      <td>120B</td>
+      <td>MXFP4</td>
+      <td>1× DGX Spark</td>
+      <td>54.72</td>
+    </tr>
+    <tr>
+      <td>gpt-oss-120b</td>
+      <td>120B</td>
+      <td>MXFP4</td>
+      <td>2× DGX Spark</td>
+      <td>101.36</td>
+    </tr>
+    <tr>
+      <td>gpt-oss-120b</td>
+      <td>120B</td>
+      <td>MXFP4</td>
+      <td>4× DGX Spark</td>
+      <td>106.31</td>
+    </tr>
+    <tr>
+      <td>MiniMax-M2.7</td>
+      <td>229B</td>
+      <td>NVFP4</td>
+      <td>2× DGX Spark</td>
+      <td>26.00</td>
+    </tr>
+    <tr>
+      <td>Qwen3.5-397B-A17B</td>
+      <td>397B</td>
+      <td>INT4 AutoRound</td>
+      <td>3× DGX Spark (ring)</td>
+      <td>17.05</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p>Professionele kaarten van de vorige generatie (<strong>RTX 6000 Ada 48 GB</strong>, <strong>RTX A6000 48 GB</strong>) staan ook in de catalogus; het zijn alternatieven met 48 GB voor situaties waarin budget of beschikbaarheid meespeelt, maar bij nieuwe aankopen verdient de Blackwell-generatie (RTX PRO 5000/6000) de voorkeur.</p>
+</blockquote>
+<h3 id="46-multi-gpu">
+  
+  
+    <a href="#46-multi-gpu" class="anchor-heading" aria-labelledby="46-multi-gpu"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.6. Multi-GPU
+  
+  
+</h3>
+    
+
+<p>Wanneer het VRAM van één kaart onvoldoende is voor het beoogde model, worden meerdere kaarten samengevoegd (bijv. 2× RTX PRO 5000 = 96 GB, of 2× RTX PRO 6000 = 192 GB). De reden: <strong>70B+ en grote MoE-modellen met hoge precisie / lange context</strong> draaien. Professionele kaarten en datacenterkaarten zijn ontworpen voor multi-GPU-schaling; de workload wordt verdeeld via <strong>tensorparallellisme (tensor parallelism)</strong> (elke laag wordt over de kaarten opgesplitst, vereist hoge bandbreedte) of <strong>pipelineparallellisme (pipeline parallelism)</strong> (de lagen worden over de kaarten verdeeld, weinig verkeer tussen de kaarten). vLLM en TensorRT-LLM ondersteunen beide. Bij opstellingen met meerdere nodes mogen knelpunten in de <strong>InfiniBand-/Ethernet-bandbreedte</strong> en in <strong>PCIe</strong> niet over het hoofd worden gezien.</p>
+<h3 id="47-alleen-cpu--ram">
+  
+  
+    <a href="#47-alleen-cpu--ram" class="anchor-heading" aria-labelledby="47-alleen-cpu--ram"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.7. Alleen CPU + RAM
+  
+  
+</h3>
+    
+
+<p>Geschikt voor een instap, kleine/gekwantiseerde modellen en <strong>batch-/niet-interactief</strong> werk (bijv. het samenvatten van documenten); niet voor vloeiend chatten. Het knelpunt is niet de rekenkracht, maar de <strong>geheugenbandbreedte</strong>. Een typische desktop-CPU met 8 cores haalt ~5–15 tok/s op een 7B-model; grote modellen zakken naar enkele cijfers. Een model dat in het VRAM past, is ruwweg ~10× sneller dan een model dat naar het RAM is overgelopen. llama.cpp kan een deel van de lagen op de GPU houden en de rest naar het RAM offloaden — goed als tijdelijke oplossing, niet voor productiesnelheid.</p>
+<h3 id="48-koppeling-van-scenario-aan-hardware">
+  
+  
+    <a href="#48-koppeling-van-scenario-aan-hardware" class="anchor-heading" aria-labelledby="48-koppeling-van-scenario-aan-hardware"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.8. Koppeling van scenario aan hardware
+  
+  
+</h3>
+    
+
+<p><img src="/papers/local-llm-guide/images/sema-4-gpu-decision.png" alt="Beslisboom voor de GPU-keuze" width="600" /></p>
+<p><sub><i>Figuur: Beslisboom voor de GPU-keuze</i></sub></p>
+
+<p><strong>Algemene koppeling (van edge tot enterprise):</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Behoefte</th>
+      <th>Doel-VRAM</th>
+      <th>Aetherix-hardware</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Edge / embedded / robotica</strong></td>
+      <td>unified 8–128 GB</td>
+      <td>Jetson Orin Nano (8 GB) → AGX Orin (64 GB) → <strong>AGX Thor / T5000 (128 GB)</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Instapwerkstation</strong> (7–14B)</td>
+      <td>16–24 GB</td>
+      <td><strong>RTX PRO 2000 (16 GB)</strong> of <strong>RTX PRO 4000 (24 GB)</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Midden</strong> (14–32B ruim)</td>
+      <td>32–48 GB</td>
+      <td><strong>RTX PRO 4500 (32 GB)</strong> of <strong>RTX PRO 5000 (48 GB)</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Hoog / 70B op één kaart</strong></td>
+      <td>96 GB</td>
+      <td><strong>RTX PRO 6000 (96 GB)</strong> — Max-Q-uitvoering bij beperkt vermogen</td>
+    </tr>
+    <tr>
+      <td><strong>Productiedienst voor meerdere gebruikers</strong></td>
+      <td>24–141 GB</td>
+      <td><strong>L4 / L40S</strong> → <strong>H100 NVL (94 GB)</strong> → <strong>H200 NVL (141 GB)</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Zeer groot model / kant-en-klaar</strong></td>
+      <td>128 GB+</td>
+      <td><strong>DGX Spark (128 GB)</strong> / 2–3× ring, op bedrijfsschaal <strong>DGX B300</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Fine-tune (LoRA/QLoRA)</strong></td>
+      <td>laag–gemiddeld</td>
+      <td>7B: <strong>1× L40S / RTX PRO 6000</strong> · 70B: <strong>1× DGX Spark</strong> (QLoRA) / <strong>2–4× H200</strong> (LoRA)</td>
+    </tr>
+    <tr>
+      <td><strong>Full fine-tune</strong></td>
+      <td>~12–14× params</td>
+      <td>7B: <strong>1× H200</strong> (~85–100 GB) · 70B: <strong>4–8× H200</strong> (ZeRO-3, ~1 TB)</td>
+    </tr>
+    <tr>
+      <td><strong>Pre-training (vanaf nul)</strong></td>
+      <td>~16× params</td>
+      <td><strong>8× B200 / 8–16× B300</strong> (team van 8 GPU’s — zie 4.5/D)</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Inferentiescenario’s (modelgrootte × gebruikerscapaciteit):</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Model (precisie)</th>
+      <th>Min. VRAM</th>
+      <th>Aanbevolen GPU</th>
+      <th>Gelijktijdige capaciteit</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>7B (FP16)</td>
+      <td>~14 GB</td>
+      <td>1× L40S of RTX PRO 6000</td>
+      <td>50+</td>
+    </tr>
+    <tr>
+      <td>13B (FP16)</td>
+      <td>~26 GB</td>
+      <td>1× RTX PRO 6000 96GB</td>
+      <td>30+</td>
+    </tr>
+    <tr>
+      <td>70B (FP16)</td>
+      <td>~140 GB</td>
+      <td><strong>2× H200</strong> (één H200 laat geen ruimte voor KV-cache + 20% reserve)</td>
+      <td>20–100</td>
+    </tr>
+    <tr>
+      <td>70B (INT8)</td>
+      <td>~70 GB</td>
+      <td>1× H200 · 1× DGX Spark</td>
+      <td>30–100 (H200) · ~3–5 (Spark)</td>
+    </tr>
+    <tr>
+      <td>405B (FP16)</td>
+      <td>~810 GB</td>
+      <td>8× B300</td>
+      <td>10–50</td>
+    </tr>
+    <tr>
+      <td>405B (INT4)</td>
+      <td>~200–230 GB</td>
+      <td>3× DGX Spark (ring, 384 GB)</td>
+      <td>~3–10 (ring)</td>
+    </tr>
+    <tr>
+      <td>70B-inferentie (veel verkeer, 500+)</td>
+      <td>—</td>
+      <td>8× B200 (1 team)</td>
+      <td>cluster nodig voor de doorvoer</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Opmerking:</strong> De kolom “Min. VRAM” is de ruwe geheugenvoetafdruk van het model bij de genoemde precisie; daar komen KV-cache + ~20% reserve bij (zie 4.3) — daarom past 70B FP16 niet op één kaart van 141 GB en is <strong>2× H200</strong> nodig. Op DGX Spark (128 GB) en in ringconfiguraties draaien zeer grote modellen <strong>gekwantiseerd</strong> (INT8/INT4). Omdat de geheugenbandbreedte van DGX Spark relatief laag is (273 GB/s), is het geschikt voor <strong>één / enkele gelijktijdige gebruikers</strong> (~3–5); hoge gelijktijdigheid vereist H200/B-serie.</p>
+</blockquote>
+<h3 id="49-operationele-kosten-en-totale-eigendomskosten-tco">
+  
+  
+    <a href="#49-operationele-kosten-en-totale-eigendomskosten-tco" class="anchor-heading" aria-labelledby="49-operationele-kosten-en-totale-eigendomskosten-tco"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.9. Operationele kosten en totale eigendomskosten (TCO)
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>Vermogen (referentie-TDP):</strong> RTX PRO 2000 ≈ 70 W · PRO 4000 ≈ 140 W · PRO 4500 ≈ 200 W · PRO 5000 ≈ 300 W · PRO 6000 Workstation/Server ≈ 600 W (<strong>Max-Q ≈ 300 W</strong>) · L4 ≈ 72 W · L40S ≈ 350 W · H200 NVL ≈ 600 W · <strong>DGX Spark slechts 240 W</strong> · <strong>server met 8× B200 ~15 kW</strong>. Jetson-modules zitten in de tientallen watts, zeer laag.</li>
+  <li><strong>Voor kantooromgevingen met beperkingen in vermogen/warmte</strong> bieden Max-Q-uitvoeringen, kaarten met een lage TDP (PRO 2000/4000, L4) en DGX Spark een duidelijk voordeel.</li>
+  <li><strong>Koeling:</strong> Werkstationkaarten hebben hun eigen ventilatoren; datacenterkaarten (L40S, H100/H200 NVL) zijn <strong>passief</strong> en werken alleen in een server/chassis met een goede luchtstroom — ze kunnen niet in een desktopbehuizing worden ingebouwd. Voor multi-GPU en 24/7-productie is koeling van serverklasse verplicht.</li>
+  <li><strong>TCO — aankoopprijs ≠ totale kosten.</strong> De aankoopprijs van de GPU is slechts <strong>30–40%</strong> van de totale eigendomskosten; de overige <strong>60–70%</strong> bestaat uit elektriciteit, koeling, netwerk, onderhoud, datacenter en personeel. In grote clusters kunnen de koelkosten de elektriciteitskosten benaderen; bij meerdere nodes moeten ook de kosten van InfiniBand-switches en bekabeling worden meegerekend. Een goed gedimensioneerde oplossing met laag vermogen (bijv. DGX Spark) biedt vaak een lagere TCO.</li>
+</ul><hr />
+<h2 id="5-modelkeuze">
+  
+  
+    <a href="#5-modelkeuze" class="anchor-heading" aria-labelledby="5-modelkeuze"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5. Modelkeuze
+  
+  
+</h2>
+    
+
+<p><img src="/papers/local-llm-guide/images/sema-5-model-selection.png" alt="Modelkeuze per taak" width="720" /></p>
+<p><sub><i>Figuur: Modelkeuze per taak</i></sub></p>
+
+<blockquote>
+  <p>Balans tussen grootte en kosten: voor de meeste lokale workloads zijn <strong>7–14B dense</strong> of <strong>~30B MoE (~3B actief)</strong> de optimale balans; de zwaarste taken vereisen 70B+ / grote MoE-modellen.</p>
+</blockquote>
+<h3 id="51-wat-kunt-u-met-een-lokale-llm-doen-toepassingen-van-inferentie">
+  
+  
+    <a href="#51-wat-kunt-u-met-een-lokale-llm-doen-toepassingen-van-inferentie" class="anchor-heading" aria-labelledby="51-wat-kunt-u-met-een-lokale-llm-doen-toepassingen-van-inferentie"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.1. Wat kunt u met een lokale LLM doen? (toepassingen van inferentie)
+  
+  
+</h3>
+    
+
+<p>Voordat u een model kiest, moet <strong>“welke taak ga ik uitvoeren?”</strong> duidelijk zijn — de taak bepaalt zowel het model als de hardware. Voor de meeste organisaties is het startpunt <strong>inferentie, niet training</strong> (zie 4.2), en <strong>RAG is daar slechts één van.</strong> Het is praktisch om de toepassingen in twee groepen te verdelen:</p>
+
+<p><strong>Interactief (lage latentie is belangrijk — TPS/TTFT doorslaggevend):</strong></p>
+<ul>
+  <li><strong>Chat / assistent</strong> — algemene vraag en antwoord, zakelijke/persoonlijke assistent</li>
+  <li><strong>RAG / vraag en antwoord over documenten</strong> — met uw eigen documenten (slechts één van de toepassingen)</li>
+  <li><strong>Codeondersteuning</strong> — IDE-assistent, code genereren/uitleggen/reviewen, tests genereren</li>
+  <li><strong>Agents &amp; automatisering (agentisch)</strong> — tool calling, e-mailtriage, agenda, workflows met meerdere stappen</li>
+  <li><strong>Vertaling</strong> — gerubriceerde documenten lokaal vertalen zonder ze bloot te stellen</li>
+</ul>
+
+<p><strong>Batch / niet-interactief (batch — latentie irrelevant; kleine/goedkope hardware volstaat, zie 4.7):</strong></p>
+<ul>
+  <li><strong>Samenvatten</strong> — vergaderingen, contracten, lange rapporten, stapels e-mail</li>
+  <li><strong>Informatie-extractie</strong> — factuur/contract/formulier → gestructureerde JSON, NER</li>
+  <li><strong>Classificatie / routering</strong> — triage van verzoeken, sentimentanalyse, contentmoderatie, detectie van persoonsgegevens (PII)</li>
+  <li><strong>Semantisch zoeken / aanbevelen / clusteren</strong> — met embeddingmodellen</li>
+  <li><strong>Synthetische / gelabelde data genereren</strong> — datavoorbereiding voor fine-tuning</li>
+  <li><strong>Multimodaal</strong> — analyse van documenten met OCR, visuele vraag en antwoord, audiotranscriptie + LLM</li>
+  <li><strong>Guardrail / controle</strong> — de uitvoer van een ander model controleren, PII maskeren</li>
+</ul>
+
+<blockquote>
+  <p><strong>Praktische conclusie:</strong> Omdat batchtaken ongevoelig zijn voor latentie, verlagen ze de hardwarevereisten — dezelfde organisatie kan <strong>archiefsamenvatting op een kleine kaart</strong> en <strong>live chat op een grote kaart</strong> draaien. Uw taakprofiel bepaalt samen de hardwareklasse in §4 en de modelkeuze hieronder.</p>
+</blockquote>
+<h3 id="52-criteria-voor-de-modelkeuze">
+  
+  
+    <a href="#52-criteria-voor-de-modelkeuze" class="anchor-heading" aria-labelledby="52-criteria-voor-de-modelkeuze"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.2. Criteria voor de modelkeuze
+  
+  
+</h3>
+    
+
+<p>Het juiste model is niet “het model met de hoogste benchmarkscore”, maar <strong>het model dat het best past bij uw taak + hardware + randvoorwaarden.</strong> Weeg de onderstaande criteria naar de prioriteiten van uw taak:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Criterium</th>
+      <th>Te stellen vraag</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Geschiktheid voor de taak</strong></td>
+      <td>Chat, code, redeneren of extractie?</td>
+    </tr>
+    <tr>
+      <td><strong>Grootte / VRAM-budget</strong></td>
+      <td>Past het op de hardware? Bij MoE bepalen de <strong>totale</strong> parameters het geheugen (alle experts worden in het VRAM geladen); de <strong>actieve</strong> parameters bepalen alleen de <strong>snelheid</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Contextlengte</strong></td>
+      <td>Hoeveel tokens zijn nodig? (Bepaalt de belasting van de KV-cache — zie 4.3)</td>
+    </tr>
+    <tr>
+      <td><strong>Prestaties in het Turks / de doeltaal</strong></td>
+      <td>Niet de algemene score, maar <strong>Turkse</strong> benchmarks (zie 5.6)</td>
+    </tr>
+    <tr>
+      <td><strong>Licentie</strong></td>
+      <td>Is commercieel gebruik toegestaan? (zie 5.7)</td>
+    </tr>
+    <tr>
+      <td><strong>Architectuur</strong></td>
+      <td>Dense vs MoE — afweging tussen snelheid en geheugen</td>
+    </tr>
+    <tr>
+      <td><strong>Kwantiseerbaarheid</strong></td>
+      <td>Is het kwaliteitsverlies van Q4/AWQ acceptabel? Zijn GGUF/AWQ beschikbaar?</td>
+    </tr>
+    <tr>
+      <td><strong>Betrouwbaarheid van tool calling / JSON</strong></td>
+      <td>Cruciaal voor agents &amp; gestructureerde uitvoer (kleine modellen hebben hier moeite mee)</td>
+    </tr>
+    <tr>
+      <td><strong>Multimodaliteit</strong></td>
+      <td>Zijn beeld/audio nodig?</td>
+    </tr>
+    <tr>
+      <td><strong>Fine-tunebaarheid</strong></td>
+      <td>Zijn het basismodel + ecosysteem (Unsloth/Axolotl) beschikbaar?</td>
+    </tr>
+    <tr>
+      <td><strong>Ecosysteem / onderhoud</strong></td>
+      <td>Zijn er kant-en-klare quants, varianten en actieve ontwikkeling?</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p>De criteria worden <strong>per taak gewogen:</strong> bij een code-assistent springen tool calling + SWE-bench eruit; bij de verwerking van overheids-/juridische documenten zijn prestaties in het Turks + licentie + nauwkeurigheid van bronvermeldingen doorslaggevend. Valideer de keuze met uw eigen gebruik, niet met één enkel “toonaangevend model” (zie 5.9).</p>
+</blockquote>
+<h3 id="53-actuele-families-van-open-weight-modellen-medio-2026">
+  
+  
+    <a href="#53-actuele-families-van-open-weight-modellen-medio-2026" class="anchor-heading" aria-labelledby="53-actuele-families-van-open-weight-modellen-medio-2026"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.3. Actuele families van open-weight modellen (medio 2026)
+  
+  
+</h3>
+    
+
+<blockquote>
+  <p><strong>Opmerking:</strong> In 2026 is het momentum duidelijk verschoven naar Chinese labs met open-weight modellen (Qwen, DeepSeek, GLM, Kimi, MiniMax). De meeste nieuwe modellen gebruiken de <strong>MoE-architectuur (Mixture-of-Experts)</strong>: het totale aantal parameters is groot, maar bij elke stap draait slechts een klein “actief” deel → de kwaliteit van een groot model tegen de operationele kosten van een klein model.</p>
+</blockquote>
+
+<ul>
+  <li><strong>Qwen (Alibaba)</strong> — de meest actieve familie. Qwen3-235B-A22B (235B totaal / 22B actief, <strong>Apache 2.0</strong>). In februari 2026 de <strong>Qwen3.5</strong>-serie (vlaggenschip Qwen3.5-397B-A17B, ~1M context; daarnaast dense varianten van 0.8B–27B en MoE-varianten 35B-A3B / 122B-A10B). Het nieuwere <strong>Qwen3.6-35B-A3B</strong> kan bij coderen wedijveren met het oudere 397B. 100–200+ talen.</li>
+  <li><strong>DeepSeek</strong> — In april 2026 <strong>DeepSeek V4</strong> (MIT): V4-Pro (1.6T / 49B actief, 1M context) en V4-Flash (284B / 13B actief). Het oudere redeneermodel <strong>R1</strong> en de gedistilleerde versies (1.5B–70B) worden nog steeds veel gebruikt.</li>
+  <li><strong>Llama (Meta)</strong> — de <strong>Llama 4</strong>-familie: Scout (109B/17B actief, 10M context), Maverick (~400B/17B actief, 1M context). Het grootste model, “Behemoth”, lijkt in de praktijk op de plank te zijn beland (niet officieel bevestigd). De licentie is restrictief (zie 5.7).</li>
+  <li><strong>Google Gemma</strong> — <strong>Gemma 4</strong>: E2B (telefoon), E4B (edge), 12B, 26B-A4B (MoE), 31B dense. 140+ talen, multimodaal (tekst+beeld) vanaf 4B.</li>
+  <li><strong>Mistral</strong> — Mistral Large 3 (675B/41B actief, multimodaal) en Mistral Small 4 (Apache 2.0). Het 24B-redeneermodel <strong>Magistral</strong>.</li>
+  <li><strong>Microsoft Phi</strong> — de Phi-4-familie (redeneermodellen van ~14B, MIT). Sterk in redeneren per parameter, ideaal voor lokaal gebruik.</li>
+  <li><strong>Stijgers van 2026:</strong> <strong>GLM-5.1 (Zhipu/Z.ai)</strong> (~744B/40B actief, MIT, sterk in agents/coderen), <strong>Kimi K2.6 (Moonshot)</strong> (~1T/32B actief, multimodaal, een van de beste open modellen voor coderen), <strong>MiniMax M3</strong> (juni 2026; frontier-niveau in coderen + 1M context + multimodaliteit tegelijk), <strong>MiMo V2.5 Pro (Xiaomi)</strong> (aan de top van open-weight intelligentie). NVIDIA’s open model <strong>Nemotron 3</strong> en <strong>Gemma 4</strong> zijn de sterkste niet-Chinese open opties; ook de open-weight <strong>gpt-oss</strong>-serie van OpenAI draait lokaal.</li>
+</ul>
+<h3 id="54-balans-tussen-parametergrootte-en-prestaties">
+  
+  
+    <a href="#54-balans-tussen-parametergrootte-en-prestaties" class="anchor-heading" aria-labelledby="54-balans-tussen-parametergrootte-en-prestaties"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.4. Balans tussen parametergrootte en prestaties
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>Klein (1–4B):</strong> In 2026 werkelijk bruikbaar — automatisch aanvullen, samenvatten, slimme antwoorden, eenvoudige vraag en antwoord, lichte codehulp. Draait op telefoons en met 6 GB VRAM.</li>
+  <li><strong>7–14B dense of ~30B MoE (~3B actief):</strong> De <strong>optimale balans</strong> voor de meeste lokale workloads — chat, RAG, codeondersteuning, agenttaken. MoE-modellen als Qwen3.6-35B-A3B en Gemma 4 26B-A4B leveren een kwaliteit die dicht bij die van grote modellen ligt, tegen de kosten van een klein model.</li>
+  <li><strong>70B+ / grote MoE:</strong> Voor het moeilijkste redeneerwerk, complexe agentische codeertaken met meerdere stappen, zeer lange context en de hoogste benchmarkscores. Vereist multi-GPU / veel VRAM.</li>
+</ul>
+<h3 id="55-kwantisatie">
+  
+  
+    <a href="#55-kwantisatie" class="anchor-heading" aria-labelledby="55-kwantisatie"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.5. Kwantisatie
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>Formaten:</strong> <strong>GGUF</strong> (llama.cpp/Ollama/LM Studio; CPU+GPU; lokaal het meest gebruikt), <strong>GPTQ</strong> (GPU), <strong>AWQ</strong> (activation-aware, bij 4-bit iets beter dan GPTQ).</li>
+  <li><strong>Kwaliteit/bit:</strong> FP16 = volledige kwaliteit · 8-bit ≈ vrijwel verliesvrij · <strong>Q4_K_M</strong> ≈ ~92–95% van de kwaliteit · AWQ 4-bit ≈ ~95%. Bij 4-bit is het verlies voor de meeste taken ~1–2%.</li>
+  <li><strong>Ontwikkelingen in 2026:</strong> quants met <strong>imatrix</strong> (importance matrix) verbeteren de kwaliteit bij hetzelfde aantal bits; <strong>Unsloth Dynamic 2.0</strong> kiest de bits per laag; hardware-native <strong>MXFP4</strong> voor Blackwell; <strong>FP8</strong> is gangbaar in serveropstellingen.</li>
+</ul>
+<h3 id="56-keuze-per-taak-inclusief-turks">
+  
+  
+    <a href="#56-keuze-per-taak-inclusief-turks" class="anchor-heading" aria-labelledby="56-keuze-per-taak-inclusief-turks"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.6. Keuze per taak (inclusief Turks)
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>Algemene chat:</strong> Qwen3/3.5 (meertalig, Apache 2.0), Gemma 4 (multimodaal, geschikt voor de edge).</li>
+  <li><strong>Coderen/agents:</strong> Kimi K2.6, GLM-5.1, DeepSeek V4-Pro, MiniMax M3, Qwen3.6 (Qwen-Coder).</li>
+  <li><strong>Algemene intelligentie op topniveau (inclusief redeneren):</strong> In 2026 is redeneren geen aparte categorie meer. De <strong>Artificial Analysis Intelligence Index</strong> (v4.0; combineert agents + coderen + wetenschappelijk redeneren + algemene vaardigheid, <a href="https://artificialanalysis.ai">https://artificialanalysis.ai</a>) laat zien dat aan de top van de open-weight modellen dezelfde modellen voorop lopen in intelligentie, coderen en redeneren. Huidige koplopers onder de open-weight modellen: <strong>Kimi K2.6</strong>, <strong>DeepSeek V4-Pro</strong>, <strong>GLM-5.1</strong> (alle drie statistisch gelijk), gevolgd door <strong>MiMo V2.5 Pro (Xiaomi)</strong> en <strong>Qwen3.6</strong>. De sterkste niet-Chinese open modellen: <strong>Google Gemma 4</strong> en <strong>NVIDIA Nemotron 3</strong>. (Let op: Qwen3.7 <strong>Max/Plus zijn gesloten</strong> API-modellen, geen open-weight modellen.) Voor compact/lokaal redeneren zijn <strong>Phi-4</strong> en <strong>Magistral 24B</strong> sterk per parameter.</li>
+  <li><strong>Turks / meertalig:</strong> De beste algemene meertalige open modellen zijn <strong>Qwen3/3.5</strong> (200+ talen) en <strong>Gemma 3/4</strong> (140+ talen). Op <strong>TurkBench</strong> scoorde Qwen3-235B-Inst 73.4 en Gemma-3-12B-TR 71.4 (grote modellen lopen consequent voorop). <strong>Specifiek Turkse modellen:</strong> ytu-ce-cosmos <strong>Turkish-Llama-8b</strong> (YTÜ, gebaseerd op Llama-3), <strong>Trendyol-LLM v4.1.0</strong> (Qwen2.5-7B + 13B op Turkse tokens), <strong>CosmosGPT</strong> (355M–774M, uitsluitend Turks), <strong>MODA</strong> (Qwen2.5-7B met voortgezette pre-training, 2026). Turkse benchmarks: <strong>TurkishMMLU, Cetvel, TurkBench</strong>.</li>
+  <li><strong>Embedding- &amp; rerankingmodellen voor RAG:</strong> De kwaliteit van RAG hangt net zoveel af van het <strong>embeddingmodel</strong> als van de LLM — wordt het verkeerde fragment opgehaald, dan kan zelfs het beste model niet correct antwoorden. Sterke open opties voor meertalig/Turks: <strong>BGE-M3</strong>, <strong>multilingual-e5</strong>, <strong>Jina embeddings v3</strong>, <strong>Nomic Embed</strong>; voor reranking de <strong>bge-reranker</strong>-klasse. Ook embeddings draaien lokaal (bijv. <strong>TEI</strong>); kies voor werk met veel Turks meertalige/Turkse versies en valideer op uw eigen documenten (zie 5.9).</li>
+</ul>
+<h3 id="57-licentie-commercieel-gebruik">
+  
+  
+    <a href="#57-licentie-commercieel-gebruik" class="anchor-heading" aria-labelledby="57-licentie-commercieel-gebruik"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.7. Licentie (commercieel gebruik)
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>Volledig vrij (Apache 2.0 / MIT):</strong> Qwen3/3.5 (Apache 2.0), DeepSeek V4 &amp; R1 (MIT), GLM-5.1 (MIT), de open lagen van Mistral (Apache 2.0), Phi-4 (MIT). Kimi K2.6 “Modified MIT” (controleer bij zeer grote schaal de clausule over merk/naamsvermelding).</li>
+  <li><strong>Restrictief:</strong> <strong>Llama 4 Community License</strong> — commercieel gebruik is alleen vrij voor organisaties met minder dan 700M maandelijks actieve gebruikers; gebruikers in de EU zijn uitgesloten van de multimodale/visuele mogelijkheden. <strong>Gemma</strong> valt onder Googles eigen voorwaarden (permissief, maar geen zuivere Apache).</li>
+  <li><strong>Veiligste basis voor commerciële distributie:</strong> Qwen (Apache 2.0) en DeepSeek/GLM (MIT). Turkse afgeleide modellen erven de licentie van het basismodel — Trendyol v4.x → Qwen2.5, ytu-cosmos → Llama; controleer elke modelkaart afzonderlijk.</li>
+</ul>
+<h3 id="58-waar-vergelijkt-u-modellen-in-2026">
+  
+  
+    <a href="#58-waar-vergelijkt-u-modellen-in-2026" class="anchor-heading" aria-labelledby="58-waar-vergelijkt-u-modellen-in-2026"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.8. Waar vergelijkt u modellen in 2026?
+  
+  
+</h3>
+    
+
+<ul>
+  <li>Het oorspronkelijke <strong>Hugging Face Open LLM Leaderboard is gearchiveerd</strong> (2025). Het is vervangen door aggregator- en arenasites.</li>
+  <li><strong>LMArena</strong> (voorheen Chatbot Arena/LMSys) — Elo op basis van blinde A/B-stemmen; het beste signaal voor voorkeuren in de praktijk.</li>
+  <li><strong>llm-stats.com</strong> — 300+ modellen; samengestelde score (GPQA, SWE-Bench Verified, coding-arena, prijs).</li>
+  <li><strong>Artificial Analysis — Intelligence Index</strong> (v4.0) — een samengestelde score die agents + coderen + wetenschappelijk redeneren + algemene vaardigheid combineert; zet open-weight en gesloten modellen naast elkaar. Het is de <strong>meest praktische bron voor een overzicht in één oogopslag</strong> bij de keuze van een open model. <a href="https://artificialanalysis.ai">https://artificialanalysis.ai</a></li>
+  <li><strong>Belangrijke benchmarks:</strong> voor agentisch coderen <strong>SWE-Bench Pro &amp; Verified / Terminal-Bench</strong>; voor redeneren/wetenschap <strong>GPQA Diamond / Humanity’s Last Exam</strong>; oudere academische benchmarks (MMLU-Pro, AIME, MATH-500) zijn grotendeels verzadigd en maken nu minder onderscheid; voor Turks <strong>TurkishMMLU / Cetvel / TurkBench</strong>.</li>
+</ul>
+<h3 id="59-stel-uw-eigen-evaluatieset-benchmarkset-samen">
+  
+  
+    <a href="#59-stel-uw-eigen-evaluatieset-benchmarkset-samen" class="anchor-heading" aria-labelledby="59-stel-uw-eigen-evaluatieset-benchmarkset-samen"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.9. Stel uw eigen evaluatieset (benchmarkset) samen
+  
+  
+</h3>
+    
+
+<p>De algemene ranglijsten in §5.8 zijn een goed startsignaal, maar <strong>weerspiegelen uw werkelijkheid niet:</strong> uw taal, uw domein, uw documenten en de door u gekozen kwantisatie leveren andere resultaten op; bovendien dragen populaire benchmarks het risico van <strong>datacontaminatie</strong> (het model heeft de testvragen tijdens de training gezien). De betrouwbaarste beslissing komt uit een kleine, organisatiespecifieke evaluatieset.</p>
+
+<ul>
+  <li><strong>Data:</strong> Verzamel <strong>50–200 representatieve voorbeelden</strong> uit het werkelijke gebruik (invoer + ideale uitvoer of acceptatiecriteria).</li>
+  <li><strong>Methode (per taak):</strong>
+    <ul>
+      <li>Informatie-extractie / classificatie → automatische scoring (exact-match / regex)</li>
+      <li>Open vragen / chat → <strong>LLM-as-judge</strong> (met een groter model, rubric) + menselijke vergelijking naast elkaar</li>
+      <li>RAG → <strong>recall@k</strong> van het ophalen + nauwkeurigheid van bronvermelding/getrouwheid</li>
+    </ul>
+  </li>
+  <li><strong>Meet niet alleen de kwaliteit:</strong> op uw eigen hardware ook <strong>TPS/TTFT</strong>, gelijktijdige capaciteit, <strong>lekken van persoonsgegevens (PII) / percentage onnodige weigeringen</strong>.</li>
+  <li><strong>Proces:</strong> vergelijk kandidaten op dezelfde set → <strong>test ook de kwantisatieniveaus</strong> (kwaliteitsverlies Q4 vs Q8) → draai dezelfde set opnieuw als <strong>regressietest</strong> bij updates van model/versie.</li>
+  <li><strong>Tools:</strong> lm-evaluation-harness, promptfoo, RAGAS / DeepEval voor RAG, Langfuse voor monitoring.</li>
+</ul>
+
+<blockquote>
+  <p><strong>PoC-lus:</strong> begin klein → meet op uw eigen set → schaal hardware en model op naarmate de behoeften duidelijker worden. De beslissing over het “juiste model” wordt met deze lus genomen, niet met een marketingscore.</p>
+</blockquote><hr />
+<h2 id="6-softwarekeuze">
+  
+  
+    <a href="#6-softwarekeuze" class="anchor-heading" aria-labelledby="6-softwarekeuze"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6. Softwarekeuze
+  
+  
+</h2>
+    
+
+<p>Het is het verstandigst om de softwarelaag in zeven categorieën te bekijken: <strong>(A) inferentie-engines</strong> (de backend die het model daadwerkelijk draait), <strong>(B) alles-in-één desktopapplicaties</strong>, <strong>(C) self-hosted AI-werkruimtes van de nieuwe generatie</strong>, <strong>(D) klassieke web-UI’s en RAG-oplossingen</strong>, <strong>(E) API-gateways / routering</strong> (de laag vóór opstellingen met meerdere modellen en meerdere gebruikers), <strong>(F) tools voor fine-tuning &amp; training</strong> en <strong>(G) code-assistenten &amp; agents</strong>.</p>
+
+<p><img src="/papers/local-llm-guide/images/sema-6-software-layers.png" alt="Softwarelagen: UI → (gateway) → engine → hardware, met fine-tuning ernaast" width="620" /></p>
+<p><sub><i>Figuur: Softwarelagen: UI → engine → hardware</i></sub></p>
+
+<blockquote>
+  <p><strong>Gemeenschappelijke basis — OpenAI-compatibele API:</strong> llama.cpp (llama-server), Ollama, vLLM, SGLang en LM Studio bieden allemaal een <strong>OpenAI-compatibel endpoint</strong>. Dezelfde clientcode (alleen <code class="language-plaintext highlighter-rouge">base_url</code> wijzigen naar localhost) werkt dus met al deze tools — een cruciaal gemak voor integratie.</p>
+</blockquote>
+<h3 id="6a-inferentie-engines-backend">
+  
+  
+    <a href="#6a-inferentie-engines-backend" class="anchor-heading" aria-labelledby="6a-inferentie-engines-backend"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.A. Inferentie-engines (backend)
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>llama.cpp</strong> — Het fundament van het ecosysteem. C/C++; eigen formaat <strong>GGUF</strong> (1.5-bit → 8-bit). 15+ backends, waaronder CUDA; <code class="language-plaintext highlighter-rouge">llama-server</code> biedt een OpenAI-compatibele HTTP-server. De breedste hardwarecompatibiliteit, draait op de meest bescheiden hardware. Veel tools, zoals LM Studio, Ollama en Jan, bouwen erop voort (GGUF) als inferentie-engine. <em>(Licentie: MIT · ~117k★ · <a href="https://github.com/ggml-org/llama.cpp">ggml-org/llama.cpp</a>)</em></li>
+  <li><strong>Ollama</strong> — De eenvoudigste start (<code class="language-plaintext highlighter-rouge">ollama run &lt;model&gt;</code>), met een eigen modelbibliotheek. <strong>Verandering in 2026:</strong> Sinds juli 2025 is er een <strong>officiële desktopapp voor macOS/Windows</strong> (chat-GUI, invoer van bestanden/afbeeldingen); Linux blijft CLI. Releases in 2026 voegden een laag voor agents/integraties toe, sneller laden van GGUF, meerdere gelijktijdige sessies en het publiceren van modellen naar de cloud. Zowel een eigen REST-API als een OpenAI-compatibele API. Er zijn tientallen frontends (Open WebUI, AnythingLLM…) bovenop gebouwd. <em>(Licentie: MIT · ~174k★ · <a href="https://github.com/ollama/ollama">ollama/ollama</a>)</em></li>
+  <li><strong>vLLM</strong> — <strong>Serving</strong>-engine met hoge doorvoer. <strong>PagedAttention</strong> verdeelt de KV-cache in pagina’s (geheugenverspilling &lt;4%). ~24× de doorvoer van naïeve HF, en 2–4× die van Ollama bij hoge gelijktijdigheid. OpenAI-compatibele server. Voor productie / meerdere gebruikers / GPU-serving met hoge gelijktijdigheid; niet voor de desktop. (Vrijwel wekelijkse releases; v0.22.1, juni 2026.) <em>(Licentie: Apache-2.0 · ~83k★ · <a href="https://github.com/vllm-project/vllm">vllm-project/vllm</a>)</em></li>
+  <li><strong>SGLang</strong> — Een tegenhanger van vLLM. <strong>RadixAttention</strong> slaat gemeenschappelijke prefixen (systeemprompt, geschiedenis van meerdere beurten) maar één keer op. Volgens berichten in productie op 400,000+ GPU’s bij onder meer xAI/NVIDIA; in sommige tests ~29% hogere doorvoer dan vLLM op een H100. Sterk voor scenario’s met agents / meerdere beurten / gemeenschappelijke prompts. <em>(Licentie: Apache-2.0 · ~29k★ · <a href="https://github.com/sgl-project/sglang">sgl-project/sglang</a>)</em></li>
+  <li><strong>TensorRT-LLM (NVIDIA)</strong> — NVIDIA’s eigen opensource-inferentie-engine met de hoogste prestaties, <strong>uitsluitend voor NVIDIA-GPU’s</strong>. Compileert het model tot een <strong>TensorRT-engine</strong> voor een specifieke combinatie van model, GPU en precisie (fused kernels, geoptimaliseerde attention, agressieve kwantisatie). Ondersteunt <strong>FP8, FP4, INT4-AWQ, INT8-SmoothQuant</strong>; bevat in-flight batching, een gepagineerde KV-cache en speculatieve decodering. In gepubliceerde benchmarks ligt het op kaarten van de H100-klasse doorgaans ~15–30% voor op vLLM in piekdoorvoer/latentie. <strong>Kosten:</strong> de compilatiestap (engine build) en de operationele overhead zijn hoger dan bij vLLM, en de aanpassing aan nieuwe modellen verloopt trager. <strong>Wanneer:</strong> voor productiediensten die voor NVIDIA-hardware hebben gekozen en de laatste druppel prestaties willen. Overkill voor een desktop met één gebruiker; daar zijn Ollama/llama.cpp zinvoller, en voor praktische serving voor meerdere gebruikers vLLM/SGLang. <em>(Licentie: Apache-2.0 · ~14k★ · <a href="https://github.com/NVIDIA/TensorRT-LLM">NVIDIA/TensorRT-LLM</a>)</em></li>
+</ul>
+<h3 id="6b-alles-in-één-desktopapplicaties">
+  
+  
+    <a href="#6b-alles-in-één-desktopapplicaties" class="anchor-heading" aria-labelledby="6b-alles-in-één-desktopapplicaties"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.B. Alles-in-één desktopapplicaties
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>LM Studio</strong> — Verzorgde (closed-source) desktopapp: HF-modelbrowser, downloaden met één klik, chat-GUI en een lokale OpenAI-compatibele server. Win/macOS/Linux. In 2026 kwamen er continuous batching en speculatieve decodering met MTP bij; de <code class="language-plaintext highlighter-rouge">lms</code>-CLI en een headless <strong><code class="language-plaintext highlighter-rouge">llmster</code></strong> voor server/CI. De beste route voor wie zowel een GUI als een ontwikkeltool wil. <em>(Licentie: closed source · <a href="https://lmstudio.ai">lmstudio.ai</a>)</em></li>
+  <li><strong>Jan</strong> — Opensource, in de stijl van ChatGPT, 100% offline te gebruiken. Ingebouwde modelhub, cloudconnectoren, <strong>MCP-ondersteuning</strong>, OpenAI-compatibele API op <code class="language-plaintext highlighter-rouge">localhost:1337</code>. Win/macOS/Linux. Het belangrijkste opensourcealternatief voor LM Studio. (v0.7.9, maart 2026.) <em>(Licentie: Apache-2.0 · ~43k★ · <a href="https://github.com/janhq/jan">janhq/jan</a>)</em></li>
+  <li><strong>Llamafile (Mozilla)</strong> — Verpakt het model + llama.cpp in <strong>één bestand waarop u dubbelklikt</strong>, waarna een chat in de browser opent. Voor absolute eenvoud/draagbaarheid. <em>(Licentie: Apache-2.0 · ~25k★ · <a href="https://github.com/Mozilla-Ocho/llamafile">Mozilla-Ocho/llamafile</a>)</em></li>
+</ul>
+<h3 id="6c-self-hosted-ai-werkruimtes-van-de-nieuwe-generatie">
+  
+  
+    <a href="#6c-self-hosted-ai-werkruimtes-van-de-nieuwe-generatie" class="anchor-heading" aria-labelledby="6c-self-hosted-ai-werkruimtes-van-de-nieuwe-generatie"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.C. Self-hosted AI-werkruimtes van de nieuwe generatie
+  
+  
+</h3>
+    
+
+<blockquote>
+  <p>Deze categorie is de echte vernieuwing van 2026. Het verschil zit niet in “welke chat-UI mooier is”, maar in de vraag of <strong>agent + persistent geheugen + MCP + integratie van persoonlijke data (e-mail/agenda/notities)</strong> direct uit de doos meekomen. De verschuiving van “chat-UI” → “AI-werkruimte” is echt — maar ook de klassieke UI’s hebben niet stilgestaan (zie de eerlijke beoordeling in 6.D).</p>
+</blockquote>
+
+<ul>
+  <li><strong>Odysseus</strong> (<a href="https://github.com/pewdiepie-archdaemon/odysseus">github.com/pewdiepie-archdaemon/odysseus</a>) — Het duidelijkste voorbeeld van dit paradigma. <strong>Agentmodus</strong> (shell, bestandsbewerkingen, uitvoeren van skills), <strong>MCP</strong>-ondersteuning, <strong>Cookbook</strong> (scant uw hardware, stelt VRAM-bewuste modellen voor en downloadt ze — dicht rechtstreeks de kloof “wat kan mijn hardware draaien?”), <strong>Deep Research</strong>, <strong>persistent geheugen &amp; skills met ChromaDB</strong>, <strong>e-mailtriage</strong> (IMAP/SMTP), <strong>CalDAV-agenda</strong>, notities/taken, vergelijken van modellen. Backend: vLLM, llama.cpp, Ollama (+ OpenRouter/OpenAI/Copilot). Docker compose of native Python. <em>(Licentie: AGPL-3.0 · ~71k★ · <a href="https://github.com/pewdiepie-archdaemon/odysseus">pewdiepie-archdaemon/odysseus</a>)</em>, actief. <em>(Beveiligingsopmerking: vanwege de brede toegang tot shell en tools raadt het project aan de deployment te beveiligen als een beheerconsole — authenticatie ingeschakeld, niet rechtstreeks aan internet blootgesteld, reverse proxy + HTTPS.)</em></li>
+  <li><strong>Khoj</strong> — Een “AI-tweede brein”. Semantisch zoeken + chatten over persoonlijke documenten (PDF, Markdown, Notion, Word, org-mode); <strong>eigen agents, geplande automatiseringen, deep research</strong>. Een ongewoon breed toegangsoppervlak: browser, <strong>Obsidian, Emacs</strong>, desktop, mobiel, WhatsApp. Self-hosted (Docker) / cloud / enterprise. Zeer actief. <em>(Licentie: AGPL-3.0 · ~35k★ · <a href="https://github.com/khoj-ai/khoj">khoj-ai/khoj</a>)</em></li>
+  <li><strong>Hermes (Nous Research)</strong> — <strong>Hermes Agent</strong>, een zelfverbeterende autonome agent: <strong>automatisch skills aanmaken</strong> na complexe taken, persistent geheugen, 40+ tools, <strong>MCP</strong>, cron-planner, parallelle subagents, berichten via meerdere platforms (Telegram/Discord/Slack/WhatsApp/Signal). <strong>Hermes WebUI</strong> is een lichte frontend met drie panelen. Een snelgroeiend nieuw project. <em>(Licentie: MIT · ~194k★ · <a href="https://github.com/NousResearch/hermes-agent">NousResearch/hermes-agent</a>)</em> <strong>Belangrijk:</strong> onafhankelijk van het model-endpoint (niet local-first); voor een lokale LLM richt u het op een eigen endpoint van Ollama/vLLM.</li>
+</ul>
+<h3 id="6d-klassieke-web-uis-en-rag-oplossingen">
+  
+  
+    <a href="#6d-klassieke-web-uis-en-rag-oplossingen" class="anchor-heading" aria-labelledby="6d-klassieke-web-uis-en-rag-oplossingen"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.D. Klassieke web-UI’s en RAG-oplossingen
+  
+  
+</h3>
+    
+
+<p><strong>Klassieke / algemene web-UI’s:</strong></p>
+<ul>
+  <li><strong>Open WebUI</strong> — Het eerlijke antwoord op “is het achterhaald?”: <strong>deels, maar minder dan u denkt.</strong> De populairste self-hosted chat-UI (~141k★, zeer actief). Het heeft moderne mogelijkheden <strong>toegevoegd</strong>: MCP-ondersteuning (+registry), native tool calling in Python, het pluginframework Pipelines, lokale RAG met 9 vectordatabases, zoeken op het web via 15+ aanbieders. <strong>De terechte kritiek:</strong> het is in de kern nog steeds een <strong>chatfrontend + RAG + plugins</strong>; het heeft geen <em>werkruimte</em>-identiteit met e-mailtriage, agenda, notities, een hardwarebewust model-cookbook of een zelfverbeterende lus voor skills/geheugen. Het staat dus niet stil — het zit alleen op het spoor van de “algemene UI”, niet op dat van de “AI-werkruimte”. <em>(Licentie: Open WebUI License — BSD-3 + merkvoorwaarde · ~142k★ · <a href="https://github.com/open-webui/open-webui">open-webui/open-webui</a>)</em></li>
+  <li><strong>LibreChat</strong> — Meerdere aanbieders, eigen agents/assistenten zonder code, MCP, een beveiligde code-interpreter in een sandbox, zoeken op het web, code-artifacts. De ruimste licentie van de grote UI’s; zeer actief. <em>(Licentie: MIT · ~39k★ · <a href="https://github.com/danny-avila/LibreChat">danny-avila/LibreChat</a>)</em></li>
+  <li><strong>LobeChat / LobeHub</strong> — Heeft zich expliciet <strong>opnieuw gepositioneerd richting het agentparadigma</strong>: Agent Builder, Agent Groups, planning voor geautomatiseerde runs, een bewerkbaar “Personal Memory”, 10,000+ tool-/MCP-plugins. Het bewijs dat de verschuiving “chat → werkruimte” ook bij de klassiekers echt is. <em>(Licentie: LobeHub Community License · ~79k★ · <a href="https://github.com/lobehub/lobe-chat">lobehub/lobe-chat</a>)</em></li>
+  <li><strong>Cherry Studio</strong> — Desktopclient (Electron; Win/macOS/Linux). Uniforme toegang tot LLM’s + lokaal; <strong>gebruik van MCP-tools, agents, 300+ kant-en-klare assistenten</strong>, vooraf gekoppelde MCP-servers voor bestandssysteem/GitHub/zoeken op het web/geheugen. Ondersteunt de lokale API van Ollama. Voor de desktop met één gebruiker / wie een eigen API-sleutel meebrengt. <em>(Licentie: AGPL-3.0 · ~35k★ · <a href="https://github.com/CherryHQ/cherry-studio">CherryHQ/cherry-studio</a>)</em></li>
+</ul>
+
+<p><strong>Op RAG gerichte oplossingen (vraag en antwoord over uw eigen documenten):</strong></p>
+<ul>
+  <li><strong>AnythingLLM</strong> — Een eigen ChatGPT over uw documenten; sterke agentfuncties: <strong>agent builder</strong> zonder code, surfen op het web, <strong>agenttaken gepland via cron</strong>, MCP. RAG met bronvermelding; LanceDB + PGVector/Pinecone/Weaviate/Qdrant; meerdere gebruikers. Lokale backends: Ollama, LM Studio, llama.cpp, LocalAI. Docker of desktop. Staat tussen RAG en werkruimte in. <em>(Licentie: MIT · ~62k★ · <a href="https://github.com/Mintplex-Labs/anything-llm">Mintplex-Labs/anything-llm</a>)</em></li>
+  <li><strong>OpenRAG-Local (CordatusAI)</strong> — ⭐ <strong>De opensourcebijdrage van Cordatus</strong> (<a href="https://github.com/CordatusAI/openrag-local">github.com/CordatusAI/openrag-local</a>). We hebben het OpenRAG-project van Langflow (<code class="language-plaintext highlighter-rouge">langflow-ai/openrag</code>) geforkt, aangepast zodat het <strong>volledig lokaal</strong> draait en als opensource uitgebracht: <strong>er zijn geen cloud-API-sleutels nodig</strong>, inferentie draait op uw eigen GPU met <strong>sglang/vLLM</strong> (OpenAI-compatibel), en embeddings worden lokaal gemaakt met <strong>TEI</strong>. U uploadt uw documenten en bevraagt ze via een chatinterface. Stack: <strong>Langflow</strong> (flow-engine) + <strong>OpenSearch</strong> (vectoropslag) + <strong>Docling</strong> (documentparsing met OCR) + <strong>SearXNG</strong> (lokaal zoeken op het web). Het omvat <strong>agentische RAG</strong>, re-ranking en orkestratie van meerdere agents; het wordt met één <strong>Docker Compose</strong>-commando uitgerold en ondersteunt toewijzing van meerdere GPU’s. De voorbeeldconfiguratie gebruikt <strong>GLM-5.1-FP8</strong> als LLM — het is dus volledig compatibel met de hardwarekeuzes (RTX PRO / DGX) en modelkeuzes (Apache/MIT) in deze handleiding, zodat u kosteloos een volledig lokale oplossing voor vraag en antwoord over documenten kunt opzetten. <em>(Licentie: Apache-2.0 · <a href="https://github.com/CordatusAI/openrag-local">CordatusAI/openrag-local</a> — fork van <code class="language-plaintext highlighter-rouge">langflow-ai/openrag</code>, jong project.)</em></li>
+  <li><strong>RAGFlow</strong> — Een toonaangevende open RAG-engine die diepgaand documentbegrip combineert met agentmogelijkheden. Sterk in rommelige documenten uit de praktijk (PDF/scans/slides/Excel); verklaarbare chunking, traceerbare/onderbouwde bronvermeldingen (tegen hallucinaties), agentworkflows + code-uitvoering + MCP. Docker Compose (4+ cores, 16 GB RAM). Van de specifieke RAG-engines heeft deze de meeste sterren; voor serieuze/productiewaardige vraag en antwoord over documenten. <em>(Licentie: Apache-2.0 · ~82k★ · <a href="https://github.com/infiniflow/ragflow">infiniflow/ragflow</a>)</em></li>
+</ul>
+<h3 id="6e-api-gateways--routering-gateway--router">
+  
+  
+    <a href="#6e-api-gateways--routering-gateway--router" class="anchor-heading" aria-labelledby="6e-api-gateways--routering-gateway--router"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.E. API-gateways / routering (gateway &amp; router)
+  
+  
+</h3>
+    
+
+<blockquote>
+  <p>Deze laag is het idee uit de inleiding van §6 — <strong>“allemaal OpenAI-compatibel, één <code class="language-plaintext highlighter-rouge">base_url</code>“</strong> — opgeschaald naar bedrijfsniveau: ze plaatst meerdere modellen/servers/aanbieders achter één OpenAI-compatibel endpoint.</p>
+</blockquote>
+
+<p><strong>Wanneer is het nodig?</strong> Bij één gebruiker + één model is het <strong>niet nodig</strong> — het eigen endpoint van de engine volstaat. Het komt wel in beeld bij <strong>meerdere teams, meerdere modellen, meer dan één GPU-server, een mix van lokaal en cloud, of facturering op gebruik/quota</strong> (zie scenario C en G).</p>
+
+<p><strong>Positie in de architectuur:</strong> <code class="language-plaintext highlighter-rouge">Applications / IDE → [Gateway] → vLLM · TensorRT-LLM · Ollama · llama.cpp endpoints</code></p>
+
+<p><strong>Wat het biedt:</strong> virtuele API-sleutels (isolatie per team), <strong>budget + rate limiting</strong> (quota), <strong>routering + load balancing + fallback</strong> (“goedkope taak → klein model, moeilijke taak → groot model”), bijhouden van kosten/gebruik, observability (Langfuse e.d.), caching en guardrails.</p>
+
+<blockquote>
+  <p><strong>Belangrijke opmerking over de vereisten:</strong> Een gateway <strong>rekent niet, maar stuurt alleen door (proxy)</strong> → <strong>er is geen GPU nodig, een CPU volstaat, weinig resources.</strong> Typische opstelling: Docker + <strong>Postgres</strong> voor de state (sleutels/budget) + optioneel <strong>Redis</strong> (cache/rate limiting). Het is dus veel lichter dan de engine-laag; het is niet “nog een GPU-kast”.</p>
+</blockquote>
+
+<ul>
+  <li><strong>LiteLLM</strong> — De meest gangbare keuze. Zowel een Python-SDK als <strong>LiteLLM Proxy</strong> (gatewayserver): virtuele sleutels, budget/limieten, routering/fallback, bijhouden van kosten, logging naar Langfuse, Redis-cache. Lokaal koppelt het rechtstreeks aan endpoints van vLLM/Ollama. <em>(Licentie: MIT — de map <code class="language-plaintext highlighter-rouge">enterprise/</code> valt onder een aparte commerciële licentie · ~50k★ · <a href="https://github.com/BerriAI/litellm">BerriAI/litellm</a>)</em></li>
+  <li><strong>Portkey AI Gateway</strong> — Snelle opensource-edge-gateway; routering/fallback/cache/observability, zelf te hosten. <em>(Licentie: MIT · ~12k★ · <a href="https://github.com/Portkey-AI/gateway">Portkey-AI/gateway</a>)</em></li>
+  <li><strong>Kong AI Gateway</strong> — Voor organisaties die Kong al gebruiken; geen apart project, maar <strong>een functie binnen Kong Gateway</strong> (routering over meerdere LLM’s). <em>(Licentie: Apache-2.0 · ~44k★ · <a href="https://github.com/Kong/kong">Kong/kong</a>)</em></li>
+  <li><strong>Envoy AI Gateway</strong> — Gebouwd op Envoy Gateway; een leveranciersneutrale toegangslaag voor K8s-omgevingen. <em>(Licentie: Apache-2.0 · ~2k★ · <a href="https://github.com/envoyproxy/ai-gateway">envoyproxy/ai-gateway</a>)</em></li>
+  <li><strong>Aan de NVIDIA-kant (volgens het rapport):</strong> <strong>NIM</strong>-microservices — gecontaineriseerde, OpenAI-compatibele, geoptimaliseerde inferentiediensten <em>(Licentie: gesloten/propriëtair; voor productie NVIDIA AI Enterprise · <a href="https://docs.nvidia.com/nim/">docs.nvidia.com/nim</a>)</em>; voor geschaalde serving zonder een aparte gateway op te zetten <strong>vLLM production-stack</strong> met een eigen router <em>(Licentie: Apache-2.0 · ~2k★ · <a href="https://github.com/vllm-project/production-stack">vllm-project/production-stack</a>)</em>. Voor modelbeheer over meerdere GPU’s/meerdere nodes (een “clustermanager” naast de gateway) <strong>GPUStack</strong> <em>(Licentie: Apache-2.0 · ~5k★ · <a href="https://github.com/gpustack/gpustack">gpustack/gpustack</a>)</em>.</li>
+</ul>
+<h3 id="6f-tools-voor-fine-tuning--training-opensource">
+  
+  
+    <a href="#6f-tools-voor-fine-tuning--training-opensource" class="anchor-heading" aria-labelledby="6f-tools-voor-fine-tuning--training-opensource"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.F. Tools voor fine-tuning &amp; training (opensource)
+  
+  
+</h3>
+    
+
+<blockquote>
+  <p>Met deze tools brengt u de vier niveaus uit §4.2 (pre-training · full fine-tune · LoRA · QLoRA) in de praktijk. De meeste organisaties beginnen met <strong>LoRA/QLoRA</strong> — zelfs mogelijk op een werkstation met één GPU; volledige fine-tuning en training vanaf nul vereisen meerdere GPU’s/meerdere nodes. Alles draait op NVIDIA CUDA. Voor de koppeling aan hardware, zie 4.2 en scenario F.</p>
+</blockquote>
+
+<p><strong>Eenvoudige instap — LoRA/QLoRA fine-tune (één / enkele GPU’s):</strong></p>
+<ul>
+  <li><strong>Unsloth</strong> — De snelste LoRA/QLoRA met het laagste VRAM-gebruik; past grote modellen aan op één GPU. Met <strong>Unsloth Studio</strong> verloopt data → training → evaluatie → export (LoRA/GGUF) in één flow in een <strong>lokale web-UI zonder code</strong>. <em>(Licentie: Apache-2.0 / AGPL-3.0 dual — de AGPL-clausule vereist een juridische toets binnen de onderneming · ~67k★ · <a href="https://github.com/unslothai/unsloth">unslothai/unsloth</a>)</em></li>
+  <li><strong>LLaMA-Factory</strong> — <strong>WebUI/CLI</strong> zonder code; fine-tunet het breedste scala van 100+ LLM’s en VLM’s. De praktischste instap voor teams. <em>(Licentie: Apache-2.0 · ~72k★ · <a href="https://github.com/hiyouga/LLaMA-Factory">hiyouga/LLaMA-Factory</a>)</em></li>
+  <li><strong>Axolotl</strong> — Door <strong>YAML-configuratie</strong> gestuurde, versiebeheerde, reproduceerbare fine-tune-pipelines; schaalt van één GPU naar meerdere GPU’s. <em>(Licentie: Apache-2.0 · ~12k★ · <a href="https://github.com/axolotl-ai-cloud/axolotl">axolotl-ai-cloud/axolotl</a>)</em></li>
+</ul>
+
+<p><strong>Alignment / bouwstenen:</strong></p>
+<ul>
+  <li><strong>Hugging Face TRL</strong> — Componentbibliotheek voor alignment / post-training (SFT, DPO, GRPO/RLHF). <em>(Licentie: Apache-2.0 · ~19k★ · <a href="https://github.com/huggingface/trl">huggingface/trl</a>)</em></li>
+  <li><strong>Hugging Face PEFT</strong> — Het fundament van de LoRA-/adapter-engine; niet zelfstandig, maar werkt als afhankelijkheid onder tools als TRL/Axolotl. <em>(Licentie: Apache-2.0 · ~21k★ · <a href="https://github.com/huggingface/peft">huggingface/peft</a>)</em></li>
+</ul>
+
+<p><strong>Serieuze / grootschalige &amp; gedistribueerde training (meerdere GPU’s / DGX-klasse):</strong></p>
+<ul>
+  <li><strong>NVIDIA NeMo</strong> — NVIDIA-native end-to-end trainingsframework; voor DGX-klasse met meerdere GPU’s/meerdere nodes. <em>(Licentie: Apache-2.0 · ~17k★ · <a href="https://github.com/NVIDIA-NeMo/NeMo">NVIDIA-NeMo/NeMo</a>)</em></li>
+  <li><strong>Megatron-LM</strong> — Voor NVIDIA-GPU’s geoptimaliseerde bibliotheek voor grootschalige pretraining vanaf nul. <em>(Licentie: Apache-2.0 · ~17k★ · <a href="https://github.com/NVIDIA/Megatron-LM">NVIDIA/Megatron-LM</a>)</em></li>
+  <li><strong>DeepSpeed</strong> — Backend voor gedistribueerde training (ZeRO, offloading naar CPU/NVMe); maakt het mogelijk modellen te trainen waarvoor één kaart onvoldoende VRAM heeft. <em>(Licentie: Apache-2.0 · ~43k★ · <a href="https://github.com/deepspeedai/DeepSpeed">deepspeedai/DeepSpeed</a>)</em></li>
+</ul>
+
+<blockquote>
+  <p><strong>Keuze:</strong> Voor snelle aanpassing op één werkstation <strong>Unsloth</strong> of <strong>LLaMA-Factory</strong>; voor versiebeheerde pipelines <strong>Axolotl</strong>; voor alignment <strong>TRL</strong>; voor gedistribueerde training/pretraining van DGX-klasse <strong>NeMo + Megatron + DeepSpeed</strong>. Test het gefinetunede model altijd op uw eigen evaluatieset (zie 5.9).</p>
+</blockquote>
+<h3 id="6g-code-assistenten--agents-opensource">
+  
+  
+    <a href="#6g-code-assistenten--agents-opensource" class="anchor-heading" aria-labelledby="6g-code-assistenten--agents-opensource"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.G. Code-assistenten &amp; agents (opensource)
+  
+  
+</h3>
+    
+
+<blockquote>
+  <p>Alle onderstaande tools koppelen aan een <strong>lokale LLM via een OpenAI-compatibel / Ollama-endpoint</strong> — code-assistenten/agents worden dus gebruikt zonder dat uw code of repository de machine verlaat en zonder verbinding met een gesloten cloud. Cruciaal voor zakelijke en air-gapped omgevingen. Kies voor codetaken een model <strong>dat tool calling beheerst</strong> (zie 5.2); modellen van de klasse Qwen-Coder / DeepSeek-Coder passen goed.</p>
+</blockquote>
+
+<p><strong>Terminalagents:</strong></p>
+<ul>
+  <li><strong>OpenCode</strong> — Terminal-native, de populairste open codeeragent; ondersteuning voor 75+ aanbieders + lokale endpoints. <em>(Licentie: MIT · ~175k★ · <a href="https://github.com/sst/opencode">sst/opencode</a>)</em></li>
+  <li><strong>Aider</strong> — Git-bewust “pair programming” in de terminal; volwassen en gevestigd. <em>(Licentie: Apache-2.0 · ~46k★ · <a href="https://github.com/Aider-AI/aider">Aider-AI/aider</a>)</em></li>
+</ul>
+
+<p><strong>In de IDE (VS Code / JetBrains):</strong></p>
+<ul>
+  <li><strong>Cline</strong> — Autonome codeeragent voor VS Code/JetBrains; open ondersteuning voor Ollama/LM Studio/OpenAI-compatibel. <em>(Licentie: Apache-2.0 · ~63k★ · <a href="https://github.com/cline/cline">cline/cline</a>)</em></li>
+  <li><strong>Continue</strong> — IDE-assistent: chat + <strong>automatisch aanvullen</strong> + agentmodus, volledig configureerbaar voor lokale modellen. <em>(Licentie: Apache-2.0 · ~34k★ · <a href="https://github.com/continuedev/continue">continuedev/continue</a>)</em></li>
+</ul>
+
+<p><strong>Brede softwareagent:</strong></p>
+<ul>
+  <li><strong>OpenHands</strong> — End-to-end software-engineeringagent in een sandbox (voorheen OpenDevin); koppelt aan lokale vLLM/Ollama. <em>(Licentie: MIT · ~77k★ · <a href="https://github.com/All-Hands-AI/OpenHands">All-Hands-AI/OpenHands</a>)</em></li>
+</ul>
+
+<p><strong>Self-hosted automatisch aanvullen (geschikt voor air-gapped):</strong></p>
+<ul>
+  <li><strong>Tabby</strong> — Volledig zelf te hosten alternatief voor Copilot (FIM-aanvulling + chat); ideaal voor on-prem / air-gapped omgevingen. <em>(Licentie: Apache-2.0-kern + <code class="language-plaintext highlighter-rouge">ee/</code> met aparte commerciële licentie · ~34k★ · <a href="https://github.com/TabbyML/tabby">TabbyML/tabby</a>)</em></li>
+</ul>
+
+<blockquote>
+  <p><strong>Opmerking:</strong> <strong>Roo Code</strong> en <strong>Void</strong> zijn in 2026 gearchiveerd (niet langer actief onderhouden); als vervanging worden respectievelijk <strong>Cline / Kilo Code</strong> en <strong>Cline / Continue</strong> aanbevolen. Voor een bredere “agent op uw eigen machine” is ook <strong>Goose</strong> (Apache-2.0, ~49k★) een optie; omdat het op tool calling leunt, vallen zwakke lokale modellen echter terug naar chatmodus.</p>
+</blockquote><hr />
+<h2 id="7-voorbeeldscenarios-voor-deployment">
+  
+  
+    <a href="#7-voorbeeldscenarios-voor-deployment" class="anchor-heading" aria-labelledby="7-voorbeeldscenarios-voor-deployment"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7. Voorbeeldscenario’s voor deployment
+  
+  
+</h2>
+    
+
+<p><img src="/papers/local-llm-guide/images/sema-7-scenario.png" alt="Koppeling van scenario aan hardware" width="420" /></p>
+<p><sub><i>Figuur: Koppeling van scenario aan hardware</i></sub></p>
+
+<p><strong>Scenario A — Individuele / privacybewuste gebruiker (instapwerkstation).</strong>
+<strong>RTX PRO 2000 (16 GB)</strong> of <strong>RTX PRO 4000 (24 GB)</strong> → <strong>Ollama</strong> of <strong>LM Studio</strong> → een model van 8B–14B (bijv. Qwen3 8B / Gemma 4 12B, Q4_K_M). Optioneel <strong>Jan</strong> als UI. Laag vermogen, stil, volledig offline. Wie zich niet met de installatie wil bezighouden, kan meteen aan de slag met de <strong>vooraf geïnstalleerde en geteste kant-en-klare werkstations</strong> van Aetherix (<a href="https://aetherix.com/product-category/graphics-cards/">aetherix.com/product-category/graphics-cards</a>, zie 4.5/B).</p>
+
+<p><strong>Scenario B — Ontwikkelaar (code-assistent + integratie).</strong>
+<strong>RTX PRO 4500 (32 GB)</strong> of <strong>RTX PRO 5000 (48 GB)</strong> → <strong>Ollama/LM Studio</strong> voor persoonlijk gebruik, <strong>vLLM</strong> of <strong>TensorRT-LLM</strong> voor veel verzoeken/serving → een codemodel (klasse Qwen3.6 / DeepSeek-Coder). Dankzij het OpenAI-compatibele endpoint koppelt het rechtstreeks aan IDE’s en uw eigen tools; opensourcetools zoals <strong>OpenCode / Aider / Cline / Continue</strong> koppelen als code-assistent/agent aan het lokale model (zie 6.G). Met een <strong>kant-en-klaar werkstation met Ubuntu + NVIDIA-stack vooraf geïnstalleerd</strong> kunt u beginnen zonder een dag te verliezen (<a href="https://aetherix.com/product-category/graphics-cards/">aetherix.com/product-category/graphics-cards</a>, zie 4.5/B).</p>
+
+<p><strong>Scenario C — Mkb / organisatie (documentgebaseerd, meerdere gebruikers).</strong>
+Server + <strong>RTX PRO 6000 (96 GB)</strong> of, voor het datacenter, <strong>L40S / H100 NVL / H200 NVL</strong> → backend <strong>vLLM</strong> of <strong>TensorRT-LLM</strong>, met daarbovenop naar behoefte <strong>OpenRAG-Local (CordatusAI) / AnythingLLM / RAGFlow</strong> (RAG over bedrijfsdocumenten, meerdere gebruikers, bronvermelding). Met een model met Apache-/MIT-licentie (Qwen/DeepSeek/GLM) is het commercieel veilig.</p>
+
+<p><strong>Scenario D — Edge / robotica / in het veld.</strong>
+<strong>Jetson Orin Nano (8 GB)</strong> voor kleine modellen, <strong>Jetson AGX Orin (64 GB)</strong> of <strong>AGX Thor (128 GB)</strong> voor grote modellen aan de edge → llama.cpp/Ollama → inferentie op het apparaat zonder internet. Voor embedded producten, robots en toepassingen in het veld.</p>
+
+<p><strong>Scenario E — Persoonlijke “AI-werkruimte” (agent + geheugen + persoonlijke data).</strong>
+Eén krachtige machine → <strong>Odysseus</strong> of <strong>Khoj</strong> → e-mailtriage, agenda, notities, deep research en persistent geheugen onder één dak; als backend lokaal Ollama/vLLM/llama.cpp. Voor wie verder wil gaan dan “alleen chatten”.</p>
+
+<p><strong>Scenario F — Aanpassing van het model (fine-tune).</strong>
+Om een model aan uw eigen data aan te passen: LoRA/QLoRA voor 7B–13B → <strong>1× RTX PRO 6000 (96 GB)</strong> of <strong>1× H200</strong>; LoRA voor 70B → <strong>2–4× H200</strong>, QLoRA voor 70B → <strong>1× DGX Spark (128 GB)</strong>. 70B fine-tunen op één DGX Spark (QLoRA) kan op de desktop; naarmate het team groeit, schaalt het op met een 2–3× ring. Aan de softwarekant worden <strong>Unsloth / LLaMA-Factory / Axolotl</strong> (LoRA/QLoRA) gebruikt, en op grote schaal <strong>NeMo / DeepSpeed</strong> (zie 6.F); valideer het resultaat op uw eigen evaluatieset (zie 5.9).</p>
+
+<p><strong>Scenario F2 — Diepgaande domeinaanpassing (full fine-tune).</strong>
+Voor diepgaande domeinaanpassing waarbij LoRA tekortschiet (bijv. voortgezette pre-training in het Turks, gespecialiseerde medische/juridische modellen): full fine-tune van 70B → <strong>4–8× H200</strong> (met ZeRO-3), ~1 TB VRAM. Een lage learning rate + het mengen van domeindata met algemene data zijn essentieel om catastrofaal vergeten te beperken (zie 4.2). Software: <strong>NeMo / Megatron-LM / DeepSpeed</strong> (zie 6.F).</p>
+
+<p><strong>Scenario G — Grootschalige productie / training vanaf nul.</strong>
+Inferentie met veel verkeer (500+ gelijktijdig) of pre-training (vanaf nul) → <strong>8× B200 / B300 (HGX/DGX-team)</strong>, op bedrijfsschaal <strong>DGX B300 als “AI-fabriek”.</strong> InfiniBand-netwerk, koeling van serverklasse en TCO-planning zijn verplicht (zie 4.9). Op de schaal van een ministerie of instantie on-prem uitgerold, zodat de data volledig binnen de instelling blijven.</p><hr />
+<h2 id="8-risicos-en-aandachtspunten">
+  
+  
+    <a href="#8-risicos-en-aandachtspunten" class="anchor-heading" aria-labelledby="8-risicos-en-aandachtspunten"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8. Risico’s en aandachtspunten
+  
+  
+</h2>
+    
+
+<ul>
+  <li><strong>Betrouwbaarheid van de modelbron.</strong> Download modellen van betrouwbare bronnen (officiële modelkaarten op Hugging Face), niet uit willekeurige repository’s.</li>
+  <li><strong>Toegangsbeheer op het lokale netwerk.</strong> Werkruimtes met toegang tot agents/tools (zoals Odysseus en Hermes) kunnen toegang hebben tot de shell en bestanden — beveilig ze als een beheerconsole: authenticatie ingeschakeld, niet rechtstreeks aan internet blootstellen, een reverse proxy + HTTPS gebruiken.</li>
+  <li><strong>Hallucinaties en nauwkeurigheid.</strong> Ook lokale modellen kunnen dingen verzinnen; bij kritisch gebruik zijn onderbouwing met bronnen via RAG (antwoorden met bronvermelding) en menselijke controle essentieel.</li>
+  <li><strong>Naleving van licenties.</strong> Controleer voor commercieel gebruik altijd de modellicentie (vooral bij de Llama-familie en afgeleide Turkse modellen).</li>
+  <li><strong>Updates en duurzaamheid.</strong> Zowel modellen als tools verouderen snel; plan regelmatige updates en wijs een verantwoordelijke voor het onderhoud aan.</li>
+</ul>
+<h3 id="veelgemaakte-fouten-bij-het-dimensioneren-van-hardware">
+  
+  
+    <a href="#veelgemaakte-fouten-bij-het-dimensioneren-van-hardware" class="anchor-heading" aria-labelledby="veelgemaakte-fouten-bij-het-dimensioneren-van-hardware"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Veelgemaakte fouten bij het dimensioneren van hardware
+  
+  
+</h3>
+    
+
+<ul>
+  <li>✗ <strong>Kleine GPU, hoge verwachtingen:</strong> proberen een 70B-model op één L40S te draaien.</li>
+  <li>✗ <strong>Het totale VRAM verkeerd berekenen:</strong> de som van gewichten + KV-cache + activaties + overhead negeren.</li>
+  <li>✗ <strong>B200/B300 als losse kaarten behandelen:</strong> deze worden verkocht als team van minimaal 8 GPU’s; plan het budget daarop.</li>
+  <li>✗ <strong>Netwerkknelpunt:</strong> de InfiniBand-/Ethernet-bandbreedte bij meerdere nodes over het hoofd zien.</li>
+  <li>✗ <strong>Koeling verwaarlozen:</strong> een server met 8× B200 is ~15 kW+; controleer de koelcapaciteit.</li>
+  <li>✗ <strong>Geen TCO berekenen:</strong> alleen naar de GPU-prijs kijken en elektriciteit/koeling/onderhoud negeren.</li>
+  <li>✗ <strong>Kwaliteit van kwantisatie negeren:</strong> INT4/INT8 gebruiken zonder het effect op de nauwkeurigheid van het model te testen.</li>
+  <li>✗ <strong>Snelheid van schijf/opslag verwaarlozen:</strong> een NVMe-SSD is verplicht voor het laden van modellen en checkpoints; een HDD is te traag.</li>
+  <li>✗ <strong>PCIe-knelpunt:</strong> geen rekening houden met de bandbreedte tussen GPU en CPU bij multi-GPU.</li>
+  <li>✗ <strong>Geen schaalplan:</strong> bij de eerste aankoop geen rekening houden met toekomstige groei.</li>
+  <li>✗ <strong>Incompatibiliteit in de softwarestack:</strong> versies van CUDA/driver/framework die niet op elkaar aansluiten.</li>
+  <li>✗ <strong>Geen redundantieplan:</strong> onderbreking van de dienst bij uitval van een GPU.</li>
+</ul>
+<h3 id="proces-voor-het-dimensioneren-van-hardware">
+  
+  
+    <a href="#proces-voor-het-dimensioneren-van-hardware" class="anchor-heading" aria-labelledby="proces-voor-het-dimensioneren-van-hardware"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Proces voor het dimensioneren van hardware
+  
+  
+</h3>
+    
+
+<p><img src="/papers/local-llm-guide/images/sema-8-process.png" alt="Proces voor het dimensioneren van hardware" width="820" /></p>
+<p><sub><i>Figuur: Proces voor het dimensioneren van hardware</i></sub></p>
+<h3 id="checklist-voor-het-dimensioneren-van-hardware">
+  
+  
+    <a href="#checklist-voor-het-dimensioneren-van-hardware" class="anchor-heading" aria-labelledby="checklist-voor-het-dimensioneren-van-hardware"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Checklist voor het dimensioneren van hardware
+  
+  
+</h3>
+    
+
+<ul>
+  <li>☐ Is de toepassing duidelijk? (Training / fine-tune / inferentie)</li>
+  <li>☐ Zijn de beoogde modelgrootte en -familie bepaald?</li>
+  <li>☐ Zijn de kandidaatmodellen getest op uw eigen evaluatieset? (kwaliteit + TPS/TTFT + kwantisatieverlies — zie 5.9)</li>
+  <li>☐ Is het aantal gelijktijdige gebruikers geschat?</li>
+  <li>☐ Zijn de doelen voor de servicekwaliteit vastgesteld? (TTFT, TPS)</li>
+  <li>☐ Is de VRAM-behoefte berekend? (Gewichten + KV-cache + overhead)</li>
+  <li>☐ Is er een GPU-vergelijking gemaakt? (VRAM, FLOPS, bandbreedte, verkoopeenheid)</li>
+  <li>☐ Is het budget voor een team van 8 GPU’s toereikend voor B200/B300?</li>
+  <li>☐ Is de technische specificatie opgesteld?</li>
+  <li>☐ Is er een TCO-analyse gemaakt? (Hardware + elektriciteit + koeling + onderhoud)</li>
+  <li>☐ Is de infrastructuur (stroom, koeling, netwerk) gecontroleerd?</li>
+  <li>☐ Zijn goedkeuring en budgetplanning afgerond?</li>
+</ul><hr />
+<h2 id="9-conclusie-en-aanbevelingen">
+  
+  
+    <a href="#9-conclusie-en-aanbevelingen" class="anchor-heading" aria-labelledby="9-conclusie-en-aanbevelingen"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 9. Conclusie en aanbevelingen
+  
+  
+</h2>
+    
+
+<p><strong>Beslismatrix (samenvatting):</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Uw situatie</th>
+      <th>Aanbeveling</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Datasoevereiniteit / overheid / gevoelige data</td>
+      <td>Lokale LLM vrijwel verplicht; model met Apache-/MIT-licentie + on-prem server</td>
+    </tr>
+    <tr>
+      <td>Intensief en continu gebruik</td>
+      <td>Een lokale opstelling heeft op de lange termijn de laagste marginale kosten</td>
+    </tr>
+    <tr>
+      <td>Incidenteel / licht gebruik</td>
+      <td>Een instapkaart of een bestaand werkstation volstaat</td>
+    </tr>
+    <tr>
+      <td>Instapwerkstation (laag vermogen)</td>
+      <td>RTX PRO 2000 (16 GB) / PRO 4000 (24 GB) + Ollama + model van 8–14B in Q4</td>
+    </tr>
+    <tr>
+      <td>70B+ vereist</td>
+      <td>RTX PRO 6000 (96 GB) / DGX Spark (128 GB) — RTX PRO 5000 (48 GB) alleen op de grens, met Q4 + korte context</td>
+    </tr>
+    <tr>
+      <td>Edge / robotica / veld</td>
+      <td>Jetson Orin Nano (8 GB) → AGX Orin (64 GB) → AGX Thor (128 GB)</td>
+    </tr>
+    <tr>
+      <td>Productiedienst voor meerdere gebruikers</td>
+      <td>L40S / H100 NVL (94 GB) / H200 NVL (141 GB) + vLLM/TensorRT-LLM</td>
+    </tr>
+    <tr>
+      <td>Alleen chatten</td>
+      <td>Ollama/LM Studio + (optioneel) Open WebUI</td>
+    </tr>
+    <tr>
+      <td>Agent + persoonlijke data + geheugen</td>
+      <td>Een AI-werkruimte van de klasse Odysseus / Khoj / Hermes</td>
+    </tr>
+    <tr>
+      <td>Vraag en antwoord over documenten</td>
+      <td>OpenRAG-Local (CordatusAI) / AnythingLLM / RAGFlow</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Vooruitblik.</strong> Drie trends zijn duidelijk: (1) dankzij de MoE-architectuur naderen kleine modellen met weinig “actieve parameters” snel de kwaliteit van grote modellen — dus steeds betere resultaten bij dezelfde rekenkosten (hoewel de geheugenbehoefte nog steeds van het totale aantal parameters afhangt); (2) het leiderschap bij open-weight modellen is verschoven naar Chinese labs (Qwen, DeepSeek, GLM, Kimi), en commercieel gebruik is eenvoudiger geworden dankzij Apache-/MIT-licenties; (3) de softwarelaag is uitgegroeid van “chat-UI” tot “AI-werkruimte” (agent + geheugen + persoonlijke data + hardwarebewuste modelkeuze). Met tools als het Cookbook van Odysseus begint zelfs de “modelkeuze” zelf geautomatiseerd te worden.</p>
+
+<p><strong>Slotaanbeveling.</strong> Begin klein: probeer een model van 8–14B met een instapkaart als de RTX PRO 2000/4000, of met Ollama/LM Studio op uw bestaande machine; schaal de hardware- en softwarelaag op naarmate de behoeften duidelijker worden. Werk met modellen met een permissieve licentie (Apache/MIT), zodat er bij de overstap naar commercieel gebruik geen verrassingen zijn. Wilt u samen beoordelen welke hardware bij uw behoeften past, neem dan contact op met het team van Aetherix.</p><hr />
+<h2 id="woordenlijst-begrippen">
+  
+  
+    <a href="#woordenlijst-begrippen" class="anchor-heading" aria-labelledby="woordenlijst-begrippen"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Woordenlijst (begrippen)
+  
+  
+</h2>
+    
+
+<ul>
+  <li><strong>LLM (Large Language Model):</strong> Een model dat is getraind op zeer grote hoeveelheden tekstdata en dat natuurlijke taal begrijpt en genereert.</li>
+  <li><strong>Inferentie:</strong> Een getraind model uitsluitend draaien om antwoorden te produceren.</li>
+  <li><strong>Fine-tuning:</strong> Een voorgetraind model aanpassen aan uw eigen data. <strong>Volledige fine-tuning</strong> werkt alle modelparameters bij (veel VRAM, risico op catastrofaal vergeten — zie 4.2); <strong>LoRA/QLoRA</strong> trainen alleen kleine adapterlagen (weinig VRAM, basismodel blijft behouden).</li>
+  <li><strong>LoRA / QLoRA:</strong> Efficiënte fine-tuningmethoden die kleine extra lagen trainen in plaats van het hele model; QLoRA verkleint het geheugen verder door te kwantiseren.</li>
+  <li><strong>VRAM:</strong> Het geheugen van de grafische kaart; de enige harde beperking bij een lokale LLM.</li>
+  <li><strong>Token:</strong> De teksteenheid die het model verwerkt (ruwweg een stuk van een woord).</li>
+  <li><strong>Context:</strong> Het venster van tokens dat het model op één moment in beschouwing neemt.</li>
+  <li><strong>KV-cache:</strong> Het in het geheugen vasthouden van de attention-keys/-values van gegenereerde tokens; groeit lineair met de contextlengte en het aantal gelijktijdige verzoeken.</li>
+  <li><strong>Kwantisatie:</strong> Gewichten met minder bits opslaan om geheugen te besparen (FP16 → Q8 → Q4).</li>
+  <li><strong>GGUF:</strong> Het meest gebruikte lokale bestandsformaat voor kwantisatie bij llama.cpp/Ollama.</li>
+  <li><strong>Q4_K_M:</strong> 4-bit kwantisatie; behoudt ~92–95% van de kwaliteit en verkleint het geheugen ~4×.</li>
+  <li><strong>FP16 / FP8 / INT4, MXFP4 / NVFP4:</strong> Formaten voor numerieke precisie; naarmate het aantal bits daalt, nemen geheugen- en rekenbehoefte af. Blackwell ondersteunt hardware-native FP4.</li>
+  <li><strong>MoE (Mixture-of-Experts):</strong> Het totale aantal parameters is groot, maar bij elke stap draait slechts een klein “actief” deel.</li>
+  <li><strong>Actieve parameters:</strong> Het aantal parameters dat bij MoE per token daadwerkelijk wordt gebruikt; snelheid en kosten volgen dit aantal.</li>
+  <li><strong>Dense model:</strong> De klassieke architectuur waarbij bij elke stap alle parameters worden gebruikt.</li>
+  <li><strong>GQA (Grouped-Query Attention):</strong> Een attention-methode die de KV-cache en daarmee het geheugenverbruik verkleint.</li>
+  <li><strong>Prefill (verwerking van de prompt):</strong> De eerste fase van inferentie; alle invoertokens worden parallel verwerkt, rekengebonden.</li>
+  <li><strong>Decode / autoregressieve generatie:</strong> De fase waarin het antwoord token voor token, sequentieel wordt gegenereerd; binnen één verzoek niet te paralleliseren, geheugengebonden; stopt bij het EOS-token of de maximale tokenlimiet.</li>
+  <li><strong>Speculatieve decodering:</strong> Het grote model verifieert in één pass de tokens die een klein draftmodel of een kleine kop voorstelt; versnelt decode 2–3× (bijv. EAGLE-3, MTP).</li>
+  <li><strong>Disaggregated prefill:</strong> De prefill- en decodefase in aparte GPU-pools draaien; elke fase schaalt volgens haar eigen knelpunt.</li>
+  <li><strong>TTFT (Time to First Token):</strong> Latentie tot het eerste token; rekengebonden (afhankelijk van FLOPS).</li>
+  <li><strong>TPS (Tokens per second):</strong> Generatiesnelheid; geheugengebonden (afhankelijk van de geheugenbandbreedte).</li>
+  <li><strong>Doorvoer:</strong> Het totale aantal verzoeken/tokens dat per tijdseenheid wordt verwerkt; neemt toe naarmate de batch groeit.</li>
+  <li><strong>Batch:</strong> De groep verzoeken die in één keer wordt verwerkt; doorvoer↑ maar latentie↑.</li>
+  <li><strong>Geheugenbandbreedte:</strong> De leessnelheid van het GPU-geheugen (GB/s); bepaalt de TPS.</li>
+  <li><strong>FLOPS / TOPS:</strong> Rekencapaciteit per seconde; heeft invloed op training en TTFT.</li>
+  <li><strong>TDP:</strong> Het referentievermogen van de kaart (watt).</li>
+  <li><strong>Tensor- / pipelineparallellisme:</strong> Twee methoden om een model bij multi-GPU over kaarten te verdelen.</li>
+  <li><strong>RAG (Retrieval-Augmented Generation):</strong> Relevante fragmenten uit uw eigen documenten ophalen en het model daarmee een antwoord laten genereren.</li>
+  <li><strong>Embedding:</strong> Een model dat tekst omzet in een semantische vector; de basis van semantisch zoeken en RAG.</li>
+  <li><strong>Reranking:</strong> Opgehaalde resultaten opnieuw rangschikken op relevantie.</li>
+  <li><strong>Vectordatabase:</strong> Een opslag die embeddings bewaart en op gelijkenis zoekt.</li>
+  <li><strong>Agent:</strong> Een LLM-toepassing die tools aanroept en taken met meerdere stappen uitvoert.</li>
+  <li><strong>MCP (Model Context Protocol):</strong> Een open standaard die het model verbindt met externe tools en databronnen.</li>
+  <li><strong>Tool calling / function calling:</strong> Het vermogen van het model om gedefinieerde tools/functies aan te roepen.</li>
+  <li><strong>Guardrail:</strong> Een beveiligings-/filterlaag die invoer en uitvoer controleert.</li>
+  <li><strong>Gateway / router:</strong> De ene OpenAI-compatibele toegangs- en routeringslaag vóór opstellingen met meerdere modellen/meerdere servers.</li>
+  <li><strong>TCO (Total Cost of Ownership, totale eigendomskosten):</strong> Het totaal van hardware + elektriciteit + koeling + netwerk + onderhoud + personeel.</li>
+  <li><strong>Air-gapped (geïsoleerd):</strong> Een gerubriceerd netwerk zonder internet of verbinding met externe netwerken, fysiek geïsoleerd.</li>
+</ul><hr />
+<h2 id="bronnen">
+  
+  
+    <a href="#bronnen" class="anchor-heading" aria-labelledby="bronnen"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Bronnen
+  
+  
+</h2>
+    
+
+<blockquote>
+  <p>De onderstaande cijfers (TFLOPS, geheugenbandbreedte, vermogenswaarden en benchmarkscores) zijn per <strong>juni 2026</strong> samengesteld uit de betreffende <strong>officiële datasheets, modelkaarten en benchmarksites</strong>; raadpleeg voor actuele waarden de primaire bronnen. Het aantal sterren is bij benadering en veranderlijk.</p>
+</blockquote>
+
+<p><strong>Hardware (technische specificaties, TDP):</strong></p>
+<ul>
+  <li>NVIDIA-datacenter-GPU’s (B200, B300, H100/H200, L4, L40S) en DGX-systemen — <a href="https://www.nvidia.com/en-us/data-center/">https://www.nvidia.com/en-us/data-center/</a></li>
+  <li>NVIDIA RTX PRO Blackwell-werkstation-GPU’s — <a href="https://www.nvidia.com/en-us/products/workstations/">https://www.nvidia.com/en-us/products/workstations/</a></li>
+  <li>NVIDIA Jetson-edgeplatforms (Orin, Thor) — <a href="https://developer.nvidia.com/embedded-computing">https://developer.nvidia.com/embedded-computing</a></li>
+</ul>
+
+<p><strong>Inferentie-engines &amp; metingen:</strong></p>
+<ul>
+  <li>vLLM <a href="https://docs.vllm.ai">https://docs.vllm.ai</a> · TensorRT-LLM <a href="https://github.com/NVIDIA/TensorRT-LLM">https://github.com/NVIDIA/TensorRT-LLM</a> · SGLang <a href="https://github.com/sgl-project/sglang">https://github.com/sgl-project/sglang</a></li>
+</ul>
+
+<p><strong>Frameworks voor fine-tuning &amp; training:</strong></p>
+<ul>
+  <li>Unsloth <a href="https://github.com/unslothai/unsloth">https://github.com/unslothai/unsloth</a> · LLaMA-Factory <a href="https://github.com/hiyouga/LLaMA-Factory">https://github.com/hiyouga/LLaMA-Factory</a> · Axolotl <a href="https://github.com/axolotl-ai-cloud/axolotl">https://github.com/axolotl-ai-cloud/axolotl</a> · HF TRL <a href="https://github.com/huggingface/trl">https://github.com/huggingface/trl</a> · NVIDIA NeMo <a href="https://github.com/NVIDIA-NeMo/NeMo">https://github.com/NVIDIA-NeMo/NeMo</a> · DeepSpeed <a href="https://github.com/deepspeedai/DeepSpeed">https://github.com/deepspeedai/DeepSpeed</a></li>
+</ul>
+
+<p><strong>Code-assistenten &amp; agents:</strong></p>
+<ul>
+  <li>OpenCode <a href="https://github.com/sst/opencode">https://github.com/sst/opencode</a> · Aider <a href="https://github.com/Aider-AI/aider">https://github.com/Aider-AI/aider</a> · Cline <a href="https://github.com/cline/cline">https://github.com/cline/cline</a> · Continue <a href="https://github.com/continuedev/continue">https://github.com/continuedev/continue</a> · OpenHands <a href="https://github.com/All-Hands-AI/OpenHands">https://github.com/All-Hands-AI/OpenHands</a> · Tabby <a href="https://github.com/TabbyML/tabby">https://github.com/TabbyML/tabby</a></li>
+</ul>
+
+<p><strong>Modelfamilies &amp; licenties (modelkaarten, Hugging Face):</strong></p>
+<ul>
+  <li>Qwen <a href="https://huggingface.co/Qwen">https://huggingface.co/Qwen</a> · DeepSeek <a href="https://huggingface.co/deepseek-ai">https://huggingface.co/deepseek-ai</a> · Llama <a href="https://huggingface.co/meta-llama">https://huggingface.co/meta-llama</a> · Gemma <a href="https://huggingface.co/google">https://huggingface.co/google</a> · Mistral <a href="https://huggingface.co/mistralai">https://huggingface.co/mistralai</a> · Phi <a href="https://huggingface.co/microsoft">https://huggingface.co/microsoft</a></li>
+</ul>
+
+<p><strong>Vergelijking &amp; benchmarks:</strong></p>
+<ul>
+  <li>Artificial Analysis <a href="https://artificialanalysis.ai">https://artificialanalysis.ai</a> · LMArena <a href="https://lmarena.ai">https://lmarena.ai</a> · llm-stats.com <a href="https://llm-stats.com">https://llm-stats.com</a> · SWE-bench <a href="https://www.swebench.com">https://www.swebench.com</a></li>
+  <li>GPQA, AIME, MMLU-PRO, MATH-500 — de betreffende academische publicaties (arXiv) en datasets op Hugging Face</li>
+  <li>Turkse benchmarks: <strong>TurkishMMLU, Cetvel, TurkBench</strong> — de betreffende datasets/repository’s op Hugging Face</li>
+</ul>
+
+<p><strong>Softwarerepository’s:</strong> §6 geeft voor elke tool de officiële GitHub-/websitelink (met licentie · geschat aantal sterren).</p>
+
+<p><strong>Tools:</strong> Cordatus VRAM Calculator — <a href="https://app.cordatus.ai/#/vram-calculator">https://app.cordatus.ai/#/vram-calculator</a></p><hr />
+<h3 id="opmerkingen">
+  
+  
+    <a href="#opmerkingen" class="anchor-heading" aria-labelledby="opmerkingen"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Opmerkingen
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>Reikwijdte van de hardware:</strong> De hardwareaanbevelingen in deze handleiding zijn beperkt tot de Aetherix-catalogus (RTX PRO Blackwell, datacenter-GPU’s, DGX, Jetson); consumentenkaarten uit de GeForce-reeks zijn niet opgenomen. Prijzen worden niet vermeld, omdat ze op offerte-/projectbasis tot stand komen en variëren — neem voor actuele prijzen en beschikbaarheid contact met ons op.</li>
+  <li><strong>Actualiteit:</strong> Dit vakgebied verandert snel; modelversies, releasenummers en benchmarkresultaten gelden per juni 2026. Wat blijft, is de beslislogica in de paragrafen, niet de namen.</li>
+  <li><strong>OpenRAG-Local:</strong> De OpenRAG die in deze handleiding wordt uitgelicht voor vraag en antwoord over documenten, is de bijdrage <a href="https://github.com/CordatusAI/openrag-local">CordatusAI/openrag-local</a>, die Cordatus heeft geforkt van <code class="language-plaintext highlighter-rouge">langflow-ai/openrag</code>, heeft aangepast zodat hij volledig lokaal draait, en als opensource heeft uitgebracht.</li>
+</ul><hr />
+
+<p><img src="/assets/images/aetherix-logo.png" alt="Aetherix" width="220" /></p>
+
+<p><strong>Laten we samen uw lokale LLM-infrastructuur plannen.</strong> Voor de juiste combinatie van hardware, model en software, VRAM-dimensionering en TCO-analyse, neem contact op met Aetherix: <a href="mailto:info@aetherix.com">info@aetherix.com</a> · <a href="https://aetherix.com">aetherix.com</a> · VRAM-calculator: <a href="https://app.cordatus.ai/#/vram-calculator">Cordatus VRAM Calculator</a></p>
+
+          
+
+          
+        </main>
+        
+
+
+      </div>
+    </div>
+    
+      
+
+<div class="search-overlay"></div>
+
+    
+  </div>
+
+  
+
+  <script>
+    window.JTD_I18N = {
+      search_no_results: "Geen resultaten gevonden",
+      copy_code: "Code naar klembord kopiëren"
+    };
+  </script>
+
+  
+
+
+<div id="cookie-consent-banner" class="cookie-consent" role="dialog"
+     aria-modal="false" aria-label="Cookie consent"
+     data-consent-state="pending" hidden>
+  <div class="cookie-consent__body">
+    <div class="cookie-consent__text">
+      <span class="cookie-consent__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+          <path d="M21 12a9 9 0 1 1-9-9 4.5 4.5 0 0 0 4.5 4.5A4.5 4.5 0 0 0 21 12zm-9-3.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-1.5 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm6-1.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-3 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0z"/>
+        </svg>
+      </span>
+      <p>Wij gebruiken cookies om het websiteverkeer te analyseren en uw ervaring te verbeteren. Door op 'Accepteren' te klikken, stemt u in met het gebruik van analytische cookies zoals beschreven in ons privacybeleid.
+        <a href="https://aetherix.com/privacy-policy/" target="_blank" rel="noopener noreferrer"
+           class="cookie-consent__link">Privacybeleid</a>
+      </p>
+    </div>
+    <div class="cookie-consent__actions">
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--reject"
+              data-consent-action="rejected">Weigeren</button>
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--accept"
+              data-consent-action="accepted">Accepteren</button>
+    </div>
+  </div>
+</div>
+<script>
+  // Eski karar önbellekte varsa bannerı gösterme
+  (function() {
+    try {
+      var v = localStorage.getItem('cookieConsent');
+      if (v === 'accepted' || v === 'rejected') {
+        document.documentElement.dataset.cookieConsent = v;
+      }
+    } catch (e) {}
+  })();
+</script>
+<script src="/assets/js/cookie-banner.js" defer></script>
+
+</body>
+</html>
+

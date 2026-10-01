@@ -1,0 +1,3489 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-default.css">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet">
+
+  <style id="jtd-nav-activation">
+  
+
+.site-nav > ul.nav-list:first-child > li > a,
+.site-nav > ul.nav-list:first-child > li > ul > li:not(:nth-child(8)) > a,
+.site-nav > ul.nav-list:first-child > li > ul > li > ul > li > a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:not(:first-child) a,
+.site-nav li.external a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(8) > a {
+  font-weight: 600;
+  text-decoration: none;
+}.site-nav > ul.nav-list:first-child > li:nth-child(3) > button svg,
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(8) > button svg {
+  transform: rotate(-90deg);
+}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list,
+.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list > li.nav-list-item:nth-child(8) > ul.nav-list {
+  display: block;
+}
+  </style>
+
+  
+
+  
+    <script src="/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+
+
+  <!-- Begin Jekyll SEO tag v2.9.1 -->
+<title>Qwen3.6-27B DGX Spark Benchmark | Aetherix White Papers</title>
+<meta name="generator" content="Jekyll v4.3.4" />
+<meta property="og:title" content="Qwen3.6-27B DGX Spark Benchmark" />
+<meta property="og:locale" content="en" />
+<meta name="description" content="Performance evaluation of the Qwen3.6-27B model on the NVIDIA DGX Spark (GB10) platform with FP8, FP8-MTP, AWQ-MTP, NVFP4, and NVFP4-MTP quantization variants." />
+<meta name="twitter:description" property="og:description" content="Performance evaluation of the Qwen3.6-27B model on the NVIDIA DGX Spark (GB10) platform with FP8, FP8-MTP, AWQ-MTP, NVFP4, and NVFP4-MTP quantization variants." />
+<link rel="canonical" href="https://whitepapers.aetherix.com/papers/qwen3.6-27b-dgx-spark-benchmark/" />
+<meta property="og:url" content="https://whitepapers.aetherix.com/papers/qwen3.6-27b-dgx-spark-benchmark/" />
+<meta property="og:site_name" content="Aetherix White Papers" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-07-03T11:10:23+00:00" />
+<meta property="article:modified_time" content="2026-07-03T11:10:23+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Qwen3.6-27B DGX Spark Benchmark" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2026-07-03T11:10:23+00:00","datePublished":"2026-07-03T11:10:23+00:00","description":"Performance evaluation of the Qwen3.6-27B model on the NVIDIA DGX Spark (GB10) platform with FP8, FP8-MTP, AWQ-MTP, NVFP4, and NVFP4-MTP quantization variants.","headline":"Qwen3.6-27B DGX Spark Benchmark","mainEntityOfPage":{"@type":"WebPage","@id":"https://whitepapers.aetherix.com/papers/qwen3.6-27b-dgx-spark-benchmark/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://whitepapers.aetherix.com/assets/images/aetherix-logo.png"}},"url":"https://whitepapers.aetherix.com/papers/qwen3.6-27b-dgx-spark-benchmark/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  
+<!-- Google tag (gtag.js) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JWLN33085T"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+
+  // Consent Mode v2 — default DENIED. Banner onayı ile GRANTED olur.
+  // KVKK/GDPR uyumu: ziyaretçi onay vermeden çerez set edilmez.
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    functionality_storage: 'granted',
+    security_storage: 'granted',
+    wait_for_update: 500
+  });
+
+  gtag('js', new Date());
+  gtag('config', 'G-JWLN33085T', {
+    anonymize_ip: true
+  });
+</script>
+
+<link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/papers/qwen3.6-27b-dgx-spark-benchmark/">
+<link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/papers/qwen3.6-27b-dgx-spark-benchmark/">
+<link rel="alternate" hreflang="x-default" href="https://whitepapers.aetherix.com/papers/qwen3.6-27b-dgx-spark-benchmark/">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/images/favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+
+
+</head>
+
+<body>
+  <a class="skip-to-main" href="#main-content">Skip to main content</a>
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="svg-link" viewBox="0 0 24 24">
+  <title>Link</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+</symbol>
+
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+  <title>Menu</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+    <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</symbol>
+
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+  <title>Expand</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</symbol>
+
+  <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
+<symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+  <title id="svg-external-link-title">(external link)</title>
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+</symbol>
+
+  
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+  <title>Document</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+</symbol>
+
+    <symbol id="svg-search" viewBox="0 0 24 24">
+  <title>Search</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</symbol>
+
+  
+  
+    <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+<symbol id="svg-copy" viewBox="0 0 16 16">
+  <title>Copy</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+</symbol>
+<symbol id="svg-copied" viewBox="0 0 16 16">
+  <title>Copied</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"/>
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"/>
+  </svg>
+</symbol>
+
+  
+</svg>
+
+  
+    <div class="side-bar">
+  <div class="site-header" role="banner">
+    <a href="/" class="site-title lh-tight">
+  <div class="site-logo" role="img" aria-label="Aetherix White Papers"></div>
+
+</a>
+    <button id="menu-button" class="site-button btn-reset" aria-label="Toggle menu" aria-pressed="false">
+      <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  <nav aria-label="Main" id="site-nav" class="site-nav">
+  
+  
+    <ul class="nav-list"><li class="nav-list-item"><a href="/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/about/" class="nav-list-link">About</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in White Papers category" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+    </button><a href="/papers/" class="nav-list-link">White Papers</a><ul class="nav-list"><li class="nav-list-item"><a href="/papers/local-llm-guide/" class="nav-list-link">Local LLM Usage Guide</a></li><li class="nav-list-item"><a href="/papers/conditional-memory-offloading/" class="nav-list-link">Conditional Memory and Offloading in LLM Inference</a></li><li class="nav-list-item"><a href="/papers/b300-gb300-cluster-architecture/" class="nav-list-link">NVIDIA DGX B300 vs GB300 NVL72 Cluster Architecture Comparison</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-2node-cluster-setup/" class="nav-list-link">DGX Spark 2-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-3node-cluster-setup/" class="nav-list-link">DGX Spark 3-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-4node-cluster-setup/" class="nav-list-link">DGX Spark 4-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-8node-cluster-setup/" class="nav-list-link">DGX Spark 8-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/qwen3.6-27b-dgx-spark-benchmark/" class="nav-list-link">Qwen3.6-27B DGX Spark Benchmark</a></li><li class="nav-list-item"><a href="/papers/qwen3.6-27b-dgx-spark-scaling/" class="nav-list-link">Qwen3.6-27B DGX Spark Cluster Scaling</a></li><li class="nav-list-item"><a href="/papers/deepseek-v4.1-flash-4spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash 4× DGX Spark Deployment</a></li><li class="nav-list-item"><a href="/papers/deepseek-v4.1-flash-8spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash 8× DGX Spark TP8 Deployment</a></li><li class="nav-list-item"><a href="/papers/kimi-k3-dgx-b300-inference-benchmark/" class="nav-list-link">Kimi K3 Inference Benchmark on DGX-B300</a></li></ul></li><li class="nav-list-item"><a href="/llm-inference-benchmarks/" class="nav-list-link">LLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/cv-inference-benchmarks/" class="nav-list-link">CV Inference Benchmark Explorer</a></li></ul>
+
+  
+</nav>
+
+
+  
+  
+    <div class="lang-switcher">
+  
+    
+    
+      <span class="lang-switcher-item active">EN</span>
+    
+  
+    
+    
+      <a class="lang-switcher-item" href="/nl/papers/qwen3.6-27b-dgx-spark-benchmark/">NL</a>
+    
+  
+</div>
+<script src="/assets/js/lang-switch.js"></script>
+
+  
+</div>
+
+  
+  <div class="main" id="top">
+    <div id="main-header" class="main-header">
+  
+    
+
+<div class="search" role="search">
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Search" aria-label="Search" autocomplete="off">
+    <label for="search-input" class="search-label"><svg viewBox="0 0 24 24" class="search-icon"><use xlink:href="#svg-search"></use></svg></label>
+  </div>
+  <div id="search-results" class="search-results"></div>
+</div>
+
+  
+  
+  
+    <nav aria-label="Auxiliary" class="aux-nav">
+  <ul class="aux-nav-list">
+    
+      <li class="aux-nav-list-item">
+        <a href="https://aetherix.com" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          aetherix.com
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://github.com/aetherix-bv" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          GitHub
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+  
+</div>
+
+    <div class="main-content-wrap">
+      <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+  <ol class="breadcrumb-nav-list">
+    <li class="breadcrumb-nav-list-item"><a href="/papers/">White Papers</a></li>
+    <li class="breadcrumb-nav-list-item"><span>Qwen3.6-27B DGX Spark Benchmark</span></li>
+  </ol>
+</nav>
+      <div id="main-content" class="main-content">
+        <main>
+          
+            <p><em>Prepared by: <strong>Aetherix B.V.</strong> — Trusted Jetson Hardware Provider for Edge AI</em></p>
+
+<p><em>Test platform: NVIDIA DGX Spark (GB10) · Model: Qwen3.6-27B · Report date: July 2026</em></p><hr />
+<h2 class="no_toc" id="contents">
+  
+  
+    <a href="#contents" class="anchor-heading" aria-labelledby="contents"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Contents
+  
+  
+</h2>
+    
+
+<ul id="markdown-toc">
+  <li><a href="#1-introduction-and-test-methodology" id="markdown-toc-1-introduction-and-test-methodology">1. Introduction and Test Methodology</a>    <ul>
+      <li><a href="#11-model-introduction" id="markdown-toc-11-model-introduction">1.1 Model Introduction</a></li>
+      <li><a href="#12-tested-variants" id="markdown-toc-12-tested-variants">1.2 Tested Variants</a></li>
+      <li><a href="#13-quantization-formats" id="markdown-toc-13-quantization-formats">1.3 Quantization Formats</a></li>
+      <li><a href="#14-what-is-mtp-multi-token-prediction" id="markdown-toc-14-what-is-mtp-multi-token-prediction">1.4 What is MTP (Multi-Token Prediction)?</a></li>
+      <li><a href="#15-metric-definitions" id="markdown-toc-15-metric-definitions">1.5 Metric Definitions</a></li>
+      <li><a href="#16-test-conditions" id="markdown-toc-16-test-conditions">1.6 Test Conditions</a></li>
+      <li><a href="#17-measurement-tool" id="markdown-toc-17-measurement-tool">1.7 Measurement Tool</a></li>
+      <li><a href="#18-inference-server-configuration" id="markdown-toc-18-inference-server-configuration">1.8 Inference Server Configuration</a></li>
+    </ul>
+  </li>
+  <li><a href="#2-performance-of-quantization-variants" id="markdown-toc-2-performance-of-quantization-variants">2. Performance of Quantization Variants</a>    <ul>
+      <li><a href="#21-qwen36-27b-fp8" id="markdown-toc-21-qwen36-27b-fp8">2.1 Qwen3.6-27B-FP8</a></li>
+      <li><a href="#22-qwen36-27b-fp8-mtp" id="markdown-toc-22-qwen36-27b-fp8-mtp">2.2 Qwen3.6-27B-FP8-MTP</a></li>
+      <li><a href="#23-qwen36-27b-awq-mtp" id="markdown-toc-23-qwen36-27b-awq-mtp">2.3 Qwen3.6-27B-AWQ-MTP</a></li>
+      <li><a href="#24-qwen36-27b-nvfp4" id="markdown-toc-24-qwen36-27b-nvfp4">2.4 Qwen3.6-27B-NVFP4</a></li>
+      <li><a href="#25-qwen36-27b-nvfp4-mtp" id="markdown-toc-25-qwen36-27b-nvfp4-mtp">2.5 Qwen3.6-27B-NVFP4-MTP</a></li>
+    </ul>
+  </li>
+  <li><a href="#3-quantization-format-comparison" id="markdown-toc-3-quantization-format-comparison">3. Quantization Format Comparison</a>    <ul>
+      <li><a href="#31-without-mtp-fp8-vs-nvfp4" id="markdown-toc-31-without-mtp-fp8-vs-nvfp4">3.1 Without MTP: FP8 vs NVFP4</a></li>
+      <li><a href="#32-with-mtp-fp8-mtp-vs-awq-mtp-vs-nvfp4-mtp" id="markdown-toc-32-with-mtp-fp8-mtp-vs-awq-mtp-vs-nvfp4-mtp">3.2 With MTP: FP8-MTP vs AWQ-MTP vs NVFP4-MTP</a></li>
+    </ul>
+  </li>
+  <li><a href="#4-in-depth-analysis-of-the-mtp-effect" id="markdown-toc-4-in-depth-analysis-of-the-mtp-effect">4. In-Depth Analysis of the MTP Effect</a>    <ul>
+      <li><a href="#41-fp8--fp8-mtp-conversion-effect" id="markdown-toc-41-fp8--fp8-mtp-conversion-effect">4.1 FP8 → FP8-MTP Conversion Effect</a></li>
+      <li><a href="#42-nvfp4--nvfp4-mtp-conversion-effect" id="markdown-toc-42-nvfp4--nvfp4-mtp-conversion-effect">4.2 NVFP4 → NVFP4-MTP Conversion Effect</a></li>
+      <li><a href="#43-mtp-speedup-ratio-vs-concurrency" id="markdown-toc-43-mtp-speedup-ratio-vs-concurrency">4.3 MTP Speedup Ratio vs Concurrency</a></li>
+    </ul>
+  </li>
+  <li><a href="#5-analysis-of-the-concurrency-effect" id="markdown-toc-5-analysis-of-the-concurrency-effect">5. Analysis of the Concurrency Effect</a>    <ul>
+      <li><a href="#51-tps-token-generation-rate-drop" id="markdown-toc-51-tps-token-generation-rate-drop">5.1 TPS (Token Generation Rate) Drop</a></li>
+      <li><a href="#52-itl-inter-token-latency-increase" id="markdown-toc-52-itl-inter-token-latency-increase">5.2 ITL (Inter-Token Latency) Increase</a></li>
+      <li><a href="#53-ttft-first-token-latency-increase" id="markdown-toc-53-ttft-first-token-latency-increase">5.3 TTFT (First Token Latency) Increase</a></li>
+      <li><a href="#54-total-latency-increase" id="markdown-toc-54-total-latency-increase">5.4 Total Latency Increase</a></li>
+      <li><a href="#55-total-throughput-rps-curve" id="markdown-toc-55-total-throughput-rps-curve">5.5 Total Throughput (RPS) Curve</a></li>
+    </ul>
+  </li>
+  <li><a href="#6-scalability-and-gpu-efficiency-analysis" id="markdown-toc-6-scalability-and-gpu-efficiency-analysis">6. Scalability and GPU Efficiency Analysis</a>    <ul>
+      <li><a href="#61-ideal-linear-scaling-vs-actual-performance" id="markdown-toc-61-ideal-linear-scaling-vs-actual-performance">6.1 Ideal Linear Scaling vs Actual Performance</a></li>
+      <li><a href="#62-gpu-saturation-map" id="markdown-toc-62-gpu-saturation-map">6.2 GPU Saturation Map</a></li>
+      <li><a href="#63-bottleneck-identification-prefill-vs-decode" id="markdown-toc-63-bottleneck-identification-prefill-vs-decode">6.3 Bottleneck Identification: Prefill vs Decode</a></li>
+      <li><a href="#64-dgx-spark-sm121-hardware-constraints-and-nvfp4-performance" id="markdown-toc-64-dgx-spark-sm121-hardware-constraints-and-nvfp4-performance">6.4 DGX Spark (SM121) Hardware Constraints and NVFP4 Performance</a>        <ul>
+          <li><a href="#641-sm121-vs-sm100-architecture-comparison" id="markdown-toc-641-sm121-vs-sm100-architecture-comparison">6.4.1 SM121 vs SM100 Architecture Comparison</a></li>
+          <li><a href="#642-why-cant-nvfp4-realize-theoretical-speedup" id="markdown-toc-642-why-cant-nvfp4-realize-theoretical-speedup">6.4.2 Why Can’t NVFP4 Realize Theoretical Speedup?</a></li>
+          <li><a href="#643-why-is-mtp--nvfp4-problematic" id="markdown-toc-643-why-is-mtp--nvfp4-problematic">6.4.3 Why is MTP + NVFP4 Problematic?</a></li>
+          <li><a href="#644-software-side-deficiencies" id="markdown-toc-644-software-side-deficiencies">6.4.4 Software-Side Deficiencies</a></li>
+          <li><a href="#645-references" id="markdown-toc-645-references">6.4.5 References</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#7-tail-latency-and-stability" id="markdown-toc-7-tail-latency-and-stability">7. Tail Latency and Stability</a>    <ul>
+      <li><a href="#71-p90p50-ratios" id="markdown-toc-71-p90p50-ratios">7.1 p90/p50 Ratios</a></li>
+      <li><a href="#72-which-variant-is-more-predictable" id="markdown-toc-72-which-variant-is-more-predictable">7.2 Which Variant is More Predictable?</a></li>
+      <li><a href="#73-latency-fluctuation-under-load" id="markdown-toc-73-latency-fluctuation-under-load">7.3 Latency Fluctuation Under Load</a></li>
+    </ul>
+  </li>
+  <li><a href="#8-optimal-operating-point-and-recommendations" id="markdown-toc-8-optimal-operating-point-and-recommendations">8. Optimal Operating Point and Recommendations</a>    <ul>
+      <li><a href="#81-variant-selection-guide" id="markdown-toc-81-variant-selection-guide">8.1 Variant Selection Guide</a></li>
+      <li><a href="#82-optimal-concurrency-levels" id="markdown-toc-82-optimal-concurrency-levels">8.2 Optimal Concurrency Levels</a></li>
+      <li><a href="#83-quantization-selection-recommendations" id="markdown-toc-83-quantization-selection-recommendations">8.3 Quantization Selection Recommendations</a></li>
+    </ul>
+  </li>
+  <li><a href="#9-conclusion" id="markdown-toc-9-conclusion">9. Conclusion</a>    <ul>
+      <li><a href="#91-summary-of-key-findings" id="markdown-toc-91-summary-of-key-findings">9.1 Summary of Key Findings</a></li>
+    </ul>
+  </li>
+  <li><a href="#appendix-a-quantitative-impact-of-sm121-hardware-deficiencies" id="markdown-toc-appendix-a-quantitative-impact-of-sm121-hardware-deficiencies">Appendix A: Quantitative Impact of SM121 Hardware Deficiencies</a>    <ul>
+      <li><a href="#a1-concrete-performance-counterpart-of-hardware-deficiencies" id="markdown-toc-a1-concrete-performance-counterpart-of-hardware-deficiencies">A.1 Concrete Performance Counterpart of Hardware Deficiencies</a></li>
+      <li><a href="#a2-theoretical-vs-realized-speedup-analysis" id="markdown-toc-a2-theoretical-vs-realized-speedup-analysis">A.2 Theoretical vs Realized Speedup Analysis</a></li>
+      <li><a href="#a3-achievable-ceiling-with-software-improvements" id="markdown-toc-a3-achievable-ceiling-with-software-improvements">A.3 Achievable Ceiling with Software Improvements</a></li>
+    </ul>
+  </li>
+  <li><a href="#appendix-b-variant-based-charts" id="markdown-toc-appendix-b-variant-based-charts">Appendix B: Variant-Based Charts</a></li>
+  <li><a href="#about-us--aetherix" id="markdown-toc-about-us--aetherix">About Us — Aetherix</a></li>
+</ul><hr />
+<h2 id="1-introduction-and-test-methodology">
+  
+  
+    <a href="#1-introduction-and-test-methodology" class="anchor-heading" aria-labelledby="1-introduction-and-test-methodology"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1. Introduction and Test Methodology
+  
+  
+</h2>
+    
+<h3 id="11-model-introduction">
+  
+  
+    <a href="#11-model-introduction" class="anchor-heading" aria-labelledby="11-model-introduction"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1.1 Model Introduction
+  
+  
+</h3>
+    
+
+<p>Qwen3.6-27B is a 27-billion-parameter large language model from Alibaba’s Qwen family. Developed after the Qwen3.5 series with community feedback, this version offers significant improvements particularly in <strong>agentic coding</strong> (front-end workflows and repository-level reasoning) and <strong>thinking preservation</strong> (preserving reasoning context from past messages).</p>
+
+<p>This report evaluates the performance of the same model with different <strong>quantization</strong> formats and <strong>MTP (Multi-Token Prediction)</strong> configurations on the NVIDIA DGX Spark platform.</p>
+
+<p><strong>Model Architecture:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Parameter count</td>
+      <td>27B</td>
+    </tr>
+    <tr>
+      <td>Hidden Dimension</td>
+      <td>5120</td>
+    </tr>
+    <tr>
+      <td>Layer count</td>
+      <td>64</td>
+    </tr>
+    <tr>
+      <td>Architecture layout</td>
+      <td>16 × (3 × Gated DeltaNet → FFN → 1 × Gated Attention → FFN)</td>
+    </tr>
+    <tr>
+      <td>DeltaNet attention heads</td>
+      <td>V: 48, QK: 16, Head dim: 128</td>
+    </tr>
+    <tr>
+      <td>Gated Attention heads</td>
+      <td>Q: 24, KV: 4, Head dim: 256</td>
+    </tr>
+    <tr>
+      <td>RoPE dimension</td>
+      <td>64</td>
+    </tr>
+    <tr>
+      <td>FFN intermediate size</td>
+      <td>17408</td>
+    </tr>
+    <tr>
+      <td>Token embedding size</td>
+      <td>248320 (padded)</td>
+    </tr>
+    <tr>
+      <td>Context length</td>
+      <td>262,144 tokens (native), expandable up to 1,010,000 with YaRN</td>
+    </tr>
+    <tr>
+      <td>MTP support</td>
+      <td>Supported with multi-steps training</td>
+    </tr>
+    <tr>
+      <td>Visual encoder</td>
+      <td>Present (Image-Text-to-Text)</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Note:</strong> Within the scope of this benchmark, only text input/output was used; the visual encoder is not active.</p>
+</blockquote>
+<h3 id="12-tested-variants">
+  
+  
+    <a href="#12-tested-variants" class="anchor-heading" aria-labelledby="12-tested-variants"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1.2 Tested Variants
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Variant</th>
+      <th>Quantization</th>
+      <th>MTP</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>FP8</strong></td>
+      <td>FP8 (8-bit floating point)</td>
+      <td>None</td>
+      <td>8-bit floating point quantization</td>
+    </tr>
+    <tr>
+      <td><strong>FP8-MTP</strong></td>
+      <td>FP8</td>
+      <td>Yes</td>
+      <td>FP8 + Multi-token prediction</td>
+    </tr>
+    <tr>
+      <td><strong>AWQ-MTP</strong></td>
+      <td>AWQ (Activation-aware Weight Quantization)</td>
+      <td>Yes</td>
+      <td>Activation-aware weight quantization + MTP</td>
+    </tr>
+    <tr>
+      <td><strong>NVFP4</strong></td>
+      <td>NVFP4 (4-bit NVIDIA format)</td>
+      <td>None</td>
+      <td>NVIDIA-specific 4-bit quantization</td>
+    </tr>
+    <tr>
+      <td><strong>NVFP4-MTP</strong></td>
+      <td>NVFP4</td>
+      <td>Yes</td>
+      <td>NVFP4 + Multi-token prediction</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Note:</strong> The AWQ variant has no test without MTP. Therefore, the direct comparison of the MTP effect can only be made for FP8 and NVFP4.</p>
+</blockquote>
+<h3 id="13-quantization-formats">
+  
+  
+    <a href="#13-quantization-formats" class="anchor-heading" aria-labelledby="13-quantization-formats"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1.3 Quantization Formats
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>FP8 (Float8):</strong> 8-bit floating point number format. Converts model weights from BF16 to FP8. The quantization method applied by Qwen is fine-grained FP8 quantization with a block size of 128; its performance metrics are nearly identical to the original model. Precision loss is minimal. Since FP8 uses 8 bits per weight, it halves the model size and memory bandwidth requirement compared to the original BF16 model; however, it is ~2x larger than the 4-bit formats (AWQ, NVFP4) in this report and demands higher memory bandwidth — which is the main reason NVFP4 surpasses FP8 in the decode phase (memory-bound) (see Section 3.1). Source: <a href="https://huggingface.co/Qwen/Qwen3.6-27B-FP8"><code class="language-plaintext highlighter-rouge">Qwen/Qwen3.6-27B-FP8</code></a></li>
+  <li><strong>AWQ (Activation-aware Weight Quantization):</strong> A method that quantizes weights to 4-bit but preserves activations. Only weights are quantized; activations remain at full precision. It saves memory bandwidth. At runtime, vLLM automatically converts AWQ weights to the <strong>Marlin kernel</strong>; this hardware-level acceleration is one of the main reasons for the performance advantage in the decode phase. Source: <a href="https://huggingface.co/shawnw3i/Qwen3.6-27B-AWQ-MTP"><code class="language-plaintext highlighter-rouge">shawnw3i/Qwen3.6-27B-AWQ-MTP</code></a></li>
+  <li><strong>NVFP4 (NVIDIA Float4):</strong> 4-bit floating point format optimized by NVIDIA for the Blackwell architecture. Offers the highest compression ratio, with hardware-level acceleration support. It is calibrated on the UltraChat dataset; prepared with sequences up to 16K context length and an approximately 2M token calibration budget. The calibration being based on a chat-weighted UltraChat distribution may affect accuracy behavior in different domains (e.g., code, math); since this benchmark only measures speed, that effect is not evaluated. Source: <a href="https://huggingface.co/unsloth/Qwen3.6-27B-NVFP4"><code class="language-plaintext highlighter-rouge">unsloth/Qwen3.6-27B-NVFP4</code></a></li>
+</ul>
+<h3 id="14-what-is-mtp-multi-token-prediction">
+  
+  
+    <a href="#14-what-is-mtp-multi-token-prediction" class="anchor-heading" aria-labelledby="14-what-is-mtp-multi-token-prediction"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1.4 What is MTP (Multi-Token Prediction)?
+  
+  
+</h3>
+    
+
+<p>MTP is a technique that enables the model to predict multiple tokens per forward pass. While traditional autoregressive models generate only one token per step, with MTP multiple tokens can be generated per step. This significantly increases the token generation rate (TPS) while reducing the inter-token latency (ITL) value.</p>
+
+<p><strong>How MTP works:</strong></p>
+<ul>
+  <li>At each decode step, the model generates N tokens</li>
+  <li>Generated tokens are checked with a verification mechanism</li>
+  <li>Correctly predicted tokens are added directly to the output</li>
+  <li>Incorrect predictions are rejected and regenerated</li>
+</ul>
+<h3 id="15-metric-definitions">
+  
+  
+    <a href="#15-metric-definitions" class="anchor-heading" aria-labelledby="15-metric-definitions"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1.5 Metric Definitions
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Metric</th>
+      <th>Unit</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>TTFT</strong> (Time To First Token)</td>
+      <td>ms</td>
+      <td>The time elapsed from sending the request to the generation of the first token. Reflects the speed of the prefill phase.</td>
+    </tr>
+    <tr>
+      <td><strong>ITL</strong> (Inter-Token Latency)</td>
+      <td>ms</td>
+      <td>The delay between two consecutive tokens. Reflects the speed of the decode phase.</td>
+    </tr>
+    <tr>
+      <td><strong>TPS</strong> (Tokens Per Second)</td>
+      <td>tokens/s</td>
+      <td>The average number of tokens generated per second. The perceived speed on the user side.</td>
+    </tr>
+    <tr>
+      <td><strong>Latency</strong></td>
+      <td>s</td>
+      <td>The total time elapsed from the start of a request to its completion (end-to-end).</td>
+    </tr>
+    <tr>
+      <td><strong>Throughput</strong></td>
+      <td>RPS</td>
+      <td>Measurement tool’s per-request definition: <code class="language-plaintext highlighter-rouge">valid_request_count / Σ(latency) = 1 / average_latency</code>. This is <strong>the completion rate per second of a single request stream</strong>; it is NOT the system’s total (fleet) work capacity.</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>⚠️ Important — Correct interpretation of the “Throughput (RPS)” metric:</strong> The measurement tool used (CordatusAI/llm-benchmark) computes this value in its source code as <code class="language-plaintext highlighter-rouge">throughput = valid_request_count / Σ(latency_i)</code>; this is algebraically equal to <code class="language-plaintext highlighter-rouge">1 / average_latency</code> and <strong>is independent of concurrency by definition</strong>. In other words, the metric staying flat does not prove the GPU is not scaling — it only reflects that a single stream measures the inverse of latency. The system’s true total capacity is measured as <code class="language-plaintext highlighter-rouge">TPS × Concurrency</code> (total tokens/s) or <code class="language-plaintext highlighter-rouge">Concurrency / average_latency</code> (total RPS) and increases markedly with concurrency (see Sections 5.5 and 6.1). This distinction is critical for the concurrency interpretations of the report (Sections 5.5, 8.2, 9.1).</p>
+</blockquote>
+<h3 id="16-test-conditions">
+  
+  
+    <a href="#16-test-conditions" class="anchor-heading" aria-labelledby="16-test-conditions"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1.6 Test Conditions
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>Platform:</strong> NVIDIA DGX Spark</li>
+  <li><strong>Concurrency levels:</strong> 1, 2, 4, 8, 16 concurrent requests</li>
+  <li><strong>Statistical measurements:</strong> Mean, p50 (median), p90 (90th percentile) values were recorded for each metric</li>
+  <li><strong>For each variant, 5 metrics × 5 concurrency levels = 25 data points</strong> were collected</li>
+</ul>
+<h3 id="17-measurement-tool">
+  
+  
+    <a href="#17-measurement-tool" class="anchor-heading" aria-labelledby="17-measurement-tool"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1.7 Measurement Tool
+  
+  
+</h3>
+    
+
+<p>All measurements were performed with the <strong><a href="https://github.com/CordatusAI/llm-benchmark">CordatusAI/llm-benchmark</a></strong> open source tool. This tool is a Streamlit-based application designed to measure the performance of LLM inference servers over the OpenAI-compatible streaming API.</p>
+
+<p><strong>Method of Operation:</strong></p>
+
+<ul>
+  <li>Streaming requests are sent to the OpenAI-compatible <code class="language-plaintext highlighter-rouge">/v1/chat/completions</code> endpoint</li>
+  <li>Token counts are verified server-side with <code class="language-plaintext highlighter-rouge">stream_options={"include_usage": True}</code></li>
+  <li>With <code class="language-plaintext highlighter-rouge">reasoning_content</code> support, reasoning tokens of reasoning models are also included in the measurement</li>
+</ul>
+
+<p><strong>Measurement Parameters:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Value</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Prompt count</td>
+      <td>100</td>
+      <td>Loaded from <code class="language-plaintext highlighter-rouge">prompts.txt</code> file, randomly ordered on each run</td>
+    </tr>
+    <tr>
+      <td>Prompt length</td>
+      <td>~128 tokens</td>
+      <td>Each prompt explicitly requests at least 128 tokens of response</td>
+    </tr>
+    <tr>
+      <td>Maximum output tokens</td>
+      <td>128</td>
+      <td>Responses are cut off at 128 tokens</td>
+    </tr>
+    <tr>
+      <td>Minimum rounds</td>
+      <td>10</td>
+      <td>At least 10 rounds per concurrency level</td>
+    </tr>
+    <tr>
+      <td>Total request count</td>
+      <td>10 × concurrency</td>
+      <td>Concurrency=8 → 80 requests, Concurrency=16 → 160 requests</td>
+    </tr>
+    <tr>
+      <td>Warm-up</td>
+      <td>1 request</td>
+      <td>1 warm-up request is sent before the benchmark</td>
+    </tr>
+    <tr>
+      <td>Statistical measurements</td>
+      <td>Mean, p50, p90</td>
+      <td>Average, median, and 90th percentile are calculated for each metric</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Limitation:</strong> The request count at each concurrency level is 10 × concurrency; at C=1 only ~10 samples are measured. Therefore, especially p90 values at low concurrency and TTFT fluctuations (e.g., the irregular TTFT trajectory of AWQ-MTP, Section 2.3; the p90/p50=1.56 value of NVFP4-MTP, Section 7.1) may partially reflect small-sample noise. For definitive tail-latency characterization, re-measurement with higher request counts is recommended.</p>
+</blockquote>
+<h3 id="18-inference-server-configuration">
+  
+  
+    <a href="#18-inference-server-configuration" class="anchor-heading" aria-labelledby="18-inference-server-configuration"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1.8 Inference Server Configuration
+  
+  
+</h3>
+    
+
+<p>All variants were run with <strong>vLLM v0.22.0</strong> (<code class="language-plaintext highlighter-rouge">vllm/vllm-openai:v0.22.0-ubuntu2404</code> Docker image).</p>
+
+<p><strong>Common Configuration:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Inference engine</td>
+      <td>vLLM v0.22.0</td>
+    </tr>
+    <tr>
+      <td>Docker image</td>
+      <td><code class="language-plaintext highlighter-rouge">vllm/vllm-openai:v0.22.0-ubuntu2404</code></td>
+    </tr>
+    <tr>
+      <td>GPU memory utilization</td>
+      <td>0.8 (80%)</td>
+    </tr>
+    <tr>
+      <td>Maximum batched tokens</td>
+      <td>8192</td>
+    </tr>
+    <tr>
+      <td>Prefix caching</td>
+      <td>Enabled (<code class="language-plaintext highlighter-rouge">--enable-prefix-caching</code>)</td>
+    </tr>
+    <tr>
+      <td>Chunked prefill</td>
+      <td>Enabled (<code class="language-plaintext highlighter-rouge">--enable-chunked-prefill</code>)</td>
+    </tr>
+    <tr>
+      <td>Reasoning parser</td>
+      <td><code class="language-plaintext highlighter-rouge">qwen3</code></td>
+    </tr>
+    <tr>
+      <td>Tool call parser</td>
+      <td><code class="language-plaintext highlighter-rouge">qwen3_coder</code></td>
+    </tr>
+    <tr>
+      <td>API port</td>
+      <td>8000</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Note:</strong> In NVFP4 variants, the <code class="language-plaintext highlighter-rouge">--max-num-batched-tokens</code> parameter is not specified; vLLM uses the default value. In the NVFP4-MTP variant, generation parameters were customized with <code class="language-plaintext highlighter-rouge">--override-generation-config</code>.</p>
+</blockquote><hr />
+<h2 id="2-performance-of-quantization-variants">
+  
+  
+    <a href="#2-performance-of-quantization-variants" class="anchor-heading" aria-labelledby="2-performance-of-quantization-variants"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2. Performance of Quantization Variants
+  
+  
+</h2>
+    
+<h3 id="21-qwen36-27b-fp8">
+  
+  
+    <a href="#21-qwen36-27b-fp8" class="anchor-heading" aria-labelledby="21-qwen36-27b-fp8"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.1 Qwen3.6-27B-FP8
+  
+  
+</h3>
+    
+
+<p>FP8 quantization stores model weights in 8-bit floating point format. This variant does not use MTP.</p>
+
+<p><strong>Performance Table:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Concurrency</th>
+      <th>TTFT (ms)</th>
+      <th>ITL (ms)</th>
+      <th>TPS (tok/s)</th>
+      <th>Latency (s)</th>
+      <th>Throughput (RPS)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>270.57</td>
+      <td>121.87</td>
+      <td>8.13</td>
+      <td>15.75</td>
+      <td>0.06</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>357.77</td>
+      <td>121.13</td>
+      <td>8.13</td>
+      <td>15.74</td>
+      <td>0.06</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>447.17</td>
+      <td>124.23</td>
+      <td>7.89</td>
+      <td>16.23</td>
+      <td>0.06</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>511.45</td>
+      <td>129.14</td>
+      <td>7.57</td>
+      <td>16.91</td>
+      <td>0.06</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>866.95</td>
+      <td>142.24</td>
+      <td>6.76</td>
+      <td>18.93</td>
+      <td>0.05</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-FP8/Qwen3.6-27B-FP8-TTFT.png" alt="FP8 TTFT" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-FP8/Qwen3.6-27B-FP8-ITL.png" alt="FP8 ITL" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-FP8/Qwen3.6-27B-FP8-TPS.png" alt="FP8 TPS" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-FP8/Qwen3.6-27B-FP8-Latency.png" alt="FP8 Latency" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-FP8/Qwen3.6-27B-FP8-Throughput.png" alt="FP8 Throughput" /></p>
+
+<p><strong>Evaluation:</strong></p>
+
+<p>Since the FP8 variant does not use MTP, its token generation rate is limited. The ITL value staying around ~122ms indicates that only ~8 tokens can be generated per second. As concurrency increases, ITL rises slightly (122ms → 142ms), but the TPS drop (17%) and latency increase (20%) are relatively muted. This shows that FP8 cannot fully saturate the GPU and there is idle capacity.</p>
+
+<p>TTFT, on the other hand, increases markedly with concurrency (271ms → 867ms, +221%). This reveals that the prefill phase intensively uses GPU compute resources and queuing occurs under concurrent requests.</p>
+
+<p><strong>Why do ITL and TTFT behave differently?</strong> The GPU facing two different bottlenecks in the two phases explains this: The <strong>Decode phase</strong> is memory-bound — only 1 token is generated per step and the dominant operation is loading weights from GPU memory; the compute units have idle capacity. The <strong>Prefill phase</strong> is compute-bound — all input tokens are processed at once, requiring intensive matrix multiplications, and the GPU’s SM units operate at full capacity. Therefore, when concurrency increases, decode is slightly affected while serious queuing occurs in prefill (see Section 6.3 for detailed analysis).</p><hr />
+<h3 id="22-qwen36-27b-fp8-mtp">
+  
+  
+    <a href="#22-qwen36-27b-fp8-mtp" class="anchor-heading" aria-labelledby="22-qwen36-27b-fp8-mtp"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.2 Qwen3.6-27B-FP8-MTP
+  
+  
+</h3>
+    
+
+<p>FP8 quantization + MTP combination. Thanks to MTP, multiple tokens are generated per decode step.</p>
+
+<p><strong>Performance Table:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Concurrency</th>
+      <th>TTFT (ms)</th>
+      <th>ITL (ms)</th>
+      <th>TPS (tok/s)</th>
+      <th>Latency (s)</th>
+      <th>Throughput (RPS)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>322.95</td>
+      <td>49.40</td>
+      <td>19.50</td>
+      <td>6.60</td>
+      <td>0.15</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>516.27</td>
+      <td>46.87</td>
+      <td>19.83</td>
+      <td>6.47</td>
+      <td>0.15</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>530.80</td>
+      <td>50.26</td>
+      <td>18.56</td>
+      <td>6.92</td>
+      <td>0.14</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>620.59</td>
+      <td>55.97</td>
+      <td>16.62</td>
+      <td>7.73</td>
+      <td>0.13</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>812.93</td>
+      <td>66.66</td>
+      <td>13.84</td>
+      <td>9.28</td>
+      <td>0.11</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-FP8-MTP/Qwen3.6-27B-FP8-MTP-TTFT.png" alt="FP8-MTP TTFT" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-FP8-MTP/Qwen3.6-27B-FP8-MTP-ITL.png" alt="FP8-MTP ITL" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-FP8-MTP/Qwen3.6-27B-FP8-MTP-TPS.png" alt="FP8-MTP TPS" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-FP8-MTP/Qwen3.6-27B-FP8-MTP-Latency.png" alt="FP8-MTP Latency" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-FP8-MTP/Qwen3.6-27B-FP8-MTP-Throughput.png" alt="FP8-MTP Throughput" /></p>
+
+<p><strong>Evaluation:</strong></p>
+
+<p>The effect of MTP is striking: ITL dropped from 122ms to 49ms (~60% decrease), and TPS rose from 8.13 to 19.50 (~140% increase). Total latency dropped from 15.75s to 6.60s (~58% decrease). This confirms that MTP dramatically accelerates the decode phase.</p>
+
+<p>However, sensitivity to concurrency increase is higher: TPS drops 29% (vs 17% in FP8 without MTP), latency increases 40% (vs 20% in FP8 without MTP). It appears that a fast model uses the GPU more effectively and resource contention becomes pronounced under additional load.</p>
+
+<p>TTFT has a higher starting value compared to the FP8 variant without MTP (323ms vs 271ms). This suggests that MTP may bring additional computational load to the prefill phase. The marked increase of TTFT with concurrency is due to the compute-bound nature of the prefill phase (see the prefill/decode bottleneck explanation in Section 2.1).</p><hr />
+<h3 id="23-qwen36-27b-awq-mtp">
+  
+  
+    <a href="#23-qwen36-27b-awq-mtp" class="anchor-heading" aria-labelledby="23-qwen36-27b-awq-mtp"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.3 Qwen3.6-27B-AWQ-MTP
+  
+  
+</h3>
+    
+
+<p>AWQ quantization + MTP combination. AWQ compresses weights to 4-bit and saves memory bandwidth.</p>
+
+<p><strong>Performance Table:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Concurrency</th>
+      <th>TTFT (ms)</th>
+      <th>ITL (ms)</th>
+      <th>TPS (tok/s)</th>
+      <th>Latency (s)</th>
+      <th>Throughput (RPS)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>266.65</td>
+      <td>37.57</td>
+      <td>25.45</td>
+      <td>5.04</td>
+      <td>0.20</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>562.95</td>
+      <td>35.34</td>
+      <td>25.42</td>
+      <td>5.05</td>
+      <td>0.20</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>845.97</td>
+      <td>38.05</td>
+      <td>23.08</td>
+      <td>5.68</td>
+      <td>0.18</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>625.74</td>
+      <td>45.44</td>
+      <td>20.09</td>
+      <td>6.40</td>
+      <td>0.16</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>876.55</td>
+      <td>60.73</td>
+      <td>14.99</td>
+      <td>8.59</td>
+      <td>0.12</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-AWQ-MTP/Qwen3.6-27B-AWQ-TTFT.png" alt="AWQ-MTP TTFT" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-AWQ-MTP/Qwen3.6-27B-AWQ-ITL.png" alt="AWQ-MTP ITL" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-AWQ-MTP/Qwen3.6-27B-AWQ-TPS.png" alt="AWQ-MTP TPS" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-AWQ-MTP/Qwen3.6-27B-AWQ-Latency.png" alt="AWQ-MTP Latency" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-AWQ-MTP/Qwen3.6-27B-AWQ-Throughput.png" alt="AWQ-MTP Throughput" /></p>
+
+<p><strong>Evaluation:</strong></p>
+
+<p>AWQ-MTP offers the highest performance among all variants. At Concurrency=1, it is the clear leader with 25.45 tok/s TPS, 37.57ms ITL, and 5.04s latency values. When AWQ’s memory bandwidth savings are combined with MTP’s multi-token generation, the decode phase is dramatically accelerated.</p>
+
+<p>However, this variant is the most sensitive to concurrency increase: TPS drops 41% (25.45 → 14.99), ITL increases 62% (37.57ms → 60.73ms), latency increases 70% (5.04s → 8.59s). This indicates that the GPU is highly utilized even under low load, and additional load leads to resource contention.</p>
+
+<p>TTFT values follow an irregular trajectory (267ms, 563ms, 846ms, 626ms, 877ms). The rise to 846ms at Concurrency=4 and the drop to 626ms at C=8 suggests it is affected by system conditions or scheduling fluctuations during the test. Overall, the increase of TTFT with concurrency is due to the compute-bound nature of the prefill phase (see the prefill/decode bottleneck explanation in Section 2.1).</p><hr />
+<h3 id="24-qwen36-27b-nvfp4">
+  
+  
+    <a href="#24-qwen36-27b-nvfp4" class="anchor-heading" aria-labelledby="24-qwen36-27b-nvfp4"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.4 Qwen3.6-27B-NVFP4
+  
+  
+</h3>
+    
+
+<p>NVIDIA’s 4-bit proprietary format. Comes with hardware-level acceleration support; MTP was not used.</p>
+
+<p><strong>Performance Table:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Concurrency</th>
+      <th>TTFT (ms)</th>
+      <th>ITL (ms)</th>
+      <th>TPS (tok/s)</th>
+      <th>Latency (s)</th>
+      <th>Throughput (RPS)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>228.42</td>
+      <td>100.40</td>
+      <td>9.86</td>
+      <td>12.98</td>
+      <td>0.08</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>339.55</td>
+      <td>100.29</td>
+      <td>9.79</td>
+      <td>13.08</td>
+      <td>0.08</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>387.42</td>
+      <td>103.28</td>
+      <td>9.48</td>
+      <td>13.50</td>
+      <td>0.07</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>451.22</td>
+      <td>108.04</td>
+      <td>9.03</td>
+      <td>14.17</td>
+      <td>0.07</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>659.95</td>
+      <td>120.80</td>
+      <td>8.00</td>
+      <td>16.00</td>
+      <td>0.06</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-NVFP4/Qwen3.6-27B-NVFP4-TTFT.png" alt="NVFP4 TTFT" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-NVFP4/Qwen3.6-27B-NVFP4-ITL.png" alt="NVFP4 ITL" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-NVFP4/Qwen3.6-27B-NVFP4-TPS.png" alt="NVFP4 TPS" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-NVFP4/Qwen3.6-27B-NVFP4-Latency.png" alt="NVFP4 Latency" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-NVFP4/Qwen3.6-27B-NVFP4-Throughput.png" alt="NVFP4 Throughput" /></p>
+
+<p><strong>Evaluation:</strong></p>
+
+<p>NVFP4 consistently outperforms the FP8 variant. ITL ~100ms (vs ~122ms in FP8), TPS ~9.86 tok/s (vs ~8.13 in FP8), latency ~13s (vs ~15.75s in FP8). The memory bandwidth advantage of 4-bit compression, combined with hardware acceleration, surpasses FP8.</p>
+
+<p>NVFP4’s TTFT values are the lowest among all variants (228ms @ C=1). This shows that NVFP4 benefits from hardware acceleration in the prefill phase.</p>
+
+<p>Concurrency sensitivity is similar to FP8: TPS drops 19%, ITL increases 20%, latency increases 23%. Since both MTP-free models cannot fully saturate the GPU, the concurrency increase has a relatively mild effect — the bottleneck difference of low impact on ITL (decode memory-bound) and high impact on TTFT (prefill compute-bound) also applies here (see the explanation in Section 2.1).</p><hr />
+<h3 id="25-qwen36-27b-nvfp4-mtp">
+  
+  
+    <a href="#25-qwen36-27b-nvfp4-mtp" class="anchor-heading" aria-labelledby="25-qwen36-27b-nvfp4-mtp"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.5 Qwen3.6-27B-NVFP4-MTP
+  
+  
+</h3>
+    
+
+<p>NVFP4 quantization + MTP combination. 4-bit compression and multi-token prediction are used together.</p>
+
+<p><strong>Performance Table:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Concurrency</th>
+      <th>TTFT (ms)</th>
+      <th>ITL (ms)</th>
+      <th>TPS (tok/s)</th>
+      <th>Latency (s)</th>
+      <th>Throughput (RPS)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>519.21</td>
+      <td>44.32</td>
+      <td>21.02</td>
+      <td>6.15</td>
+      <td>0.16</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>634.90</td>
+      <td>41.92</td>
+      <td>21.68</td>
+      <td>5.96</td>
+      <td>0.17</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>849.66</td>
+      <td>44.79</td>
+      <td>19.94</td>
+      <td>6.54</td>
+      <td>0.15</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>592.18</td>
+      <td>50.64</td>
+      <td>18.27</td>
+      <td>7.03</td>
+      <td>0.14</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>838.59</td>
+      <td>63.38</td>
+      <td>14.47</td>
+      <td>8.89</td>
+      <td>0.11</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-NVFP4-MTP/Qwen3.6-27B-NVFP4-MTP-TTFT.png" alt="NVFP4-MTP TTFT" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-NVFP4-MTP/Qwen3.6-27B-NVFP4-MTP-ITL.png" alt="NVFP4-MTP ITL" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-NVFP4-MTP/Qwen3.6-27B-NVFP4-MTP-TPS.png" alt="NVFP4-MTP TPS" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-NVFP4-MTP/Qwen3.6-27B-NVFP4-MTP-Latency.png" alt="NVFP4-MTP Latency" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-NVFP4-MTP/Qwen3.6-27B-NVFP4-MTP-Throughput.png" alt="NVFP4-MTP Throughput" /></p>
+
+<p><strong>Evaluation:</strong></p>
+
+<p>NVFP4-MTP shows performance close to FP8-MTP. At Concurrency=1, TPS is 21.02 tok/s (FP8-MTP: 19.50), ITL is 44.32ms (FP8-MTP: 49.40ms), latency is 6.15s (FP8-MTP: 6.60s). When NVFP4’s memory bandwidth advantage is combined with MTP, it provides a small additional speed gain.</p>
+
+<p>In terms of TTFT, NVFP4-MTP at Concurrency=1 has the highest value at 519ms among all variants. This marked difference indicates that the NVFP4+MTP configuration creates an additional computational load in the prefill phase. The user experiences the longest wait for the first token in this variant. Due to SM121 hardware constraints, the MTP+NVFP4 combination causes additional load in prefill (see Section 6.4.3 for details).</p>
+
+<p>Concurrency sensitivity is similar to FP8-MTP: TPS drops 31%, ITL increases 43%, latency increases 45%. The marked increase in ITL with concurrency is due to memory bandwidth contention increasing as the GPU approaches saturation in the decode phase; the TTFT increase is due to the compute-bound nature of prefill (see the explanation in Section 2.1). The slight increase in TPS at Concurrency=2 (21.02 → 21.68) and decrease in latency (6.15s → 5.96s) are noteworthy; this may indicate a possible batching effect at C=2. However, the difference (~3% TPS) is within small-sample noise limits; more measurements are needed for a definitive “sweet spot” claim (see Section 1.7 Limitation).</p><hr />
+<h2 id="3-quantization-format-comparison">
+  
+  
+    <a href="#3-quantization-format-comparison" class="anchor-heading" aria-labelledby="3-quantization-format-comparison"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. Quantization Format Comparison
+  
+  
+</h2>
+    
+
+<p><strong>TTFT Comparison (All Variants):</strong></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/comparison-charts/comparison-TTFT.png" alt="TTFT Comparison" /></p>
+<h3 id="31-without-mtp-fp8-vs-nvfp4">
+  
+  
+    <a href="#31-without-mtp-fp8-vs-nvfp4" class="anchor-heading" aria-labelledby="31-without-mtp-fp8-vs-nvfp4"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.1 Without MTP: FP8 vs NVFP4
+  
+  
+</h3>
+    
+
+<p>Comparison of the two MTP-free variants across concurrency levels:</p>
+
+<p><strong>TPS (tokens/s) Comparison:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Concurrency</th>
+      <th>FP8</th>
+      <th>NVFP4</th>
+      <th>Difference</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>8.13</td>
+      <td>9.86</td>
+      <td>+21.3%</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>8.13</td>
+      <td>9.79</td>
+      <td>+20.4%</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>7.89</td>
+      <td>9.48</td>
+      <td>+20.2%</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>7.57</td>
+      <td>9.03</td>
+      <td>+19.3%</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>6.76</td>
+      <td>8.00</td>
+      <td>+18.3%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>ITL (ms) Comparison:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Concurrency</th>
+      <th>FP8</th>
+      <th>NVFP4</th>
+      <th>Difference</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>121.87</td>
+      <td>100.40</td>
+      <td>-17.6%</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>121.13</td>
+      <td>100.29</td>
+      <td>-17.2%</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>124.23</td>
+      <td>103.28</td>
+      <td>-16.9%</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>129.14</td>
+      <td>108.04</td>
+      <td>-16.3%</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>142.24</td>
+      <td>120.80</td>
+      <td>-15.1%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Latency (s) Comparison:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Concurrency</th>
+      <th>FP8</th>
+      <th>NVFP4</th>
+      <th>Difference</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>15.75</td>
+      <td>12.98</td>
+      <td>-17.6%</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>15.74</td>
+      <td>13.08</td>
+      <td>-16.9%</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>16.23</td>
+      <td>13.50</td>
+      <td>-16.8%</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>16.91</td>
+      <td>14.17</td>
+      <td>-16.2%</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>18.93</td>
+      <td>16.00</td>
+      <td>-15.5%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Evaluation:</strong></p>
+
+<p>NVFP4 is consistently superior to FP8 across all metrics. The main reason for this advantage is that NVFP4’s 4-bit compression halves the memory bandwidth requirement. The LLM decode phase is a memory-bound workload; NVFP4, carrying less data, can feed the GPU’s compute units more efficiently.</p>
+
+<p>The advantage ratio slightly narrows as concurrency increases (from 21.3% to 18.3% in TPS). This indicates that the memory bandwidth advantage diminishes as it approaches the limit of GPU compute resources under high load.</p>
+<h3 id="32-with-mtp-fp8-mtp-vs-awq-mtp-vs-nvfp4-mtp">
+  
+  
+    <a href="#32-with-mtp-fp8-mtp-vs-awq-mtp-vs-nvfp4-mtp" class="anchor-heading" aria-labelledby="32-with-mtp-fp8-mtp-vs-awq-mtp-vs-nvfp4-mtp"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.2 With MTP: FP8-MTP vs AWQ-MTP vs NVFP4-MTP
+  
+  
+</h3>
+    
+
+<p>Comparison of the three MTP-enabled variants:</p>
+
+<p><strong>Concurrency=1 Comparison:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Metric</th>
+      <th>FP8-MTP</th>
+      <th>AWQ-MTP</th>
+      <th>NVFP4-MTP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TPS (tok/s)</td>
+      <td>19.50</td>
+      <td><strong>25.45</strong></td>
+      <td>21.02</td>
+    </tr>
+    <tr>
+      <td>ITL (ms)</td>
+      <td>49.40</td>
+      <td><strong>37.57</strong></td>
+      <td>44.32</td>
+    </tr>
+    <tr>
+      <td>Latency (s)</td>
+      <td>6.60</td>
+      <td><strong>5.04</strong></td>
+      <td>6.15</td>
+    </tr>
+    <tr>
+      <td>TTFT (ms)</td>
+      <td>322.95</td>
+      <td><strong>266.65</strong></td>
+      <td>519.21</td>
+    </tr>
+    <tr>
+      <td>Throughput (RPS)</td>
+      <td>0.15</td>
+      <td><strong>0.20</strong></td>
+      <td>0.16</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Concurrency=16 Comparison:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Metric</th>
+      <th>FP8-MTP</th>
+      <th>AWQ-MTP</th>
+      <th>NVFP4-MTP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TPS (tok/s)</td>
+      <td>13.84</td>
+      <td><strong>14.99</strong></td>
+      <td>14.47</td>
+    </tr>
+    <tr>
+      <td>ITL (ms)</td>
+      <td>66.66</td>
+      <td><strong>60.73</strong></td>
+      <td>63.38</td>
+    </tr>
+    <tr>
+      <td>Latency (s)</td>
+      <td>9.28</td>
+      <td><strong>8.59</strong></td>
+      <td>8.89</td>
+    </tr>
+    <tr>
+      <td>TTFT (ms)</td>
+      <td><strong>812.93</strong></td>
+      <td>876.55</td>
+      <td>838.59</td>
+    </tr>
+    <tr>
+      <td>Throughput (RPS)</td>
+      <td>0.11</td>
+      <td><strong>0.12</strong></td>
+      <td>0.11</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Evaluation:</strong></p>
+
+<p>AWQ-MTP is the clear leader at low concurrency. It is 30% faster than FP8-MTP and 21% faster than NVFP4-MTP in TPS. However, at high concurrency (C=16) the difference narrows significantly: AWQ-MTP’s TPS advantage drops to 8% over FP8-MTP and 3% over NVFP4-MTP.</p>
+
+<p>This shows that AWQ’s memory bandwidth advantage is most effective under low load and that compute resources become the bottleneck as load increases. At high concurrency, all variants start to exhibit similar performance.</p>
+
+<p>While NVFP4-MTP shows performance close to FP8-MTP, it has the worst values in terms of TTFT. This disadvantage should be considered in scenarios where first-token latency is critical (e.g., chatbots).</p><hr />
+<h2 id="4-in-depth-analysis-of-the-mtp-effect">
+  
+  
+    <a href="#4-in-depth-analysis-of-the-mtp-effect" class="anchor-heading" aria-labelledby="4-in-depth-analysis-of-the-mtp-effect"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. In-Depth Analysis of the MTP Effect
+  
+  
+</h2>
+    
+
+<p><strong>TPS Comparison (All Variants):</strong></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/comparison-charts/comparison-TPS.png" alt="TPS Comparison" /></p>
+<h3 id="41-fp8--fp8-mtp-conversion-effect">
+  
+  
+    <a href="#41-fp8--fp8-mtp-conversion-effect" class="anchor-heading" aria-labelledby="41-fp8--fp8-mtp-conversion-effect"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.1 FP8 → FP8-MTP Conversion Effect
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Metric</th>
+      <th>FP8 (C=1)</th>
+      <th>FP8-MTP (C=1)</th>
+      <th>Change</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TPS</td>
+      <td>8.13 tok/s</td>
+      <td>19.50 tok/s</td>
+      <td><strong>+139.7%</strong></td>
+    </tr>
+    <tr>
+      <td>ITL</td>
+      <td>121.87 ms</td>
+      <td>49.40 ms</td>
+      <td><strong>-59.5%</strong></td>
+    </tr>
+    <tr>
+      <td>Latency</td>
+      <td>15.75 s</td>
+      <td>6.60 s</td>
+      <td><strong>-58.1%</strong></td>
+    </tr>
+    <tr>
+      <td>TTFT</td>
+      <td>270.57 ms</td>
+      <td>322.95 ms</td>
+      <td>+19.4%</td>
+    </tr>
+    <tr>
+      <td>Throughput</td>
+      <td>0.06 RPS</td>
+      <td>0.15 RPS</td>
+      <td><strong>+150.0%</strong></td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>The effect of MTP on FP8 is consistent across all concurrency levels:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Concurrency</th>
+      <th>TPS Increase</th>
+      <th>ITL Decrease</th>
+      <th>Latency Decrease</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>+139.7%</td>
+      <td>-59.5%</td>
+      <td>-58.1%</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>+143.5%</td>
+      <td>-61.3%</td>
+      <td>-58.8%</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>+135.2%</td>
+      <td>-59.6%</td>
+      <td>-57.4%</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>+119.4%</td>
+      <td>-56.6%</td>
+      <td>-54.3%</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>+104.7%</td>
+      <td>-53.1%</td>
+      <td>-51.0%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Key finding:</strong> The speed gain of MTP decreases as concurrency increases. The TPS increase drops from 140% to 105%. This indicates that the additional computational load of MTP leads to resource contention under high load.</p>
+<h3 id="42-nvfp4--nvfp4-mtp-conversion-effect">
+  
+  
+    <a href="#42-nvfp4--nvfp4-mtp-conversion-effect" class="anchor-heading" aria-labelledby="42-nvfp4--nvfp4-mtp-conversion-effect"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.2 NVFP4 → NVFP4-MTP Conversion Effect
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Metric</th>
+      <th>NVFP4 (C=1)</th>
+      <th>NVFP4-MTP (C=1)</th>
+      <th>Change</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TPS</td>
+      <td>9.86 tok/s</td>
+      <td>21.02 tok/s</td>
+      <td><strong>+113.2%</strong></td>
+    </tr>
+    <tr>
+      <td>ITL</td>
+      <td>100.40 ms</td>
+      <td>44.32 ms</td>
+      <td><strong>-55.9%</strong></td>
+    </tr>
+    <tr>
+      <td>Latency</td>
+      <td>12.98 s</td>
+      <td>6.15 s</td>
+      <td><strong>-52.6%</strong></td>
+    </tr>
+    <tr>
+      <td>TTFT</td>
+      <td>228.42 ms</td>
+      <td>519.21 ms</td>
+      <td><strong>+127.3%</strong></td>
+    </tr>
+    <tr>
+      <td>Throughput</td>
+      <td>0.08 RPS</td>
+      <td>0.16 RPS</td>
+      <td><strong>+100.0%</strong></td>
+    </tr>
+  </tbody>
+</table></div>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Concurrency</th>
+      <th>TPS Increase</th>
+      <th>ITL Decrease</th>
+      <th>Latency Decrease</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>+113.2%</td>
+      <td>-55.9%</td>
+      <td>-52.6%</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>+121.3%</td>
+      <td>-58.2%</td>
+      <td>-54.4%</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>+110.3%</td>
+      <td>-56.7%</td>
+      <td>-51.6%</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>+102.3%</td>
+      <td>-53.1%</td>
+      <td>-50.4%</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>+80.9%</td>
+      <td>-47.5%</td>
+      <td>-44.4%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Key finding:</strong> The negative effect of MTP on TTFT in NVFP4 is striking. TTFT rose from 228ms to 519ms (127% increase). This indicates that the NVFP4+MTP configuration creates significant additional load in the prefill phase. The user will experience a significant delay while waiting for the first token.</p>
+
+<p>Additionally, MTP’s speed gain in NVFP4 is lower than in FP8 across all concurrency levels (TPS increase 113% vs 140%). This suggests that NVFP4’s hardware acceleration may not be fully compatible with MTP.</p>
+<h3 id="43-mtp-speedup-ratio-vs-concurrency">
+  
+  
+    <a href="#43-mtp-speedup-ratio-vs-concurrency" class="anchor-heading" aria-labelledby="43-mtp-speedup-ratio-vs-concurrency"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.3 MTP Speedup Ratio vs Concurrency
+  
+  
+</h3>
+    
+
+<p>The MTP-enabled / MTP-disabled TPS ratio shows how MTP’s benefit changes under load:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Concurrency</th>
+      <th>FP8 MTP Ratio</th>
+      <th>NVFP4 MTP Ratio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>2.40x</td>
+      <td>2.13x</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>2.44x</td>
+      <td>2.21x</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>2.35x</td>
+      <td>2.10x</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>2.19x</td>
+      <td>2.02x</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>2.05x</td>
+      <td>1.81x</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Evaluation:</strong></p>
+
+<p>In both quantization formats, the MTP speedup ratio decreases as concurrency increases. In FP8 it drops from 2.40x to 2.05x, and in NVFP4 from 2.13x to 1.81x. This proves that MTP provides the greatest benefit under low load conditions and that its return diminishes under high load.</p>
+
+<p>The MTP ratio in NVFP4 is lower than in FP8 across all levels. This is because NVFP4 hardware acceleration is already more efficient in the MTP-free case, so MTP’s marginal contribution is smaller.</p><hr />
+<h2 id="5-analysis-of-the-concurrency-effect">
+  
+  
+    <a href="#5-analysis-of-the-concurrency-effect" class="anchor-heading" aria-labelledby="5-analysis-of-the-concurrency-effect"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5. Analysis of the Concurrency Effect
+  
+  
+</h2>
+    
+<h3 id="51-tps-token-generation-rate-drop">
+  
+  
+    <a href="#51-tps-token-generation-rate-drop" class="anchor-heading" aria-labelledby="51-tps-token-generation-rate-drop"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.1 TPS (Token Generation Rate) Drop
+  
+  
+</h3>
+    
+
+<p>As concurrency increases, TPS drops in all variants:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Variant</th>
+      <th>C=1</th>
+      <th>C=2</th>
+      <th>C=4</th>
+      <th>C=8</th>
+      <th>C=16</th>
+      <th>Total Drop</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FP8</td>
+      <td>8.13</td>
+      <td>8.13</td>
+      <td>7.89</td>
+      <td>7.57</td>
+      <td>6.76</td>
+      <td>-17%</td>
+    </tr>
+    <tr>
+      <td>FP8-MTP</td>
+      <td>19.50</td>
+      <td>19.83</td>
+      <td>18.56</td>
+      <td>16.62</td>
+      <td>13.84</td>
+      <td>-29%</td>
+    </tr>
+    <tr>
+      <td>AWQ-MTP</td>
+      <td>25.45</td>
+      <td>25.42</td>
+      <td>23.08</td>
+      <td>20.09</td>
+      <td>14.99</td>
+      <td>-41%</td>
+    </tr>
+    <tr>
+      <td>NVFP4</td>
+      <td>9.86</td>
+      <td>9.79</td>
+      <td>9.48</td>
+      <td>9.03</td>
+      <td>8.00</td>
+      <td>-19%</td>
+    </tr>
+    <tr>
+      <td>NVFP4-MTP</td>
+      <td>21.02</td>
+      <td>21.68</td>
+      <td>19.94</td>
+      <td>18.27</td>
+      <td>14.47</td>
+      <td>-31%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Analysis:</strong></p>
+
+<ul>
+  <li><strong>MTP-free models</strong> (FP8, NVFP4) exhibit low drop rates (17-19%). Since these models cannot use the GPU at full capacity, the concurrency increase can continue loading and individual TPS is not much affected.</li>
+  <li><strong>MTP-enabled models</strong> (FP8-MTP, AWQ-MTP, NVFP4-MTP) exhibit higher drop rates (29-41%). AWQ-MTP in particular has the highest rate with a 41% drop. This confirms that fast models saturate the GPU better and additional load leads to resource contention.</li>
+  <li>The drop rate is similar between FP8-MTP and NVFP4-MTP (29% vs 31%), indicating that the GPU becomes saturated at a similar rate in both formats.</li>
+</ul>
+<h3 id="52-itl-inter-token-latency-increase">
+  
+  
+    <a href="#52-itl-inter-token-latency-increase" class="anchor-heading" aria-labelledby="52-itl-inter-token-latency-increase"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.2 ITL (Inter-Token Latency) Increase
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Variant</th>
+      <th>C=1</th>
+      <th>C=16</th>
+      <th>Increase Rate</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FP8</td>
+      <td>121.87 ms</td>
+      <td>142.24 ms</td>
+      <td>+17%</td>
+    </tr>
+    <tr>
+      <td>FP8-MTP</td>
+      <td>49.40 ms</td>
+      <td>66.66 ms</td>
+      <td>+35%</td>
+    </tr>
+    <tr>
+      <td>AWQ-MTP</td>
+      <td>37.57 ms</td>
+      <td>60.73 ms</td>
+      <td>+62%</td>
+    </tr>
+    <tr>
+      <td>NVFP4</td>
+      <td>100.40 ms</td>
+      <td>120.80 ms</td>
+      <td>+20%</td>
+    </tr>
+    <tr>
+      <td>NVFP4-MTP</td>
+      <td>44.32 ms</td>
+      <td>63.38 ms</td>
+      <td>+43%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Analysis:</strong></p>
+
+<p>The ITL increase is a direct indicator of memory bandwidth contention. In MTP-enabled models, the ITL increase is markedly higher:</p>
+<ul>
+  <li>62% increase in AWQ-MTP: loading 4-bit weights uses high bandwidth; with MTP, this demand multiplies as multiple tokens are generated.</li>
+  <li>Only 17% increase in FP8: GPU memory bandwidth still has capacity.</li>
+</ul>
+<h3 id="53-ttft-first-token-latency-increase">
+  
+  
+    <a href="#53-ttft-first-token-latency-increase" class="anchor-heading" aria-labelledby="53-ttft-first-token-latency-increase"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.3 TTFT (First Token Latency) Increase
+  
+  
+</h3>
+    
+
+<p>TTFT is the metric most affected by the concurrency increase:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Variant</th>
+      <th>C=1</th>
+      <th>C=16</th>
+      <th>Increase Rate</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FP8</td>
+      <td>270.57 ms</td>
+      <td>866.95 ms</td>
+      <td>+220%</td>
+    </tr>
+    <tr>
+      <td>FP8-MTP</td>
+      <td>322.95 ms</td>
+      <td>812.93 ms</td>
+      <td>+152%</td>
+    </tr>
+    <tr>
+      <td>AWQ-MTP</td>
+      <td>266.65 ms</td>
+      <td>876.55 ms</td>
+      <td>+229%</td>
+    </tr>
+    <tr>
+      <td>NVFP4</td>
+      <td>228.42 ms</td>
+      <td>659.95 ms</td>
+      <td>+189%</td>
+    </tr>
+    <tr>
+      <td>NVFP4-MTP</td>
+      <td>519.21 ms</td>
+      <td>838.59 ms</td>
+      <td>+61%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Analysis:</strong></p>
+
+<ul>
+  <li>The 2-3x increase in TTFT shows that the prefill phase intensively uses GPU compute resources and serious queuing occurs under concurrent requests.</li>
+  <li>The only 61% increase in NVFP4-MTP is noteworthy. However, this variant already has the highest starting TTFT (519ms); in absolute terms at C=16 it is 839ms, close to the other variants. (The 61% here is the effect of concurrency C=1→C=16; the 127% in Section 4.2 is the effect of adding MTP at fixed C=1 — the two ratios belong to different comparisons.)</li>
+  <li>The prefill phase requires intensive matrix multiplications, including KV-cache creation. This phase is limited by compute power rather than memory bandwidth, and the sharing of the GPU’s compute units causes delay.</li>
+</ul>
+
+<p><strong>Practical impact:</strong> From the user’s perspective, as concurrency increases, the “time to start receiving response” can extend up to 3x. This directly negatively affects the user experience in interactive chat scenarios.</p>
+<h3 id="54-total-latency-increase">
+  
+  
+    <a href="#54-total-latency-increase" class="anchor-heading" aria-labelledby="54-total-latency-increase"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.4 Total Latency Increase
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Variant</th>
+      <th>C=1</th>
+      <th>C=16</th>
+      <th>Increase Rate</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FP8</td>
+      <td>15.75 s</td>
+      <td>18.93 s</td>
+      <td>+20%</td>
+    </tr>
+    <tr>
+      <td>FP8-MTP</td>
+      <td>6.60 s</td>
+      <td>9.28 s</td>
+      <td>+40%</td>
+    </tr>
+    <tr>
+      <td>AWQ-MTP</td>
+      <td>5.04 s</td>
+      <td>8.59 s</td>
+      <td>+70%</td>
+    </tr>
+    <tr>
+      <td>NVFP4</td>
+      <td>12.98 s</td>
+      <td>16.00 s</td>
+      <td>+23%</td>
+    </tr>
+    <tr>
+      <td>NVFP4-MTP</td>
+      <td>6.15 s</td>
+      <td>8.89 s</td>
+      <td>+45%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Analysis:</strong></p>
+
+<p>Total latency is a combination of TTFT and decode time. Despite the large increase in TTFT, the increase in total latency is lower because the decode time (ITL × token count) is the dominant component.</p>
+
+<p>The total latency increase is limited in MTP-free models (20-23%). In MTP-enabled models it ranges between 40-70%. AWQ-MTP has the highest rate with a 70% increase.</p>
+<h3 id="55-total-throughput-rps-curve">
+  
+  
+    <a href="#55-total-throughput-rps-curve" class="anchor-heading" aria-labelledby="55-total-throughput-rps-curve"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.5 Total Throughput (RPS) Curve
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Variant</th>
+      <th>C=1</th>
+      <th>C=2</th>
+      <th>C=4</th>
+      <th>C=8</th>
+      <th>C=16</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FP8</td>
+      <td>0.06</td>
+      <td>0.06</td>
+      <td>0.06</td>
+      <td>0.06</td>
+      <td>0.05</td>
+    </tr>
+    <tr>
+      <td>FP8-MTP</td>
+      <td>0.15</td>
+      <td>0.15</td>
+      <td>0.14</td>
+      <td>0.13</td>
+      <td>0.11</td>
+    </tr>
+    <tr>
+      <td>AWQ-MTP</td>
+      <td>0.20</td>
+      <td>0.20</td>
+      <td>0.18</td>
+      <td>0.16</td>
+      <td>0.12</td>
+    </tr>
+    <tr>
+      <td>NVFP4</td>
+      <td>0.08</td>
+      <td>0.08</td>
+      <td>0.07</td>
+      <td>0.07</td>
+      <td>0.06</td>
+    </tr>
+    <tr>
+      <td>NVFP4-MTP</td>
+      <td>0.16</td>
+      <td>0.17</td>
+      <td>0.15</td>
+      <td>0.14</td>
+      <td>0.11</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Analysis:</strong></p>
+
+<p>The “Throughput (RPS)” value above is a <strong>per-request</strong> metric (<code class="language-plaintext highlighter-rouge">1 / average_latency</code>; see Section 1.5). It is independent of concurrency by definition; therefore, it appearing flat does <strong>not prove</strong> the GPU is not scaling — the metric structurally cannot increase with concurrency.</p>
+
+<p>The system’s true total capacity is measured as <code class="language-plaintext highlighter-rouge">Concurrency / average_latency</code> (total RPS) or <code class="language-plaintext highlighter-rouge">TPS × Concurrency</code> (total tokens/s generated concurrently). Below is the <strong>system-wide RPS</strong>:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Variant</th>
+      <th>C=1</th>
+      <th>C=2</th>
+      <th>C=4</th>
+      <th>C=8</th>
+      <th>C=16</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FP8</td>
+      <td>0.06</td>
+      <td>0.13</td>
+      <td>0.25</td>
+      <td>0.47</td>
+      <td>0.85</td>
+    </tr>
+    <tr>
+      <td>FP8-MTP</td>
+      <td>0.15</td>
+      <td>0.31</td>
+      <td>0.58</td>
+      <td>1.04</td>
+      <td>1.72</td>
+    </tr>
+    <tr>
+      <td>AWQ-MTP</td>
+      <td>0.20</td>
+      <td>0.40</td>
+      <td>0.70</td>
+      <td>1.25</td>
+      <td>1.86</td>
+    </tr>
+    <tr>
+      <td>NVFP4</td>
+      <td>0.08</td>
+      <td>0.15</td>
+      <td>0.30</td>
+      <td>0.56</td>
+      <td>1.00</td>
+    </tr>
+    <tr>
+      <td>NVFP4-MTP</td>
+      <td>0.16</td>
+      <td>0.34</td>
+      <td>0.61</td>
+      <td>1.14</td>
+      <td>1.80</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>As can be seen, system-wide RPS <strong>increases markedly</strong> with concurrency (e.g., FP8-MTP: 0.15 at C=1 → 1.72 at C=16, ~11x; FP8: ~13x). This is consistent with the <code class="language-plaintext highlighter-rouge">TPS × Concurrency</code> table in Section 6.1.</p>
+
+<p><strong>Correct conclusion:</strong> Increasing concurrency on a single GPU <strong>significantly increases</strong> total work capacity; in exchange, individual request latency and TPS drop somewhat. That is, concurrency is a <strong>trade-off</strong> between latency and total throughput. Even though scaling efficiency decreases under load (83% for FP8 at C=16, 59% for AWQ-MTP; see Section 6.1), total capacity continues to increase.</p><hr />
+<h2 id="6-scalability-and-gpu-efficiency-analysis">
+  
+  
+    <a href="#6-scalability-and-gpu-efficiency-analysis" class="anchor-heading" aria-labelledby="6-scalability-and-gpu-efficiency-analysis"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6. Scalability and GPU Efficiency Analysis
+  
+  
+</h2>
+    
+<h3 id="61-ideal-linear-scaling-vs-actual-performance">
+  
+  
+    <a href="#61-ideal-linear-scaling-vs-actual-performance" class="anchor-heading" aria-labelledby="61-ideal-linear-scaling-vs-actual-performance"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.1 Ideal Linear Scaling vs Actual Performance
+  
+  
+</h3>
+    
+
+<p>If the GPU could scale perfectly, concurrency × TPS would be expected to remain constant. That is, at C=2 TPS should not drop by half, and at C=4 it should not drop to a quarter.</p>
+
+<p><strong>TPS × Concurrency (Total Token Generation Capacity):</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Concurrency</th>
+      <th>FP8</th>
+      <th>FP8-MTP</th>
+      <th>AWQ-MTP</th>
+      <th>NVFP4</th>
+      <th>NVFP4-MTP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>8.1</td>
+      <td>19.5</td>
+      <td>25.5</td>
+      <td>9.9</td>
+      <td>21.0</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>16.3</td>
+      <td>39.7</td>
+      <td>50.8</td>
+      <td>19.6</td>
+      <td>43.4</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>31.6</td>
+      <td>74.2</td>
+      <td>92.3</td>
+      <td>37.9</td>
+      <td>79.8</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>60.6</td>
+      <td>133.0</td>
+      <td>160.7</td>
+      <td>72.2</td>
+      <td>146.2</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>108.2</td>
+      <td>221.4</td>
+      <td>239.8</td>
+      <td>128.0</td>
+      <td>231.5</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Note:</strong> This table is the measure of the system’s <strong>true total capacity</strong> and grows with concurrency (e.g., FP8: 8.1 → 108.2 tok/s, ~13x). It does not contradict the flat “Throughput (RPS)” curve in Section 5.5; since the metric there is per-request (<code class="language-plaintext highlighter-rouge">1/latency</code>), it is fixed by definition. This table is the correct indicator of total capacity.</p>
+</blockquote>
+
+<p><strong>Ideal scaling (C=1 TPS × Concurrency):</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Concurrency</th>
+      <th>FP8 (Ideal)</th>
+      <th>FP8 (Actual)</th>
+      <th>Efficiency</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>8.1</td>
+      <td>8.1</td>
+      <td>100%</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>16.3</td>
+      <td>16.3</td>
+      <td>100%</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>32.5</td>
+      <td>31.6</td>
+      <td>97.2%</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>65.0</td>
+      <td>60.6</td>
+      <td>93.2%</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>130.0</td>
+      <td>108.2</td>
+      <td>83.2%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Concurrency</th>
+      <th>AWQ-MTP (Ideal)</th>
+      <th>AWQ-MTP (Actual)</th>
+      <th>Efficiency</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>25.5</td>
+      <td>25.5</td>
+      <td>100%</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>50.9</td>
+      <td>50.8</td>
+      <td>99.8%</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>101.8</td>
+      <td>92.3</td>
+      <td>90.7%</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>203.6</td>
+      <td>160.7</td>
+      <td>78.9%</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>407.2</td>
+      <td>239.8</td>
+      <td>58.9%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Evaluation:</strong></p>
+
+<ul>
+  <li>FP8 scales relatively well, even at concurrency=16 with 83.2% efficiency. This is because the GPU has not yet reached full capacity due to its low individual TPS.</li>
+  <li>AWQ-MTP drops to 58.9% efficiency at C=16. Since the GPU is intensively used, additional load directly leads to resource contention.</li>
+  <li>These data show that each variant has a different “optimum concurrency” point.</li>
+</ul>
+<h3 id="62-gpu-saturation-map">
+  
+  
+    <a href="#62-gpu-saturation-map" class="anchor-heading" aria-labelledby="62-gpu-saturation-map"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.2 GPU Saturation Map
+  
+  
+</h3>
+    
+
+<p>Analysis showing how much each variant saturates the GPU at different concurrency levels:</p>
+
+<p><strong>Ratio of Individual TPS to C=1 (Saturation Index):</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Concurrency</th>
+      <th>FP8</th>
+      <th>FP8-MTP</th>
+      <th>AWQ-MTP</th>
+      <th>NVFP4</th>
+      <th>NVFP4-MTP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>100%</td>
+      <td>100%</td>
+      <td>100%</td>
+      <td>100%</td>
+      <td>100%</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>100%</td>
+      <td>102%</td>
+      <td>100%</td>
+      <td>99%</td>
+      <td>103%</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>97%</td>
+      <td>95%</td>
+      <td>91%</td>
+      <td>96%</td>
+      <td>95%</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>93%</td>
+      <td>85%</td>
+      <td>79%</td>
+      <td>92%</td>
+      <td>87%</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>83%</td>
+      <td>71%</td>
+      <td>59%</td>
+      <td>81%</td>
+      <td>69%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>How to read this table?</strong></p>
+
+  <p>The saturation index is the ratio of the speed a request sees under concurrent load to the speed it would see if running alone on the GPU:</p>
+
+  <p><code class="language-plaintext highlighter-rouge">Saturation Index = (Individual TPS at level C) / (Individual TPS at C=1) × 100</code></p>
+
+  <p><strong>Concrete example (FP8, C=16):</strong> Total capacity 108.2 tok/s (Section 6.1 table) ÷ 16 requests ≈ 6.8 tok/s per request. Since the individual speed at C=1 is 8.1 tok/s, 6.8 / 8.1 ≈ <strong>83%</strong>.</p>
+
+  <p><strong>100%</strong> means C=1 performance is preserved — requests do not slow each other down, there is still idle capacity on the GPU. A drop indicates that requests have started contending for the same resources (especially memory bandwidth), i.e., the GPU is approaching saturation. Values like 102-103% at C=2 are measurement noise.</p>
+
+  <p><strong>Important nuance:</strong> A low index does not mean a “bad variant”; while the index drops, total capacity continues to increase (e.g., despite AWQ-MTP dropping to 59% at C=16, with 239.8 tok/s total output it is more than double that of FP8). The practical use of the index is this: if the service SLA requires a minimum speed per user, the reasonable concurrency ceiling for each variant can be read from this table. This index is mathematically identical to the “Efficiency” column in Section 6.1; while 6.1 details the calculation for two variants, this table gathers all five variants in a single map.</p>
+</blockquote>
+
+<p><strong>Evaluation:</strong></p>
+
+<ul>
+  <li>AWQ-MTP drops to 79% at C=8 and 59% at C=16. The GPU has reached saturation and additional load causes serious performance loss.</li>
+  <li>FP8 and NVFP4 are at 81-83% even at C=16. There is still compute capacity on the GPU; the bottleneck is in memory bandwidth.</li>
+  <li>MTP-enabled variants have a lower saturation index at all levels because they use the GPU more efficiently and less idle capacity remains for additional load.</li>
+</ul>
+<h3 id="63-bottleneck-identification-prefill-vs-decode">
+  
+  
+    <a href="#63-bottleneck-identification-prefill-vs-decode" class="anchor-heading" aria-labelledby="63-bottleneck-identification-prefill-vs-decode"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.3 Bottleneck Identification: Prefill vs Decode
+  
+  
+</h3>
+    
+
+<p>Bottleneck analysis based on the behavior of the two main phases under concurrency:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Phase</th>
+      <th>Metric</th>
+      <th>C=1→C=16 Change</th>
+      <th>Bottleneck Type</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Prefill</td>
+      <td>TTFT</td>
+      <td>2-3x increase</td>
+      <td>Compute-bound</td>
+    </tr>
+    <tr>
+      <td>Decode</td>
+      <td>ITL</td>
+      <td>17-62% increase</td>
+      <td>Memory bandwidth-bound</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Evaluation:</strong></p>
+
+<ul>
+  <li><strong>The Prefill phase</strong> is compute-bound: All input tokens are processed at once, requiring intensive matrix multiplications. Concurrent requests must share the GPU’s SM (Streaming Multiprocessor) units.</li>
+  <li><strong>The Decode phase</strong> is memory bandwidth-bound: Only one (or a few with MTP) token is generated per step; the dominant operation is loading weights from GPU memory. More compressed formats (AWQ, NVFP4) alleviate this bottleneck by carrying less data.</li>
+</ul>
+
+<p><strong>Practical consequences:</strong></p>
+<ul>
+  <li>In long-prompt scenarios (long document summarization, etc.) the prefill bottleneck will dominate</li>
+  <li>In short-prompt but long-response scenarios (code generation, creative writing) the decode bottleneck will dominate</li>
+  <li>AWQ-MTP is the configuration that best resolves the decode bandwidth bottleneck</li>
+</ul>
+<h3 id="64-dgx-spark-sm121-hardware-constraints-and-nvfp4-performance">
+  
+  
+    <a href="#64-dgx-spark-sm121-hardware-constraints-and-nvfp4-performance" class="anchor-heading" aria-labelledby="64-dgx-spark-sm121-hardware-constraints-and-nvfp4-performance"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.4 DGX Spark (SM121) Hardware Constraints and NVFP4 Performance
+  
+  
+</h3>
+    
+
+<p>NVFP4 halves the memory bandwidth requirement compared to FP8 with 4-bit compression. Since the decode phase is memory-bound, this theoretically promises ~2x speedup. However, as seen in Section 3.1, NVFP4 is only 21-18% faster than FP8. This section examines from hardware and software perspectives why NVFP4 cannot realize its theoretical speedup.</p>
+<h4 id="641-sm121-vs-sm100-architecture-comparison">
+  
+  
+    <a href="#641-sm121-vs-sm100-architecture-comparison" class="anchor-heading" aria-labelledby="641-sm121-vs-sm100-architecture-comparison"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.4.1 SM121 vs SM100 Architecture Comparison
+  
+  
+</h4>
+    
+
+<p>DGX Spark has the GB10 SoC, where the NVIDIA Grace (ARM64) CPU and Blackwell GPU are on the same package. The system uses <strong>128 GB LPDDR5x (273 GB/s) unified memory</strong> shared between the CPU and GPU; there is no separate VRAM. The GPU is based on the SM 12.1 (compute capability) architecture and contains 48 SMs and 6,144 CUDA cores. There are 4 tensor cores per SM by conventional counting (≈192 total); however, unlike the data center Blackwell (SM100)’s 5th generation <code class="language-plaintext highlighter-rouge">tcgen05</code> + TMEM infrastructure, they only operate via the warp-level <code class="language-plaintext highlighter-rouge">mma.sync</code> path.</p>
+
+<p>Data center Blackwell GPUs (B200, GB200) are based on the SM 10.0 (compute capability) architecture. Although both architectures are referred to as “Blackwell,” their tensor core infrastructures differ significantly:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th>SM100 (B200, CC 10.0)</th>
+      <th>SM121 (DGX Spark/GB10, CC 12.1)</th>
+      <th>Source</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FP4 <code class="language-plaintext highlighter-rouge">mma.sync</code> (e2m1)</td>
+      <td>—</td>
+      <td>✅ Supported</td>
+      <td>PTX ISA §9.7.15.5.14 <a href="#ref1">[1]</a></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">tcgen05.mma</code> (5th gen TC path)</td>
+      <td>✅ Supported</td>
+      <td>❌ Not supported</td>
+      <td>PTX ISA §9.7.17.7.1 <a href="#ref2">[2]</a></td>
+    </tr>
+    <tr>
+      <td>Tensor Memory (TMEM)</td>
+      <td>256 KB</td>
+      <td>None</td>
+      <td>PTX ISA §9.7.17.1 <a href="#ref3">[3]</a></td>
+    </tr>
+    <tr>
+      <td>CTA Pairs / Cooperative MMA</td>
+      <td>✅ Supported</td>
+      <td>❌ Not supported</td>
+      <td>PTX ISA §9.7.17.5.1 <a href="#ref4">[4]</a></td>
+    </tr>
+    <tr>
+      <td>SMEM / SM (max)</td>
+      <td>228 KB</td>
+      <td>128 KB</td>
+      <td>Blackwell Tuning Guide <a href="#ref5">[5]</a></td>
+    </tr>
+    <tr>
+      <td>SMEM / thread block (max)</td>
+      <td>227 KB</td>
+      <td>99 KB</td>
+      <td>Blackwell Tuning Guide <a href="#ref5">[5]</a></td>
+    </tr>
+    <tr>
+      <td>SM count</td>
+      <td>148 (active; 160 physical)</td>
+      <td>48</td>
+      <td>deviceQuery / TechPowerUp <a href="#ref5">[5]</a></td>
+    </tr>
+    <tr>
+      <td>Tensor core / SM</td>
+      <td>4 (5th gen, <code class="language-plaintext highlighter-rouge">tcgen05</code>)</td>
+      <td>4 (warp-level <code class="language-plaintext highlighter-rouge">mma.sync</code>)</td>
+      <td>CUDA PG / TechPowerUp <a href="#ref5">[5]</a></td>
+    </tr>
+    <tr>
+      <td>FP4 peak (with sparsity)</td>
+      <td>~9 PFLOP</td>
+      <td>~1 PFLOP</td>
+      <td>NVIDIA spec</td>
+    </tr>
+    <tr>
+      <td>Memory bandwidth</td>
+      <td>~8 TB/s (HBM3e)</td>
+      <td>273 GB/s (LPDDR5x)</td>
+      <td>NVIDIA spec</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>DGX Spark (SM121) has Blackwell FP4 tensor cores and the <code class="language-plaintext highlighter-rouge">mma.sync.aligned.m16n8k64.f32.e2m1.e2m1</code> instruction runs at the hardware level. SM121 belongs to the <code class="language-plaintext highlighter-rouge">compute_120f</code> family, covering CC 12.0 and 12.1 <a href="#ref1">[1]</a>, <a href="#ref6">[6]</a>. However, unlike data center Blackwell GPUs (SM100), the full 5th generation tensor core infrastructure is not available on SM121: the <code class="language-plaintext highlighter-rouge">tcgen05.mma</code> instruction set <a href="#ref2">[2]</a>, Tensor Memory <a href="#ref3">[3]</a>, and CTA Pairs/Cooperative MMA <a href="#ref4">[4]</a> are not supported on SM121.</p>
+<h4 id="642-why-cant-nvfp4-realize-theoretical-speedup">
+  
+  
+    <a href="#642-why-cant-nvfp4-realize-theoretical-speedup" class="anchor-heading" aria-labelledby="642-why-cant-nvfp4-realize-theoretical-speedup"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.4.2 Why Can’t NVFP4 Realize Theoretical Speedup?
+  
+  
+</h4>
+    
+
+<p>The reasons NVFP4 cannot reach its theoretical potential on SM121 are both hardware and software related:</p>
+
+<p><strong>1. Lack of TMEM and SMEM pressure:</strong></p>
+
+<p>On SM100, 256KB TMEM allows FP4 kernels to keep intermediate results outside SMEM. On SM121, there is no TMEM; all intermediate data must fit into the 99KB SMEM per block. NVFP4’s block-scaled format requires keeping E2M1 weights and FP8 block scales in SMEM simultaneously. The default CUTLASS FP4 tile sizes designed for SM100 exceed SM121’s 99KB SMEM per block limit; community measurements confirm that tile sizes need to be reduced to fit this budget (BTankut’s tile sweep: 256×128 ≈154 TFLOPS for prefill/large batch, 128×128 ≈147 TFLOPS for decode/small batch are the best results <a href="#ref10">[10]</a>). This reduction leads to lower arithmetic intensity and earlier encounter with the memory bandwidth limit.</p>
+
+<p><strong>2. Lack of tcgen05.mma:</strong></p>
+
+<p><code class="language-plaintext highlighter-rouge">tcgen05.mma</code> is the PTX instruction that dispatches FP4 matrix multiplications most efficiently <a href="#ref2">[2]</a>. On SM121, only <code class="language-plaintext highlighter-rouge">mma.sync.aligned.m16n8k64.f32.e2m1.e2m1</code> can be used; CUTLASS has to go through the CuTe API abstraction path.</p>
+
+<p><strong>3. Lack of CTA Pairs / Cooperative MMA:</strong></p>
+
+<p>On SM100, two SMs can combine to execute a single MMA operation <a href="#ref4">[4]</a>. On SM121, this cooperation mechanism is not available.</p>
+
+<p><strong>4. Fewer SMs and weaker tensor core path:</strong></p>
+
+<p>While SM100 (B200) has 148 active SMs, DGX Spark (SM121) contains only 48 SMs (~3x difference). Additionally, SM100’s 5th generation <code class="language-plaintext highlighter-rouge">tcgen05</code> + TMEM tensor core infrastructure is absent on SM121; SM121 falls back to the warp-level <code class="language-plaintext highlighter-rouge">mma.sync</code> path <a href="#ref5">[5]</a>. These two factors together limit FP4 peak compute capacity to ~1 PFLOP (SM121) vs ~9 PFLOP (SM100) (see Appendix A.1-4).</p>
+
+<p><strong>5. Memory bandwidth:</strong></p>
+
+<p>273 GB/s LPDDR5x (SM121) vs ~8 TB/s HBM3e (SM100). Since the decode phase is memory-bound, NVFP4’s 4-bit compression saves bandwidth on both platforms; however, DGX Spark’s low bandwidth causes the compute speedup to hit the bandwidth limit and NVFP4’s compute advantage to be lost.</p>
+
+<p><strong>6. E2M1 activation quantization overhead:</strong></p>
+
+<p>In W4A4 (weights and activations 4-bit) operating mode, NVFP4 requires activations to be converted from BF16 to E2M1 at runtime. On SM121, the <code class="language-plaintext highlighter-rouge">cvt.rn.satfinite.e2m1x2.f32</code> PTX instruction can be used with the correct compile flags (<code class="language-plaintext highlighter-rouge">sm_121a</code>); however, vLLM v0.22.0’s CMake process does not pass these flags correctly (see Section 6.4.4).</p>
+<h4 id="643-why-is-mtp--nvfp4-problematic">
+  
+  
+    <a href="#643-why-is-mtp--nvfp4-problematic" class="anchor-heading" aria-labelledby="643-why-is-mtp--nvfp4-problematic"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.4.3 Why is MTP + NVFP4 Problematic?
+  
+  
+</h4>
+    
+
+<p>The NVFP4+MTP configuration, as examined in Section 2.5, has the highest TTFT value (519ms). The reasons:</p>
+
+<ul>
+  <li>MTP brings additional computational load per decode step (multiple token generation + verification)</li>
+  <li>NVFP4’s SMEM constraints make it harder to absorb the additional computational load added by MTP</li>
+  <li>The prefill phase is compute-bound (Section 6.3); while the NVFP4+MTP combination increases the load in this phase, the lack of tcgen05 and SMEM constraints cannot provide additional compute capacity</li>
+  <li>Result: 127% increase in TTFT (NVFP4 without MTP 228ms → NVFP4-MTP 519ms)</li>
+</ul>
+<h4 id="644-software-side-deficiencies">
+  
+  
+    <a href="#644-software-side-deficiencies" class="anchor-heading" aria-labelledby="644-software-side-deficiencies"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.4.4 Software-Side Deficiencies
+  
+  
+</h4>
+    
+
+<p>In addition to hardware constraints, NVFP4’s software support on SM121 is also incomplete. These deficiencies exacerbate the impact of hardware constraints:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Issue</th>
+      <th>Description</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>CMake <code class="language-plaintext highlighter-rouge">sm_121a</code> suffix removal</td>
+      <td>vLLM compiles as <code class="language-plaintext highlighter-rouge">sm_121a</code> → <code class="language-plaintext highlighter-rouge">sm_120</code>, E2M1 PTX disabled</td>
+      <td>Fixed with PR #37725 <a href="#ref7">[7]</a></td>
+    </tr>
+    <tr>
+      <td>SM121 capability gate error</td>
+      <td><code class="language-plaintext highlighter-rouge">cuda_device_capability &gt;= 110</code> check invalidates SM121 (121)</td>
+      <td>Fixed with PR #38126 <a href="#ref8">[8]</a></td>
+    </tr>
+    <tr>
+      <td>E2M1 software conversion missing</td>
+      <td>When <code class="language-plaintext highlighter-rouge">cvt.rn.satfinite.e2m1x2.f32</code> is not compiled correctly, no software fallback</td>
+      <td>Upstreamed with PR #35947 <a href="#ref9">[9]</a></td>
+    </tr>
+    <tr>
+      <td>CUTLASS tile sizes not optimized for SM121</td>
+      <td>Default tiles designed for SM100’s 228KB SMEM</td>
+      <td>Community solution available (BTankut) <a href="#ref10">[10]</a></td>
+    </tr>
+    <tr>
+      <td>MoE grouped GEMM kernel missing</td>
+      <td>No kernel optimized for SM121</td>
+      <td>FlashInfer PR #2650 in progress <a href="#ref11">[11]</a></td>
+    </tr>
+    <tr>
+      <td>MTP + NVFP4 constraint</td>
+      <td>In vLLM, MTP head is not loaded in certain NVFP4+MTP paths (not a universal ban, path-dependent)</td>
+      <td>Solvable with workaround keeping MTP head in BF16 / Avarok patch <a href="#ref12">[12]</a></td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Source:</strong> <a href="https://github.com/vllm-project/vllm/issues/37141">vLLM Issue #37141 — Upstream DGX Spark improvements from Avarok-Cybersecurity/dgx-vllm</a></p>
+</blockquote>
+
+<p>NVFP4’s software support on SM121 is not yet mature; however, community solutions can significantly improve NVFP4 performance. Avarok-Cybersecurity offers an optimized Docker image with Marlin W4A16 backend and software E2M1 conversion <a href="#ref12">[12]</a>. BTankut provides improvements with CUTLASS tile tuning and SM121 admissible_archs patches <a href="#ref10">[10]</a>. Efforts are ongoing to upstream these developments into vLLM <a href="https://github.com/vllm-project/vllm/issues/37141">[vLLM Issue #37141]</a>. However, the lack of tcgen05, TMEM, and CTA Pairs creates a hardware-based ceiling that software improvements cannot exceed.</p>
+
+<p><strong>All measurements in this report were taken with the stock <code class="language-plaintext highlighter-rouge">vllm/vllm-openai:v0.22.0-ubuntu2404</code> image, without the aforementioned community patches applied.</strong> Therefore, the NVFP4 and NVFP4-MTP results here reflect the current upstream state; improvements can be expected with the patches applied (see Appendix A.3 for quantitative estimates).</p>
+<h4 id="645-references">
+  
+  
+    <a href="#645-references" class="anchor-heading" aria-labelledby="645-references"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.4.5 References
+  
+  
+</h4>
+    
+
+<p><a id="ref1"></a>[1] NVIDIA, <em>PTX ISA v9.3</em>, Section 9.7.15.5.14 — Multiply-and-Accumulate Instruction: mma. “.e2m1 alternate floating point type mma operation requires sm_120a and is supported on sm_120f from PTX ISA version 8.8.” <a href="https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#warp-level-matrix-instructions-mma">https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#warp-level-matrix-instructions-mma</a></p>
+
+<p><a id="ref2"></a>[2] NVIDIA, <em>PTX ISA v9.3</em>, Section 9.7.17.7.1 — tcgen05 Memory Alloc/Manage Instructions. Supported architectures: sm_100a, sm_101a, sm_100f, sm_110f. SM120/SM121 not in the list. <a href="https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#tcgen05-memory-alloc-manage-instructions">https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#tcgen05-memory-alloc-manage-instructions</a></p>
+
+<p><a id="ref3"></a>[3] NVIDIA, <em>PTX ISA v9.3</em>, Section 9.7.17.1 — Tensor Memory. “On architecture sm_100a/sm_100f, the 5th generation TensorCore’s Tensor Memory has a two-dimensional structure of 512 columns and 128 rows per CTA, each cell 32-bits.” No TMEM definition for SM120/SM121. <a href="https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#tensor-memory">https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#tensor-memory</a></p>
+
+<p><a id="ref4"></a>[4] NVIDIA, <em>PTX ISA v9.3</em>, Section 9.7.17.5.1 — CTA Pair. “Any 2 CTAs within the cluster whose %cluster_ctarank differs by the last bit only is said to form a CTA pair.” CTA Pairs are part of the tcgen05 instruction family; not valid on architectures that do not support tcgen05. <a href="https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#tcgen05-cta-pair">https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#tcgen05-cta-pair</a></p>
+
+<p><a id="ref5"></a>[5] NVIDIA, <em>Blackwell Tuning Guide</em> — SMEM limits: CC 10.0 = 228 KB/SM, 227 KB/block; CC 12.0/12.1 = 128 KB/SM, 99 KB/block. Also <em>CUDA C++ Programming Guide</em> Section 20.9/20.10. B200 SM and tensor core counts (148 active SMs, 592 tensor cores; 160 physical SMs) from TechPowerUp B200 database; DGX Spark 48 SM value confirmed from <code class="language-plaintext highlighter-rouge">deviceQuery</code> output. <a href="https://docs.nvidia.com/cuda/blackwell-tuning-guide/index.html">https://docs.nvidia.com/cuda/blackwell-tuning-guide/index.html</a> · <a href="https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html">https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html</a></p>
+
+<p><a id="ref6"></a>[6] NVIDIA, <em>CUDA C++ Programming Guide</em>, Table 25 — Family-Specific Compatibility. “compute_120f: Compatible with Compute Capability 12.0, 12.1.” <a href="https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#feature-availability">https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#feature-availability</a></p>
+
+<p><a id="ref7"></a>[7] RobTand, <em>vLLM PR #37725</em> — Preserve CUDA arch suffix (a/f) for SM12x — fixes NVFP4 NaN on desktop Blackwell. <a href="https://github.com/vllm-project/vllm/pull/37725">https://github.com/vllm-project/vllm/pull/37725</a></p>
+
+<p><a id="ref8"></a>[8] johnnynunez, <em>vLLM PR #38126</em> — Fix DGX Spark logic. <a href="https://github.com/vllm-project/vllm/pull/38126">https://github.com/vllm-project/vllm/pull/38126</a></p>
+
+<p><a id="ref9"></a>[9] blake-snc, <em>vLLM PR #35947</em> — Software E2M1 conversion for SM12x NVFP4 activation quantization. <a href="https://github.com/vllm-project/vllm/pull/35947">https://github.com/vllm-project/vllm/pull/35947</a></p>
+
+<p><a id="ref10"></a>[10] NVIDIA Developer Forums, <em>FP4 on DGX Spark — Why It Doesn’t Scale Like You’d Expect</em>. BTankut CUTLASS tile tuning results. <a href="https://forums.developer.nvidia.com/t/fp4-on-dgx-spark-why-it-doesnt-scale-like-youd-expect/360142">https://forums.developer.nvidia.com/t/fp4-on-dgx-spark-why-it-doesnt-scale-like-youd-expect/360142</a></p>
+
+<p><a id="ref11"></a>[11] kahyunnam, <em>FlashInfer PR #2650</em> — Enable sm120f compilation. <a href="https://github.com/flashinfer-ai/flashinfer/pull/2650">https://github.com/flashinfer-ai/flashinfer/pull/2650</a></p>
+
+<p><a id="ref12"></a>[12] Avarok-Cybersecurity, <em>dgx-vllm GitHub</em>. NVFP4 DGX Spark improvements. <a href="https://github.com/Avarok-Cybersecurity/dgx-vllm">https://github.com/Avarok-Cybersecurity/dgx-vllm</a></p><hr />
+<h2 id="7-tail-latency-and-stability">
+  
+  
+    <a href="#7-tail-latency-and-stability" class="anchor-heading" aria-labelledby="7-tail-latency-and-stability"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7. Tail Latency and Stability
+  
+  
+</h2>
+    
+<h3 id="71-p90p50-ratios">
+  
+  
+    <a href="#71-p90p50-ratios" class="anchor-heading" aria-labelledby="71-p90p50-ratios"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7.1 p90/p50 Ratios
+  
+  
+</h3>
+    
+
+<p>The p90/p50 ratio indicates the tail thickness of the latency distribution. If the ratio is close to 1.0, the distribution is tight and predictable; if high, some requests complete much slower than expected.</p>
+
+<p><strong>ITL p90/p50 Ratios:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Variant</th>
+      <th>C=1</th>
+      <th>C=4</th>
+      <th>C=8</th>
+      <th>C=16</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FP8</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>1.01</td>
+      <td>1.02</td>
+    </tr>
+    <tr>
+      <td>FP8-MTP</td>
+      <td>1.05</td>
+      <td>1.06</td>
+      <td>1.10</td>
+      <td>1.08</td>
+    </tr>
+    <tr>
+      <td>AWQ-MTP</td>
+      <td>1.05</td>
+      <td>1.08</td>
+      <td>1.11</td>
+      <td>1.11</td>
+    </tr>
+    <tr>
+      <td>NVFP4</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>1.01</td>
+      <td>1.02</td>
+    </tr>
+    <tr>
+      <td>NVFP4-MTP</td>
+      <td>1.12</td>
+      <td>1.08</td>
+      <td>1.08</td>
+      <td>1.12</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>TTFT p90/p50 Ratios:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Variant</th>
+      <th>C=1</th>
+      <th>C=4</th>
+      <th>C=8</th>
+      <th>C=16</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FP8</td>
+      <td>1.20</td>
+      <td>1.28</td>
+      <td>1.08</td>
+      <td>1.19</td>
+    </tr>
+    <tr>
+      <td>FP8-MTP</td>
+      <td>1.02</td>
+      <td>1.05</td>
+      <td>1.08</td>
+      <td>1.13</td>
+    </tr>
+    <tr>
+      <td>AWQ-MTP</td>
+      <td>1.35</td>
+      <td>1.15</td>
+      <td>1.24</td>
+      <td>1.29</td>
+    </tr>
+    <tr>
+      <td>NVFP4</td>
+      <td>1.13</td>
+      <td>1.15</td>
+      <td>1.29</td>
+      <td>1.11</td>
+    </tr>
+    <tr>
+      <td>NVFP4-MTP</td>
+      <td>1.02</td>
+      <td>1.42</td>
+      <td>1.15</td>
+      <td>1.56</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>TPS p90/p50 Ratios:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Variant</th>
+      <th>C=1</th>
+      <th>C=4</th>
+      <th>C=8</th>
+      <th>C=16</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FP8</td>
+      <td>1.00</td>
+      <td>1.01</td>
+      <td>1.01</td>
+      <td>1.01</td>
+    </tr>
+    <tr>
+      <td>FP8-MTP</td>
+      <td>1.11</td>
+      <td>1.06</td>
+      <td>1.07</td>
+      <td>1.07</td>
+    </tr>
+    <tr>
+      <td>AWQ-MTP</td>
+      <td>1.07</td>
+      <td>1.10</td>
+      <td>1.08</td>
+      <td>1.09</td>
+    </tr>
+    <tr>
+      <td>NVFP4</td>
+      <td>1.01</td>
+      <td>1.01</td>
+      <td>1.01</td>
+      <td>1.00</td>
+    </tr>
+    <tr>
+      <td>NVFP4-MTP</td>
+      <td>1.03</td>
+      <td>1.08</td>
+      <td>1.06</td>
+      <td>1.07</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Evaluation:</strong></p>
+
+<ul>
+  <li><strong>ITL stability:</strong> MTP-free models (FP8, NVFP4) have near-perfect stability (p90/p50 ≈ 1.00-1.02). In MTP-enabled models the ratio ranges from 1.05-1.12. This indicates that MTP causes fluctuations in the acceptance rate of token generation.</li>
+  <li><strong>TTFT stability:</strong> The highest fluctuation is observed in NVFP4-MTP (1.56 at C=16). This indicates that the NVFP4+MTP configuration exhibits unpredictable behavior in the prefill phase. AWQ-MTP also shows high fluctuation (1.29-1.35).</li>
+  <li><strong>TPS stability:</strong> It is at acceptable levels across all variants (1.00-1.11). Since TPS is the inverse of ITL, similar ratios are expected; however, the measurement average is more stable.</li>
+</ul>
+<h3 id="72-which-variant-is-more-predictable">
+  
+  
+    <a href="#72-which-variant-is-more-predictable" class="anchor-heading" aria-labelledby="72-which-variant-is-more-predictable"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7.2 Which Variant is More Predictable?
+  
+  
+</h3>
+    
+
+<p>Ranking (from most predictable to least predictable):</p>
+
+<ol>
+  <li><strong>NVFP4</strong> — Excellent stability in ITL and TPS, medium in TTFT</li>
+  <li><strong>FP8</strong> — Close to NVFP4, low fluctuation across all metrics</li>
+  <li><strong>FP8-MTP</strong> — Medium in ITL and TPS, good stability in TTFT</li>
+  <li><strong>AWQ-MTP</strong> — Medium in ITL, high fluctuation in TTFT</li>
+  <li><strong>NVFP4-MTP</strong> — Highest fluctuation in ITL, highest fluctuation in TTFT</li>
+</ol>
+<h3 id="73-latency-fluctuation-under-load">
+  
+  
+    <a href="#73-latency-fluctuation-under-load" class="anchor-heading" aria-labelledby="73-latency-fluctuation-under-load"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7.3 Latency Fluctuation Under Load
+  
+  
+</h3>
+    
+
+<p>The main reason for the increased fluctuation in MTP-enabled models is MTP’s working mechanism:</p>
+
+<ul>
+  <li>Multiple tokens are generated per step, but some are rejected</li>
+  <li>The rejection rate varies depending on context and model state</li>
+  <li>In steps with high rejection rate, effective TPS drops and ITL increases</li>
+  <li>This causes the p90/p50 ratio to rise</li>
+</ul>
+
+<p>The high TTFT fluctuation observed especially in NVFP4-MTP (p90/p50 = 1.56 @ C=16) suggests that this configuration may pose a risk for critical applications; however, this value may have been affected by the limited sample size (see Section 1.7 Limitation) and should be confirmed with a higher request count before an SLA decision. In systems with SLA requirements (e.g., “99% of requests must respond within 1 second”), this fluctuation should be taken into account.</p><hr />
+<h2 id="8-optimal-operating-point-and-recommendations">
+  
+  
+    <a href="#8-optimal-operating-point-and-recommendations" class="anchor-heading" aria-labelledby="8-optimal-operating-point-and-recommendations"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8. Optimal Operating Point and Recommendations
+  
+  
+</h2>
+    
+<h3 id="81-variant-selection-guide">
+  
+  
+    <a href="#81-variant-selection-guide" class="anchor-heading" aria-labelledby="81-variant-selection-guide"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8.1 Variant Selection Guide
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Scenario</th>
+      <th>Recommended Variant</th>
+      <th>Concurrency</th>
+      <th>Rationale</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Interactive chatbot</strong></td>
+      <td>AWQ-MTP</td>
+      <td>1-2</td>
+      <td>Lowest latency (5.04s), highest TPS (25.45). User gets a fast response.</td>
+    </tr>
+    <tr>
+      <td><strong>Code assistant (autocomplete)</strong></td>
+      <td>AWQ-MTP</td>
+      <td>1-2</td>
+      <td>Low TTFT (267ms) + high TPS. Instant suggestions are critical while coding.</td>
+    </tr>
+    <tr>
+      <td><strong>API service (low load)</strong></td>
+      <td>AWQ-MTP</td>
+      <td>1-4</td>
+      <td>Even at C=4, 23 tok/s TPS and 5.68s latency are acceptable.</td>
+    </tr>
+    <tr>
+      <td><strong>API service (high load)</strong></td>
+      <td>NVFP4-MTP</td>
+      <td>8-16</td>
+      <td>Total throughput increases with concurrency (system-wide 231 tok/s at C=16); NVFP4-MTP offers throughput close to AWQ-MTP under high load with more balanced scaling.</td>
+    </tr>
+    <tr>
+      <td><strong>Batch processing</strong></td>
+      <td>NVFP4-MTP or FP8-MTP</td>
+      <td>8-16</td>
+      <td>What matters in batch processing is total tokens/s; at C=16, MTP-enabled variants reach ~221-232 tok/s, approximately double that of MTP-free ones (~108-128) (see Section 6.1).</td>
+    </tr>
+    <tr>
+      <td><strong>SLA-requiring system</strong></td>
+      <td>FP8 or NVFP4</td>
+      <td>1-4</td>
+      <td>Lowest fluctuation. p90/p50 ≈ 1.0. Predictable performance is critical.</td>
+    </tr>
+    <tr>
+      <td><strong>First token latency critical</strong></td>
+      <td>NVFP4</td>
+      <td>1-2</td>
+      <td>Lowest TTFT (228ms). User sees a response immediately.</td>
+    </tr>
+    <tr>
+      <td><strong>Memory-constrained environment</strong></td>
+      <td>NVFP4-MTP</td>
+      <td>1-4</td>
+      <td>4-bit compression + MTP provides the lowest memory footprint + high speed. (On DGX Spark, memory is shared between CPU-GPU; low footprint leaves room for other workloads.)</td>
+    </tr>
+  </tbody>
+</table></div>
+<h3 id="82-optimal-concurrency-levels">
+  
+  
+    <a href="#82-optimal-concurrency-levels" class="anchor-heading" aria-labelledby="82-optimal-concurrency-levels"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8.2 Optimal Concurrency Levels
+  
+  
+</h3>
+    
+
+<p>For each variant, the optimal balance point between individual request performance and total throughput:</p>
+
+<p>Optimal concurrency depends on <strong>what you are optimizing</strong>; there is no single “correct” value:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Variant</th>
+      <th>Optimal C for Latency</th>
+      <th>Optimal C for Throughput</th>
+      <th>Note</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FP8</td>
+      <td>1-2</td>
+      <td>8-16</td>
+      <td>Scaling efficiency 83% at C=16; system-wide RPS 0.06 → 0.85.</td>
+    </tr>
+    <tr>
+      <td>FP8-MTP</td>
+      <td>1-2</td>
+      <td>8-16</td>
+      <td>System-wide RPS 1.72 at C=16 (~11x).</td>
+    </tr>
+    <tr>
+      <td>AWQ-MTP</td>
+      <td>1-2</td>
+      <td>4-8</td>
+      <td>Highest per-request speed; scaling efficiency drops rapidly at C≥8 (59%).</td>
+    </tr>
+    <tr>
+      <td>NVFP4</td>
+      <td>1-2</td>
+      <td>8-16</td>
+      <td>Most stable variant; system-wide RPS 1.00 at C=16.</td>
+    </tr>
+    <tr>
+      <td>NVFP4-MTP</td>
+      <td>1-2</td>
+      <td>8-16</td>
+      <td>TPS/latency improves slightly at C=2 (difference within noise limit; see Section 1.7); system-wide RPS 1.80 at C=16.</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>General rule:</strong></p>
+
+<ul>
+  <li><strong>Latency-critical / single user</strong> (chatbot, code assistant): <strong>C=1-2.</strong> The individual request gets the fastest response here.</li>
+  <li><strong>Throughput-critical / multi-user service</strong> (API, batch): <strong>C=8-16.</strong> System-wide capacity (total RPS and tokens/s) increases ~9-13x with concurrency (see Sections 5.5 and 6.1); in exchange, per-request latency/TPS drops somewhat.</li>
+</ul>
+
+<p>As explained in Section 5.5, the impression that “concurrency does not increase total capacity” stems from misreading the measurement tool’s per-request “Throughput (RPS)” metric (<code class="language-plaintext highlighter-rouge">1/latency</code>). In reality, the GPU does not saturate on a single request; batching significantly increases system throughput. However, scaling efficiency drops under load (83% for FP8 at C=16, 59% for AWQ-MTP), so the return is not unlimited — therefore, even in throughput-critical scenarios, attention should be paid to tail latency increase at very high concurrency.</p>
+<h3 id="83-quantization-selection-recommendations">
+  
+  
+    <a href="#83-quantization-selection-recommendations" class="anchor-heading" aria-labelledby="83-quantization-selection-recommendations"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8.3 Quantization Selection Recommendations
+  
+  
+</h3>
+    
+
+<p><strong>Why is AWQ-MTP the performance winner?</strong></p>
+
+<p>AWQ quantizes weights to 4-bit while keeping activations at full precision. This balances memory bandwidth savings with model accuracy. When combined with MTP:</p>
+<ul>
+  <li>Memory bandwidth pressure is alleviated in the decode phase (smaller weights)</li>
+  <li>MTP generates multiple tokens and most are accepted</li>
+  <li>Net result: ITL drops 69%, TPS increases 213% (relative to FP8 baseline)</li>
+</ul>
+
+<p>It should be emphasized that this “winner” designation is based solely on speed metrics; accuracy measurement is outside the scope of this work and should be done separately before a production decision.</p>
+
+<p><strong>But AWQ’s risks:</strong></p>
+<ul>
+  <li>4-bit quantization may cause loss in model accuracy. This benchmark <strong>does not include accuracy measurement</strong>; model quality should be evaluated separately for both AWQ and NVFP4. (The NVFP4 variant is calibrated on UltraChat with a ~2M token budget; see Section 1.3.)</li>
+  <li>Performance drop is steeper at high concurrency (41%)</li>
+  <li>TTFT fluctuation is higher</li>
+</ul>
+
+<p><strong>When should NVFP4-MTP be preferred?</strong></p>
+<ul>
+  <li>When wanting to fully benefit from hardware acceleration on NVIDIA Blackwell GPUs</li>
+  <li>In memory-constrained environments (lowest memory footprint)</li>
+  <li>Under high load (C=8-16)</li>
+</ul>
+
+<p><strong>Forward-looking note:</strong> The AWQ-MTP superiority in this report is a snapshot of unpatched stock vLLM v0.22.0. As the software fixes in Section 6.4.4 enter upstream, NVFP4-MTP is expected to reach parity with AWQ-MTP, and to surpass it at high concurrency (see Appendix A.3 for quantitative analysis). If long-lived installations are planned on DGX Spark, NVFP4, the hardware-native format, should be considered as the strategic choice.</p><hr />
+<h2 id="9-conclusion">
+  
+  
+    <a href="#9-conclusion" class="anchor-heading" aria-labelledby="9-conclusion"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 9. Conclusion
+  
+  
+</h2>
+    
+<h3 id="91-summary-of-key-findings">
+  
+  
+    <a href="#91-summary-of-key-findings" class="anchor-heading" aria-labelledby="91-summary-of-key-findings"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 9.1 Summary of Key Findings
+  
+  
+</h3>
+    
+
+<ol>
+  <li>
+    <p><strong>MTP provides dramatic speedup:</strong> TPS increases 140% in FP8 and 113% in NVFP4. Latency drops by more than half. MTP is the most effective technique that improves performance at a transformational level on DGX Spark.</p>
+  </li>
+  <li>
+    <p><strong>AWQ-MTP is the fastest variant:</strong> 25.45 tok/s (C=1), 37.57ms ITL, 5.04s latency. The combination of memory bandwidth savings + MTP creates a unique speed advantage in the decode phase. (Note: this evaluation is speed-based only; accuracy was not measured.)</p>
+  </li>
+  <li>
+    <p><strong>NVFP4 is consistently superior to FP8:</strong> In the MTP-free comparison, TPS is 21% higher, ITL is 18% lower, and latency is 18% lower. The bandwidth advantage of 4-bit compression is evident.</p>
+  </li>
+  <li>
+    <p><strong>Concurrency is a latency–throughput trade-off:</strong> Increasing concurrency somewhat reduces individual request performance (latency, per-request TPS); however, it <strong>significantly increases system-wide total capacity</strong> (total tokens/s and RPS ~13x in FP8, ~9-11x in MTP-enabled variants). Note: Since the measurement tool’s “Throughput (RPS)” metric is per-request (<code class="language-plaintext highlighter-rouge">1/latency</code>), it is independent of concurrency by definition; system capacity is measured as <code class="language-plaintext highlighter-rouge">TPS × Concurrency</code> (see Sections 5.5, 6.1). Scaling efficiency still decreases under load (59-83% at C=16).</p>
+  </li>
+  <li>
+    <p><strong>TTFT is the most sensitive metric:</strong> It rises 2-3x with concurrency increase. The prefill phase is compute-bound and serious delays occur under concurrent requests.</p>
+  </li>
+  <li>
+    <p><strong>MTP’s benefit decreases under load:</strong> The TPS speedup ratio drops from 2.40x (C=1) to 2.05x (C=16) in FP8. In NVFP4 it drops from 2.13x to 1.81x.</p>
+  </li>
+  <li>
+    <p><strong>MTP-free models are more stable:</strong> p90/p50 ratios are ~1.00 in ITL and ~1.15 in TTFT. In MTP-enabled models, ITL ~1.05-1.12, TTFT ~1.02-1.56.</p>
+  </li>
+  <li>
+    <p><strong>NVFP4’s current lag is not permanent:</strong> All measurements were taken with stock vLLM v0.22.0 without community patches applied. When the software fixes in Section 6.4.4 are applied, NVFP4-MTP is expected to catch up to AWQ-MTP and surpass it under high load — even at C=16 the difference is only ~3.5% today (see Appendix A.3).</p>
+  </li>
+</ol><hr />
+<h2 id="appendix-a-quantitative-impact-of-sm121-hardware-deficiencies">
+  
+  
+    <a href="#appendix-a-quantitative-impact-of-sm121-hardware-deficiencies" class="anchor-heading" aria-labelledby="appendix-a-quantitative-impact-of-sm121-hardware-deficiencies"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Appendix A: Quantitative Impact of SM121 Hardware Deficiencies
+  
+  
+</h2>
+    
+
+<p>Section 6.4 explains from hardware and software perspectives why NVFP4 cannot reach its theoretical potential on SM121. However, the concrete performance counterpart of each deficiency has not been given quantitatively. This appendix concretizes the impact of each of the aforementioned deficiencies on NVFP4 performance.</p>
+<h3 id="a1-concrete-performance-counterpart-of-hardware-deficiencies">
+  
+  
+    <a href="#a1-concrete-performance-counterpart-of-hardware-deficiencies" class="anchor-heading" aria-labelledby="a1-concrete-performance-counterpart-of-hardware-deficiencies"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> A.1 Concrete Performance Counterpart of Hardware Deficiencies
+  
+  
+</h3>
+    
+
+<p><strong>1. Lack of TMEM → tile reduction necessity</strong></p>
+
+<p>On SM100, 256KB TMEM + 228KB SMEM = a total of 484KB intermediate data area is available. On SM121, there is no TMEM; all intermediate data must fit into the 99KB SMEM per block. The default CUTLASS FP4 tile sizes designed for SM100 exceed this 99KB budget (confirmed by community measurements <a href="#ref10">[10]</a>), so the tile size must be reduced:</p>
+
+<ul>
+  <li>Smaller tile = lower arithmetic intensity (compute/bandwidth ratio)</li>
+  <li>Low arithmetic intensity = earlier encounter with memory bandwidth limit</li>
+  <li>Result: The bandwidth savings provided by NVFP4’s 4-bit compression cannot be realized because the compute units are not fed sufficiently</li>
+</ul>
+
+<p><strong>2. Lack of tcgen05.mma → no efficient dispatch mechanism</strong></p>
+
+<p><code class="language-plaintext highlighter-rouge">tcgen05.mma</code> is the PTX instruction on SM100 that directly dispatches FP4 GEMM to the tensor core in a single instruction. On SM121, only <code class="language-plaintext highlighter-rouge">mma.sync.aligned.m16n8k64.f32.e2m1.e2m1</code> can be used. CUTLASS has to go through the CuTe API abstraction layer:</p>
+
+<ul>
+  <li>More register management overhead</li>
+  <li>More SMEM management overhead</li>
+  <li>Less optimal scheduling (manual software-level pipelining instead of tcgen05’s hardware-level automatic pipelining)</li>
+</ul>
+
+<p><strong>3. Lack of CTA Pairs / Cooperative MMA → SM cooperation impossible</strong></p>
+
+<p>On SM100, two SMs can combine to execute a single MMA operation (CTA Pair). This is a critical capability for large tile sizes: matrix multiplications too large for a single SM to process alone can be divided between two SMs. On SM121, each SM must work in isolation:</p>
+
+<ul>
+  <li>Large matrix multiplications must be divided into smaller pieces</li>
+  <li>Partitioning overhead: separate SMEM loading, separate synchronization for each piece</li>
+  <li>Work done with a single CTA Pair on SM100 is done with multiple independent CTAs on SM121 → additional coordination cost</li>
+</ul>
+
+<p><strong>4. Fewer SMs and absence of 5th generation tensor core infrastructure → ~9x difference in total FP4 compute capacity</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Architecture</th>
+      <th>SM Count</th>
+      <th>Tensor Cores / SM</th>
+      <th>Total Tensor Cores</th>
+      <th>Tensor core path</th>
+      <th>FP4 Peak (with sparsity)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>SM100 (B200)</td>
+      <td>148 (active)</td>
+      <td>4</td>
+      <td>592</td>
+      <td>5th gen <code class="language-plaintext highlighter-rouge">tcgen05</code> + TMEM</td>
+      <td>~9 PFLOP</td>
+    </tr>
+    <tr>
+      <td>SM121 (DGX Spark)</td>
+      <td>48</td>
+      <td>4</td>
+      <td>~192</td>
+      <td>warp-level <code class="language-plaintext highlighter-rouge">mma.sync</code></td>
+      <td>~1 PFLOP</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>The difference is not the popularly expressed “1 vs 4 tensor cores per SM” — by conventional counting, both architectures have 4 tensor cores per SM. The real difference comes from two sources: <strong>(a)</strong> SM count (148 active vs 48, ~3x) and <strong>(b)</strong> tensor core <strong>generation/programming model</strong> — SM100 has the 5th generation <code class="language-plaintext highlighter-rouge">tcgen05</code> + TMEM infrastructure that dispatches with a single instruction, while SM121 only has the warp-level <code class="language-plaintext highlighter-rouge">mma.sync</code> path. When these two factors combine, FP4 peak compute power is ~1 PFLOP (SM121) vs ~9 PFLOP (SM100), approximately an order of magnitude (≈9x) difference. This difference particularly affects the <strong>prefill phase</strong> (compute-bound); it is directly related to the high TTFT (519ms) observed in NVFP4-MTP.</p>
+
+<p><strong>5. Memory bandwidth → 273 GB/s vs ~8 TB/s</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Architecture</th>
+      <th>Memory Type</th>
+      <th>Bandwidth</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>SM100 (B200)</td>
+      <td>HBM3e</td>
+      <td>~8 TB/s</td>
+    </tr>
+    <tr>
+      <td>SM121 (DGX Spark)</td>
+      <td>LPDDR5x</td>
+      <td>273 GB/s</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>The bandwidth difference is ~29x. NVFP4’s 4-bit compression saves bandwidth on both platforms; however, DGX Spark’s low bandwidth causes the compute speedup to hit the bandwidth limit. In other words: NVFP4 carries less data than FP8 (4-bit vs 8-bit), but the 273 GB/s bandwidth is already so low that NVFP4’s compute advantage is lost under the bandwidth limit.</p>
+
+<p><strong>6. E2M1 activation quantization overhead</strong></p>
+
+<p>In W4A4 (weights and activations 4-bit) operating mode, NVFP4 requires activations to be converted from BF16 to E2M1 at runtime. On SM121, the <code class="language-plaintext highlighter-rouge">cvt.rn.satfinite.e2m1x2.f32</code> PTX instruction can be used with the correct compile flags (<code class="language-plaintext highlighter-rouge">sm_121a</code>); however, vLLM v0.22.0’s CMake process does not pass these flags correctly (Section 6.4.4). When the hardware instruction is disabled, software conversion is required; this additional computational load slows down both the prefill and decode phases.</p>
+<h3 id="a2-theoretical-vs-realized-speedup-analysis">
+  
+  
+    <a href="#a2-theoretical-vs-realized-speedup-analysis" class="anchor-heading" aria-labelledby="a2-theoretical-vs-realized-speedup-analysis"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> A.2 Theoretical vs Realized Speedup Analysis
+  
+  
+</h3>
+    
+
+<p>NVFP4 halves the memory bandwidth requirement compared to FP8 by compressing weights to 4-bit. Since the decode phase is memory-bound, this theoretically promises ~2x speedup. However, actual performance:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Platform</th>
+      <th>NVFP4 / FP8 TPS Ratio</th>
+      <th>Expected</th>
+      <th>Realized</th>
+      <th>Loss</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>SM121 (DGX Spark) [this report]</td>
+      <td>~1.21x</td>
+      <td>~2.0x</td>
+      <td>~1.21x</td>
+      <td>~40%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>On SM121, NVFP4 realizes only ~60% of the theoretical ~2x speedup (measured ~1.21x; loss ~40%). In this study, comparative measurement on data center Blackwell (SM100) was not performed; however, the SM121-specific hardware deficiencies documented in Section 6.4 (absence of TMEM, tcgen05, CTA Pairs and SMEM constraint) indicate that a significant portion of the loss is platform-specific. The breakdown of the loss is given estimatively in the table below.</p>
+
+<p><strong>Breakdown of the loss:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Source</th>
+      <th>Estimated Contribution</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Low bandwidth (273 GB/s)</td>
+      <td>~15%</td>
+      <td>NVFP4’s compute speedup hits bandwidth limit</td>
+    </tr>
+    <tr>
+      <td>SMEM constraint + tile reduction</td>
+      <td>~8%</td>
+      <td>Low arithmetic intensity reduces bandwidth advantage</td>
+    </tr>
+    <tr>
+      <td>Fewer SM count (48 vs 148)</td>
+      <td>~5%</td>
+      <td>Limits total FP4 capacity; directly affects prefill, indirectly decode</td>
+    </tr>
+    <tr>
+      <td>Lack of tcgen05 + TMEM + CTA Pairs</td>
+      <td>~5%</td>
+      <td>Dispatch inefficiency + SM isolation (falling to warp-level <code class="language-plaintext highlighter-rouge">mma.sync</code> path)</td>
+    </tr>
+    <tr>
+      <td>E2M1 software conversion</td>
+      <td>~3-5%</td>
+      <td>Additional computational load when not compiled correctly</td>
+    </tr>
+    <tr>
+      <td><strong>Total</strong></td>
+      <td><strong>~36-38%</strong></td>
+      <td><strong>Consistent with ≈40% loss</strong></td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Note:</strong> The percentages above are estimates and represent interrelated interactions that are difficult to isolate. The total is not a simple sum of individual contributions, but reflects their combined effects.</p>
+</blockquote>
+<h3 id="a3-achievable-ceiling-with-software-improvements">
+  
+  
+    <a href="#a3-achievable-ceiling-with-software-improvements" class="anchor-heading" aria-labelledby="a3-achievable-ceiling-with-software-improvements"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> A.3 Achievable Ceiling with Software Improvements
+  
+  
+</h3>
+    
+
+<p>If the software fixes listed in Section 6.4.4 (CMake suffix error, capability gate error, E2M1 software conversion, CUTLASS tile tuning, Marlin W4A16 backend) are applied:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Scenario</th>
+      <th>NVFP4 / FP8 TPS Ratio</th>
+      <th>Improvement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Current (vLLM v0.22.0, unfixed)</td>
+      <td>~1.21x</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>After software fixes applied (estimated)</td>
+      <td>~1.30-1.40x</td>
+      <td>~+8-19%</td>
+    </tr>
+    <tr>
+      <td>Theoretical ceiling (hardware limit)</td>
+      <td>~1.30-1.40x</td>
+      <td>—</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Software improvements can raise NVFP4’s speedup ratio over FP8 from ~1.21x to ~1.30-1.40x. However, <strong>the lack of tcgen05, TMEM, and CTA Pairs creates a hardware-based ceiling that software improvements cannot exceed.</strong> Speedup of NVFP4 over FP8 beyond ~1.4x on SM121 is not possible due to these hardware deficiencies.</p>
+
+<p><strong>Comparison with AWQ-MTP — expectation after software fixes:</strong></p>
+
+<p>The ratio of AWQ-MTP, the speed winner in this report, to FP8-MTP is ~1.31x (25.45 / 19.50 tok/s). Since the predicted ~1.30-1.40x band for NVFP4 after software fixes covers and extends beyond this value, <strong>when all fixes are applied, NVFP4-MTP is expected to catch up to AWQ-MTP and likely surpass it by a small margin</strong> (estimate: 19.50 × 1.30-1.40 ≈ 25.4-27.3 tok/s vs AWQ-MTP 25.45 tok/s).</p>
+
+<p>Three factors supporting this expectation:</p>
+
+<ol>
+  <li><strong>The difference has already closed at high concurrency:</strong> At C=16, total capacity NVFP4-MTP 231.5 vs AWQ-MTP 239.8 tok/s — even unpatched, the difference is only ~3.5% (Section 6.1). Since AWQ-MTP’s saturation index drops more steeply (59% vs NVFP4-MTP 69% at C=16, Section 6.2), NVFP4-MTP is the most likely candidate to take the lead under load.</li>
+  <li><strong>The known bugs in the NVFP4+MTP path are directly software-related:</strong> When the TTFT 519ms issue and MTP head loading constraint (Section 6.4.3-6.4.4) are fixed, an improvement area opens for NVFP4-MTP that has no counterpart on the AWQ side.</li>
+  <li><strong>Hardware-native path advantage:</strong> AWQ (W4A16) expands weights to BF16 with the Marlin kernel before computation; NVFP4 uses Blackwell’s native FP4 tensor core instruction (<code class="language-plaintext highlighter-rouge">mma.sync</code> e2m1). As kernel software matures, the difference tends to open in favor of the hardware-native format.</li>
+</ol>
+
+<p>Nevertheless, the hardware ceiling in A.2 also applies here: on SM121, this transition should be expected at the level of <strong>parity or single-digit percentage advantage</strong>, not a major leap. Additionally, this comparison is speed-based only; the accuracy behavior of the two formats should be evaluated separately (Section 8.3).</p>
+
+<blockquote>
+  <p><strong>Companion paper:</strong> The subsequent <a href="/papers/qwen3.6-27b-dgx-spark-scaling/">Qwen3.6-27B DGX Spark Cluster Scaling</a> report extends this work to multi-node configurations (TP1/TP2/TP4) using a newer nightly vLLM image. Its TP1 (single-node) results for the same NVFP4 model differ from the NVFP4 baseline measured here; see §1.5 of that report for a side-by-side comparison of the two runtimes.</p>
+</blockquote><hr />
+<h2 id="appendix-b-variant-based-charts">
+  
+  
+    <a href="#appendix-b-variant-based-charts" class="anchor-heading" aria-labelledby="appendix-b-variant-based-charts"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Appendix B: Variant-Based Charts
+  
+  
+</h2>
+    
+
+<p>All charts are available in the respective variant directories:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Variant</th>
+      <th>Directory</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FP8</td>
+      <td><code class="language-plaintext highlighter-rouge">Qwen3.6-27B-FP8/</code></td>
+    </tr>
+    <tr>
+      <td>FP8-MTP</td>
+      <td><code class="language-plaintext highlighter-rouge">Qwen3.6-27B-FP8-MTP/</code></td>
+    </tr>
+    <tr>
+      <td>AWQ-MTP</td>
+      <td><code class="language-plaintext highlighter-rouge">Qwen3.6-27B-AWQ-MTP/</code></td>
+    </tr>
+    <tr>
+      <td>NVFP4</td>
+      <td><code class="language-plaintext highlighter-rouge">Qwen3.6-27B-NVFP4/</code></td>
+    </tr>
+    <tr>
+      <td>NVFP4-MTP</td>
+      <td><code class="language-plaintext highlighter-rouge">Qwen3.6-27B-NVFP4-MTP/</code></td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Each directory contains 5 PNG charts (TTFT, ITL, TPS, Latency, Throughput), 5 HTML interactive charts, and 1 CSV data file.</p><hr />
+<h2 id="about-us--aetherix">
+  
+  
+    <a href="#about-us--aetherix" class="anchor-heading" aria-labelledby="about-us--aetherix"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> About Us — Aetherix
+  
+  
+</h2>
+    
+
+<p><strong>Aetherix B.V.</strong> is a Netherlands-based provider of NVIDIA Jetson™ hardware for edge AI. It specialises in Jetson platforms for robotics, automation and embedded systems, and ships across Europe from its distribution base in the Netherlands.</p>
+
+<p>All measurements in this report were performed with the open source <strong><a href="https://github.com/CordatusAI/llm-benchmark">CordatusAI/llm-benchmark</a></strong> tool, on an <strong>NVIDIA DGX Spark (GB10)</strong> system.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Web</strong></td>
+      <td><a href="https://aetherix.com">aetherix.com</a></td>
+    </tr>
+    <tr>
+      <td><strong>Email</strong></td>
+      <td><a href="mailto:info@aetherix.com">info@aetherix.com</a></td>
+    </tr>
+    <tr>
+      <td><strong>Contact</strong></td>
+      <td><a href="https://aetherix.com/contact/">aetherix.com/contact</a></td>
+    </tr>
+    <tr>
+      <td><strong>Address</strong></td>
+      <td>Oude Apeldoornseweg 41, A1.08, 7333 NR Apeldoorn, Netherlands</td>
+    </tr>
+  </tbody>
+</table></div><hr />
+
+<p><em>Report date: July 2026</em></p>
+
+<p><em>Test platform: NVIDIA DGX Spark (GB10) · Model: Qwen3.6-27B</em></p>
+
+<p><em>Prepared by: Aetherix B.V.</em></p>
+
+          
+
+          
+        </main>
+        
+
+
+      </div>
+    </div>
+    
+      
+
+<div class="search-overlay"></div>
+
+    
+  </div>
+
+  
+
+  <script>
+    window.JTD_I18N = {
+      search_no_results: "No results found",
+      copy_code: "Copy code to clipboard"
+    };
+  </script>
+
+  
+
+
+<div id="cookie-consent-banner" class="cookie-consent" role="dialog"
+     aria-modal="false" aria-label="Cookie consent"
+     data-consent-state="pending" hidden>
+  <div class="cookie-consent__body">
+    <div class="cookie-consent__text">
+      <span class="cookie-consent__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+          <path d="M21 12a9 9 0 1 1-9-9 4.5 4.5 0 0 0 4.5 4.5A4.5 4.5 0 0 0 21 12zm-9-3.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-1.5 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm6-1.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-3 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0z"/>
+        </svg>
+      </span>
+      <p>We use cookies to analyze site traffic and improve your experience. By clicking 'Accept', you consent to the use of analytics cookies as described in our Privacy Policy.
+        <a href="https://aetherix.com/privacy-policy/" target="_blank" rel="noopener noreferrer"
+           class="cookie-consent__link">Privacy Policy</a>
+      </p>
+    </div>
+    <div class="cookie-consent__actions">
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--reject"
+              data-consent-action="rejected">Reject</button>
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--accept"
+              data-consent-action="accepted">Accept</button>
+    </div>
+  </div>
+</div>
+<script>
+  // Eski karar önbellekte varsa bannerı gösterme
+  (function() {
+    try {
+      var v = localStorage.getItem('cookieConsent');
+      if (v === 'accepted' || v === 'rejected') {
+        document.documentElement.dataset.cookieConsent = v;
+      }
+    } catch (e) {}
+  })();
+</script>
+<script src="/assets/js/cookie-banner.js" defer></script>
+
+</body>
+</html>
+

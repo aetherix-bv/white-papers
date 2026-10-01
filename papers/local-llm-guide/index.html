@@ -1,0 +1,1978 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-default.css">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet">
+
+  <style id="jtd-nav-activation">
+  
+
+.site-nav > ul.nav-list:first-child > li > a,
+.site-nav > ul.nav-list:first-child > li > ul > li:not(:nth-child(1)) > a,
+.site-nav > ul.nav-list:first-child > li > ul > li > ul > li > a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:not(:first-child) a,
+.site-nav li.external a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(1) > a {
+  font-weight: 600;
+  text-decoration: none;
+}.site-nav > ul.nav-list:first-child > li:nth-child(3) > button svg,
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(1) > button svg {
+  transform: rotate(-90deg);
+}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list,
+.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list > li.nav-list-item:nth-child(1) > ul.nav-list {
+  display: block;
+}
+  </style>
+
+  
+
+  
+    <script src="/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+
+
+  <!-- Begin Jekyll SEO tag v2.9.1 -->
+<title>Local LLM Usage Guide | Aetherix White Papers</title>
+<meta name="generator" content="Jekyll v4.3.4" />
+<meta property="og:title" content="Local LLM Usage Guide" />
+<meta property="og:locale" content="en" />
+<meta name="description" content="End-to-end decision guide for local LLM usage: hardware (NVIDIA Jetson, RTX PRO, DGX Spark, DGX/HGX), model selection, software stack and scenario mapping." />
+<meta name="twitter:description" property="og:description" content="End-to-end decision guide for local LLM usage: hardware (NVIDIA Jetson, RTX PRO, DGX Spark, DGX/HGX), model selection, software stack and scenario mapping." />
+<link rel="canonical" href="https://whitepapers.aetherix.com/papers/local-llm-guide/" />
+<meta property="og:url" content="https://whitepapers.aetherix.com/papers/local-llm-guide/" />
+<meta property="og:site_name" content="Aetherix White Papers" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-06-30T09:00:00+00:00" />
+<meta property="article:modified_time" content="2026-06-30T09:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Local LLM Usage Guide" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2026-06-30T09:00:00+00:00","datePublished":"2026-06-30T09:00:00+00:00","description":"End-to-end decision guide for local LLM usage: hardware (NVIDIA Jetson, RTX PRO, DGX Spark, DGX/HGX), model selection, software stack and scenario mapping.","headline":"Local LLM Usage Guide","mainEntityOfPage":{"@type":"WebPage","@id":"https://whitepapers.aetherix.com/papers/local-llm-guide/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://whitepapers.aetherix.com/assets/images/aetherix-logo.png"}},"url":"https://whitepapers.aetherix.com/papers/local-llm-guide/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  
+<!-- Google tag (gtag.js) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JWLN33085T"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+
+  // Consent Mode v2 — default DENIED. Banner onayı ile GRANTED olur.
+  // KVKK/GDPR uyumu: ziyaretçi onay vermeden çerez set edilmez.
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    functionality_storage: 'granted',
+    security_storage: 'granted',
+    wait_for_update: 500
+  });
+
+  gtag('js', new Date());
+  gtag('config', 'G-JWLN33085T', {
+    anonymize_ip: true
+  });
+</script>
+
+<link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/papers/local-llm-guide/">
+<link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/papers/local-llm-guide/">
+<link rel="alternate" hreflang="x-default" href="https://whitepapers.aetherix.com/papers/local-llm-guide/">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/images/favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+
+
+</head>
+
+<body>
+  <a class="skip-to-main" href="#main-content">Skip to main content</a>
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="svg-link" viewBox="0 0 24 24">
+  <title>Link</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+</symbol>
+
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+  <title>Menu</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+    <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</symbol>
+
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+  <title>Expand</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</symbol>
+
+  <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
+<symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+  <title id="svg-external-link-title">(external link)</title>
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+</symbol>
+
+  
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+  <title>Document</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+</symbol>
+
+    <symbol id="svg-search" viewBox="0 0 24 24">
+  <title>Search</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</symbol>
+
+  
+  
+    <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+<symbol id="svg-copy" viewBox="0 0 16 16">
+  <title>Copy</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+</symbol>
+<symbol id="svg-copied" viewBox="0 0 16 16">
+  <title>Copied</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"/>
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"/>
+  </svg>
+</symbol>
+
+  
+</svg>
+
+  
+    <div class="side-bar">
+  <div class="site-header" role="banner">
+    <a href="/" class="site-title lh-tight">
+  <div class="site-logo" role="img" aria-label="Aetherix White Papers"></div>
+
+</a>
+    <button id="menu-button" class="site-button btn-reset" aria-label="Toggle menu" aria-pressed="false">
+      <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  <nav aria-label="Main" id="site-nav" class="site-nav">
+  
+  
+    <ul class="nav-list"><li class="nav-list-item"><a href="/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/about/" class="nav-list-link">About</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in White Papers category" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+    </button><a href="/papers/" class="nav-list-link">White Papers</a><ul class="nav-list"><li class="nav-list-item"><a href="/papers/local-llm-guide/" class="nav-list-link">Local LLM Usage Guide</a></li><li class="nav-list-item"><a href="/papers/conditional-memory-offloading/" class="nav-list-link">Conditional Memory and Offloading in LLM Inference</a></li><li class="nav-list-item"><a href="/papers/b300-gb300-cluster-architecture/" class="nav-list-link">NVIDIA DGX B300 vs GB300 NVL72 Cluster Architecture Comparison</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-2node-cluster-setup/" class="nav-list-link">DGX Spark 2-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-3node-cluster-setup/" class="nav-list-link">DGX Spark 3-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-4node-cluster-setup/" class="nav-list-link">DGX Spark 4-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-8node-cluster-setup/" class="nav-list-link">DGX Spark 8-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/qwen3.6-27b-dgx-spark-benchmark/" class="nav-list-link">Qwen3.6-27B DGX Spark Benchmark</a></li><li class="nav-list-item"><a href="/papers/qwen3.6-27b-dgx-spark-scaling/" class="nav-list-link">Qwen3.6-27B DGX Spark Cluster Scaling</a></li><li class="nav-list-item"><a href="/papers/deepseek-v4.1-flash-4spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash 4× DGX Spark Deployment</a></li><li class="nav-list-item"><a href="/papers/deepseek-v4.1-flash-8spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash 8× DGX Spark TP8 Deployment</a></li><li class="nav-list-item"><a href="/papers/kimi-k3-dgx-b300-inference-benchmark/" class="nav-list-link">Kimi K3 Inference Benchmark on DGX-B300</a></li></ul></li><li class="nav-list-item"><a href="/llm-inference-benchmarks/" class="nav-list-link">LLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/cv-inference-benchmarks/" class="nav-list-link">CV Inference Benchmark Explorer</a></li></ul>
+
+  
+</nav>
+
+
+  
+  
+    <div class="lang-switcher">
+  
+    
+    
+      <span class="lang-switcher-item active">EN</span>
+    
+  
+    
+    
+      <a class="lang-switcher-item" href="/nl/papers/local-llm-guide/">NL</a>
+    
+  
+</div>
+<script src="/assets/js/lang-switch.js"></script>
+
+  
+</div>
+
+  
+  <div class="main" id="top">
+    <div id="main-header" class="main-header">
+  
+    
+
+<div class="search" role="search">
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Search" aria-label="Search" autocomplete="off">
+    <label for="search-input" class="search-label"><svg viewBox="0 0 24 24" class="search-icon"><use xlink:href="#svg-search"></use></svg></label>
+  </div>
+  <div id="search-results" class="search-results"></div>
+</div>
+
+  
+  
+  
+    <nav aria-label="Auxiliary" class="aux-nav">
+  <ul class="aux-nav-list">
+    
+      <li class="aux-nav-list-item">
+        <a href="https://aetherix.com" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          aetherix.com
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://github.com/aetherix-bv" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          GitHub
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+  
+</div>
+
+    <div class="main-content-wrap">
+      <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+  <ol class="breadcrumb-nav-list">
+    <li class="breadcrumb-nav-list-item"><a href="/papers/">White Papers</a></li>
+    <li class="breadcrumb-nav-list-item"><span>Local LLM Usage Guide</span></li>
+  </ol>
+</nav>
+      <div id="main-content" class="main-content">
+        <main>
+          
+            <blockquote>
+  <p><strong>Publication date:</strong> June 2026
+<strong>Scope:</strong> An end-to-end decision guide starting from why local LLM is needed and for whom, all the way to hardware → model → software selection.
+<strong>Note:</strong> This field changes very significantly even in a short period. The product names, prices, and benchmark results below are valid as of June 2026; what endures is not the names, but the categories and decision logic. On the hardware side, only NVIDIA is deliberately covered — the main reason is the CUDA ecosystem (see Section 4.1).</p>
+</blockquote><hr />
+<h2 class="no_toc" id="table-of-contents">
+  
+  
+    <a href="#table-of-contents" class="anchor-heading" aria-labelledby="table-of-contents"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Table of contents
+  
+  
+</h2>
+    
+
+<ul id="markdown-toc">
+  <li><a href="#executive-summary" id="markdown-toc-executive-summary">Executive Summary</a></li>
+  <li><a href="#1-introduction" id="markdown-toc-1-introduction">1. Introduction</a>    <ul>
+      <li><a href="#about-aetherix" id="markdown-toc-about-aetherix">About Aetherix</a></li>
+    </ul>
+  </li>
+  <li><a href="#2-why-local-llm-rationale" id="markdown-toc-2-why-local-llm-rationale">2. Why Local LLM? (Rationale)</a>    <ul>
+      <li><a href="#advantages" id="markdown-toc-advantages">Advantages</a></li>
+      <li><a href="#points-to-consider" id="markdown-toc-points-to-consider">Points to consider</a></li>
+    </ul>
+  </li>
+  <li><a href="#3-who-needs-it-target-audiences-and-scenarios" id="markdown-toc-3-who-needs-it-target-audiences-and-scenarios">3. Who Needs It? (Target Audiences and Scenarios)</a></li>
+  <li><a href="#4-hardware-selection-nvidia" id="markdown-toc-4-hardware-selection-nvidia">4. Hardware Selection (NVIDIA)</a>    <ul>
+      <li><a href="#41-why-nvidia-in-one-word-cuda" id="markdown-toc-41-why-nvidia-in-one-word-cuda">4.1. Why NVIDIA? In one word: CUDA</a></li>
+      <li><a href="#42-first-decision-training-or-inference" id="markdown-toc-42-first-decision-training-or-inference">4.2. First decision: Training or Inference?</a></li>
+      <li><a href="#43-the-decisive-metric-vram-and-total-memory-budget" id="markdown-toc-43-the-decisive-metric-vram-and-total-memory-budget">4.3. The decisive metric: VRAM (and total memory budget)</a></li>
+      <li><a href="#44-how-inference-works-and-quality-of-service-metrics" id="markdown-toc-44-how-inference-works-and-quality-of-service-metrics">4.4. How inference works and quality-of-service metrics</a></li>
+      <li><a href="#45-hardware-classes-aetherix-catalog" id="markdown-toc-45-hardware-classes-aetherix-catalog">4.5. Hardware classes (Aetherix catalog)</a></li>
+      <li><a href="#46-multi-gpu" id="markdown-toc-46-multi-gpu">4.6. Multi-GPU</a></li>
+      <li><a href="#47-cpu--ram-only" id="markdown-toc-47-cpu--ram-only">4.7. CPU + RAM only</a></li>
+      <li><a href="#48-scenario--hardware-mapping" id="markdown-toc-48-scenario--hardware-mapping">4.8. Scenario → hardware mapping</a></li>
+      <li><a href="#49-operating-costs-and-total-cost-of-ownership-tco" id="markdown-toc-49-operating-costs-and-total-cost-of-ownership-tco">4.9. Operating costs and Total Cost of Ownership (TCO)</a></li>
+    </ul>
+  </li>
+  <li><a href="#5-model-selection" id="markdown-toc-5-model-selection">5. Model Selection</a>    <ul>
+      <li><a href="#51-what-can-you-do-with-a-local-llm-inference-use-cases" id="markdown-toc-51-what-can-you-do-with-a-local-llm-inference-use-cases">5.1. What can you do with a local LLM? (inference use cases)</a></li>
+      <li><a href="#52-model-selection-criteria" id="markdown-toc-52-model-selection-criteria">5.2. Model selection criteria</a></li>
+      <li><a href="#53-current-open-weight-model-families-mid-2026" id="markdown-toc-53-current-open-weight-model-families-mid-2026">5.3. Current open-weight model families (mid-2026)</a></li>
+      <li><a href="#54-parameter-size--performance-balance" id="markdown-toc-54-parameter-size--performance-balance">5.4. Parameter size ↔ performance balance</a></li>
+      <li><a href="#55-quantization" id="markdown-toc-55-quantization">5.5. Quantization</a></li>
+      <li><a href="#56-selection-by-task-including-turkish" id="markdown-toc-56-selection-by-task-including-turkish">5.6. Selection by task (including Turkish)</a></li>
+      <li><a href="#57-license-commercial-use" id="markdown-toc-57-license-commercial-use">5.7. License (commercial use)</a></li>
+      <li><a href="#58-where-do-you-compare-models-in-2026" id="markdown-toc-58-where-do-you-compare-models-in-2026">5.8. Where do you compare models in 2026?</a></li>
+      <li><a href="#59-build-your-own-evaluation-benchmark-set" id="markdown-toc-59-build-your-own-evaluation-benchmark-set">5.9. Build your own evaluation (benchmark) set</a></li>
+    </ul>
+  </li>
+  <li><a href="#6-software-selection" id="markdown-toc-6-software-selection">6. Software Selection</a>    <ul>
+      <li><a href="#6a-inference-engines-backend" id="markdown-toc-6a-inference-engines-backend">6.A. Inference engines (backend)</a></li>
+      <li><a href="#6b-all-in-one-desktop-applications" id="markdown-toc-6b-all-in-one-desktop-applications">6.B. All-in-one desktop applications</a></li>
+      <li><a href="#6c-next-generation-self-hosted-ai-workspaces" id="markdown-toc-6c-next-generation-self-hosted-ai-workspaces">6.C. Next-generation self-hosted AI workspaces</a></li>
+      <li><a href="#6d-classic-web-uis-and-rag-solutions" id="markdown-toc-6d-classic-web-uis-and-rag-solutions">6.D. Classic web UIs and RAG solutions</a></li>
+      <li><a href="#6e-api-gateways--routing-gateway--router" id="markdown-toc-6e-api-gateways--routing-gateway--router">6.E. API gateways / routing (gateway &amp; router)</a></li>
+      <li><a href="#6f-fine-tune--training-tools-open-source" id="markdown-toc-6f-fine-tune--training-tools-open-source">6.F. Fine-tune &amp; training tools (open source)</a></li>
+      <li><a href="#6g-coding-assistants--agents-open-source" id="markdown-toc-6g-coding-assistants--agents-open-source">6.G. Coding assistants &amp; agents (open source)</a></li>
+    </ul>
+  </li>
+  <li><a href="#7-example-deployment-scenarios" id="markdown-toc-7-example-deployment-scenarios">7. Example Deployment Scenarios</a></li>
+  <li><a href="#8-risks-and-points-to-consider" id="markdown-toc-8-risks-and-points-to-consider">8. Risks and Points to Consider</a>    <ul>
+      <li><a href="#common-mistakes-in-hardware-sizing" id="markdown-toc-common-mistakes-in-hardware-sizing">Common mistakes in hardware sizing</a></li>
+      <li><a href="#hardware-sizing-process" id="markdown-toc-hardware-sizing-process">Hardware sizing process</a></li>
+      <li><a href="#hardware-sizing-checklist" id="markdown-toc-hardware-sizing-checklist">Hardware sizing checklist</a></li>
+    </ul>
+  </li>
+  <li><a href="#9-conclusion-and-recommendations" id="markdown-toc-9-conclusion-and-recommendations">9. Conclusion and Recommendations</a></li>
+  <li><a href="#glossary-terms" id="markdown-toc-glossary-terms">Glossary (Terms)</a></li>
+  <li><a href="#resources" id="markdown-toc-resources">Resources</a>    <ul>
+      <li><a href="#notes" id="markdown-toc-notes">Notes</a></li>
+    </ul>
+  </li>
+</ul><hr />
+<h2 id="executive-summary">
+  
+  
+    <a href="#executive-summary" class="anchor-heading" aria-labelledby="executive-summary"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Executive Summary
+  
+  
+</h2>
+    
+
+<ul>
+  <li><strong>Local LLM</strong> means running the model on your own hardware: data never leaves the device, internet is not required, and there is no per-use fee. The strongest rationale is <strong>data privacy and sovereignty</strong> (government, healthcare, legal, finance, defense).</li>
+  <li><strong>The single hard constraint is VRAM.</strong> Real requirement = model weights + KV cache + activations + ~20% headroom; model size and context length determine the hardware class (see 4.3).</li>
+  <li><strong>Hardware (NVIDIA only — reason: CUDA):</strong> at the edge <strong>Jetson</strong> → on the workstation <strong>RTX PRO Blackwell (16–96 GB)</strong> → in the data center <strong>L40S / H100·H200 NVL</strong> → at large scale <strong>DGX Spark / B200·B300</strong>. The first question: <strong>training or inference?</strong></li>
+  <li><strong>Model:</strong> for most workloads, <strong>7–14B dense</strong> or <strong>~30B MoE</strong> is the optimal balance; for commercial use, <strong>Apache 2.0 / MIT</strong> licensed families (Qwen, DeepSeek, GLM) are the safest foundation. First define <strong>what you will do</strong> (5.1) and <strong>selection criteria</strong> (5.2).</li>
+  <li><strong>Software:</strong> easy start with <strong>Ollama / LM Studio</strong>; production with <strong>vLLM / TensorRT-LLM</strong>; for agents + memory, <strong>AI workspaces</strong>; for multi-user setups, lead with a <strong>gateway</strong> (LiteLLM, etc.).</li>
+  <li><strong>Decision method:</strong> start small, measure on <strong>your own evaluation set</strong> (5.9), and scale as needs clarify. Do not forget <strong>TCO</strong> in cost (the GPU cost is only 30–40% of the total).</li>
+</ul><hr />
+<h2 id="1-introduction">
+  
+  
+    <a href="#1-introduction" class="anchor-heading" aria-labelledby="1-introduction"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1. Introduction
+  
+  
+</h2>
+    
+
+<p><strong>LLM (Large Language Model)</strong> is an artificial intelligence model trained on very large amounts of text data that can understand and generate natural language. Most of us use these via the cloud: services like ChatGPT, Claude, and Gemini run the model on their own servers, and we access it over the internet.</p>
+
+<p><strong>Local LLM</strong> means running the model on your own hardware — a laptop, a desktop workstation, or a company server. Data never leaves the device, internet connectivity is not required, and there is no per-use fee.</p>
+
+<p>The key difference between the two approaches is:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th>Cloud LLM</th>
+      <th>Local LLM</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Where data is processed</td>
+      <td>On the provider’s server</td>
+      <td>On your own hardware</td>
+    </tr>
+    <tr>
+      <td>Cost model</td>
+      <td>Usage/subscription (ongoing)</td>
+      <td>Hardware (one-time) + electricity</td>
+    </tr>
+    <tr>
+      <td>Internet</td>
+      <td>Required</td>
+      <td>Not required</td>
+    </tr>
+    <tr>
+      <td>Privacy</td>
+      <td>Trust the provider</td>
+      <td>Full control</td>
+    </tr>
+    <tr>
+      <td>Model access</td>
+      <td>Limited to what the provider offers</td>
+      <td>Free choice among hundreds of open models</td>
+    </tr>
+    <tr>
+      <td>Customization</td>
+      <td>Limited</td>
+      <td>Full (fine-tuning, RAG, own data)</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>The purpose of this guide is to provide a current and actionable answer to the question “Is local LLM right for me / my organization, and if so, which hardware–model–software trio should I choose?”</p>
+<h4 id="about-aetherix">
+  
+  
+    <a href="#about-aetherix" class="anchor-heading" aria-labelledby="about-aetherix"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> About Aetherix
+  
+  
+</h4>
+    
+
+<p><img src="/assets/images/aetherix-logo.png" alt="Aetherix" /></p>
+
+<p><strong>Aetherix B.V.</strong> is a Netherlands-based provider of NVIDIA Jetson™ hardware for edge AI, specialising in Jetson platforms for robotics, automation and embedded systems.</p>
+
+<ul>
+  <li><strong>Hardware:</strong> NVIDIA Jetson developer kits, AI kits, carrier boards and accessories; NVIDIA DGX Spark systems; NVIDIA RTX PRO graphics cards.</li>
+  <li><strong>Expertise:</strong> a team with years of hands-on Jetson and professional GPU experience, and NVIDIA systems selected for real-world AI.</li>
+  <li><strong>EU operations:</strong> compliant invoicing, VAT validation and transparent logistics, with European shipping from the Netherlands.</li>
+</ul>
+
+<p>The hardware recommendations in this guide are based on this portfolio.</p><hr />
+<h2 id="2-why-local-llm-rationale">
+  
+  
+    <a href="#2-why-local-llm-rationale" class="anchor-heading" aria-labelledby="2-why-local-llm-rationale"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2. Why Local LLM? (Rationale)
+  
+  
+</h2>
+    
+
+<p><img src="/papers/local-llm-guide/images/sema-2-advantages.png" alt="Key advantages of local LLM" width="320" /></p>
+<p><sub><i>Figure: Key advantages of local LLM</i></sub></p>
+<h3 id="advantages">
+  
+  
+    <a href="#advantages" class="anchor-heading" aria-labelledby="advantages"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Advantages
+  
+  
+</h3>
+    
+
+<p><strong>Data privacy and security.</strong> This is the strongest rationale. In fields such as legal, healthcare, finance, and defense, data never leaves the device; data-protection compliance becomes significantly easier. Sensitive customer data, contracts, or patient records are not sent to a third party’s server.</p>
+
+<p><strong>Data sovereignty — government and public institutions.</strong> This is one of the most decisive rationales for state agencies, critical infrastructure, and public institutions: with local LLM, corporate/classified information can never leak to overseas or third-party servers under any circumstances. Data is processed entirely within the institution’s own boundaries, on its own hardware; this directly meets data sovereignty and national security requirements. Being able to run even on completely isolated (air-gapped) and classified networks is a critical advantage for these institutions.</p>
+
+<p><strong>Cost.</strong> Under intensive and continuous use, a one-time hardware investment eventually falls below the operating expense of cloud equivalents; for teams making large numbers of calls, the marginal cost in a local setup is almost only electricity.</p>
+
+<p><strong>Offline operation.</strong> It works in environments without internet (the field, secure networks, air-gapped/isolated systems).</p>
+
+<p><strong>Customization.</strong> You can fine-tune on your own data, bind it to your own documents with RAG, and fully control system behavior. Open-weight models do not impose the restrictions that closed services enforce.</p>
+
+<p><strong>Predictable latency.</strong> Speed depends on your hardware; you are not subject to provider congestion, quota limits, or service outages.</p>
+<h3 id="points-to-consider">
+  
+  
+    <a href="#points-to-consider" class="anchor-heading" aria-labelledby="points-to-consider"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Points to consider
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>Correct hardware matching.</strong> Your target model size requires the right VRAM/hardware class; for the most demanding workloads and the largest models, higher-memory cards or multi-GPU plans are needed (see Section 4).</li>
+  <li><strong>Upfront investment.</strong> Hardware is a one-time investment; properly scaled, it pays for itself over the long term.</li>
+  <li><strong>Technical knowledge.</strong> Setup, quantization choice, and driver/CUDA management require a learning curve. (New-generation tools have made this significantly easier.)</li>
+  <li><strong>Maintenance burden.</strong> Updates, model changes, and hardware maintenance are the institution’s responsibility.</li>
+</ul>
+
+<p><strong>Summary:</strong> Whenever there are privacy and data sovereignty concerns, intensive use, or a need for customization, local LLM is a strong and sustainable choice. With the right hardware–model–software match, the scale can be adjusted from small to large as needed.</p><hr />
+<h2 id="3-who-needs-it-target-audiences-and-scenarios">
+  
+  
+    <a href="#3-who-needs-it-target-audiences-and-scenarios" class="anchor-heading" aria-labelledby="3-who-needs-it-target-audiences-and-scenarios"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. Who Needs It? (Target Audiences and Scenarios)
+  
+  
+</h2>
+    
+
+<p><img src="/papers/local-llm-guide/images/sema-3-target-audience.png" alt="Who needs local LLM?" width="760" /></p>
+<p><sub><i>Figure: Who needs local LLM?</i></sub></p>
+
+<p><strong>Government and public institutions.</strong> Ministries, public agencies, critical infrastructure, and defense — keeping data within the country and within the institution’s own boundaries, and preventing it from leaking out, is a data sovereignty and national security requirement. For these institutions, local LLM is often the only suitable option.</p>
+
+<p><strong>Enterprise (sensitive data).</strong> Law firms, hospitals/healthcare providers, finance, and defense industry — when keeping data internal is a legal/contractual obligation, local LLM is almost the only option.</p>
+
+<p><strong>Developers.</strong> Unlimited prototyping without API costs; IDE integration as a code assistant; workflows with many automated tests/calls.</p>
+
+<p><strong>Researchers and academics.</strong> Studying model behavior, running experiments, fine-tuning studies, and scientific work that requires full control over the model.</p>
+
+<p><strong>SMEs.</strong> Small and medium-sized businesses that want to build customer service, document processing, and internal automation without exposing customer data.</p>
+
+<p><strong>Individual/privacy-focused users.</strong> Personal assistant, note/email management, hobby use; those who do not want to give their data to any company.</p>
+
+<p><strong>Those for whom keeping scale small is enough:</strong> For occasional and light use only, an entry-level card or an existing workstation is often sufficient; as needs grow, the hardware can scale gradually (see Section 4).</p><hr />
+<h2 id="4-hardware-selection-nvidia">
+  
+  
+    <a href="#4-hardware-selection-nvidia" class="anchor-heading" aria-labelledby="4-hardware-selection-nvidia"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. Hardware Selection (NVIDIA)
+  
+  
+</h2>
+    
+<h3 id="41-why-nvidia-in-one-word-cuda">
+  
+  
+    <a href="#41-why-nvidia-in-one-word-cuda" class="anchor-heading" aria-labelledby="41-why-nvidia-in-one-word-cuda"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.1. Why NVIDIA? In one word: CUDA
+  
+  
+</h3>
+    
+
+<p>The main reason to choose NVIDIA for local LLM hardware is <strong>CUDA</strong>. CUDA is the software platform NVIDIA offers for parallel computing on GPUs, and it has become the de facto standard of the AI world. Its practical consequences are:</p>
+
+<ul>
+  <li><strong>Ecosystem compatibility.</strong> Nearly all LLM tools and libraries — PyTorch, TensorFlow, vLLM, TensorRT-LLM, llama.cpp, Ollama — are developed primarily on CUDA and run best on NVIDIA hardware. Newly released models, quantization formats, and optimizations are published for CUDA first.</li>
+  <li><strong>Maturity and prevalence.</strong> CUDA has been under development for over a decade; it provides extensive documentation, community support, and an abundance of ready-made solutions. When you encounter a problem, the solution most likely already exists.</li>
+  <li><strong>Seamless setup.</strong> A “works out of the box” experience; the risk of driver, library, and toolchain incompatibility is minimized.</li>
+</ul>
+
+<p>For this reason, throughout this guide only NVIDIA is covered on the hardware side; alternative platforms have not yet reached this level of maturity and ecosystem breadth. While in classic IT, CPU + RAM + storage is often sufficient, in LLMs <strong>GPU choice directly determines whether the model can run at all</strong>: VRAM determines the model size that can be run, memory bandwidth determines the token generation rate, and FLOPS determines training/inference speed. Wrong GPU = the model either does not run at all or runs very slowly.</p>
+<h3 id="42-first-decision-training-or-inference">
+  
+  
+    <a href="#42-first-decision-training-or-inference" class="anchor-heading" aria-labelledby="42-first-decision-training-or-inference"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.2. First decision: Training or Inference?
+  
+  
+</h3>
+    
+
+<p>This is the <strong>most important question</strong> that determines hardware requirements. The answer to “Will training be done?” defines the scale of hardware you will need from the start.</p>
+
+<p><img src="/papers/local-llm-guide/images/sema-4-training-inference.png" alt="First decision: training or inference?" width="640" /></p>
+<p><sub><i>Figure: First decision: training or inference?</i></sub></p>
+
+<p><strong>For most organizations, the starting point is inference</strong> — running a ready open model on your own server. Training/customization comes into play only when the model needs to be adapted to your own data, and it has four tiers:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th>Pre-training (from scratch)</th>
+      <th>Full Fine-tune</th>
+      <th>Fine-tune (LoRA)</th>
+      <th>Fine-tune (QLoRA)</th>
+      <th>Inference</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>VRAM requirement</td>
+      <td>Very high (~16× params)</td>
+      <td>High (~12–14× params)</td>
+      <td>Medium (~2–3× params)</td>
+      <td>Low (~0.6–1× params)</td>
+      <td>Model + KV cache</td>
+    </tr>
+    <tr>
+      <td>7B model</td>
+      <td>8× B200 (1 team)</td>
+      <td>1× H200 (~85–100 GB)</td>
+      <td>1× L40S / RTX PRO 6000</td>
+      <td>1× L40S</td>
+      <td>1× L40S / RTX PRO 6000</td>
+    </tr>
+    <tr>
+      <td>70B model</td>
+      <td>8–16× B300 (1–2 teams)</td>
+      <td>4–8× H200 (ZeRO-3)</td>
+      <td>2–4× H200</td>
+      <td>1× DGX Spark / 1× H200</td>
+      <td>1× H200 (INT8) / 1× DGX Spark (INT8) — for FP16, 2× H200 (see 4.8)</td>
+    </tr>
+    <tr>
+      <td>Duration</td>
+      <td>Weeks–months</td>
+      <td>Days–1 week</td>
+      <td>Hours</td>
+      <td>Hours</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>Data requirement</td>
+      <td>Trillions of tokens</td>
+      <td>Millions of examples</td>
+      <td>Thousands of examples</td>
+      <td>Thousands of examples</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>Cost</td>
+      <td>Very high</td>
+      <td>High</td>
+      <td>Medium</td>
+      <td>Low</td>
+      <td>Medium</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<ul>
+  <li><strong>Pre-training (from scratch):</strong> The heaviest scenario; only for institutions training their own base model. Requires a B200/B300 cluster. <strong>Note:</strong> The “8×/16×” figures in the table are not the actual compute requirement but the <strong>minimum sales unit of B200/B300</strong> (an 8-GPU team — see 4.5/D). The actual VRAM requirement is roughly 16× the model size (FP16 weights + gradients + Adam optimizer states): <strong>7B full training ≈ 120–150 GB</strong>, <strong>70B ≈ 1 TB+</strong> (plus activations). So 7B full training needs far less memory than a single 8-GPU team; even if the whole team is not used, this is the smallest sales unit.</li>
+  <li><strong>Full Fine-tune:</strong> Updates <strong>all parameters</strong> of a pre-trained model on your own data. VRAM requirement is close to pre-training (~12–14× params — slightly lower thanks to gradient checkpointing and typically shorter sequences), but <strong>duration and data are far less</strong>. Suited for deep domain adaptation (specialized fields such as Turkish, medical, legal); comes into play when LoRA is insufficient. <strong>Risk — catastrophic forgetting:</strong> Updating all parameters can degrade or overwrite the general capabilities learned during pre-training (other languages, general knowledge, reasoning). <strong>LoRA/QLoRA largely mitigates this risk</strong> — base model weights are kept frozen and only small adapter layers are trained; domain adaptation is added while general capabilities are preserved. In practice, most organizations should start with LoRA/QLoRA. When full fine-tuning is chosen, mitigate the risk with: a low learning rate, <strong>data mixing</strong> (domain data + general data together), <strong>regularization</strong> (KL/L2), and limiting the number of epochs. (Open-source tools: see 6.F.)</li>
+  <li><strong>LoRA / QLoRA fine-tune:</strong> The practical way to adapt an existing model to your own data. It does not train the whole model, only small additional layers. <strong>Memory accounting:</strong> In LoRA, base weights are frozen, so only FP16 weights (~2× params) + gradient-checkpointed activations + small adapter gradients/Adam states contribute → <strong>~2–3× params</strong>; in QLoRA, base weights are quantized to 4-bit NF4 (~0.5× params), plus activations and small adapter overhead → <strong>~0.6–1× params</strong>. Fine-tuning a 70B model even with a single <strong>DGX Spark</strong> is possible (with QLoRA — in FP16-based LoRA, the 70B weights alone are ~140 GB, so they do not fit in 128 GB). (Open-source tools: see 6.F.)</li>
+  <li><strong>Inference:</strong> Just running the model. Here, the <strong>extra VRAM allocated for KV cache is critical</strong> (see 4.3); as the number of concurrent users grows, this load grows.</li>
+</ul>
+<h3 id="43-the-decisive-metric-vram-and-total-memory-budget">
+  
+  
+    <a href="#43-the-decisive-metric-vram-and-total-memory-budget" class="anchor-heading" aria-labelledby="43-the-decisive-metric-vram-and-total-memory-budget"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.3. The decisive metric: VRAM (and total memory budget)
+  
+  
+</h3>
+    
+
+<p>In local LLM, the single hard constraint is VRAM (graphics card memory). If the model weights + KV cache do not fit in GPU memory, it either spills to system RAM (~10x slowdown) or the model does not run at all.</p>
+
+<p><strong>Rule of thumb (weights only):</strong></p>
+<ul>
+  <li><strong>FP16 (16-bit):</strong> ~2 GB VRAM / billion parameters</li>
+  <li><strong>8-bit (Q8):</strong> half of that (~1 GB / billion)</li>
+  <li><strong>4-bit (Q4, e.g. Q4_K_M):</strong> a quarter (~0.5 GB / billion). Q4_K_M is considered the optimal quality/memory balance because it retains ~92–95% of full precision while reducing memory ~4×.</li>
+</ul>
+
+<p><strong>Approximate VRAM by model size (weights; add KV cache + headroom on top):</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>FP16</th>
+      <th>8-bit</th>
+      <th>4-bit (Q4_K_M)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>7B / 8B</td>
+      <td>~14–16 GB</td>
+      <td>~8 GB</td>
+      <td>~5 GB</td>
+    </tr>
+    <tr>
+      <td>14B</td>
+      <td>~28 GB</td>
+      <td>~15 GB</td>
+      <td>~9–10 GB</td>
+    </tr>
+    <tr>
+      <td>32B</td>
+      <td>~64 GB</td>
+      <td>~34 GB</td>
+      <td>~18–20 GB</td>
+    </tr>
+    <tr>
+      <td>70B</td>
+      <td>~140 GB</td>
+      <td>~70 GB</td>
+      <td>~38–48 GB</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>KV cache / context length impact (often overlooked).</strong> KV cache grows linearly with context length and the number of concurrent requests; for long contexts it can exceed even the model weights. Example: Llama 3.1 70B, a single request with 128K context, can alone consume ~40 GB of KV cache — and this value already assumes the model uses <strong>GQA (Grouped-Query Attention)</strong>; a classic (MHA) architecture without GQA would require ~8× more for the same scenario. Mitigation: <strong>quantizing the KV cache to FP8/INT8</strong> roughly halves the memory.</p>
+
+<p><strong>Total VRAM budget.</strong> The real requirement is not just the weights:</p>
+
+<blockquote>
+  <p><strong>Total VRAM = Model Weights + KV Cache + Activations + Overhead</strong></p>
+</blockquote>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Component</th>
+      <th>Calculation</th>
+      <th>Example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Model weights</td>
+      <td>parameters × bytes/param</td>
+      <td>7B FP16 = 14 GB · 70B FP16 = 140 GB</td>
+    </tr>
+    <tr>
+      <td>Max context (max_len)</td>
+      <td>directly determines KV cache size</td>
+      <td>4K → 128K tokens = ~32× KV cache difference</td>
+    </tr>
+    <tr>
+      <td>KV cache</td>
+      <td>2 × layers × kv_heads × head_dim × max_len × batch × 2 bytes</td>
+      <td>70B (GQA, 8 KV head), 4096 tokens, batch 32 ≈ 20–40 GB</td>
+    </tr>
+    <tr>
+      <td>Activations</td>
+      <td>batch × max_len × hidden_dim × layers</td>
+      <td>Large in training, small in inference</td>
+    </tr>
+    <tr>
+      <td>Overhead</td>
+      <td>~10–20% extra</td>
+      <td>Fragmentation, temporary buffers</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Formula note:</strong> In GQA models, <code class="language-plaintext highlighter-rouge">kv_heads</code> is a small fraction of the total attention head count (e.g. Llama 3.1 70B: 64 heads → 8 KV head); the 20–40 GB example in the table is therefore low. In a classic (MHA) architecture without GQA, <code class="language-plaintext highlighter-rouge">kv_heads = number of heads</code>, and the same scenario requires ~8× more memory.</p>
+</blockquote>
+
+<blockquote>
+  <p><strong>Rule:</strong> Always leave <strong>~20% extra VRAM headroom</strong>. To simplify the calculation, you can use the free tool <strong>Cordatus VRAM Calculator</strong> — <a href="https://app.cordatus.ai/#/vram-calculator">https://app.cordatus.ai/#/vram-calculator</a></p>
+</blockquote>
+<h3 id="44-how-inference-works-and-quality-of-service-metrics">
+  
+  
+    <a href="#44-how-inference-works-and-quality-of-service-metrics" class="anchor-heading" aria-labelledby="44-how-inference-works-and-quality-of-service-metrics"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.4. How inference works and quality-of-service metrics
+  
+  
+</h3>
+    
+
+<p><strong>Two-stage inference — why are there two separate bottlenecks?</strong> An LLM request is processed in two stages:</p>
+
+<ul>
+  <li><strong>Prefill (prompt processing):</strong> All tokens in the input prompt are processed <strong>at once (in parallel)</strong>; heavy matrix multiplications dominate → <strong>compute-bound (FLOPS-dependent)</strong>. This stage determines <strong>TTFT</strong> — a long prompt = long TTFT.</li>
+  <li><strong>Decode (token generation):</strong> The response is generated <strong>token by token, sequentially</strong>; since each token depends on the previous one (<strong>autoregressive</strong>), it <strong>cannot be parallelized</strong> within a single request. At each step, all model weights are re-read from memory, but the compute is relatively small → <strong>memory-bound (memory-bandwidth-dependent)</strong>. This stage determines <strong>TPS</strong>. Generation continues until an <strong>EOS (end-of-sequence) token</strong> is produced or the <strong>maximum token limit</strong> is reached.</li>
+</ul>
+
+<blockquote>
+  <p>This is why two different hardware properties matter: FLOPS for prefill/TTFT and memory bandwidth for decode/TPS. Although decode does not parallelize within a single request, <strong>batching</strong> distributes weight reads across many requests, increasing total throughput.</p>
+</blockquote>
+
+<p>Hardware selection is shaped not only by “does the model fit” but also by “what user experience are we targeting.” Four key metrics:</p>
+
+<ul>
+  <li><strong>TTFT (Time to First Token):</strong> How long after the user submits the prompt does the first token arrive? <strong>Compute-bound</strong> — depends on FLOPS.</li>
+  <li><strong>TPS (Tokens Per Second):</strong> How many tokens are generated per second? Directly affects user experience. <strong>Memory-bound</strong> — depends on memory bandwidth.</li>
+  <li><strong>Throughput:</strong> How many requests are processed per unit time? Increases as batch grows.</li>
+  <li><strong>Batch size — the fundamental trade-off:</strong> High batch → high throughput but high latency; low batch → low latency but low throughput. Finding the optimal point is critical.</li>
+</ul>
+
+<blockquote>
+  <p>Practical takeaway: if you want <strong>fast single-user responses</strong>, high bandwidth (TPS) and FLOPS (TTFT) matter; if you want <strong>multi-user high throughput</strong>, you need to scale the batch and therefore VRAM (KV cache).</p>
+</blockquote>
+
+<p><strong>Techniques that accelerate the system (2026).</strong> Various software-layer methods exist to speed up these two stages; most are supported by <strong>vLLM / SGLang / TensorRT-LLM</strong> and generally kick in <strong>without changing the model</strong>:</p>
+
+<ul>
+  <li><strong>Speculative decoding:</strong> A small “draft” model proposes multiple tokens, and the large model verifies them in a single pass → <strong>2–3× speedup</strong> in decode. The current strongest approach is <strong>EAGLE-3 / EAGLE 3.1</strong> (a lightweight prediction head attached to the model’s inner layers, which does not require a separate draft model) and its parallel variant <strong>P-EAGLE</strong>.</li>
+  <li><strong>MTP (Multi-Token Prediction):</strong> The model predicts multiple tokens in a single step (e.g. DeepSeek architecture); used as a draft both in training and speculative decoding.</li>
+  <li><strong>Disaggregated prefill (prefill/decode separation):</strong> Distributes compute-bound prefill and memory-bound decode across <strong>separate GPU pools</strong>; each stage scales according to its own bottleneck, improving latency and throughput together (e.g. <strong>NVIDIA Dynamo</strong>).</li>
+  <li><strong>Continuous / in-flight batching:</strong> Dynamically adds and removes requests from the batch, keeping the GPU busy → high throughput.</li>
+  <li><strong>Chunked prefill &amp; prefix caching:</strong> Splits long prefill and interleaves it with decode to lower TTFT; KV cache is reused for common prefixes (system prompt) (PagedAttention / RadixAttention — see 6.A).</li>
+  <li><strong>KV cache quantization (FP8/INT8):</strong> Reduces the memory load of decode (see 4.3).</li>
+</ul>
+
+<blockquote>
+  <p>With the right inference engine and configuration, these techniques can produce a <strong>2–4× speed/throughput</strong> difference in production setups — software configuration matters as much as hardware.</p>
+</blockquote>
+<h3 id="45-hardware-classes-aetherix-catalog">
+  
+  
+    <a href="#45-hardware-classes-aetherix-catalog" class="anchor-heading" aria-labelledby="45-hardware-classes-aetherix-catalog"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.5. Hardware classes (Aetherix catalog)
+  
+  
+</h3>
+    
+
+<p>We have limited the hardware recommendations in this guide to the NVIDIA products <strong>we offer as Aetherix</strong>. We do not carry consumer GeForce cards (RTX 3090/4090/5090); instead, we provide <strong>professional workstations (RTX PRO Blackwell), data center GPUs, DGX systems, and Jetson edge modules</strong>. The decisive metric is again VRAM; the classes below are organized by VRAM and use case.</p>
+
+<p><strong>Why don’t we recommend consumer (gaming) GPUs?</strong> An RTX 4090/5090 certainly runs LLMs at the hobby/individual level; however, for <strong>enterprise, production, and 24/7</strong> use, professional/data-center class is necessary for these concrete reasons:</p>
+
+<ul>
+  <li><strong>Low VRAM ceiling.</strong> The top consumer card (RTX 5090) stays at ~32 GB; insufficient for large models, long contexts, and KV cache. RTX PRO 6000 offers 96 GB and H200 offers 141 GB.</li>
+  <li><strong>No ECC memory.</strong> Consumer cards lack error-correcting (ECC) memory; there is a risk of silent memory errors during long-term/continuous operation. Professional and data center cards are ECC-equipped.</li>
+  <li><strong>Driver/license restriction.</strong> NVIDIA’s GeForce driver license <strong>restricts use in data centers</strong>; enterprise/DC deployment officially requires professional or data center cards.</li>
+  <li><strong>Limited multi-GPU scaling.</strong> NVLink has been removed from new consumer cards; high-speed inter-GPU links and server density are exclusive to the professional/DC series (see 4.6).</li>
+  <li><strong>Cooling &amp; form factor.</strong> Consumer cards are not suited to server airflow and are not designed for sustained full load; data center cards work with passive cooling integrated into the server chassis (see 4.9).</li>
+  <li><strong>Warranty &amp; sustainability.</strong> Professional cards come with enterprise warranty, long lifetime, and stable driver support; consumer cards do not offer these guarantees for production workloads.</li>
+</ul>
+
+<blockquote>
+  <p>In short: consumer cards “work,” but for a <strong>reliable, scalable, and compliant</strong> enterprise local-LLM infrastructure, professional/data center class is the right choice. The Aetherix catalog is therefore limited to these classes.</p>
+</blockquote>
+
+<blockquote>
+  <p><strong>Pricing note:</strong> These products are generally offered on a quote/project basis and prices vary; we deliberately do not list prices in this guide. For current pricing and availability, please contact us. The power (W) figures below are NVIDIA reference TDPs.</p>
+</blockquote>
+
+<p><strong>A) Jetson — edge / embedded / robotics local AI.</strong> For running small/medium models in the field or on-device, without requiring internet. Uses unified memory (CPU+GPU share the same pool).</p>
+<ul>
+  <li><strong>Jetson Orin Nano (4 GB / 8 GB)</strong> — entry-level; 1–4B-class small models, vision/speech assistants. Very low power.</li>
+  <li><strong>Jetson AGX Orin (64 GB)</strong> — serious work at the edge; with 64 GB unified, medium-sized models and multimodal workloads.</li>
+  <li><strong>Jetson AGX Thor / T5000 (128 GB class, Blackwell generation)</strong> — next-generation physical-AI/robotics flagship; large models and concurrent workloads at the edge. The “highest memory” option on the edge side.</li>
+</ul>
+
+<p>
+<img src="/papers/local-llm-guide/images/jetson-orin-nano.png" alt="NVIDIA Jetson Orin Nano AI Kit" width="300" />
+<img src="/papers/local-llm-guide/images/jetson-agx-thor.png" alt="NVIDIA Jetson AGX Thor Developer Kit" width="300" />
+</p>
+<p><sub><i>Jetson Orin Nano AI kit and Jetson AGX Thor Developer Kit</i></sub></p>
+
+<p><strong>B) RTX PRO Blackwell — workstation / server GPU (the main class for local LLM).</strong> ECC GDDR7, fits in a desktop workstation or server. This series replaces the consumer cards.</p>
+<ul>
+  <li><strong>RTX PRO 2000 Blackwell — 16 GB.</strong> Entry; comfortably 7B–14B (Q4). Very low power (~70 W), small form factor friendly.</li>
+  <li><strong>RTX PRO 4000 Blackwell — 24 GB</strong> (and an SFF/compact variant). Optimal entry: 14B comfortably, 32B Q4. ~140 W.</li>
+  <li><strong>RTX PRO 4500 Blackwell — 32 GB.</strong> Comfortably runs 32B; 70B does not fit on this card (see PRO 6000). ~200 W.</li>
+  <li><strong>RTX PRO 5000 Blackwell — 48 GB.</strong> 32B comfortably with long context; 70B in Q4 only with short context, at the limit (70B Q4 ≈ 38–48 GB — see 4.3; for comfortable 70B, use PRO 6000). ~300 W.</li>
+  <li><strong>RTX PRO 6000 Blackwell — 96 GB</strong> (three editions: <strong>Workstation</strong>, <strong>Max-Q Workstation</strong>, <strong>Server</strong>). On a single card, 70B in FP16/8-bit or very large contexts. Workstation/Server ~600 W; <strong>Max-Q</strong> ~300 W is the efficient choice for power/heat-constrained environments. The “single-card” flagship for local LLM.</li>
+</ul>
+
+<blockquote>
+  <p><strong>As a ready workstation (Aetherix):</strong> We provide these GPUs not only as bare cards but also as <strong>pre-installed and tested complete workstation</strong> systems (RTX PRO 4000 / 4500 / 5000 / 6000 Workstation and Max-Q). The systems ship with an Intel Core i9-14900KF-class CPU; <strong>Ubuntu + optimized NVIDIA software stack pre-installed</strong>, having passed performance/temperature tests, and delivered with a <strong>2-year warranty</strong> — meaning “works out of the box” for local LLM. Details: <a href="https://aetherix.com/product-category/graphics-cards/">aetherix.com/product-category/graphics-cards</a>.</p>
+</blockquote>
+
+<p><img src="/papers/local-llm-guide/images/rtx-pro-6000.webp" alt="NVIDIA RTX PRO 6000 Blackwell Workstation" width="360" /></p>
+<p><sub><i>NVIDIA RTX PRO 6000 Blackwell Workstation Edition — 96 GB</i></sub></p>
+
+<p><strong>C) Data center GPUs (single / few) — high-volume, multi-user production service.</strong> Passively cooled, server-mounted cards; for many concurrent requests with vLLM/TensorRT-LLM. Unlike B200/B300, they <strong>can be sold individually (or 2–8 per server).</strong></p>
+<ul>
+  <li><strong>NVIDIA L4 — 24 GB.</strong> Low-power (~72 W) inference card; efficient base for small/medium model serving.</li>
+  <li><strong>NVIDIA L40 / L40S — 48 GB.</strong> Versatile inference + fine-tuning; serves mid-size models with high throughput (a single card is not enough for 70B — see “common mistakes”, Section 8; 70B-class requires H100/H200 or 2× cards).</li>
+  <li><strong>NVIDIA H100 NVL — 94 GB</strong> and <strong>H200 NVL — 141 GB.</strong> The highest tier sold as single cards; large MoE models, long context, intense concurrency. The 141 GB of the H200 gives the highest model capacity on a single card.</li>
+</ul>
+
+<p><img src="/papers/local-llm-guide/images/dgx-sunucu.webp" alt="NVIDIA DGX AI server" width="420" /></p>
+<p><sub><i>Data-center-class NVIDIA DGX/HGX server infrastructure</i></sub></p>
+
+<p><strong>D) Top-tier Blackwell — turnkey data center systems (HGX / DGX, 8-GPU team).</strong> For full training and high-traffic (500+ concurrent users) inference. This class <strong>is not sold as single cards</strong>; it comes as an 8-GPU, pre-installed–pre-wired–pre-cooled server/rack — budget and infrastructure must be planned accordingly.</p>
+<ul>
+  <li><strong>NVIDIA B200 — 192 GB HBM3e</strong>, 8 TB/s. Blackwell generation; cluster training and high throughput.</li>
+  <li><strong>NVIDIA B300 — 288 GB HBM3e</strong>, 8 TB/s. Blackwell Ultra; for training and serving the largest models (405B+) with NVFP4.</li>
+  <li><strong>Turnkey systems — NVIDIA DGX B200 / DGX B300.</strong> “AI Factory”-class servers from NVIDIA containing 8 of the above GPUs; the highest tier for enterprise-scale training + inference. (<strong>DGX</strong> = NVIDIA’s turnkey system; <strong>HGX</strong> = the form in which the same 8-GPU block is integrated into OEM servers.)</li>
+</ul>
+
+<p><strong>E) DGX Spark — desktop “AI mini PC” (a class of its own).</strong></p>
+
+<blockquote>
+  <p><strong>Important — mind the name confusion:</strong> Although it carries “DGX” in its name, DGX Spark is <strong>not the same family/class</strong> as the rack-mounted DGX/HGX servers in (D) above. It is a plug-in, standalone, palm-sized <strong>desktop mini PC</strong>. The “DGX” here is just NVIDIA’s desktop AI-device brand; the hardware class, memory bandwidth, and use case are entirely different from B200/B300 data center systems.</p>
+</blockquote>
+
+<ul>
+  <li><strong>NVIDIA DGX Spark (GB10 Grace-Blackwell) — 128 GB unified memory, 1 PetaFLOP AI, only 240 W, 150×150×50 mm / 1.2 kg.</strong> A desktop “AI supercomputer”; fits models up to ~200B in memory, can fine-tune 70B. <strong>Key constraint:</strong> memory bandwidth is relatively low (~273 GB/s) → single-stream token generation is slower than running the same model on an H200. Its real strength: fitting very large models in memory compactly and at low power, for local development/test and gradual growth. <strong>No 8-GPU team requirement — can be purchased and scaled one by one, like a mini PC.</strong> Scales switch-less with QSFP cables:
+    <ul>
+      <li><strong>1× Spark</strong> — 128 GB, 70B fine-tune / 200B inference, 3–5 concurrent users, local testing.</li>
+      <li><strong>2× Spark</strong> (ConnectX-7 QSFP, 200 Gbps direct connection) — 256 GB, 405B inference, mid-scale team.</li>
+      <li><strong>3× Spark (ring topology)</strong> — 384 GB, 405B+ fine-tune / high throughput, no switch required.</li>
+    </ul>
+  </li>
+</ul>
+
+<p>
+<img src="/papers/local-llm-guide/images/dgx-spark.png" alt="NVIDIA DGX Spark" width="320" />
+<img src="/papers/local-llm-guide/images/dgx-spark-3x.png" alt="3x DGX Spark ring topology" width="320" />
+</p>
+<p><sub><i>NVIDIA DGX Spark (128 GB, 240 W) and 3× ring topology yielding a 384 GB pool</i></sub></p>
+
+<p><strong>GPU comparison matrix (2026).</strong> Aetherix’s leading LLM options:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>Architecture</th>
+      <th>VRAM</th>
+      <th>FP16/BF16 (sparse)</th>
+      <th>FP8 (sparse)</th>
+      <th>FP4 (sparse)</th>
+      <th>Memory BW</th>
+      <th>Sales unit</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>B300 288GB</strong></td>
+      <td>Blackwell Ultra</td>
+      <td>288 GB HBM3e</td>
+      <td>4,500 TFLOPS</td>
+      <td>9,000 TFLOPS</td>
+      <td>30,000 TFLOPS (15 PFLOPS dense)</td>
+      <td>8 TB/s</td>
+      <td>8-GPU team</td>
+    </tr>
+    <tr>
+      <td><strong>B200 192GB</strong></td>
+      <td>Blackwell</td>
+      <td>192 GB HBM3e</td>
+      <td>4,500 TFLOPS</td>
+      <td>9,000 TFLOPS</td>
+      <td>18,000 TFLOPS</td>
+      <td>8 TB/s</td>
+      <td>8-GPU team</td>
+    </tr>
+    <tr>
+      <td><strong>H200 141GB</strong></td>
+      <td>Hopper</td>
+      <td>141 GB HBM3e</td>
+      <td>1,979 TFLOPS</td>
+      <td>3,958 TFLOPS</td>
+      <td>—</td>
+      <td>4.8 TB/s</td>
+      <td>Single (2–8/server)</td>
+    </tr>
+    <tr>
+      <td><strong>DGX Spark (GB10)</strong></td>
+      <td>Grace Blackwell</td>
+      <td>128 GB LPDDR5x (unified)</td>
+      <td>—</td>
+      <td>—</td>
+      <td>1,000 AI TOPS</td>
+      <td>273 GB/s</td>
+      <td>Single (desktop)</td>
+    </tr>
+    <tr>
+      <td><strong>RTX PRO 6000 Blackwell</strong></td>
+      <td>Blackwell</td>
+      <td>96 GB GDDR7</td>
+      <td>~1,000 TFLOPS</td>
+      <td>~2,000 TFLOPS</td>
+      <td>4,000 AI TOPS</td>
+      <td>1.79 TB/s</td>
+      <td>Single (workstation)</td>
+    </tr>
+    <tr>
+      <td><strong>L40S 48GB</strong></td>
+      <td>Ada Lovelace</td>
+      <td>48 GB GDDR6</td>
+      <td>362 TFLOPS</td>
+      <td>733 TFLOPS</td>
+      <td>—</td>
+      <td>864 GB/s</td>
+      <td>Single (server)</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p>Values are from NVIDIA’s official datasheets (2:4 sparsity / “with sparsity”). <strong>The B300’s real leap over the B200 is in memory (192→288 GB) and NVFP4</strong> (FP4 ~67% higher: 15 PFLOPS dense / ~30,000 TFLOPS sparse); FP8/FP16 are similar to the B200, and bandwidth is 8 TB/s on both. For the RTX PRO 6000, NVIDIA quotes “up to 4 PFLOPS FP4 (4,000 AI TOPS), 2 PFLOPS FP8, 1 PFLOP FP16”.</p>
+</blockquote>
+
+<p><strong>DGX Spark — example run rates (decode benchmark with vLLM).</strong> Thanks to unified memory, huge models run on a standalone desktop device:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>Size</th>
+      <th>Quantization</th>
+      <th>Configuration</th>
+      <th>Tok/s (decode)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>gpt-oss-120b</td>
+      <td>120B</td>
+      <td>MXFP4</td>
+      <td>1× DGX Spark</td>
+      <td>54.72</td>
+    </tr>
+    <tr>
+      <td>gpt-oss-120b</td>
+      <td>120B</td>
+      <td>MXFP4</td>
+      <td>2× DGX Spark</td>
+      <td>101.36</td>
+    </tr>
+    <tr>
+      <td>gpt-oss-120b</td>
+      <td>120B</td>
+      <td>MXFP4</td>
+      <td>4× DGX Spark</td>
+      <td>106.31</td>
+    </tr>
+    <tr>
+      <td>MiniMax-M2.7</td>
+      <td>229B</td>
+      <td>NVFP4</td>
+      <td>2× DGX Spark</td>
+      <td>26.00</td>
+    </tr>
+    <tr>
+      <td>Qwen3.5-397B-A17B</td>
+      <td>397B</td>
+      <td>INT4 AutoRound</td>
+      <td>3× DGX Spark (ring)</td>
+      <td>17.05</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p>Previous-generation professional cards (<strong>RTX 6000 Ada 48 GB</strong>, <strong>RTX A6000 48 GB</strong>) are also in the catalog; they are 48 GB alternatives for budget/availability situations, but new purchases should prefer the Blackwell generation (RTX PRO 5000/6000).</p>
+</blockquote>
+<h3 id="46-multi-gpu">
+  
+  
+    <a href="#46-multi-gpu" class="anchor-heading" aria-labelledby="46-multi-gpu"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.6. Multi-GPU
+  
+  
+</h3>
+    
+
+<p>When a single card’s VRAM is insufficient for the target model, multiple cards are pooled (e.g. 2× RTX PRO 5000 = 96 GB, or 2× RTX PRO 6000 = 192 GB). The rationale: running <strong>70B+ and large MoE models with high precision / long context</strong>. Professional/data center cards are designed for multi-GPU scaling; the workload is distributed via <strong>tensor parallelism</strong> (each layer is split across cards, requires high bandwidth) or <strong>pipeline parallelism</strong> (layers are distributed across cards, light inter-card traffic). vLLM and TensorRT-LLM support both. In multi-node setups, <strong>InfiniBand/Ethernet bandwidth</strong> and <strong>PCIe</strong> bottlenecks must not be overlooked.</p>
+<h3 id="47-cpu--ram-only">
+  
+  
+    <a href="#47-cpu--ram-only" class="anchor-heading" aria-labelledby="47-cpu--ram-only"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.7. CPU + RAM only
+  
+  
+</h3>
+    
+
+<p>Suitable for entry, small/quantized models, and <strong>batch/non-interactive</strong> work (e.g. document summarization); not for fluid chat. The bottleneck is not compute but <strong>memory bandwidth</strong>. A typical 8-core desktop CPU achieves ~5–15 tok/s on a 7B model; large models drop to single digits. A model that fits in VRAM is roughly ~10× faster than one spilled to RAM. llama.cpp can keep some layers on the GPU and offload the rest to RAM — good as a short-term solution, not for production speed.</p>
+<h3 id="48-scenario--hardware-mapping">
+  
+  
+    <a href="#48-scenario--hardware-mapping" class="anchor-heading" aria-labelledby="48-scenario--hardware-mapping"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.8. Scenario → hardware mapping
+  
+  
+</h3>
+    
+
+<p><img src="/papers/local-llm-guide/images/sema-4-gpu-decision.png" alt="GPU selection decision tree" width="600" /></p>
+<p><sub><i>Figure: GPU selection decision tree</i></sub></p>
+
+<p><strong>General mapping (edge to enterprise):</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Need</th>
+      <th>Target VRAM</th>
+      <th>Aetherix hardware</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Edge / embedded / robotics</strong></td>
+      <td>unified 8–128 GB</td>
+      <td>Jetson Orin Nano (8 GB) → AGX Orin (64 GB) → <strong>AGX Thor / T5000 (128 GB)</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Entry workstation</strong> (7–14B)</td>
+      <td>16–24 GB</td>
+      <td><strong>RTX PRO 2000 (16 GB)</strong> or <strong>RTX PRO 4000 (24 GB)</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Mid</strong> (14–32B comfortably)</td>
+      <td>32–48 GB</td>
+      <td><strong>RTX PRO 4500 (32 GB)</strong> or <strong>RTX PRO 5000 (48 GB)</strong></td>
+    </tr>
+    <tr>
+      <td><strong>High / single-card 70B</strong></td>
+      <td>96 GB</td>
+      <td><strong>RTX PRO 6000 (96 GB)</strong> — Max-Q edition if power-constrained</td>
+    </tr>
+    <tr>
+      <td><strong>Multi-user production service</strong></td>
+      <td>24–141 GB</td>
+      <td><strong>L4 / L40S</strong> → <strong>H100 NVL (94 GB)</strong> → <strong>H200 NVL (141 GB)</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Very large model / turnkey</strong></td>
+      <td>128 GB+</td>
+      <td><strong>DGX Spark (128 GB)</strong> / 2–3× ring, at enterprise scale <strong>DGX B300</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Fine-tune (LoRA/QLoRA)</strong></td>
+      <td>low–medium</td>
+      <td>7B: <strong>1× L40S / RTX PRO 6000</strong> · 70B: <strong>1× DGX Spark</strong> (QLoRA) / <strong>2–4× H200</strong> (LoRA)</td>
+    </tr>
+    <tr>
+      <td><strong>Full Fine-tune</strong></td>
+      <td>~12–14× params</td>
+      <td>7B: <strong>1× H200</strong> (~85–100 GB) · 70B: <strong>4–8× H200</strong> (ZeRO-3, ~1 TB)</td>
+    </tr>
+    <tr>
+      <td><strong>Pre-training (from scratch)</strong></td>
+      <td>~16× params</td>
+      <td><strong>8× B200 / 8–16× B300</strong> (8-GPU team — see 4.5/D)</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Inference scenarios (model size × user capacity):</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Model (precision)</th>
+      <th>Min VRAM</th>
+      <th>Recommended GPU</th>
+      <th>Concurrent capacity</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>7B (FP16)</td>
+      <td>~14 GB</td>
+      <td>1× L40S or RTX PRO 6000</td>
+      <td>50+</td>
+    </tr>
+    <tr>
+      <td>13B (FP16)</td>
+      <td>~26 GB</td>
+      <td>1× RTX PRO 6000 96GB</td>
+      <td>30+</td>
+    </tr>
+    <tr>
+      <td>70B (FP16)</td>
+      <td>~140 GB</td>
+      <td><strong>2× H200</strong> (a single H200 leaves no room for KV cache + 20% headroom)</td>
+      <td>20–100</td>
+    </tr>
+    <tr>
+      <td>70B (INT8)</td>
+      <td>~70 GB</td>
+      <td>1× H200 · 1× DGX Spark</td>
+      <td>30–100 (H200) · ~3–5 (Spark)</td>
+    </tr>
+    <tr>
+      <td>405B (FP16)</td>
+      <td>~810 GB</td>
+      <td>8× B300</td>
+      <td>10–50</td>
+    </tr>
+    <tr>
+      <td>405B (INT4)</td>
+      <td>~200–230 GB</td>
+      <td>3× DGX Spark (ring, 384 GB)</td>
+      <td>~3–10 (ring)</td>
+    </tr>
+    <tr>
+      <td>70B inference (high traffic, 500+)</td>
+      <td>—</td>
+      <td>8× B200 (1 team)</td>
+      <td>cluster required for throughput</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Note:</strong> The “Min VRAM” column is the raw memory footprint of the model at the given precision; KV cache + ~20% headroom is added on top (see 4.3) — this is why 70B FP16 does not fit on a single 141 GB card; <strong>2× H200</strong> is required. On DGX Spark (128 GB) and ring configurations, very large models run <strong>quantized</strong> (INT8/INT4). Because DGX Spark’s memory bandwidth is relatively low (273 GB/s), it is suitable for <strong>single / few concurrent users</strong> (~3–5); high concurrency requires H200/B-series.</p>
+</blockquote>
+<h3 id="49-operating-costs-and-total-cost-of-ownership-tco">
+  
+  
+    <a href="#49-operating-costs-and-total-cost-of-ownership-tco" class="anchor-heading" aria-labelledby="49-operating-costs-and-total-cost-of-ownership-tco"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.9. Operating costs and Total Cost of Ownership (TCO)
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>Power (reference TDP):</strong> RTX PRO 2000 ≈ 70 W · PRO 4000 ≈ 140 W · PRO 4500 ≈ 200 W · PRO 5000 ≈ 300 W · PRO 6000 Workstation/Server ≈ 600 W (<strong>Max-Q ≈ 300 W</strong>) · L4 ≈ 72 W · L40S ≈ 350 W · H200 NVL ≈ 600 W · <strong>DGX Spark only 240 W</strong> · <strong>8× B200 server ~15 kW</strong>. Jetson modules are in the tens of watts, very low.</li>
+  <li><strong>For office environments with power/heat constraints</strong>, Max-Q editions, low-TDP cards (PRO 2000/4000, L4), and DGX Spark offer a clear advantage.</li>
+  <li><strong>Cooling:</strong> Workstation cards come with their own fans; data center cards (L40S, H100/H200 NVL) are <strong>passive</strong> and work only in a server/chassis with proper airflow — they cannot be installed in a desktop chassis. For multi-GPU and 24/7 production, server-class cooling is mandatory.</li>
+  <li><strong>TCO — purchase price ≠ total cost.</strong> The GPU purchase price is only <strong>30–40%</strong> of the total cost of ownership; the remaining <strong>60–70%</strong> is electricity, cooling, networking, maintenance, data center, and personnel. In large clusters, cooling costs can approach electricity costs; for multi-node, InfiniBand switch + cabling costs must also be factored in. A properly scaled, low-power solution (e.g. DGX Spark) often offers a lower TCO.</li>
+</ul><hr />
+<h2 id="5-model-selection">
+  
+  
+    <a href="#5-model-selection" class="anchor-heading" aria-labelledby="5-model-selection"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5. Model Selection
+  
+  
+</h2>
+    
+
+<p><img src="/papers/local-llm-guide/images/sema-5-model-selection.png" alt="Model selection by task" width="720" /></p>
+<p><sub><i>Figure: Model selection by task</i></sub></p>
+
+<blockquote>
+  <p>Size–cost balance: for most local workloads, <strong>7–14B dense</strong> or <strong>~30B MoE (~3B active)</strong> models are the optimal balance; the most demanding tasks require 70B+ / large MoE.</p>
+</blockquote>
+<h3 id="51-what-can-you-do-with-a-local-llm-inference-use-cases">
+  
+  
+    <a href="#51-what-can-you-do-with-a-local-llm-inference-use-cases" class="anchor-heading" aria-labelledby="51-what-can-you-do-with-a-local-llm-inference-use-cases"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.1. What can you do with a local LLM? (inference use cases)
+  
+  
+</h3>
+    
+
+<p>Before selecting a model, <strong>“what task will I do?”</strong> must be clear — the task determines both the model and the hardware. For most organizations, the starting point is <strong>inference, not training</strong> (see 4.2) and <strong>RAG is only one of these.</strong> It is practical to group the use cases into two:</p>
+
+<p><strong>Interactive (low latency matters — TPS/TTFT decisive):</strong></p>
+<ul>
+  <li><strong>Chat / assistant</strong> — general Q&amp;A, enterprise/personal assistant</li>
+  <li><strong>RAG / document Q&amp;A</strong> — with your own documents (only one of these)</li>
+  <li><strong>Code assistance</strong> — IDE assistant, code generation/explanation/review, test generation</li>
+  <li><strong>Agent &amp; automation (agentic)</strong> — tool calling, email triage, calendar, multi-step workflows</li>
+  <li><strong>Translation</strong> — translating classified documents locally without exposing them</li>
+</ul>
+
+<p><strong>Batch / non-interactive (batch — latency irrelevant; small/cheap hardware suffices, see 4.7):</strong></p>
+<ul>
+  <li><strong>Summarization</strong> — meetings, contracts, long reports, email piles</li>
+  <li><strong>Information extraction</strong> — invoice/contract/form → structured JSON, NER</li>
+  <li><strong>Classification / routing</strong> — request triage, sentiment analysis, content moderation, PII detection</li>
+  <li><strong>Semantic search / recommendation / clustering</strong> — with embedding models</li>
+  <li><strong>Synthetic / labeled data generation</strong> — data preparation for fine-tuning</li>
+  <li><strong>Multimodal</strong> — OCR’d document analysis, visual Q&amp;A, audio transcription + LLM</li>
+  <li><strong>Guardrail / auditing</strong> — auditing another model’s output, PII masking</li>
+</ul>
+
+<blockquote>
+  <p><strong>Practical takeaway:</strong> Because batch jobs are latency-insensitive, they reduce hardware requirements — the same organization can run <strong>archive summarization on a small card</strong> and <strong>live chat on a large card</strong>. Your task profile jointly determines the hardware class in §4 and the model choice below.</p>
+</blockquote>
+<h3 id="52-model-selection-criteria">
+  
+  
+    <a href="#52-model-selection-criteria" class="anchor-heading" aria-labelledby="52-model-selection-criteria"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.2. Model selection criteria
+  
+  
+</h3>
+    
+
+<p>The right model is not “the one with the highest benchmark score” but <strong>the one best suited to your task + hardware + constraints.</strong> Weigh the criteria below by your task priorities:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Criterion</th>
+      <th>Question to ask</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Task fit</strong></td>
+      <td>Chat, code, reasoning, or extraction?</td>
+    </tr>
+    <tr>
+      <td><strong>Size / VRAM budget</strong></td>
+      <td>Does it fit the hardware? In MoE, <strong>total</strong> parameters determine memory (all experts are loaded into VRAM); <strong>active</strong> parameters determine only <strong>speed</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Context length</strong></td>
+      <td>How many tokens needed? (Determines KV cache load — see 4.3)</td>
+    </tr>
+    <tr>
+      <td><strong>Turkish / language performance</strong></td>
+      <td>Not the general score, but <strong>Turkish</strong> benchmarks (see 5.6)</td>
+    </tr>
+    <tr>
+      <td><strong>License</strong></td>
+      <td>Is commercial use allowed? (see 5.7)</td>
+    </tr>
+    <tr>
+      <td><strong>Architecture</strong></td>
+      <td>Dense vs MoE — speed/memory trade-off</td>
+    </tr>
+    <tr>
+      <td><strong>Quantizability</strong></td>
+      <td>Is Q4/AWQ quality loss acceptable? Are GGUF/AWQ available?</td>
+    </tr>
+    <tr>
+      <td><strong>Tool-calling / JSON reliability</strong></td>
+      <td>Critical for agents &amp; structured output (small models struggle)</td>
+    </tr>
+    <tr>
+      <td><strong>Multimodality</strong></td>
+      <td>Are vision/audio needed?</td>
+    </tr>
+    <tr>
+      <td><strong>Fine-tunability</strong></td>
+      <td>Is the base model + ecosystem (Unsloth/Axolotl) available?</td>
+    </tr>
+    <tr>
+      <td><strong>Ecosystem / maintenance</strong></td>
+      <td>Are ready quants, variants, and active development available?</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p>Criteria are <strong>weighted by task:</strong> in a code assistant, tool-calling + SWE-bench stand out; in government/legal document processing, Turkish performance + license + citation accuracy are decisive. Validate the choice with your own usage, not a single “leader model” (see 5.9).</p>
+</blockquote>
+<h3 id="53-current-open-weight-model-families-mid-2026">
+  
+  
+    <a href="#53-current-open-weight-model-families-mid-2026" class="anchor-heading" aria-labelledby="53-current-open-weight-model-families-mid-2026"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.3. Current open-weight model families (mid-2026)
+  
+  
+</h3>
+    
+
+<blockquote>
+  <p><strong>Note:</strong> In 2026, momentum has clearly shifted to Chinese open-weight labs (Qwen, DeepSeek, GLM, Kimi, MiniMax). Most new models use the <strong>MoE (Mixture-of-Experts)</strong> architecture: total parameters are large, but only a small “active” portion runs at each step → large-model quality at small-model operating cost.</p>
+</blockquote>
+
+<ul>
+  <li><strong>Qwen (Alibaba)</strong> — the most active family. Qwen3-235B-A22B (235B total / 22B active, <strong>Apache 2.0</strong>). In February 2026, the <strong>Qwen3.5</strong> series (flagship Qwen3.5-397B-A17B, ~1M context; plus 0.8B–27B dense and 35B-A3B / 122B-A10B MoE variants). The newer <strong>Qwen3.6-35B-A3B</strong> rivals the older 397B in coding. 100–200+ languages.</li>
+  <li><strong>DeepSeek</strong> — In April 2026, <strong>DeepSeek V4</strong> (MIT): V4-Pro (1.6T / 49B active, 1M context) and V4-Flash (284B / 13B active). The older <strong>R1</strong> reasoning model and distilled versions (1.5B–70B) remain very common.</li>
+  <li><strong>Llama (Meta)</strong> — the <strong>Llama 4</strong> family: Scout (109B/17B active, 10M context), Maverick (~400B/17B active, 1M context). The largest “Behemoth” appears to have been practically shelved (not officially confirmed). License is restrictive (see 5.7).</li>
+  <li><strong>Google Gemma</strong> — <strong>Gemma 4</strong>: E2B (phone), E4B (edge), 12B, 26B-A4B (MoE), 31B dense. 140+ languages, multimodal (text+image) from 4B onward.</li>
+  <li><strong>Mistral</strong> — Mistral Large 3 (675B/41B active, multimodal) and Mistral Small 4 (Apache 2.0). The 24B <strong>Magistral</strong> reasoning model.</li>
+  <li><strong>Microsoft Phi</strong> — Phi-4 family (~14B reasoning models, MIT). Strong in reasoning per parameter, ideal for local.</li>
+  <li><strong>2026 risers:</strong> <strong>GLM-5.1 (Zhipu/Z.ai)</strong> (~744B/40B active, MIT, strong agent/coding), <strong>Kimi K2.6 (Moonshot)</strong> (~1T/32B active, multimodal, among the best open models in coding), <strong>MiniMax M3</strong> (June 2026; frontier coding + 1M context + multimodality together), <strong>MiMo V2.5 Pro (Xiaomi)</strong> (at the top of open-weight intelligence). NVIDIA’s open model <strong>Nemotron 3</strong> and <strong>Gemma 4</strong> are the strongest non-Chinese open options; OpenAI’s open-weight <strong>gpt-oss</strong> series also runs locally.</li>
+</ul>
+<h3 id="54-parameter-size--performance-balance">
+  
+  
+    <a href="#54-parameter-size--performance-balance" class="anchor-heading" aria-labelledby="54-parameter-size--performance-balance"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.4. Parameter size ↔ performance balance
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>Small (1–4B):</strong> In 2026, genuinely useful — autocomplete, summarization, smart replies, simple Q&amp;A, light code help. Runs on phones and 6 GB VRAM.</li>
+  <li><strong>7–14B dense or ~30B MoE (~3B active):</strong> The <strong>optimal balance</strong> for most local workloads — chat, RAG, code assistance, agent tasks. MoEs like Qwen3.6-35B-A3B and Gemma 4 26B-A4B deliver near-large-model quality at small-model cost.</li>
+  <li><strong>70B+ / large MoE:</strong> For the hardest reasoning, complex multi-step agent-coding, very long context, and the highest benchmark scores. Requires multi-GPU / serious VRAM.</li>
+</ul>
+<h3 id="55-quantization">
+  
+  
+    <a href="#55-quantization" class="anchor-heading" aria-labelledby="55-quantization"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.5. Quantization
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>Formats:</strong> <strong>GGUF</strong> (llama.cpp/Ollama/LM Studio; CPU+GPU; most common locally), <strong>GPTQ</strong> (GPU), <strong>AWQ</strong> (activation-aware, slightly better than GPTQ at 4-bit).</li>
+  <li><strong>Quality/bit:</strong> FP16 = full quality · 8-bit ≈ near-lossless · <strong>Q4_K_M</strong> ≈ ~92–95% of quality · AWQ 4-bit ≈ ~95%. At 4-bit, the loss is ~1–2% for most tasks.</li>
+  <li><strong>2026 developments:</strong> <strong>imatrix</strong> (importance-matrix) quants improve quality at the same bit; <strong>Unsloth Dynamic 2.0</strong> sets bits per layer; hardware-native <strong>MXFP4</strong> for Blackwell; <strong>FP8</strong> is common in server setups.</li>
+</ul>
+<h3 id="56-selection-by-task-including-turkish">
+  
+  
+    <a href="#56-selection-by-task-including-turkish" class="anchor-heading" aria-labelledby="56-selection-by-task-including-turkish"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.6. Selection by task (including Turkish)
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>General chat:</strong> Qwen3/3.5 (multilingual, Apache 2.0), Gemma 4 (multimodal, edge-friendly).</li>
+  <li><strong>Coding/agent:</strong> Kimi K2.6, GLM-5.1, DeepSeek V4-Pro, MiniMax M3, Qwen3.6 (Qwen-Coder).</li>
+  <li><strong>Top-tier general intelligence (including reasoning):</strong> In 2026, reasoning is not a separate category. The <strong>Artificial Analysis Intelligence Index</strong> (v4.0; combines agent + coding + scientific reasoning + general capability, <a href="https://artificialanalysis.ai">https://artificialanalysis.ai</a>) shows that the same models lead in intelligence, coding, and reasoning at the open-weight top. Current open-weight leaders: <strong>Kimi K2.6</strong>, <strong>DeepSeek V4-Pro</strong>, <strong>GLM-5.1</strong> (all three statistically tied), followed by <strong>MiMo V2.5 Pro (Xiaomi)</strong> and <strong>Qwen3.6</strong>. The strongest non-Chinese open models: <strong>Google Gemma 4</strong> and <strong>NVIDIA Nemotron 3</strong>. (Note: Qwen3.7 <strong>Max/Plus are closed</strong> API models, not open-weight.) For compact/local reasoning, <strong>Phi-4</strong> and <strong>Magistral 24B</strong> are strong per parameter.</li>
+  <li><strong>Turkish / multilingual:</strong> The best general multilingual open models are <strong>Qwen3/3.5</strong> (200+ languages) and <strong>Gemma 3/4</strong> (140+ languages). On <strong>TurkBench</strong>, Qwen3-235B-Inst scored 73.4 and Gemma-3-12B-TR 71.4 (large models consistently lead). <strong>Turkish-specific models:</strong> ytu-ce-cosmos <strong>Turkish-Llama-8b</strong> (YTÜ, Llama-3-based), <strong>Trendyol-LLM v4.1.0</strong> (Qwen2.5-7B + 13B on Turkish tokens), <strong>CosmosGPT</strong> (355M–774M, Turkish-only), <strong>MODA</strong> (Qwen2.5-7B continued pre-training, 2026). Turkish benchmarks: <strong>TurkishMMLU, Cetvel, TurkBench</strong>.</li>
+  <li><strong>Embedding &amp; reranking models for RAG:</strong> RAG quality depends on the <strong>embedding model</strong> as much as on the LLM — if the wrong chunk is retrieved, even the best model cannot answer correctly. Strong open options for multilingual/Turkish: <strong>BGE-M3</strong>, <strong>multilingual-e5</strong>, <strong>Jina embeddings v3</strong>, <strong>Nomic Embed</strong>; for reranking, the <strong>bge-reranker</strong> class. Embeddings also run locally (e.g. <strong>TEI</strong>); for Turkish-heavy work, choose multilingual/Turkish versions and validate on your own documents (see 5.9).</li>
+</ul>
+<h3 id="57-license-commercial-use">
+  
+  
+    <a href="#57-license-commercial-use" class="anchor-heading" aria-labelledby="57-license-commercial-use"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.7. License (commercial use)
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>Fully free (Apache 2.0 / MIT):</strong> Qwen3/3.5 (Apache 2.0), DeepSeek V4 &amp; R1 (MIT), GLM-5.1 (MIT), Mistral open layers (Apache 2.0), Phi-4 (MIT). Kimi K2.6 “Modified MIT” (check the brand/attribution clause at very large scale).</li>
+  <li><strong>Restrictive:</strong> <strong>Llama 4 Community License</strong> — commercial use is free only for organizations under 700M monthly active users; EU-based users are excluded from multimodal/vision capabilities. <strong>Gemma</strong> is under Google’s own terms (permissive but not pure Apache).</li>
+  <li><strong>Safest foundations for commercial distribution:</strong> Qwen (Apache 2.0) and DeepSeek/GLM (MIT). Turkish derivative models inherit the base model’s license — Trendyol v4.x → Qwen2.5, ytu-cosmos → Llama; check each model card separately.</li>
+</ul>
+<h3 id="58-where-do-you-compare-models-in-2026">
+  
+  
+    <a href="#58-where-do-you-compare-models-in-2026" class="anchor-heading" aria-labelledby="58-where-do-you-compare-models-in-2026"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.8. Where do you compare models in 2026?
+  
+  
+</h3>
+    
+
+<ul>
+  <li>The original <strong>Hugging Face Open LLM Leaderboard was archived</strong> (2025). It has been replaced by aggregator/arena sites.</li>
+  <li><strong>LMArena</strong> (formerly Chatbot Arena/LMSys) — Elo from blind A/B votes; the best signal for real-world preference.</li>
+  <li><strong>llm-stats.com</strong> — 300+ models; composite score (GPQA, SWE-Bench Verified, coding-arena, price).</li>
+  <li><strong>Artificial Analysis — Intelligence Index</strong> (v4.0) — a composite score combining agent + coding + scientific reasoning + general capability; ranks open-weight and closed models side by side. It is the <strong>most practical single-glance</strong> source for open model selection. <a href="https://artificialanalysis.ai">https://artificialanalysis.ai</a></li>
+  <li><strong>Key benchmarks:</strong> for agent-coding, <strong>SWE-Bench Pro &amp; Verified / Terminal-Bench</strong>; for reasoning/science, <strong>GPQA Diamond / Humanity’s Last Exam</strong>; older academic benchmarks (MMLU-Pro, AIME, MATH-500) have largely saturated and are now less discriminating; for Turkish, <strong>TurkishMMLU / Cetvel / TurkBench</strong>.</li>
+</ul>
+<h3 id="59-build-your-own-evaluation-benchmark-set">
+  
+  
+    <a href="#59-build-your-own-evaluation-benchmark-set" class="anchor-heading" aria-labelledby="59-build-your-own-evaluation-benchmark-set"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.9. Build your own evaluation (benchmark) set
+  
+  
+</h3>
+    
+
+<p>The general leaderboards in §5.8 are a good starting signal but <strong>do not reflect your reality:</strong> your language, your domain, your documents, and your chosen quantization yield different results; moreover, popular benchmarks carry a risk of <strong>data contamination</strong> (the model having seen the test questions during training). The most reliable decision is a small, organization-specific evaluation set.</p>
+
+<ul>
+  <li><strong>Data:</strong> Collect <strong>50–200 representative examples</strong> from real usage (input + ideal output or acceptance criteria).</li>
+  <li><strong>Method (by task):</strong>
+    <ul>
+      <li>Information extraction / classification → automatic scoring (exact-match / regex)</li>
+      <li>Open-ended / chat → <strong>LLM-as-judge</strong> (with a larger model, rubric) + human side-by-side</li>
+      <li>RAG → retrieval <strong>recall@k</strong> + citation/faithfulness accuracy</li>
+    </ul>
+  </li>
+  <li><strong>Measure not only quality:</strong> on your own hardware, <strong>TPS/TTFT</strong>, concurrent capacity, <strong>PII leakage / unnecessary refusal rate</strong>.</li>
+  <li><strong>Process:</strong> compare candidates on the same set → <strong>also test quantization levels</strong> (Q4 vs Q8 quality loss) → re-run the same set as a <strong>regression test</strong> on model/version updates.</li>
+  <li><strong>Tools:</strong> lm-evaluation-harness, promptfoo, RAGAS / DeepEval for RAG, Langfuse for monitoring.</li>
+</ul>
+
+<blockquote>
+  <p><strong>PoC loop:</strong> start small → measure on your own set → scale hardware and model as needs clarify. The “right model” decision is made with this loop, not with a marketing score.</p>
+</blockquote><hr />
+<h2 id="6-software-selection">
+  
+  
+    <a href="#6-software-selection" class="anchor-heading" aria-labelledby="6-software-selection"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6. Software Selection
+  
+  
+</h2>
+    
+
+<p>It is healthiest to think of the software layer in seven categories: <strong>(A) inference engines</strong> (the backend that actually runs the model), <strong>(B) all-in-one desktop applications</strong>, <strong>(C) next-generation self-hosted AI workspaces</strong>, <strong>(D) classic web UIs and RAG solutions</strong>, <strong>(E) API gateways / routing</strong> (the layer in front of multi-model, multi-user setups), <strong>(F) fine-tune &amp; training tools</strong>, and <strong>(G) coding assistants &amp; agents</strong>.</p>
+
+<p><img src="/papers/local-llm-guide/images/sema-6-software-layers.png" alt="Software layers: UI → (gateway) → engine → hardware, with fine-tune on the side" width="620" /></p>
+<p><sub><i>Figure: Software layers: UI → engine → hardware</i></sub></p>
+
+<blockquote>
+  <p><strong>Common ground — OpenAI-compatible API:</strong> llama.cpp (llama-server), Ollama, vLLM, SGLang, and LM Studio all offer an <strong>OpenAI-compatible endpoint</strong>. So the same client code (just changing <code class="language-plaintext highlighter-rouge">base_url</code> to localhost) works with all of them — a critical convenience for integration.</p>
+</blockquote>
+<h3 id="6a-inference-engines-backend">
+  
+  
+    <a href="#6a-inference-engines-backend" class="anchor-heading" aria-labelledby="6a-inference-engines-backend"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.A. Inference engines (backend)
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>llama.cpp</strong> — The foundation of the ecosystem. C/C++; native format <strong>GGUF</strong> (1.5-bit → 8-bit). 15+ backends including CUDA; <code class="language-plaintext highlighter-rouge">llama-server</code> provides an OpenAI-compatible HTTP server. The widest hardware compatibility, runs on the most modest hardware. Many tools such as LM Studio, Ollama, and Jan build on it (GGUF) as their inference engine. <em>(License: MIT · ~117k★ · <a href="https://github.com/ggml-org/llama.cpp">ggml-org/llama.cpp</a>)</em></li>
+  <li><strong>Ollama</strong> — The easiest start (<code class="language-plaintext highlighter-rouge">ollama run &lt;model&gt;</code>), with its own model library. <strong>2026 change:</strong> Since July 2025 there is an <strong>official desktop app for macOS/Windows</strong> (chat GUI, file/image input); Linux remains CLI. 2026 releases added an agent/integration layer, faster GGUF loading, concurrent multi-session, and model publishing to the cloud. Both native REST and OpenAI-compatible API. Dozens of frontends (Open WebUI, AnythingLLM…) are built on top. <em>(License: MIT · ~174k★ · <a href="https://github.com/ollama/ollama">ollama/ollama</a>)</em></li>
+  <li><strong>vLLM</strong> — High-throughput <strong>serving</strong> engine. <strong>PagedAttention</strong> pages the KV cache (memory waste &lt;4%). ~24× throughput vs. naive HF, and 2–4× over Ollama at high concurrency. OpenAI-compatible server. For production / multi-user / high-concurrency GPU serving; not for desktop. (Nearly weekly releases; v0.22.1, June 2026.) <em>(License: Apache-2.0 · ~83k★ · <a href="https://github.com/vllm-project/vllm">vllm-project/vllm</a>)</em></li>
+  <li><strong>SGLang</strong> — A counterpart to vLLM. <strong>RadixAttention</strong> stores common prefixes (system prompt, multi-turn history) only once. Reported in production on 400,000+ GPUs at xAI/NVIDIA and others; in some tests ~29% higher throughput than vLLM on H100. Strong for agent / multi-turn / common-prompt scenarios. <em>(License: Apache-2.0 · ~29k★ · <a href="https://github.com/sgl-project/sglang">sgl-project/sglang</a>)</em></li>
+  <li><strong>TensorRT-LLM (NVIDIA)</strong> — NVIDIA’s own open-source, highest-performance inference engine, <strong>for NVIDIA GPUs only</strong>. It compiles the model into a <strong>TensorRT engine</strong> for a specific model+GPU+precision (fused kernels, optimized attention, aggressive quantization). Supports <strong>FP8, FP4, INT4-AWQ, INT8-SmoothQuant</strong>; includes in-flight batching, paged KV cache, speculative decoding. In published benchmarks it is typically ~15–30% ahead of vLLM in peak throughput/latency on H100-class cards. <strong>Cost:</strong> the compile step (engine build) and operational overhead are higher than vLLM, and adaptation to new models is slower. <strong>When:</strong> for production services that have fixed on NVIDIA hardware and want the last drop of performance. Overkill for single-user desktop; there, Ollama/llama.cpp, and for practical multi-user serving, vLLM/SGLang make more sense. <em>(License: Apache-2.0 · ~14k★ · <a href="https://github.com/NVIDIA/TensorRT-LLM">NVIDIA/TensorRT-LLM</a>)</em></li>
+</ul>
+<h3 id="6b-all-in-one-desktop-applications">
+  
+  
+    <a href="#6b-all-in-one-desktop-applications" class="anchor-heading" aria-labelledby="6b-all-in-one-desktop-applications"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.B. All-in-one desktop applications
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>LM Studio</strong> — Polished (closed-source) desktop app: HF model browser, one-click download, chat GUI, and a local OpenAI-compatible server. Win/macOS/Linux. In 2026 it added continuous batching, MTP speculative decoding; <code class="language-plaintext highlighter-rouge">lms</code> CLI and a headless <strong><code class="language-plaintext highlighter-rouge">llmster</code></strong> for server/CI. The best path for those who want both GUI and developer tool. <em>(License: closed source · <a href="https://lmstudio.ai">lmstudio.ai</a>)</em></li>
+  <li><strong>Jan</strong> — Open-source, ChatGPT-style, 100% offline-capable. Built-in model hub, cloud connectors, <strong>MCP support</strong>, OpenAI-compatible API at <code class="language-plaintext highlighter-rouge">localhost:1337</code>. Win/macOS/Linux. The main open-source alternative to LM Studio. (v0.7.9, March 2026.) <em>(License: Apache-2.0 · ~43k★ · <a href="https://github.com/janhq/jan">janhq/jan</a>)</em></li>
+  <li><strong>Llamafile (Mozilla)</strong> — Packages the model + llama.cpp in a <strong>single double-clickable file</strong>, opening a chat in the browser. For absolute simplicity/portability. <em>(License: Apache-2.0 · ~25k★ · <a href="https://github.com/Mozilla-Ocho/llamafile">Mozilla-Ocho/llamafile</a>)</em></li>
+</ul>
+<h3 id="6c-next-generation-self-hosted-ai-workspaces">
+  
+  
+    <a href="#6c-next-generation-self-hosted-ai-workspaces" class="anchor-heading" aria-labelledby="6c-next-generation-self-hosted-ai-workspaces"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.C. Next-generation self-hosted AI workspaces
+  
+  
+</h3>
+    
+
+<blockquote>
+  <p>This category is the real innovation of 2026. The difference is not “which chat UI is nicer”; it is whether <strong>agent + persistent memory + MCP + personal data integration (email/calendar/notes)</strong> come out of the box. The shift from “chat UI” → “AI workspace” is real — but classic UIs have not stood still either (see the honest assessment in 6.D).</p>
+</blockquote>
+
+<ul>
+  <li><strong>Odysseus</strong> (<a href="https://github.com/pewdiepie-archdaemon/odysseus">github.com/pewdiepie-archdaemon/odysseus</a>) — The clearest example of this paradigm. <strong>Agent mode</strong> (shell, file operations, skill execution), <strong>MCP</strong> support, <strong>Cookbook</strong> (scans your hardware and suggests VRAM-aware models and downloads them — directly closes the “what can my hardware run?” gap), <strong>Deep Research</strong>, <strong>persistent memory &amp; skills with ChromaDB</strong>, <strong>email triage</strong> (IMAP/SMTP), <strong>CalDAV calendar</strong>, notes/tasks, model comparison. Backend: vLLM, llama.cpp, Ollama (+ OpenRouter/OpenAI/Copilot). Docker compose or native Python. <em>(License: AGPL-3.0 · ~71k★ · <a href="https://github.com/pewdiepie-archdaemon/odysseus">pewdiepie-archdaemon/odysseus</a>)</em>, active. <em>(Security note: due to broad shell/tool access, the project recommends protecting the deployment like an admin console — authentication enabled, not directly exposed to the internet, reverse proxy + HTTPS.)</em></li>
+  <li><strong>Khoj</strong> — An “AI second brain.” Semantic search + chat over personal documents (PDF, Markdown, Notion, Word, org-mode); <strong>custom agents, scheduled automations, deep research</strong>. An unusually broad access surface: browser, <strong>Obsidian, Emacs</strong>, desktop, mobile, WhatsApp. Self-host (Docker) / cloud / enterprise. Very active. <em>(License: AGPL-3.0 · ~35k★ · <a href="https://github.com/khoj-ai/khoj">khoj-ai/khoj</a>)</em></li>
+  <li><strong>Hermes (Nous Research)</strong> — <strong>Hermes Agent</strong>, a self-improving autonomous agent: <strong>automatic skill creation</strong> after complex tasks, persistent memory, 40+ tools, <strong>MCP</strong>, cron scheduler, parallel sub-agents, multi-platform messaging (Telegram/Discord/Slack/WhatsApp/Signal). <strong>Hermes WebUI</strong> is a lightweight three-panel frontend. A fast-growing new project. <em>(License: MIT · ~194k★ · <a href="https://github.com/NousResearch/hermes-agent">NousResearch/hermes-agent</a>)</em> <strong>Important:</strong> model-endpoint-agnostic (not local-first); for local LLM, point it at an Ollama/vLLM custom endpoint.</li>
+</ul>
+<h3 id="6d-classic-web-uis-and-rag-solutions">
+  
+  
+    <a href="#6d-classic-web-uis-and-rag-solutions" class="anchor-heading" aria-labelledby="6d-classic-web-uis-and-rag-solutions"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.D. Classic web UIs and RAG solutions
+  
+  
+</h3>
+    
+
+<p><strong>Classic / general web UIs:</strong></p>
+<ul>
+  <li><strong>Open WebUI</strong> — The honest answer to “is it left behind?”: <strong>partly, but not as much as you think.</strong> The most popular self-hosted chat UI (~141k★, very active). It has <strong>added</strong> modern capabilities: MCP support (+registry), native Python tool calling, Pipelines plugin framework, local RAG across 9 vector DBs, web search across 15+ providers. <strong>The fair criticism:</strong> it is still fundamentally a <strong>chat frontend + RAG + plugins</strong>; it does not have a <em>workspace</em> identity with email triage, calendar, notes, a hardware-aware model cookbook, or a self-improving skill/memory loop. So it is not stagnant — just on the “general UI” track, not the “AI workspace” track. <em>(License: Open WebUI License — BSD-3 + brand condition · ~142k★ · <a href="https://github.com/open-webui/open-webui">open-webui/open-webui</a>)</em></li>
+  <li><strong>LibreChat</strong> — Multi-provider, no-code custom agents/assistants, MCP, secure sandboxed code interpreter, web search, code artifacts. The most permissive license among the large UIs; very active. <em>(License: MIT · ~39k★ · <a href="https://github.com/danny-avila/LibreChat">danny-avila/LibreChat</a>)</em></li>
+  <li><strong>LobeChat / LobeHub</strong> — Has explicitly <strong>repositioned toward the agent paradigm</strong>: Agent Builder, Agent Groups, scheduling for automated runs, editable “Personal Memory,” 10,000+ tool/MCP plugins. Proof that the “chat → workspace” shift is real even among the classics. <em>(License: LobeHub Community License · ~79k★ · <a href="https://github.com/lobehub/lobe-chat">lobehub/lobe-chat</a>)</em></li>
+  <li><strong>Cherry Studio</strong> — Desktop client (Electron; Win/macOS/Linux). Unified LLM access + local; <strong>MCP tool use, agents, 300+ ready assistants</strong>, pre-connected file-system/GitHub/web-search/memory MCP servers. Supports the Ollama local API. For the single-user desktop / bring-your-own-key crowd. <em>(License: AGPL-3.0 · ~35k★ · <a href="https://github.com/CherryHQ/cherry-studio">CherryHQ/cherry-studio</a>)</em></li>
+</ul>
+
+<p><strong>RAG-focused solutions (Q&amp;A over your own documents):</strong></p>
+<ul>
+  <li><strong>AnythingLLM</strong> — A custom ChatGPT over your documents; strong agent features: no-code <strong>agent builder</strong>, web browsing, <strong>cron-scheduled agent tasks</strong>, MCP. RAG with source citations; LanceDB + PGVector/Pinecone/Weaviate/Qdrant; multi-user. Local backends: Ollama, LM Studio, llama.cpp, LocalAI. Docker or desktop. Sits between RAG and workspace. <em>(License: MIT · ~62k★ · <a href="https://github.com/Mintplex-Labs/anything-llm">Mintplex-Labs/anything-llm</a>)</em></li>
+  <li><strong>OpenRAG-Local (CordatusAI)</strong> — ⭐ <strong>Cordatus’s open-source contribution</strong> (<a href="https://github.com/CordatusAI/openrag-local">github.com/CordatusAI/openrag-local</a>). We forked Langflow’s OpenRAG project (<code class="language-plaintext highlighter-rouge">langflow-ai/openrag</code>) and adapted it to run <strong>fully locally</strong>, releasing it as open source: <strong>it requires no cloud API keys</strong>, inference runs on your own GPU with <strong>sglang/vLLM</strong> (OpenAI-compatible), and embeddings are produced locally with <strong>TEI</strong>. You upload your documents and query them from a chat interface. Stack: <strong>Langflow</strong> (flow engine) + <strong>OpenSearch</strong> (vector store) + <strong>Docling</strong> (OCR’d document parsing) + <strong>SearXNG</strong> (local web search). It includes <strong>agentic RAG</strong>, re-ranking, and multi-agent orchestration; it deploys with a single <strong>Docker Compose</strong> command and supports multi-GPU device assignment. Its example configuration uses <strong>GLM-5.1-FP8</strong> as the LLM — so it is fully compatible with the hardware (RTX PRO / DGX) and model (Apache/MIT) choices in this guide, letting you set up a completely local document-Q&amp;A solution for free. <em>(License: Apache-2.0 · <a href="https://github.com/CordatusAI/openrag-local">CordatusAI/openrag-local</a> — fork of <code class="language-plaintext highlighter-rouge">langflow-ai/openrag</code>, young project.)</em></li>
+  <li><strong>RAGFlow</strong> — A leading open RAG engine combining deep document understanding + agent capabilities. Strong on messy real-world documents (PDF/scans/slides/Excel); explainable chunking, traceable/grounded citations (anti-hallucination), agent workflows + code execution + MCP. Docker Compose (4+ cores, 16 GB RAM). The most-starred dedicated RAG engine; for serious/production document Q&amp;A. <em>(License: Apache-2.0 · ~82k★ · <a href="https://github.com/infiniflow/ragflow">infiniflow/ragflow</a>)</em></li>
+</ul>
+<h3 id="6e-api-gateways--routing-gateway--router">
+  
+  
+    <a href="#6e-api-gateways--routing-gateway--router" class="anchor-heading" aria-labelledby="6e-api-gateways--routing-gateway--router"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.E. API gateways / routing (gateway &amp; router)
+  
+  
+</h3>
+    
+
+<blockquote>
+  <p>This layer is the §6 intro’s <strong>“all OpenAI-compatible, single <code class="language-plaintext highlighter-rouge">base_url</code>“</strong> idea scaled to the enterprise: it puts multiple models/servers/providers behind a single OpenAI-compatible endpoint.</p>
+</blockquote>
+
+<p><strong>When is it needed?</strong> For single-user + single-model, <strong>it is not needed</strong> — the engine’s own endpoint suffices. But it comes into play for <strong>multiple teams, multiple models, more than one GPU server, local+cloud mix, or usage/quota billing</strong> (see Scenario C and G).</p>
+
+<p><strong>Architectural position:</strong> <code class="language-plaintext highlighter-rouge">Applications / IDE → [Gateway] → vLLM · TensorRT-LLM · Ollama · llama.cpp endpoints</code></p>
+
+<p><strong>What it provides:</strong> virtual API keys (per-team isolation), <strong>budget + rate limiting</strong> (quotas), <strong>routing + load balancing + fallback</strong> (“cheap task → small model, hard task → large model”), cost/usage tracking, observability (Langfuse, etc.), caching, and guardrails.</p>
+
+<blockquote>
+  <p><strong>Important requirement note:</strong> A gateway <strong>does no compute, it only proxies</strong> → <strong>it needs no GPU, CPU suffices, low resources.</strong> Typical setup: Docker + <strong>Postgres</strong> for state (keys/budget) + optional <strong>Redis</strong> (cache/rate-limit). So it is much lighter than the engine layer; it is not “another GPU box.”</p>
+</blockquote>
+
+<ul>
+  <li><strong>LiteLLM</strong> — The most common choice. Both a Python SDK and <strong>LiteLLM Proxy</strong> (gateway server): virtual keys, budget/limits, routing/fallback, cost tracking, Langfuse logging, Redis cache. For local, it connects directly to vLLM/Ollama endpoints. <em>(License: MIT — <code class="language-plaintext highlighter-rouge">enterprise/</code> directory under a separate commercial license · ~50k★ · <a href="https://github.com/BerriAI/litellm">BerriAI/litellm</a>)</em></li>
+  <li><strong>Portkey AI Gateway</strong> — Fast, open-source edge gateway; routing/fallback/cache/observability, self-hostable. <em>(License: MIT · ~12k★ · <a href="https://github.com/Portkey-AI/gateway">Portkey-AI/gateway</a>)</em></li>
+  <li><strong>Kong AI Gateway</strong> — For organizations already using Kong; not a separate project but <strong>a capability within Kong Gateway</strong> (multi-LLM routing). <em>(License: Apache-2.0 · ~44k★ · <a href="https://github.com/Kong/kong">Kong/kong</a>)</em></li>
+  <li><strong>Envoy AI Gateway</strong> — Built on Envoy Gateway; a vendor-neutral access layer for K8s environments. <em>(License: Apache-2.0 · ~2k★ · <a href="https://github.com/envoyproxy/ai-gateway">envoyproxy/ai-gateway</a>)</em></li>
+  <li><strong>NVIDIA side (per the report):</strong> <strong>NIM</strong> microservices — containerized, OpenAI-compatible, optimized inference services <em>(License: closed/proprietary; for production, NVIDIA AI Enterprise · <a href="https://docs.nvidia.com/nim/">docs.nvidia.com/nim</a>)</em>; for scaled serving without setting up a separate gateway, <strong>vLLM production-stack</strong> with its own router <em>(License: Apache-2.0 · ~2k★ · <a href="https://github.com/vllm-project/production-stack">vllm-project/production-stack</a>)</em>. For multi-GPU/multi-node model management (a “cluster manager” adjacent to the gateway), <strong>GPUStack</strong> <em>(License: Apache-2.0 · ~5k★ · <a href="https://github.com/gpustack/gpustack">gpustack/gpustack</a>)</em>.</li>
+</ul>
+<h3 id="6f-fine-tune--training-tools-open-source">
+  
+  
+    <a href="#6f-fine-tune--training-tools-open-source" class="anchor-heading" aria-labelledby="6f-fine-tune--training-tools-open-source"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.F. Fine-tune &amp; training tools (open source)
+  
+  
+</h3>
+    
+
+<blockquote>
+  <p>These tools put the four tiers in §4.2 (pre-training · full fine-tune · LoRA · QLoRA) into practice. Most organizations start with <strong>LoRA/QLoRA</strong> — possible even on a single-GPU workstation; full fine-tuning and from-scratch training require multi-GPU/multi-node. All run on NVIDIA CUDA. For hardware mapping, see 4.2 and Scenario F.</p>
+</blockquote>
+
+<p><strong>Easy entry — LoRA/QLoRA fine-tune (single / few GPUs):</strong></p>
+<ul>
+  <li><strong>Unsloth</strong> — The fastest and lowest-VRAM LoRA/QLoRA; adapts large models on a single GPU. With <strong>Unsloth Studio</strong>, data → training → evaluation → export (LoRA/GGUF) is done in a <strong>no-code, local web UI</strong> in a single flow. <em>(License: Apache-2.0 / AGPL-3.0 dual — the AGPL clause requires enterprise legal review · ~67k★ · <a href="https://github.com/unslothai/unsloth">unslothai/unsloth</a>)</em></li>
+  <li><strong>LLaMA-Factory</strong> — No-code <strong>WebUI/CLI</strong>; fine-tunes the widest range of 100+ LLMs and VLMs. The most practical entry for teams. <em>(License: Apache-2.0 · ~72k★ · <a href="https://github.com/hiyouga/LLaMA-Factory">hiyouga/LLaMA-Factory</a>)</em></li>
+  <li><strong>Axolotl</strong> — <strong>YAML-config</strong>-driven, version-controlled, reproducible fine-tune pipelines; scales from single-GPU to multi-GPU. <em>(License: Apache-2.0 · ~12k★ · <a href="https://github.com/axolotl-ai-cloud/axolotl">axolotl-ai-cloud/axolotl</a>)</em></li>
+</ul>
+
+<p><strong>Alignment / building blocks:</strong></p>
+<ul>
+  <li><strong>Hugging Face TRL</strong> — Component library for alignment / post-training (SFT, DPO, GRPO/RLHF). <em>(License: Apache-2.0 · ~19k★ · <a href="https://github.com/huggingface/trl">huggingface/trl</a>)</em></li>
+  <li><strong>Hugging Face PEFT</strong> — The foundation of the LoRA/adapter engine; not standalone, it works as a dependency under tools like TRL/Axolotl. <em>(License: Apache-2.0 · ~21k★ · <a href="https://github.com/huggingface/peft">huggingface/peft</a>)</em></li>
+</ul>
+
+<p><strong>Serious / large-scale &amp; distributed training (multi-GPU / DGX class):</strong></p>
+<ul>
+  <li><strong>NVIDIA NeMo</strong> — NVIDIA-native end-to-end training framework; for DGX-class multi-GPU/multi-node. <em>(License: Apache-2.0 · ~17k★ · <a href="https://github.com/NVIDIA-NeMo/NeMo">NVIDIA-NeMo/NeMo</a>)</em></li>
+  <li><strong>Megatron-LM</strong> — NVIDIA GPU-optimized library for large-scale from-scratch pretraining. <em>(License: Apache-2.0 · ~17k★ · <a href="https://github.com/NVIDIA/Megatron-LM">NVIDIA/Megatron-LM</a>)</em></li>
+  <li><strong>DeepSpeed</strong> — Distributed training backend (ZeRO, CPU/NVMe offload); makes it possible to train models whose VRAM a single card cannot provide. <em>(License: Apache-2.0 · ~43k★ · <a href="https://github.com/deepspeedai/DeepSpeed">deepspeedai/DeepSpeed</a>)</em></li>
+</ul>
+
+<blockquote>
+  <p><strong>Choice:</strong> For fast adaptation on a single workstation, <strong>Unsloth</strong> or <strong>LLaMA-Factory</strong>; for version-controlled pipelines, <strong>Axolotl</strong>; for alignment, <strong>TRL</strong>; for DGX-class distributed training/pretraining, <strong>NeMo + Megatron + DeepSpeed</strong>. Always test the fine-tuned model on your own evaluation set (see 5.9).</p>
+</blockquote>
+<h3 id="6g-coding-assistants--agents-open-source">
+  
+  
+    <a href="#6g-coding-assistants--agents-open-source" class="anchor-heading" aria-labelledby="6g-coding-assistants--agents-open-source"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.G. Coding assistants &amp; agents (open source)
+  
+  
+</h3>
+    
+
+<blockquote>
+  <p>All the tools below connect to a <strong>local LLM via an OpenAI-compatible / Ollama endpoint</strong> — so code assistants/agents are used without your code or repository leaving the machine, and without connecting to a closed cloud. Critical for enterprise and air-gapped environments. For code tasks, choose a model with <strong>tool-calling capability</strong> (see 5.2); Qwen-Coder / DeepSeek-Coder-class models match well.</p>
+</blockquote>
+
+<p><strong>Terminal agents:</strong></p>
+<ul>
+  <li><strong>OpenCode</strong> — Terminal-native, the most popular open coding agent; 75+ providers + local endpoint support. <em>(License: MIT · ~175k★ · <a href="https://github.com/sst/opencode">sst/opencode</a>)</em></li>
+  <li><strong>Aider</strong> — Git-aware terminal “pair programming”; mature and established. <em>(License: Apache-2.0 · ~46k★ · <a href="https://github.com/Aider-AI/aider">Aider-AI/aider</a>)</em></li>
+</ul>
+
+<p><strong>In-IDE (VS Code / JetBrains):</strong></p>
+<ul>
+  <li><strong>Cline</strong> — VS Code/JetBrains autonomous coding agent; open Ollama/LM Studio/OpenAI-compatible support. <em>(License: Apache-2.0 · ~63k★ · <a href="https://github.com/cline/cline">cline/cline</a>)</em></li>
+  <li><strong>Continue</strong> — IDE assistant: chat + <strong>autocomplete</strong> + agent mode, fully configurable for local models. <em>(License: Apache-2.0 · ~34k★ · <a href="https://github.com/continuedev/continue">continuedev/continue</a>)</em></li>
+</ul>
+
+<p><strong>Broad software agent:</strong></p>
+<ul>
+  <li><strong>OpenHands</strong> — Sandboxed, end-to-end software-engineering agent (formerly OpenDevin); connects to local vLLM/Ollama. <em>(License: MIT · ~77k★ · <a href="https://github.com/All-Hands-AI/OpenHands">All-Hands-AI/OpenHands</a>)</em></li>
+</ul>
+
+<p><strong>Self-hosted autocomplete (air-gapped-friendly):</strong></p>
+<ul>
+  <li><strong>Tabby</strong> — Fully self-hostable Copilot alternative (FIM completion + chat); ideal for on-prem / air-gapped environments. <em>(License: Apache-2.0 core + <code class="language-plaintext highlighter-rouge">ee/</code> separate commercial license · ~34k★ · <a href="https://github.com/TabbyML/tabby">TabbyML/tabby</a>)</em></li>
+</ul>
+
+<blockquote>
+  <p><strong>Note:</strong> <strong>Roo Code</strong> and <strong>Void</strong> were archived in 2026 (no longer actively maintained); <strong>Cline / Kilo Code</strong> and <strong>Cline / Continue</strong> are recommended as replacements, respectively. For a broader “agent on your own machine,” <strong>Goose</strong> (Apache-2.0, ~49k★) is also an option; however, because it relies on tool-calling, weak local models fall back to chat mode.</p>
+</blockquote><hr />
+<h2 id="7-example-deployment-scenarios">
+  
+  
+    <a href="#7-example-deployment-scenarios" class="anchor-heading" aria-labelledby="7-example-deployment-scenarios"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7. Example Deployment Scenarios
+  
+  
+</h2>
+    
+
+<p><img src="/papers/local-llm-guide/images/sema-7-scenario.png" alt="Scenario → hardware mapping" width="420" /></p>
+<p><sub><i>Figure: Scenario → hardware mapping</i></sub></p>
+
+<p><strong>Scenario A — Individual / privacy-focused user (entry workstation).</strong>
+<strong>RTX PRO 2000 (16 GB)</strong> or <strong>RTX PRO 4000 (24 GB)</strong> → <strong>Ollama</strong> or <strong>LM Studio</strong> → an 8B–14B model (e.g. Qwen3 8B / Gemma 4 12B, Q4_K_M). Optionally <strong>Jan</strong> as the UI. Low power, silent, fully offline. For those who do not want to deal with setup, Aetherix’s <strong>pre-installed and tested ready workstations</strong> are ready to use (<a href="https://aetherix.com/product-category/graphics-cards/">aetherix.com/product-category/graphics-cards</a>, see 4.5/B).</p>
+
+<p><strong>Scenario B — Developer (code assistant + integration).</strong>
+<strong>RTX PRO 4500 (32 GB)</strong> or <strong>RTX PRO 5000 (48 GB)</strong> → <strong>Ollama/LM Studio</strong> for personal use, <strong>vLLM</strong> or <strong>TensorRT-LLM</strong> for many requests/serving → a code model (Qwen3.6 / DeepSeek-Coder class). Thanks to the OpenAI-compatible endpoint, it connects directly to IDEs and your own tools; open-source tools such as <strong>OpenCode / Aider / Cline / Continue</strong> connect to the local model as a code assistant/agent (see 6.G). You can start without losing a day with an <strong>Ubuntu + NVIDIA stack pre-installed ready workstation</strong> (<a href="https://aetherix.com/product-category/graphics-cards/">aetherix.com/product-category/graphics-cards</a>, see 4.5/B).</p>
+
+<p><strong>Scenario C — SME / organization (document-based, multi-user).</strong>
+Server + <strong>RTX PRO 6000 (96 GB)</strong> or, for the data center, <strong>L40S / H100 NVL / H200 NVL</strong> → backend <strong>vLLM</strong> or <strong>TensorRT-LLM</strong>, on top of which <strong>OpenRAG-Local (CordatusAI) / AnythingLLM / RAGFlow</strong> as needed (RAG over company documents, multi-user, source citations). With an Apache/MIT-licensed model (Qwen/DeepSeek/GLM), it is commercially safe.</p>
+
+<p><strong>Scenario D — Edge / robotics / in the field.</strong>
+<strong>Jetson Orin Nano (8 GB)</strong> for small models, <strong>Jetson AGX Orin (64 GB)</strong> or <strong>AGX Thor (128 GB)</strong> for large models at the edge → llama.cpp/Ollama → on-device inference without internet. For embedded products, robots, and field applications.</p>
+
+<p><strong>Scenario E — Personal “AI workspace” (agent + memory + personal data).</strong>
+A powerful single machine → <strong>Odysseus</strong> or <strong>Khoj</strong> → email triage, calendar, notes, deep research, and persistent memory under one roof; backend as local Ollama/vLLM/llama.cpp. For those who want to go beyond “just chat.”</p>
+
+<p><strong>Scenario F — Model customization (fine-tune).</strong>
+To adapt a model to your own data: 7B–13B LoRA/QLoRA → <strong>1× RTX PRO 6000 (96 GB)</strong> or <strong>1× H200</strong>; 70B LoRA → <strong>2–4× H200</strong>, 70B QLoRA → <strong>1× DGX Spark (128 GB)</strong>. Fine-tuning 70B on a single DGX Spark (QLoRA) is possible on the desktop; as the team grows, it scales with 2–3× ring. On the software side, <strong>Unsloth / LLaMA-Factory / Axolotl</strong> (LoRA/QLoRA) are used, and at large scale <strong>NeMo / DeepSpeed</strong> (see 6.F); validate the result on your own evaluation set (see 5.9).</p>
+
+<p><strong>Scenario F2 — Deep domain adaptation (full fine-tune).</strong>
+For deep domain adaptation where LoRA is insufficient (e.g., Turkish continued pre-training, medical/legal specialist models): 70B full fine-tune → <strong>4–8× H200</strong> (with ZeRO-3), ~1 TB VRAM. A low learning rate + mixing domain data with general data is essential to mitigate catastrophic forgetting (see 4.2). Software: <strong>NeMo / Megatron-LM / DeepSpeed</strong> (see 6.F).</p>
+
+<p><strong>Scenario G — Large-scale production / from-scratch training.</strong>
+High-traffic (500+ concurrent) inference or pre-training (from scratch) → <strong>8× B200 / B300 (HGX/DGX team)</strong>, at enterprise scale <strong>DGX B300 “AI Factory.”</strong> InfiniBand networking, server-class cooling, and TCO planning are mandatory (see 4.9). At ministry/agency scale, deployed on-prem so that data stays entirely within the institution.</p><hr />
+<h2 id="8-risks-and-points-to-consider">
+  
+  
+    <a href="#8-risks-and-points-to-consider" class="anchor-heading" aria-labelledby="8-risks-and-points-to-consider"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8. Risks and Points to Consider
+  
+  
+</h2>
+    
+
+<ul>
+  <li><strong>Model source reliability.</strong> Download models from reputable sources (official Hugging Face cards); not from random repositories.</li>
+  <li><strong>Local network access control.</strong> Workspaces with agent/tool access (such as Odysseus, Hermes) may have shell and file access — protect them like an admin console: authentication enabled, do not expose directly to the internet, use a reverse proxy + HTTPS.</li>
+  <li><strong>Hallucination and accuracy.</strong> Local models can also make things up; in critical use, source grounding with RAG (cited answers) and human review are essential.</li>
+  <li><strong>License compliance.</strong> For commercial use, always verify the model license (especially for the Llama family and derivative Turkish models).</li>
+  <li><strong>Updates and sustainability.</strong> Both models and tools age quickly; plan regular updates and a maintenance owner.</li>
+</ul>
+<h3 id="common-mistakes-in-hardware-sizing">
+  
+  
+    <a href="#common-mistakes-in-hardware-sizing" class="anchor-heading" aria-labelledby="common-mistakes-in-hardware-sizing"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Common mistakes in hardware sizing
+  
+  
+</h3>
+    
+
+<ul>
+  <li>✗ <strong>Small GPU, high expectation:</strong> trying to run a 70B model on a single L40S.</li>
+  <li>✗ <strong>Miscalculating total VRAM:</strong> ignoring the sum of weights + KV cache + activations + overhead.</li>
+  <li>✗ <strong>Treating B200/B300 as single cards:</strong> these are sold as a minimum 8-GPU team; plan the budget accordingly.</li>
+  <li>✗ <strong>Network bottleneck:</strong> overlooking InfiniBand/Ethernet bandwidth in multi-node.</li>
+  <li>✗ <strong>Cooling neglect:</strong> an 8× B200 server is ~15 kW+; check the cooling capacity.</li>
+  <li>✗ <strong>Not computing TCO:</strong> looking only at GPU price and ignoring electricity/cooling/maintenance.</li>
+  <li>✗ <strong>Ignoring quantization quality:</strong> using INT4/INT8 without testing the impact on model accuracy.</li>
+  <li>✗ <strong>Neglecting disk/storage speed:</strong> NVMe SSD is mandatory for model loading and checkpoints; HDD is too slow.</li>
+  <li>✗ <strong>PCIe bottleneck:</strong> not accounting for GPU–CPU bandwidth in multi-GPU.</li>
+  <li>✗ <strong>No scaling plan:</strong> not considering future growth in the initial purchase.</li>
+  <li>✗ <strong>Software stack incompatibility:</strong> CUDA/driver/framework version mismatch.</li>
+  <li>✗ <strong>No redundancy plan:</strong> service disruption on GPU failure.</li>
+</ul>
+<h3 id="hardware-sizing-process">
+  
+  
+    <a href="#hardware-sizing-process" class="anchor-heading" aria-labelledby="hardware-sizing-process"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Hardware sizing process
+  
+  
+</h3>
+    
+
+<p><img src="/papers/local-llm-guide/images/sema-8-process.png" alt="Hardware sizing process" width="820" /></p>
+<p><sub><i>Figure: Hardware sizing process</i></sub></p>
+<h3 id="hardware-sizing-checklist">
+  
+  
+    <a href="#hardware-sizing-checklist" class="anchor-heading" aria-labelledby="hardware-sizing-checklist"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Hardware sizing checklist
+  
+  
+</h3>
+    
+
+<ul>
+  <li>☐ Is the use case clear? (Training / Fine-tune / Inference)</li>
+  <li>☐ Are the target model size and family determined?</li>
+  <li>☐ Have candidate models been tested on your own evaluation set? (quality + TPS/TTFT + quantization loss — see 5.9)</li>
+  <li>☐ Is the number of concurrent users estimated?</li>
+  <li>☐ Are quality-of-service targets set? (TTFT, TPS)</li>
+  <li>☐ Is the VRAM requirement computed? (Weights + KV cache + overhead)</li>
+  <li>☐ Has a GPU comparison been done? (VRAM, FLOPS, bandwidth, sales unit)</li>
+  <li>☐ Is the 8-GPU team budget adequate for B200/B300?</li>
+  <li>☐ Is the technical specification prepared?</li>
+  <li>☐ Has a TCO analysis been done? (Hardware + electricity + cooling + maintenance)</li>
+  <li>☐ Has the infrastructure (power, cooling, network) been checked?</li>
+  <li>☐ Are approval and budget planning complete?</li>
+</ul><hr />
+<h2 id="9-conclusion-and-recommendations">
+  
+  
+    <a href="#9-conclusion-and-recommendations" class="anchor-heading" aria-labelledby="9-conclusion-and-recommendations"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 9. Conclusion and Recommendations
+  
+  
+</h2>
+    
+
+<p><strong>Decision matrix (summary):</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Your situation</th>
+      <th>Recommendation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Data sovereignty / government / sensitive data</td>
+      <td>Local LLM almost mandatory; Apache/MIT model + on-prem server</td>
+    </tr>
+    <tr>
+      <td>Intensive and continuous use</td>
+      <td>Local setup has the lowest long-term marginal cost</td>
+    </tr>
+    <tr>
+      <td>Occasional / light use</td>
+      <td>An entry-level card or existing workstation suffices</td>
+    </tr>
+    <tr>
+      <td>Entry workstation (low power)</td>
+      <td>RTX PRO 2000 (16 GB) / PRO 4000 (24 GB) + Ollama + 8–14B Q4 model</td>
+    </tr>
+    <tr>
+      <td>70B+ required</td>
+      <td>RTX PRO 6000 (96 GB) / DGX Spark (128 GB) — RTX PRO 5000 (48 GB) only at the limit with Q4 + short context</td>
+    </tr>
+    <tr>
+      <td>Edge / robotics / field</td>
+      <td>Jetson Orin Nano (8 GB) → AGX Orin (64 GB) → AGX Thor (128 GB)</td>
+    </tr>
+    <tr>
+      <td>Multi-user production service</td>
+      <td>L40S / H100 NVL (94 GB) / H200 NVL (141 GB) + vLLM/TensorRT-LLM</td>
+    </tr>
+    <tr>
+      <td>Just chat</td>
+      <td>Ollama/LM Studio + (optionally) Open WebUI</td>
+    </tr>
+    <tr>
+      <td>Agent + personal data + memory</td>
+      <td>An AI workspace of the Odysseus / Khoj / Hermes class</td>
+    </tr>
+    <tr>
+      <td>Document-based Q&amp;A</td>
+      <td>OpenRAG-Local (CordatusAI) / AnythingLLM / RAGFlow</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Future outlook.</strong> Three trends are clear: (1) thanks to MoE architecture, small “active-parameter” models are rapidly approaching large-model quality — so increasingly better results at the same compute cost (although memory requirements still depend on total parameters); (2) open-weight leadership has shifted to Chinese labs (Qwen, DeepSeek, GLM, Kimi), and commercial use has been made easier with Apache/MIT licenses; (3) the software layer has expanded from “chat UI” to “AI workspace” (agent + memory + personal data + hardware-aware model selection). With tools like Odysseus’s Cookbook, even “model selection” itself has begun to automate.</p>
+
+<p><strong>Closing recommendation.</strong> Start small: try an 8–14B model with an entry card like RTX PRO 2000/4000, or with Ollama/LM Studio on your existing machine; scale the hardware and software layer as needs clarify. Proceed with permissively licensed (Apache/MIT) models so there are no surprises when transitioning to commercial use. To evaluate together which hardware fits your needs, you can contact the Aetherix team.</p><hr />
+<h2 id="glossary-terms">
+  
+  
+    <a href="#glossary-terms" class="anchor-heading" aria-labelledby="glossary-terms"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Glossary (Terms)
+  
+  
+</h2>
+    
+
+<ul>
+  <li><strong>LLM (Large Language Model):</strong> A model trained on very large text data that understands and generates natural language.</li>
+  <li><strong>Inference:</strong> Running a trained model only to produce responses.</li>
+  <li><strong>Fine-tuning:</strong> Adapting a pre-trained model to your own data. <strong>Full fine-tuning</strong> updates all model parameters (high VRAM, catastrophic forgetting risk — see 4.2); <strong>LoRA/QLoRA</strong> train only small adapter layers (low VRAM, base model preserved).</li>
+  <li><strong>LoRA / QLoRA:</strong> Efficient fine-tuning methods that train small additional layers rather than the whole model; QLoRA further reduces memory by quantizing.</li>
+  <li><strong>VRAM:</strong> Graphics card memory; the single hard constraint in local LLM.</li>
+  <li><strong>Token:</strong> The unit of text the model processes (roughly a piece of a word).</li>
+  <li><strong>Context:</strong> The token window the model considers at one time.</li>
+  <li><strong>KV cache:</strong> Holding the attention keys/values of generated tokens in memory; grows linearly with context length and concurrent requests.</li>
+  <li><strong>Quantization:</strong> Storing weights with fewer bits to reduce memory (FP16 → Q8 → Q4).</li>
+  <li><strong>GGUF:</strong> The most common local quantization file format for llama.cpp/Ollama.</li>
+  <li><strong>Q4_K_M:</strong> 4-bit quantization; retains ~92–95% of quality while reducing memory ~4×.</li>
+  <li><strong>FP16 / FP8 / INT4, MXFP4 / NVFP4:</strong> Numeric precision formats; as bits drop, memory/compute decrease. Blackwell supports hardware-native FP4.</li>
+  <li><strong>MoE (Mixture-of-Experts):</strong> Total parameters are large, but only a small “active” portion runs at each step.</li>
+  <li><strong>Active parameters:</strong> The number of parameters actually used per token in MoE; speed and cost track this.</li>
+  <li><strong>Dense model:</strong> The classic architecture where all parameters are used at every step.</li>
+  <li><strong>GQA (Grouped-Query Attention):</strong> An attention method that reduces KV cache and thus memory consumption.</li>
+  <li><strong>Prefill (prompt processing):</strong> The first stage of inference; all input tokens are processed in parallel, compute-bound.</li>
+  <li><strong>Decode / autoregressive generation:</strong> The stage where the response is generated token by token, sequentially; cannot be parallelized within a single request, memory-bound; stops at the EOS token or the maximum token limit.</li>
+  <li><strong>Speculative decoding:</strong> The large model verifies in a single pass the tokens proposed by a small draft model/head; speeds up decode 2–3× (e.g. EAGLE-3, MTP).</li>
+  <li><strong>Disaggregated prefill:</strong> Running the prefill and decode stages in separate GPU pools; each stage scales according to its own bottleneck.</li>
+  <li><strong>TTFT (Time to First Token):</strong> First-token latency; compute-bound (FLOPS-dependent).</li>
+  <li><strong>TPS (Tokens per second):</strong> Generation rate; memory-bound (memory-bandwidth-dependent).</li>
+  <li><strong>Throughput:</strong> Total requests/tokens processed per unit time; increases as batch grows.</li>
+  <li><strong>Batch:</strong> The group of requests processed at once; throughput↑ but latency↑.</li>
+  <li><strong>Memory bandwidth:</strong> The read speed of GPU memory (GB/s); determines TPS.</li>
+  <li><strong>FLOPS / TOPS:</strong> Compute capacity per second; affects training and TTFT.</li>
+  <li><strong>TDP:</strong> The card’s reference power consumption (Watts).</li>
+  <li><strong>Tensor / pipeline parallelism:</strong> Two methods for splitting a model across cards in multi-GPU.</li>
+  <li><strong>RAG (Retrieval-Augmented Generation):</strong> Retrieving relevant chunks from your own documents and having the model generate an answer.</li>
+  <li><strong>Embedding:</strong> A model that converts text into a semantic vector; the foundation of semantic search and RAG.</li>
+  <li><strong>Reranking:</strong> Re-ordering retrieved results by relevance.</li>
+  <li><strong>Vector database:</strong> A store that holds embeddings and performs similarity search.</li>
+  <li><strong>Agent:</strong> An LLM application that calls tools and carries out multi-step tasks.</li>
+  <li><strong>MCP (Model Context Protocol):</strong> An open standard that connects the model to external tools and data sources.</li>
+  <li><strong>Tool-calling / function-calling:</strong> The model’s ability to call defined tools/functions.</li>
+  <li><strong>Guardrail:</strong> A security/filter layer that audits input/output.</li>
+  <li><strong>Gateway / router:</strong> The single OpenAI-compatible access and routing layer in front of multi-model/multi-server setups.</li>
+  <li><strong>TCO (Total Cost of Ownership):</strong> The total of hardware + electricity + cooling + network + maintenance + personnel.</li>
+  <li><strong>Air-gapped (isolated):</strong> A classified network with no internet or external network connection, physically isolated.</li>
+</ul><hr />
+<h2 id="resources">
+  
+  
+    <a href="#resources" class="anchor-heading" aria-labelledby="resources"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Resources
+  
+  
+</h2>
+    
+
+<blockquote>
+  <p>The figures below (TFLOPS, memory bandwidth, power values, and benchmark scores) were compiled as of <strong>June 2026</strong> from the relevant <strong>official datasheets, model cards, and benchmark sites</strong>; for current values, consult the primary sources. Star counts are approximate and variable.</p>
+</blockquote>
+
+<p><strong>Hardware (technical specs, TDP):</strong></p>
+<ul>
+  <li>NVIDIA data center GPUs (B200, B300, H100/H200, L4, L40S) and DGX systems — <a href="https://www.nvidia.com/en-us/data-center/">https://www.nvidia.com/en-us/data-center/</a></li>
+  <li>NVIDIA RTX PRO Blackwell workstation GPUs — <a href="https://www.nvidia.com/en-us/products/workstations/">https://www.nvidia.com/en-us/products/workstations/</a></li>
+  <li>NVIDIA Jetson (Orin, Thor) edge platforms — <a href="https://developer.nvidia.com/embedded-computing">https://developer.nvidia.com/embedded-computing</a></li>
+</ul>
+
+<p><strong>Inference engines &amp; measurement:</strong></p>
+<ul>
+  <li>vLLM <a href="https://docs.vllm.ai">https://docs.vllm.ai</a> · TensorRT-LLM <a href="https://github.com/NVIDIA/TensorRT-LLM">https://github.com/NVIDIA/TensorRT-LLM</a> · SGLang <a href="https://github.com/sgl-project/sglang">https://github.com/sgl-project/sglang</a></li>
+</ul>
+
+<p><strong>Fine-tune &amp; training frameworks:</strong></p>
+<ul>
+  <li>Unsloth <a href="https://github.com/unslothai/unsloth">https://github.com/unslothai/unsloth</a> · LLaMA-Factory <a href="https://github.com/hiyouga/LLaMA-Factory">https://github.com/hiyouga/LLaMA-Factory</a> · Axolotl <a href="https://github.com/axolotl-ai-cloud/axolotl">https://github.com/axolotl-ai-cloud/axolotl</a> · HF TRL <a href="https://github.com/huggingface/trl">https://github.com/huggingface/trl</a> · NVIDIA NeMo <a href="https://github.com/NVIDIA-NeMo/NeMo">https://github.com/NVIDIA-NeMo/NeMo</a> · DeepSpeed <a href="https://github.com/deepspeedai/DeepSpeed">https://github.com/deepspeedai/DeepSpeed</a></li>
+</ul>
+
+<p><strong>Coding assistants &amp; agents:</strong></p>
+<ul>
+  <li>OpenCode <a href="https://github.com/sst/opencode">https://github.com/sst/opencode</a> · Aider <a href="https://github.com/Aider-AI/aider">https://github.com/Aider-AI/aider</a> · Cline <a href="https://github.com/cline/cline">https://github.com/cline/cline</a> · Continue <a href="https://github.com/continuedev/continue">https://github.com/continuedev/continue</a> · OpenHands <a href="https://github.com/All-Hands-AI/OpenHands">https://github.com/All-Hands-AI/OpenHands</a> · Tabby <a href="https://github.com/TabbyML/tabby">https://github.com/TabbyML/tabby</a></li>
+</ul>
+
+<p><strong>Model families &amp; licenses (model cards, Hugging Face):</strong></p>
+<ul>
+  <li>Qwen <a href="https://huggingface.co/Qwen">https://huggingface.co/Qwen</a> · DeepSeek <a href="https://huggingface.co/deepseek-ai">https://huggingface.co/deepseek-ai</a> · Llama <a href="https://huggingface.co/meta-llama">https://huggingface.co/meta-llama</a> · Gemma <a href="https://huggingface.co/google">https://huggingface.co/google</a> · Mistral <a href="https://huggingface.co/mistralai">https://huggingface.co/mistralai</a> · Phi <a href="https://huggingface.co/microsoft">https://huggingface.co/microsoft</a></li>
+</ul>
+
+<p><strong>Comparison &amp; benchmarks:</strong></p>
+<ul>
+  <li>Artificial Analysis <a href="https://artificialanalysis.ai">https://artificialanalysis.ai</a> · LMArena <a href="https://lmarena.ai">https://lmarena.ai</a> · llm-stats.com <a href="https://llm-stats.com">https://llm-stats.com</a> · SWE-bench <a href="https://www.swebench.com">https://www.swebench.com</a></li>
+  <li>GPQA, AIME, MMLU-PRO, MATH-500 — relevant academic publications (arXiv) and Hugging Face datasets</li>
+  <li>Turkish benchmarks: <strong>TurkishMMLU, Cetvel, TurkBench</strong> — relevant datasets/repositories on Hugging Face</li>
+</ul>
+
+<p><strong>Software repositories:</strong> §6 gives the official GitHub/site link for each tool (with license · approximate stars).</p>
+
+<p><strong>Tools:</strong> Cordatus VRAM Calculator — <a href="https://app.cordatus.ai/#/vram-calculator">https://app.cordatus.ai/#/vram-calculator</a></p><hr />
+<h3 id="notes">
+  
+  
+    <a href="#notes" class="anchor-heading" aria-labelledby="notes"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Notes
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>Hardware scope:</strong> The hardware recommendations in this guide are limited to the Aetherix catalog (RTX PRO Blackwell, data center GPUs, DGX, Jetson); consumer GeForce cards are not included. Prices are not listed because they are quote/project-based and variable — for current pricing and availability, please contact us.</li>
+  <li><strong>Currency:</strong> This field changes rapidly; model versions, release numbers, and benchmark results are valid as of June 2026. What endures is the decision logic in the sections, not the names.</li>
+  <li><strong>OpenRAG-Local:</strong> The OpenRAG featured in this guide for document Q&amp;A is the <a href="https://github.com/CordatusAI/openrag-local">CordatusAI/openrag-local</a> contribution, which Cordatus forked from <code class="language-plaintext highlighter-rouge">langflow-ai/openrag</code>, adapted to run fully locally, and released as open source.</li>
+</ul><hr />
+
+<p><img src="/assets/images/aetherix-logo.png" alt="Aetherix" width="220" /></p>
+
+<p><strong>Let’s plan your local LLM infrastructure together.</strong> For the right hardware–model–software match, VRAM sizing, and TCO analysis, contact Aetherix: <a href="mailto:info@aetherix.com">info@aetherix.com</a> · <a href="https://aetherix.com">aetherix.com</a> · VRAM calculator: <a href="https://app.cordatus.ai/#/vram-calculator">Cordatus VRAM Calculator</a></p>
+
+          
+
+          
+        </main>
+        
+
+
+      </div>
+    </div>
+    
+      
+
+<div class="search-overlay"></div>
+
+    
+  </div>
+
+  
+
+  <script>
+    window.JTD_I18N = {
+      search_no_results: "No results found",
+      copy_code: "Copy code to clipboard"
+    };
+  </script>
+
+  
+
+
+<div id="cookie-consent-banner" class="cookie-consent" role="dialog"
+     aria-modal="false" aria-label="Cookie consent"
+     data-consent-state="pending" hidden>
+  <div class="cookie-consent__body">
+    <div class="cookie-consent__text">
+      <span class="cookie-consent__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+          <path d="M21 12a9 9 0 1 1-9-9 4.5 4.5 0 0 0 4.5 4.5A4.5 4.5 0 0 0 21 12zm-9-3.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-1.5 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm6-1.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-3 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0z"/>
+        </svg>
+      </span>
+      <p>We use cookies to analyze site traffic and improve your experience. By clicking 'Accept', you consent to the use of analytics cookies as described in our Privacy Policy.
+        <a href="https://aetherix.com/privacy-policy/" target="_blank" rel="noopener noreferrer"
+           class="cookie-consent__link">Privacy Policy</a>
+      </p>
+    </div>
+    <div class="cookie-consent__actions">
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--reject"
+              data-consent-action="rejected">Reject</button>
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--accept"
+              data-consent-action="accepted">Accept</button>
+    </div>
+  </div>
+</div>
+<script>
+  // Eski karar önbellekte varsa bannerı gösterme
+  (function() {
+    try {
+      var v = localStorage.getItem('cookieConsent');
+      if (v === 'accepted' || v === 'rejected') {
+        document.documentElement.dataset.cookieConsent = v;
+      }
+    } catch (e) {}
+  })();
+</script>
+<script src="/assets/js/cookie-banner.js" defer></script>
+
+</body>
+</html>
+

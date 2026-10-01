@@ -1,0 +1,1604 @@
+
+
+<!DOCTYPE html>
+
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-default.css">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet">
+
+  <style id="jtd-nav-activation">
+  
+
+.site-nav > ul.nav-list:first-child > li > a,
+.site-nav > ul.nav-list:first-child > li > ul > li:not(:nth-child(9)) > a,
+.site-nav > ul.nav-list:first-child > li > ul > li > ul > li > a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:not(:first-child) a,
+.site-nav li.external a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(9) > a {
+  font-weight: 600;
+  text-decoration: none;
+}.site-nav > ul.nav-list:first-child > li:nth-child(3) > button svg,
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(9) > button svg {
+  transform: rotate(-90deg);
+}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list,
+.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list > li.nav-list-item:nth-child(9) > ul.nav-list {
+  display: block;
+}
+  </style>
+
+  
+
+  
+    <script src="/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="icon" href="/nl/favicon.ico" type="image/x-icon">
+
+
+
+  <!-- Begin Jekyll SEO tag v2.9.1 -->
+<title>Schaling van Qwen3.6-27B op een DGX Spark-cluster | Aetherix White Papers</title>
+<meta name="generator" content="Jekyll v4.3.4" />
+<meta property="og:title" content="Schaling van Qwen3.6-27B op een DGX Spark-cluster" />
+<meta property="og:locale" content="nl" />
+<meta name="description" content="Schalingsstudie over meerdere nodes van Qwen3.6-27B-NVFP4 op 1x, 2x en 4x NVIDIA DGX Spark (GB10): tensorparallellisme over 200GbE, capaciteitsplanning op basis van SLO’s en advies voor de keuze tussen TP en replicatie bij deployment." />
+<meta name="twitter:description" property="og:description" content="Schalingsstudie over meerdere nodes van Qwen3.6-27B-NVFP4 op 1x, 2x en 4x NVIDIA DGX Spark (GB10): tensorparallellisme over 200GbE, capaciteitsplanning op basis van SLO’s en advies voor de keuze tussen TP en replicatie bij deployment." />
+<link rel="canonical" href="https://whitepapers.aetherix.com/nl/papers/qwen3.6-27b-dgx-spark-scaling/" />
+<meta property="og:url" content="https://whitepapers.aetherix.com/nl/papers/qwen3.6-27b-dgx-spark-scaling/" />
+<meta property="og:site_name" content="Aetherix White Papers" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-07-06T05:53:32+00:00" />
+<meta property="article:modified_time" content="2026-07-06T05:53:32+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Schaling van Qwen3.6-27B op een DGX Spark-cluster" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2026-07-06T05:53:32+00:00","datePublished":"2026-07-06T05:53:32+00:00","description":"Schalingsstudie over meerdere nodes van Qwen3.6-27B-NVFP4 op 1x, 2x en 4x NVIDIA DGX Spark (GB10): tensorparallellisme over 200GbE, capaciteitsplanning op basis van SLO’s en advies voor de keuze tussen TP en replicatie bij deployment.","headline":"Schaling van Qwen3.6-27B op een DGX Spark-cluster","mainEntityOfPage":{"@type":"WebPage","@id":"https://whitepapers.aetherix.com/nl/papers/qwen3.6-27b-dgx-spark-scaling/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://whitepapers.aetherix.com/assets/images/aetherix-logo.png"}},"url":"https://whitepapers.aetherix.com/nl/papers/qwen3.6-27b-dgx-spark-scaling/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  
+<!-- Google tag (gtag.js) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JWLN33085T"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+
+  // Consent Mode v2 — default DENIED. Banner onayı ile GRANTED olur.
+  // KVKK/GDPR uyumu: ziyaretçi onay vermeden çerez set edilmez.
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    functionality_storage: 'granted',
+    security_storage: 'granted',
+    wait_for_update: 500
+  });
+
+  gtag('js', new Date());
+  gtag('config', 'G-JWLN33085T', {
+    anonymize_ip: true
+  });
+</script>
+
+<link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/papers/qwen3.6-27b-dgx-spark-scaling/">
+<link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/papers/qwen3.6-27b-dgx-spark-scaling/">
+<link rel="alternate" hreflang="x-default" href="https://whitepapers.aetherix.com/papers/qwen3.6-27b-dgx-spark-scaling/">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/images/favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+<script>
+(function () {
+  var open = XMLHttpRequest.prototype.open;
+  var own = "/nl/search-data.json";
+  XMLHttpRequest.prototype.open = function (method, url) {
+    if (typeof url === "string" && /assets\/js\/search-data\.json$/.test(url)) arguments[1] = own;
+    return open.apply(this, arguments);
+  };
+})();
+</script>
+
+
+</head>
+
+<body>
+  <a class="skip-to-main" href="#main-content">Naar de hoofdinhoud</a>
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="svg-link" viewBox="0 0 24 24">
+  <title>Link</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+</symbol>
+
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+  <title>Menu</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+    <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</symbol>
+
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+  <title>Expand</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</symbol>
+
+  <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
+<symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+  <title id="svg-external-link-title">(external link)</title>
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+</symbol>
+
+  
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+  <title>Document</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+</symbol>
+
+    <symbol id="svg-search" viewBox="0 0 24 24">
+  <title>Search</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</symbol>
+
+  
+  
+    <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+<symbol id="svg-copy" viewBox="0 0 16 16">
+  <title>Copy</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+</symbol>
+<symbol id="svg-copied" viewBox="0 0 16 16">
+  <title>Copied</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"/>
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"/>
+  </svg>
+</symbol>
+
+  
+</svg>
+
+  
+    <div class="side-bar">
+  <div class="site-header" role="banner">
+    <a href="/nl/" class="site-title lh-tight">
+  <div class="site-logo" role="img" aria-label="Aetherix White Papers"></div>
+
+</a>
+    <button id="menu-button" class="site-button btn-reset" aria-label="Toggle menu" aria-pressed="false">
+      <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  <nav aria-label="Main" id="site-nav" class="site-nav">
+  
+  
+    <ul class="nav-list"><li class="nav-list-item"><a href="/nl/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/nl/about/" class="nav-list-link">Over ons</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in White Papers category" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+    </button><a href="/nl/papers/" class="nav-list-link">White Papers</a><ul class="nav-list"><li class="nav-list-item"><a href="/nl/papers/local-llm-guide/" class="nav-list-link">Handleiding voor lokaal LLM-gebruik</a></li><li class="nav-list-item"><a href="/nl/papers/conditional-memory-offloading/" class="nav-list-link">Conditional memory en offloading bij LLM-inferentie</a></li><li class="nav-list-item"><a href="/nl/papers/b300-gb300-cluster-architecture/" class="nav-list-link">NVIDIA DGX B300 vs GB300 NVL72: vergelijking van clusterarchitecturen</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-2node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 2 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-3node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 3 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-4node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 4 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-8node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 8 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/qwen3.6-27b-dgx-spark-benchmark/" class="nav-list-link">Qwen3.6-27B DGX Spark-benchmark</a></li><li class="nav-list-item"><a href="/nl/papers/qwen3.6-27b-dgx-spark-scaling/" class="nav-list-link">Schaling van Qwen3.6-27B op een DGX Spark-cluster</a></li><li class="nav-list-item"><a href="/nl/papers/deepseek-v4.1-flash-4spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash-deployment op 4× DGX Spark</a></li><li class="nav-list-item"><a href="/nl/papers/deepseek-v4.1-flash-8spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash-deployment op 8× DGX Spark met TP8</a></li><li class="nav-list-item"><a href="/nl/papers/kimi-k3-dgx-b300-inference-benchmark/" class="nav-list-link">Kimi K3-inferentiebenchmark op DGX-B300</a></li></ul></li><li class="nav-list-item"><a href="/nl/llm-inference-benchmarks/" class="nav-list-link">LLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/nl/cv-inference-benchmarks/" class="nav-list-link">CV Inference Benchmark Explorer</a></li></ul>
+
+  
+</nav>
+
+
+  
+  
+    <div class="lang-switcher">
+  
+    
+    
+      <a class="lang-switcher-item" href="/papers/qwen3.6-27b-dgx-spark-scaling/">EN</a>
+    
+  
+    
+    
+      <span class="lang-switcher-item active">NL</span>
+    
+  
+</div>
+<script src="/assets/js/lang-switch.js"></script>
+
+  
+</div>
+
+  
+  <div class="main" id="top">
+    <div id="main-header" class="main-header">
+  
+    
+
+<div class="search" role="search">
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Zoeken" aria-label="Zoeken" autocomplete="off">
+    <label for="search-input" class="search-label"><svg viewBox="0 0 24 24" class="search-icon"><use xlink:href="#svg-search"></use></svg></label>
+  </div>
+  <div id="search-results" class="search-results"></div>
+</div>
+
+  
+  
+  
+    <nav aria-label="Auxiliary" class="aux-nav">
+  <ul class="aux-nav-list">
+    
+      <li class="aux-nav-list-item">
+        <a href="https://aetherix.com" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          aetherix.com
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://github.com/aetherix-bv" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          GitHub
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+  
+</div>
+
+    <div class="main-content-wrap">
+      <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+  <ol class="breadcrumb-nav-list">
+    <li class="breadcrumb-nav-list-item"><a href="/nl/papers/">White Papers</a></li>
+    <li class="breadcrumb-nav-list-item"><span>Schaling van Qwen3.6-27B op een DGX Spark-cluster</span></li>
+  </ol>
+</nav>
+      <div id="main-content" class="main-content">
+        <main>
+          
+            <p><em>Opgesteld door: <strong>Aetherix B.V.</strong> — Trusted Jetson Hardware Provider for Edge AI</em></p>
+
+<p><em>Testplatform: 1x / 2x / 4x NVIDIA DGX Spark (GB10) · Model: Qwen3.6-27B-NVFP4 · Rapportdatum: juli 2026</em></p><hr />
+<h2 class="no_toc" id="inhoud">
+  
+  
+    <a href="#inhoud" class="anchor-heading" aria-labelledby="inhoud"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Inhoud
+  
+  
+</h2>
+    
+
+<ul id="markdown-toc">
+  <li><a href="#1-inleiding-en-testmethodologie" id="markdown-toc-1-inleiding-en-testmethodologie">1. Inleiding en testmethodologie</a>    <ul>
+      <li><a href="#11-aanleiding" id="markdown-toc-11-aanleiding">1.1 Aanleiding</a></li>
+      <li><a href="#12-testomgeving" id="markdown-toc-12-testomgeving">1.2 Testomgeving</a></li>
+      <li><a href="#13-benchmarktool-en-workload" id="markdown-toc-13-benchmarktool-en-workload">1.3 Benchmarktool en workload</a></li>
+      <li><a href="#14-slo-kader" id="markdown-toc-14-slo-kader">1.4 SLO-kader</a></li>
+      <li><a href="#15-kruisverwijzing-begeleidende-benchmark-en-verschillen-in-runtime" id="markdown-toc-15-kruisverwijzing-begeleidende-benchmark-en-verschillen-in-runtime">1.5 Kruisverwijzing: begeleidende benchmark en verschillen in runtime</a></li>
+    </ul>
+  </li>
+  <li><a href="#2-resultaten" id="markdown-toc-2-resultaten">2. Resultaten</a>    <ul>
+      <li><a href="#21-prestaties-voor-één-gebruiker-gelijktijdigheid--1" id="markdown-toc-21-prestaties-voor-één-gebruiker-gelijktijdigheid--1">2.1 Prestaties voor één gebruiker (gelijktijdigheid = 1)</a></li>
+      <li><a href="#22-volledige-gelijktijdigheidsreeks" id="markdown-toc-22-volledige-gelijktijdigheidsreeks">2.2 Volledige gelijktijdigheidsreeks</a></li>
+      <li><a href="#23-vergelijkingsgrafieken" id="markdown-toc-23-vergelijkingsgrafieken">2.3 Vergelijkingsgrafieken</a></li>
+    </ul>
+  </li>
+  <li><a href="#3-analyse-van-de-schalingsefficiëntie" id="markdown-toc-3-analyse-van-de-schalingsefficiëntie">3. Analyse van de schalingsefficiëntie</a>    <ul>
+      <li><a href="#31-afnemende-meeropbrengst" id="markdown-toc-31-afnemende-meeropbrengst">3.1 Afnemende meeropbrengst</a></li>
+      <li><a href="#32-waar-het-verlies-zit" id="markdown-toc-32-waar-het-verlies-zit">3.2 Waar het verlies zit</a></li>
+    </ul>
+  </li>
+  <li><a href="#4-technische-verdieping-waarom-tensorparallellisme-over-ethernet-werkt-op-gb10" id="markdown-toc-4-technische-verdieping-waarom-tensorparallellisme-over-ethernet-werkt-op-gb10">4. Technische verdieping: waarom tensorparallellisme over Ethernet werkt op GB10</a>    <ul>
+      <li><a href="#41-decode-wordt-begrensd-door-de-geheugenbandbreedte" id="markdown-toc-41-decode-wordt-begrensd-door-de-geheugenbandbreedte">4.1 Decode wordt begrensd door de geheugenbandbreedte</a></li>
+      <li><a href="#42-tps-is-simpelweg-het-spiegelbeeld-van-itl" id="markdown-toc-42-tps-is-simpelweg-het-spiegelbeeld-van-itl">4.2 TPS is simpelweg het spiegelbeeld van ITL</a></li>
+      <li><a href="#43-waarom-dit-hier-werkt-en-niet-op-datacenter-gpus" id="markdown-toc-43-waarom-dit-hier-werkt-en-niet-op-datacenter-gpus">4.3 Waarom dit hier werkt en niet op datacenter-GPU’s</a></li>
+      <li><a href="#44-de-uitzondering-prefill" id="markdown-toc-44-de-uitzondering-prefill">4.4 De uitzondering: prefill</a></li>
+    </ul>
+  </li>
+  <li><a href="#5-capaciteitsplanning-op-basis-van-slos" id="markdown-toc-5-capaciteitsplanning-op-basis-van-slos">5. Capaciteitsplanning op basis van SLO’s</a>    <ul>
+      <li><a href="#51-c_max-de-hoogste-gelijktijdigheid-die-aan-de-slos-voldoet" id="markdown-toc-51-c_max-de-hoogste-gelijktijdigheid-die-aan-de-slos-voldoet">5.1 C_max: de hoogste gelijktijdigheid die aan de SLO’s voldoet</a></li>
+      <li><a href="#52-ondersteunde-gebruikers-de-wet-van-little-t_think--45-s" id="markdown-toc-52-ondersteunde-gebruikers-de-wet-van-little-t_think--45-s">5.2 Ondersteunde gebruikers (de wet van Little, T_think = 45 s)</a></li>
+      <li><a href="#53-gevoeligheid-denktijd" id="markdown-toc-53-gevoeligheid-denktijd">5.3 Gevoeligheid: denktijd</a></li>
+      <li><a href="#54-gevoeligheid-slo-drempels--een-resultaat-op-het-scherp-van-de-snede" id="markdown-toc-54-gevoeligheid-slo-drempels--een-resultaat-op-het-scherp-van-de-snede">5.4 Gevoeligheid: SLO-drempels — een resultaat op het scherp van de snede</a></li>
+    </ul>
+  </li>
+  <li><a href="#6-deploymenttopologieën-tensorparallellisme-versus-replicatie" id="markdown-toc-6-deploymenttopologieën-tensorparallellisme-versus-replicatie">6. Deploymenttopologieën: tensorparallellisme versus replicatie</a></li>
+  <li><a href="#7-nauwkeurigheid-nvfp4-versus-fp8" id="markdown-toc-7-nauwkeurigheid-nvfp4-versus-fp8">7. Nauwkeurigheid: NVFP4 versus FP8</a></li>
+  <li><a href="#8-beperkingen-en-toekomstig-werk" id="markdown-toc-8-beperkingen-en-toekomstig-werk">8. Beperkingen en toekomstig werk</a></li>
+  <li><a href="#9-conclusie" id="markdown-toc-9-conclusie">9. Conclusie</a></li>
+  <li><a href="#bijlage-a-grafieken-per-configuratie" id="markdown-toc-bijlage-a-grafieken-per-configuratie">Bijlage A: grafieken per configuratie</a>    <ul>
+      <li><a href="#a1-tp1--één-dgx-spark" id="markdown-toc-a1-tp1--één-dgx-spark">A.1 TP1 — één DGX Spark</a></li>
+      <li><a href="#a2-tp2--2x-dgx-spark" id="markdown-toc-a2-tp2--2x-dgx-spark">A.2 TP2 — 2x DGX Spark</a></li>
+      <li><a href="#a3-tp4--4x-dgx-spark" id="markdown-toc-a3-tp4--4x-dgx-spark">A.3 TP4 — 4x DGX Spark</a></li>
+    </ul>
+  </li>
+</ul><hr />
+<h2 id="1-inleiding-en-testmethodologie">
+  
+  
+    <a href="#1-inleiding-en-testmethodologie" class="anchor-heading" aria-labelledby="1-inleiding-en-testmethodologie"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1. Inleiding en testmethodologie
+  
+  
+</h2>
+    
+<h3 id="11-aanleiding">
+  
+  
+    <a href="#11-aanleiding" class="anchor-heading" aria-labelledby="11-aanleiding"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1.1 Aanleiding
+  
+  
+</h3>
+    
+
+<p>Onze vorige studie, <a href="/nl/papers/qwen3.6-27b-dgx-spark-benchmark/">Qwen3.6-27B DGX Spark-benchmark</a>, vergeleek kwantisatieformaten (quantization formats: FP8, AWQ, NVFP4) en MTP-configuraties van hetzelfde model op <strong>één</strong> DGX Spark. Dit rapport beantwoordt de voor de hand liggende vervolgvraag:</p>
+
+<blockquote>
+  <p><strong>Wat gebeurt er als u meer DGX Sparks toevoegt?</strong> Wordt een 27B-model sneller wanneer het over 2 of 4 machines wordt verdeeld — en hoeveel? En wanneer is uitschalen met tensorparallellisme de juiste keuze, en wanneer het draaien van onafhankelijke replica’s?</p>
+</blockquote>
+
+<p>We hebben <strong>hetzelfde model, dezelfde workload en dezelfde benchmarktool</strong> gedraaid op drie clusterconfiguraties — één DGX Spark (TP=1), twee DGX Sparks (TP=2) en vier DGX Sparks (TP=4) — en de resultaten vanuit twee invalshoeken beoordeeld: de schaling van de ruwe prestaties, en <strong>capaciteitsplanning op basis van SLO’s</strong> (hoeveel echte gebruikers elke configuratie daadwerkelijk kan bedienen).</p>
+
+<p>Twee eigenschappen maken deze opstelling ongebruikelijk en naar onze mening het documenteren waard:</p>
+
+<ul>
+  <li><strong>De interconnect is Ethernet, geen NVLink.</strong> DGX Sparks zijn met elkaar verbonden via <strong>ConnectX-7 (200 Gb/s RDMA)</strong>. Tensorparallellisme (tensor parallelism) over een Ethernet-fabric wordt normaal gesproken als onpraktisch beschouwd — deze studie kwantificeert wanneer het werkt en waarom.</li>
+  <li><strong>De hardware is bescheiden en realistisch.</strong> De modelkaart (model card) van NVIDIA benchmarkt dit model op datacenterhardware van de GB300-klasse. DGX Spark (GB10) zit aan het andere uiterste: een compacte, kantoorvriendelijke machine. De resultaten hier liggen veel dichter bij wat een on-premises deploymentteam in de praktijk zal zien.</li>
+</ul>
+<h3 id="12-testomgeving">
+  
+  
+    <a href="#12-testomgeving" class="anchor-heading" aria-labelledby="12-testomgeving"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1.2 Testomgeving
+  
+  
+</h3>
+    
+
+<p><strong>Hardware — NVIDIA DGX Spark (GB10 Grace Blackwell Superchip):</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Component</th>
+      <th>Specificatie</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>GPU</td>
+      <td>Blackwell-architectuur (GB10), tot ~1 PFLOP FP4</td>
+    </tr>
+    <tr>
+      <td>Geheugen</td>
+      <td>128 GB unified LPDDR5X</td>
+    </tr>
+    <tr>
+      <td>Geheugenbandbreedte</td>
+      <td>~273 GB/s (unified, CPU+GPU)</td>
+    </tr>
+    <tr>
+      <td>Interconnect tussen nodes</td>
+      <td>NVIDIA ConnectX-7, 200 Gb/s RDMA (QSFP)</td>
+    </tr>
+    <tr>
+      <td>CPU</td>
+      <td>20-core Arm (10x Cortex-X925 + 10x Cortex-A725)</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Belangrijk architectuurfeit:</strong> er is <strong>geen NVLink tussen DGX Sparks</strong>. TP=2 en TP=4 zijn in deze studie <strong>tensorparallellisme over meerdere nodes</strong> — elke all-reduce gaat over het ConnectX-7-netwerk. Dit ene feit verklaart het grootste deel van het schalingsgedrag dat hieronder wordt beschreven.</p>
+</blockquote>
+
+<p><strong>Model:</strong> <a href="https://huggingface.co/nvidia/Qwen3.6-27B-NVFP4"><code class="language-plaintext highlighter-rouge">nvidia/Qwen3.6-27B-NVFP4</code></a> — de NVFP4-kwantisatie (4-bit) van Qwen3.6-27B, gemaakt met NVIDIA TensorRT Model Optimizer. Het model heeft een <strong>dense</strong> hybride attention-architectuur (Gated DeltaNet + Gated Attention, dense FFN — geen mixture-of-experts) en 262K context. De architectuur wordt in detail behandeld in Sectie 1.1 van de <a href="/nl/papers/qwen3.6-27b-dgx-spark-benchmark/">begeleidende paper</a>. Alleen tekstinput en -output zijn getest; de visuele encoder was niet actief.</p>
+
+<p><strong>Runtime:</strong> vLLM met Ray voor orkestratie over meerdere nodes (<code class="language-plaintext highlighter-rouge">ghcr.io/spark-arena/dgx-vllm-eugr-nightly:latest</code>). Identieke serve-flags in alle configuraties, alleen <code class="language-plaintext highlighter-rouge">-tp</code> verschilt:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vllm serve nvidia/Qwen3.6-27B-NVFP4 \
+    --gpu-memory-utilization 0.8 \
+    --enable-prefix-caching \
+    --enable-chunked-prefill \
+    --quantization modelopt \
+    --reasoning-parser qwen3 \
+    --enable-auto-tool-choice \
+    --tool-call-parser qwen3_coder \
+    -tp {1|2|4}
+</code></pre></div></div>
+<h3 id="13-benchmarktool-en-workload">
+  
+  
+    <a href="#13-benchmarktool-en-workload" class="anchor-heading" aria-labelledby="13-benchmarktool-en-workload"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1.3 Benchmarktool en workload
+  
+  
+</h3>
+    
+
+<p>De metingen zijn verricht met <a href="https://github.com/CordatusAI/llm-benchmark">CordatusAI/llm-benchmark</a>, dat het OpenAI-compatibele endpoint <code class="language-plaintext highlighter-rouge">/v1/chat/completions</code> aanstuurt met streaming en <code class="language-plaintext highlighter-rouge">include_usage</code> voor een exacte tokentelling, <code class="language-plaintext highlighter-rouge">reasoning_content</code> ondersteunt en vóór de meting een warm-up uitvoert.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Waarde</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Promptpool</td>
+      <td>100 prompts, per run geschud</td>
+    </tr>
+    <tr>
+      <td>Inputlengte</td>
+      <td>~128 tokens</td>
+    </tr>
+    <tr>
+      <td>Max. output-tokens</td>
+      <td>128</td>
+    </tr>
+    <tr>
+      <td>Rondes per gelijktijdigheidsniveau</td>
+      <td>10 (→ 10 × gelijktijdigheid verzoeken)</td>
+    </tr>
+    <tr>
+      <td>Gelijktijdigheidsniveaus</td>
+      <td>1, 2, 4, 8, 16, 32, 64</td>
+    </tr>
+    <tr>
+      <td>Time-out per verzoek</td>
+      <td>50 s</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Karakter van de workload:</strong> korte input, korte output — een evenwichtig prefill/decode-profiel dat typerend is voor interactieve chatbeurten. Gedrag bij lange context valt buiten de scope (zie Sectie 8).</p>
+<h3 id="14-slo-kader">
+  
+  
+    <a href="#14-slo-kader" class="anchor-heading" aria-labelledby="14-slo-kader"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1.4 SLO-kader
+  
+  
+</h3>
+    
+
+<p>Ruwe getallen in tokens per seconde beantwoorden niet de vraag die een deploymentteam werkelijk heeft: <em>hoeveel gebruikers kan deze configuratie goed bedienen?</em> Daarom toetsen we elke configuratie aan twee service level objectives, die tegelijk worden toegepast:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>SLO</th>
+      <th>Drempel</th>
+      <th>Onderbouwing</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>TTFT</strong> (time to first token)</td>
+      <td>≤ 1000 ms</td>
+      <td>Nielsen/NNGroup: antwoorden binnen ~1 s houden de gedachtestroom van de gebruiker ononderbroken</td>
+    </tr>
+    <tr>
+      <td><strong>TPS</strong> (decodesnelheid per verzoek)</td>
+      <td>≥ 15 tokens/s</td>
+      <td>Boven het plafond van de visuele leessnelheid (~700 wpm; Rayner et al., 2016)</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Het hoogste gelijktijdigheidsniveau (concurrency) dat aan <strong>beide</strong> SLO’s voldoet, is de <strong>C_max</strong> van de configuratie. Gelijktijdige verzoeken worden vervolgens met de wet van Little (Little’s Law) omgerekend naar ondersteunde gebruikers, met een denktijd (de tijd tussen het moment dat een gebruiker een antwoord ontvangt en het versturen van het volgende verzoek):</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>N_users = C_max × (1 + T_think / L_mean)
+</code></pre></div></div>
+
+<p>waarbij <code class="language-plaintext highlighter-rouge">L_mean</code> de gemiddelde end-to-end latentie (latency) van een verzoek op C_max is. We gebruiken <strong>T_think = 45 s</strong> als primaire aanname (standaard bij capaciteitsplanning voor interactieve chat) en geven in Sectie 5.3 een gevoeligheidsanalyse voor 15/30/60 s.</p>
+<h3 id="15-kruisverwijzing-begeleidende-benchmark-en-verschillen-in-runtime">
+  
+  
+    <a href="#15-kruisverwijzing-begeleidende-benchmark-en-verschillen-in-runtime" class="anchor-heading" aria-labelledby="15-kruisverwijzing-begeleidende-benchmark-en-verschillen-in-runtime"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1.5 Kruisverwijzing: begeleidende benchmark en verschillen in runtime
+  
+  
+</h3>
+    
+
+<p>Deze paper is een vervolg op de <a href="/nl/papers/qwen3.6-27b-dgx-spark-benchmark/">Qwen3.6-27B DGX Spark-benchmark</a>, waarin hetzelfde model <code class="language-plaintext highlighter-rouge">nvidia/Qwen3.6-27B-NVFP4</code> op <strong>één</strong> DGX Spark werd geëvalueerd in de kwantisatievarianten FP8, AWQ en NVFP4. De TP1-metingen (één node) in dit rapport en de NVFP4-baseline in de begeleidende paper hebben betrekking op dezelfde hardware, dezelfde workloadvorm (~128 tokens input, 128 tokens output) en dezelfde benchmarktool — maar ze zijn vastgelegd onder <strong>verschillende vLLM-runtimes en serve-flags</strong>. De verschillen worden hier voor de transparantie gedocumenteerd; de twee papers beantwoorden complementaire vragen (de benchmarkpaper: <em>welk kwantisatieformaat</em>; deze paper: <em>hoeveel nodes</em>).</p>
+
+<p><strong>Verschillen in runtime en serve-flags:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Begeleidende benchmark (NVFP4-variant)</th>
+      <th>Deze paper (TP1)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>vLLM-image</td>
+      <td><code class="language-plaintext highlighter-rouge">vllm/vllm-openai:v0.22.0-ubuntu2404</code> (standaard upstream)</td>
+      <td><code class="language-plaintext highlighter-rouge">ghcr.io/spark-arena/dgx-vllm-eugr-nightly:latest</code> (nightly)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--quantization</code></td>
+      <td>niet opgegeven (standaard NVFP4-pad)</td>
+      <td><code class="language-plaintext highlighter-rouge">modelopt</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--enable-auto-tool-choice</code></td>
+      <td>niet ingesteld</td>
+      <td>ingeschakeld</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--tool-call-parser</code></td>
+      <td><code class="language-plaintext highlighter-rouge">qwen3_coder</code></td>
+      <td><code class="language-plaintext highlighter-rouge">qwen3_coder</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--reasoning-parser</code></td>
+      <td><code class="language-plaintext highlighter-rouge">qwen3</code></td>
+      <td><code class="language-plaintext highlighter-rouge">qwen3</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--max-num-batched-tokens</code></td>
+      <td>8192</td>
+      <td>niet opgegeven (vLLM-standaard)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--gpu-memory-utilization</code></td>
+      <td>0.8</td>
+      <td>0.8</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--enable-prefix-caching</code> / <code class="language-plaintext highlighter-rouge">--enable-chunked-prefill</code></td>
+      <td>ingeschakeld</td>
+      <td>ingeschakeld</td>
+    </tr>
+    <tr>
+      <td>Orkestratie over meerdere nodes</td>
+      <td>geen (één node)</td>
+      <td>Ray (<code class="language-plaintext highlighter-rouge">-tp {1\|2\|4}</code>)</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p>De begeleidende benchmarkpaper (Sectie 6.4.4 en Bijlage A.3) documenteert verschillende SM121-specifieke softwaretekortkomingen in de standaardversie van vLLM v0.22.0 — waaronder een bug in CMake die het achtervoegsel <code class="language-plaintext highlighter-rouge">sm_121a</code> verwijdert, een ontbrekende software-fallback voor de E2M1-conversie en niet-geoptimaliseerde CUTLASS-tilegroottes — en voorspelt de versnelling die haalbaar is wanneer die fixes worden toegepast. De nightly image die in dit rapport is gebruikt, kan al dan niet een deel van die fixes bevatten; over de inhoud ervan wordt geen uitspraak gedaan.</p>
+</blockquote>
+
+<p><strong>Vergelijking van de resultaten voor één gebruiker (C=1):</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Metriek</th>
+      <th>Begeleidende benchmark — NVFP4</th>
+      <th>Deze paper — TP1</th>
+      <th>Δ</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TPS (tok/s)</td>
+      <td>9.86</td>
+      <td>12.63</td>
+      <td>+28.1%</td>
+    </tr>
+    <tr>
+      <td>ITL (ms)</td>
+      <td>100.40</td>
+      <td>77.97</td>
+      <td>−22.4%</td>
+    </tr>
+    <tr>
+      <td>TTFT (ms)</td>
+      <td>228.42</td>
+      <td>233.30</td>
+      <td>+2.1%</td>
+    </tr>
+    <tr>
+      <td>Latentie (s)</td>
+      <td>12.98</td>
+      <td>10.14</td>
+      <td>−21.9%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>De metrieken aan de decodekant (TPS, ITL, end-to-end latentie) verschillen aanzienlijk; de metriek aan de prefillkant (TTFT) komt tot op ~5 ms overeen. Deze verschillen worden voor de transparantie vermeld; <strong>TP1 in dit rapport is geen herhaalde meting van de NVFP4-variant uit de benchmarkpaper onder identieke software</strong>, en de conclusies over SLO’s en capaciteit in Sectie 5 zijn afgeleid van de TP1-kolom van dit rapport, niet van de NVFP4-baseline van de begeleidende paper.</p><hr />
+<h2 id="2-resultaten">
+  
+  
+    <a href="#2-resultaten" class="anchor-heading" aria-labelledby="2-resultaten"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2. Resultaten
+  
+  
+</h2>
+    
+<h3 id="21-prestaties-voor-één-gebruiker-gelijktijdigheid--1">
+  
+  
+    <a href="#21-prestaties-voor-één-gebruiker-gelijktijdigheid--1" class="anchor-heading" aria-labelledby="21-prestaties-voor-één-gebruiker-gelijktijdigheid--1"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.1 Prestaties voor één gebruiker (gelijktijdigheid = 1)
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Metriek</th>
+      <th>TP1</th>
+      <th>TP2</th>
+      <th>TP4</th>
+      <th>TP1→TP4</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TPS (tokens/s)</td>
+      <td>12.63</td>
+      <td>22.57</td>
+      <td><strong>33.11</strong></td>
+      <td><strong>2.62x</strong></td>
+    </tr>
+    <tr>
+      <td>ITL (ms)</td>
+      <td>77.97</td>
+      <td>43.48</td>
+      <td><strong>29.14</strong></td>
+      <td>2.67x lager</td>
+    </tr>
+    <tr>
+      <td>TTFT (ms)</td>
+      <td>233.30</td>
+      <td><strong>148.87</strong></td>
+      <td>163.59</td>
+      <td>TP2 het best</td>
+    </tr>
+    <tr>
+      <td>Latentie (s)</td>
+      <td>10.14</td>
+      <td>5.67</td>
+      <td><strong>3.87</strong></td>
+      <td>2.62x lager</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Twee hoofdobservaties:</p>
+
+<ul>
+  <li><strong>Uitschalen werkt.</strong> Eén gebruiker ziet 12.6 tok/s op één Spark en 33.1 tok/s op vier — het model wordt echt 2.6x sneller, ook al loopt het parallellisme over Ethernet.</li>
+  <li><strong>TTFT gaat niet mee.</strong> De time-to-first-token van TP4 is bij lage belasting <em>slechter</em> dan die van TP2 (164 ms versus 149 ms). Prefill is rekengebonden (compute-bound), en bij batch 1 kosten de extra all-reduce-hops meer dan de parallelle rekenkracht oplevert. Sectie 4.4 analyseert dit.</li>
+</ul>
+<h3 id="22-volledige-gelijktijdigheidsreeks">
+  
+  
+    <a href="#22-volledige-gelijktijdigheidsreeks" class="anchor-heading" aria-labelledby="22-volledige-gelijktijdigheidsreeks"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.2 Volledige gelijktijdigheidsreeks
+  
+  
+</h3>
+    
+
+<p>Gemiddelde waarden per configuratie (p50 volgt het gemiddelde op elk punt nauwkeurig; grafieken per configuratie, inclusief p50/p90, staan in Bijlage A).</p>
+
+<p><strong>TP1 — één DGX Spark:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Gelijktijdigheid</th>
+      <th>TTFT (ms)</th>
+      <th>ITL (ms)</th>
+      <th>TPS (tok/s)</th>
+      <th>Latentie (s)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>233.30</td>
+      <td>77.97</td>
+      <td>12.63</td>
+      <td>10.14</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>304.00</td>
+      <td>81.22</td>
+      <td>12.05</td>
+      <td>10.62</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>357.46</td>
+      <td>83.97</td>
+      <td>11.61</td>
+      <td>11.02</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>562.38</td>
+      <td>88.92</td>
+      <td>10.80</td>
+      <td>11.86</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>1143.17</td>
+      <td>102.03</td>
+      <td>9.08</td>
+      <td>14.10</td>
+    </tr>
+    <tr>
+      <td>32</td>
+      <td>2198.77</td>
+      <td>127.52</td>
+      <td>6.96</td>
+      <td>18.40</td>
+    </tr>
+    <tr>
+      <td>64</td>
+      <td>3535.15</td>
+      <td>186.40</td>
+      <td>4.70</td>
+      <td>27.22</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>TP2 — 2x DGX Spark:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Gelijktijdigheid</th>
+      <th>TTFT (ms)</th>
+      <th>ITL (ms)</th>
+      <th>TPS (tok/s)</th>
+      <th>Latentie (s)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>148.87</td>
+      <td>43.48</td>
+      <td>22.57</td>
+      <td>5.67</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>252.45</td>
+      <td>46.05</td>
+      <td>20.98</td>
+      <td>6.10</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>320.11</td>
+      <td>48.14</td>
+      <td>19.89</td>
+      <td>6.44</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>457.03</td>
+      <td>53.48</td>
+      <td>17.65</td>
+      <td>7.25</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>741.35</td>
+      <td>61.52</td>
+      <td>14.96</td>
+      <td>8.56</td>
+    </tr>
+    <tr>
+      <td>32</td>
+      <td>1196.59</td>
+      <td>81.72</td>
+      <td>11.05</td>
+      <td>11.59</td>
+    </tr>
+    <tr>
+      <td>64</td>
+      <td>2137.37</td>
+      <td>131.97</td>
+      <td>6.77</td>
+      <td>18.92</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>TP4 — 4x DGX Spark:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Gelijktijdigheid</th>
+      <th>TTFT (ms)</th>
+      <th>ITL (ms)</th>
+      <th>TPS (tok/s)</th>
+      <th>Latentie (s)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>163.59</td>
+      <td>29.14</td>
+      <td>33.11</td>
+      <td>3.87</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>267.42</td>
+      <td>31.57</td>
+      <td>29.93</td>
+      <td>4.28</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>373.16</td>
+      <td>33.69</td>
+      <td>27.51</td>
+      <td>4.65</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>446.41</td>
+      <td>36.83</td>
+      <td>24.98</td>
+      <td>5.13</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>804.86</td>
+      <td>46.09</td>
+      <td>19.21</td>
+      <td>6.66</td>
+    </tr>
+    <tr>
+      <td>32</td>
+      <td>1005.44</td>
+      <td>60.99</td>
+      <td>14.61</td>
+      <td>8.77</td>
+    </tr>
+    <tr>
+      <td>64</td>
+      <td>1551.45</td>
+      <td>114.76</td>
+      <td>7.93</td>
+      <td>16.14</td>
+    </tr>
+  </tbody>
+</table></div>
+<h3 id="23-vergelijkingsgrafieken">
+  
+  
+    <a href="#23-vergelijkingsgrafieken" class="anchor-heading" aria-labelledby="23-vergelijkingsgrafieken"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.3 Vergelijkingsgrafieken
+  
+  
+</h3>
+    
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-scaling/comparison-charts/tps-vs-concurrency.png" alt="TPS per gebruiker ten opzichte van de gelijktijdigheid voor TP1/TP2/TP4" />
+<sub><i>Figuur 1: decodesnelheid per verzoek. De stippellijn is de leessnelheids-SLO van 15 tok/s — TP1 komt er nooit boven, TP2 houdt die vast tot C=8, TP4 tot C=16 (C=16 komt voor TP2 uit op 14.96, een haar eronder; zie Sectie 5.4).</i></sub></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-scaling/comparison-charts/ttft-vs-concurrency.png" alt="TTFT ten opzichte van de gelijktijdigheid voor TP1/TP2/TP4" />
+<sub><i>Figuur 2: time to first token. TP1 overschrijdt de SLO van 1000 ms al bij C=16 (1143 ms); TP2 en TP4 gaan er bij C=32 overheen (respectievelijk 1196 ms en 1005 ms). Geen enkele afzonderlijke instantie bedient C=64 interactief — replicatie is nodig.</i></sub></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-scaling/comparison-charts/aggregate-throughput-vs-concurrency.png" alt="Totale doorvoer ten opzichte van de gelijktijdigheid voor TP1/TP2/TP4" />
+<sub><i>Figuur 3: totale systeemdoorvoer (throughput; TPS per verzoek × gelijktijdigheid). Terwijl de snelheid per gebruiker met de belasting daalt, stijgt de totale tokenproductie — hetzelfde cluster is een assistent van 33 tok/s bij C=1 en een tokenfabriek van ~508 tok/s bij C=64.</i></sub></p><hr />
+<h2 id="3-analyse-van-de-schalingsefficiëntie">
+  
+  
+    <a href="#3-analyse-van-de-schalingsefficiëntie" class="anchor-heading" aria-labelledby="3-analyse-van-de-schalingsefficiëntie"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. Analyse van de schalingsefficiëntie
+  
+  
+</h2>
+    
+<h3 id="31-afnemende-meeropbrengst">
+  
+  
+    <a href="#31-afnemende-meeropbrengst" class="anchor-heading" aria-labelledby="31-afnemende-meeropbrengst"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.1 Afnemende meeropbrengst
+  
+  
+</h3>
+    
+
+<p>TPS-schalingsfactoren ten opzichte van het ideale lineaire geval:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Stap</th>
+      <th>C=1 gemeten</th>
+      <th>C=1 efficiëntie</th>
+      <th>C=64 gemeten</th>
+      <th>C=64 efficiëntie</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TP1 → TP2</td>
+      <td>1.79x</td>
+      <td>89%</td>
+      <td>1.44x</td>
+      <td>72%</td>
+    </tr>
+    <tr>
+      <td>TP2 → TP4</td>
+      <td>1.47x</td>
+      <td>73%</td>
+      <td>1.17x</td>
+      <td>59%</td>
+    </tr>
+    <tr>
+      <td><strong>TP1 → TP4 (totaal)</strong></td>
+      <td><strong>2.62x</strong></td>
+      <td><strong>66%</strong></td>
+      <td><strong>1.69x</strong></td>
+      <td><strong>42%</strong></td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>De efficiëntie neemt af langs <strong>twee onafhankelijke assen</strong>:</p>
+
+<ol>
+  <li><strong>Meer nodes → meer communicatie.</strong> Elke transformerlaag vereist een all-reduce over alle deelnemende nodes. De overgang van 2 naar 4 nodes verhoogt zowel de datahoeveelheid als de synchronisatiekosten van elk van deze operaties.</li>
+  <li><strong>Meer belasting → een verzadigend netwerk.</strong> Bij hoge gelijktijdigheid vervoert de ConnectX-7-fabric all-reduce-verkeer voor grote batches; het aandeel communicatie in elke stap groeit, en daarom is de efficiëntie bij C=64 (42%) veel slechter dan bij C=1 (66%).</li>
+</ol>
+
+<p><strong>Praktische consequentie:</strong> op deze topologie zit TP=4 dicht bij de bruikbare grens. Nu de marginale winst van TP2→TP4 onder belasting al tot 1.17x is gedaald, zou een hypothetische TP=8 waarschijnlijk weinig tot niets opleveren — extra Sparks boven de vier kunnen beter aan replica’s worden besteed (Sectie 6).</p>
+<h3 id="32-waar-het-verlies-zit">
+  
+  
+    <a href="#32-waar-het-verlies-zit" class="anchor-heading" aria-labelledby="32-waar-het-verlies-zit"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.2 Waar het verlies zit
+  
+  
+</h3>
+    
+
+<p>De afwijking van lineair zit vrijwel volledig in de <strong>all-reduce over het netwerk</strong>. Op een systeem met NVLink kost deze operatie tientallen microseconden; over 200GbE RDMA kost ze een orde van grootte meer, en ze wordt één keer per laag, per gegenereerd token betaald. Sectie 4 legt uit waarom de rekensom op deze specifieke hardware toch in het voordeel van uitschalen uitvalt.</p><hr />
+<h2 id="4-technische-verdieping-waarom-tensorparallellisme-over-ethernet-werkt-op-gb10">
+  
+  
+    <a href="#4-technische-verdieping-waarom-tensorparallellisme-over-ethernet-werkt-op-gb10" class="anchor-heading" aria-labelledby="4-technische-verdieping-waarom-tensorparallellisme-over-ethernet-werkt-op-gb10"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. Technische verdieping: waarom tensorparallellisme over Ethernet werkt op GB10
+  
+  
+</h2>
+    
+<h3 id="41-decode-wordt-begrensd-door-de-geheugenbandbreedte">
+  
+  
+    <a href="#41-decode-wordt-begrensd-door-de-geheugenbandbreedte" class="anchor-heading" aria-labelledby="41-decode-wordt-begrensd-door-de-geheugenbandbreedte"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.1 Decode wordt begrensd door de geheugenbandbreedte
+  
+  
+</h3>
+    
+
+<p>Qwen3.6-27B is een <strong>dense</strong> model: voor het genereren van elk token moeten <strong>alle</strong> modelgewichten (weights) uit het geheugen worden gelezen. Op GB10 is dat geheugen unified LPDDR5X met ~273 GB/s — ongeveer 1/30e van de HBM-bandbreedte (bandwidth) van een datacenter-GPU. De tijd voor het lezen van de gewichten, niet het rekenwerk, domineert elke decodestap.</p>
+
+<p>Tensorparallellisme verdeelt de gewichtsmatrices over de nodes. Met TP=4:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Spark0: W₀·x →  │
+Spark1: W₁·x →  ├─ all-reduce (ConnectX-7) ─→ next token
+Spark2: W₂·x →  │
+Spark3: W₃·x →  │
+</code></pre></div></div>
+
+<ul>
+  <li>Elke node voert <strong>1/4 van de matrixvermenigvuldiging</strong> uit</li>
+  <li>Elke node leest slechts <strong>1/4 van de gewichten uit zijn eigen LPDDR5X</strong> ← de eigenlijke winst</li>
+  <li>Eén all-reduce per laag over de 200GbE-fabric ← de kosten</li>
+</ul>
+
+<p>De ITL-getallen (inter-token latency) laten de balans van deze afweging zien:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Configuratie</th>
+      <th>ITL (ms)</th>
+      <th>Versnelling t.o.v. TP1</th>
+      <th>Ideaal</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TP1</td>
+      <td>77.97</td>
+      <td>1.00x</td>
+      <td>1.0x</td>
+    </tr>
+    <tr>
+      <td>TP2</td>
+      <td>43.48</td>
+      <td>1.79x</td>
+      <td>2.0x</td>
+    </tr>
+    <tr>
+      <td>TP4</td>
+      <td>29.14</td>
+      <td>2.67x</td>
+      <td>4.0x</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Het verschil met het ideaal is de all-reduce over het netwerk per laag; al het andere schaalt.</p>
+<h3 id="42-tps-is-simpelweg-het-spiegelbeeld-van-itl">
+  
+  
+    <a href="#42-tps-is-simpelweg-het-spiegelbeeld-van-itl" class="anchor-heading" aria-labelledby="42-tps-is-simpelweg-het-spiegelbeeld-van-itl"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.2 TPS is simpelweg het spiegelbeeld van ITL
+  
+  
+</h3>
+    
+
+<p>Controle — de decodesnelheid is het omgekeerde van de inter-token latency:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Configuratie</th>
+      <th>1000 / ITL</th>
+      <th>Gemeten TPS</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TP1</td>
+      <td>12.8</td>
+      <td>12.63 ✓</td>
+    </tr>
+    <tr>
+      <td>TP2</td>
+      <td>23.0</td>
+      <td>22.57 ✓</td>
+    </tr>
+    <tr>
+      <td>TP4</td>
+      <td>34.3</td>
+      <td>33.11 ✓</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Er is geen onafhankelijk doorvoermechanisme: <strong>de volledige TPS-winst is de ITL-verlaging</strong>, oftewel het effect van het bundelen van bandbreedte.</p>
+<h3 id="43-waarom-dit-hier-werkt-en-niet-op-datacenter-gpus">
+  
+  
+    <a href="#43-waarom-dit-hier-werkt-en-niet-op-datacenter-gpus" class="anchor-heading" aria-labelledby="43-waarom-dit-hier-werkt-en-niet-op-datacenter-gpus"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.3 Waarom dit hier werkt en niet op datacenter-GPU’s
+  
+  
+</h3>
+    
+
+<p>De vuistregel “draai nooit TP over Ethernet” komt uit de HBM-wereld, en de rekensom verklaart die: het voordeel van TP is evenredig met de bespaarde tijd voor het lezen van gewichten, en de kosten zijn de all-reduce over het netwerk. Op een datacenter-GPU van de SM100-klasse (B200/GB200, ~8 TB/s HBM3e — ongeveer 30x de bandbreedte van de GB10) is het lezen van gewichten ~30x sneller, zodat de all-reduce voor een 27B-model meer zou kosten dan ze bespaart — u zou het model dan gewoon op één GPU draaien. (Op de oudere H100 met ~3.35 TB/s is de factor ~12x; de ongelijkheid blijft gelden.)</p>
+
+<p>Op GB10 is de term voor het lezen van gewichten enorm (lage bandbreedte), terwijl de all-reduce-term gematigd is (200 Gb/s RDMA, kleine activaties bij korte sequentielengtes). De ongelijkheid draait om. <strong>Tensorparallellisme over Ethernet is op DGX Spark rendabel juist omdat de geheugenbandbreedte het knelpunt is</strong> — de zwakte van het platform is wat uitschalen effectief maakt.</p>
+
+<p>Twee extra eigenschappen van dit model helpen:</p>
+
+<ul>
+  <li><strong>Het is dense.</strong> Elke forward pass raakt elk gewicht, dus elke node doet volledig werk voor elk token. Een MoE-model zou nodes stil laten staan wanneer hun experts niet door de router worden gekozen, wat de TP-efficiëntie verlaagt.</li>
+  <li><strong>NVFP4 halveert de verhouding tussen verkeer en rekenwerk.</strong> 4-bit-gewichten betekenen dat elke node per token minder bytes leest, waardoor de rekenfase kort blijft ten opzichte van de uitwisseling van activaties (met vaste omvang).</li>
+</ul>
+<h3 id="44-de-uitzondering-prefill">
+  
+  
+    <a href="#44-de-uitzondering-prefill" class="anchor-heading" aria-labelledby="44-de-uitzondering-prefill"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.4 De uitzondering: prefill
+  
+  
+</h3>
+    
+
+<p>Prefill (het verwerken van de prompt) is <strong>rekengebonden</strong>, niet bandbreedtegebonden — alle 128 input-tokens worden parallel verwerkt en het rekenwerk domineert. TP helpt ook bij rekenwerk, maar veel minder, en bij batch 1 is de overhead van de all-reduce groter dan de winst van de parallellisatie: de TTFT van TP4 bij C=1 (164 ms) is slechter dan die van TP2 (149 ms). Pas onder zware belasting, wanneer de prefill-batches groot zijn, loopt TP4 uit (C=64: 1551 ms versus 2137 ms). Als uw workload TTFT-kritisch is en licht belast wordt, is meer TP niet automatisch beter.</p><hr />
+<h2 id="5-capaciteitsplanning-op-basis-van-slos">
+  
+  
+    <a href="#5-capaciteitsplanning-op-basis-van-slos" class="anchor-heading" aria-labelledby="5-capaciteitsplanning-op-basis-van-slos"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5. Capaciteitsplanning op basis van SLO’s
+  
+  
+</h2>
+    
+<h3 id="51-c_max-de-hoogste-gelijktijdigheid-die-aan-de-slos-voldoet">
+  
+  
+    <a href="#51-c_max-de-hoogste-gelijktijdigheid-die-aan-de-slos-voldoet" class="anchor-heading" aria-labelledby="51-c_max-de-hoogste-gelijktijdigheid-die-aan-de-slos-voldoet"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.1 C_max: de hoogste gelijktijdigheid die aan de SLO’s voldoet
+  
+  
+</h3>
+    
+
+<p>Beide SLO’s (TTFT ≤ 1000 ms <strong>en</strong> TPS ≥ 15 tok/s) toegepast op de tabellen in Sectie 2.2:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Configuratie</th>
+      <th>C_max</th>
+      <th>Bepalende beperking</th>
+      <th>Latentie @ C_max</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TP1</td>
+      <td><strong>0</strong></td>
+      <td>TPS = 12.63 &lt; 15, zelfs bij C=1</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>TP2</td>
+      <td><strong>8</strong></td>
+      <td>C=8 haalt beide SLO’s (TPS 17.65, TTFT 457 ms); C=16 faalt op TPS (14.96 &lt; 15)</td>
+      <td>7.25 s</td>
+    </tr>
+    <tr>
+      <td>TP4</td>
+      <td><strong>16</strong></td>
+      <td>C=16 haalt beide (TPS 19.21, TTFT 805 ms); C=32 faalt op beide (TTFT 1005 ms, TPS 14.61)</td>
+      <td>6.66 s</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Kritische bevinding:</strong> binnen dit SLO-kader kan <strong>één DGX Spark dit model helemaal niet in productie bedienen</strong> — de decodesnelheid ligt zelfs voor één gebruiker onder de leessnelheid. Twee Sparks zijn de minimale levensvatbare productie-eenheid.</p>
+</blockquote>
+<h3 id="52-ondersteunde-gebruikers-de-wet-van-little-t_think--45-s">
+  
+  
+    <a href="#52-ondersteunde-gebruikers-de-wet-van-little-t_think--45-s" class="anchor-heading" aria-labelledby="52-ondersteunde-gebruikers-de-wet-van-little-t_think--45-s"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.2 Ondersteunde gebruikers (de wet van Little, T_think = 45 s)
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Configuratie</th>
+      <th>C_max</th>
+      <th>N_users</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TP1</td>
+      <td>0</td>
+      <td><strong>0</strong></td>
+    </tr>
+    <tr>
+      <td>TP2</td>
+      <td>8</td>
+      <td><strong>~58</strong></td>
+    </tr>
+    <tr>
+      <td>TP4</td>
+      <td>16</td>
+      <td><strong>~124</strong></td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>TP4 ondersteunt <strong>2.14x</strong> zoveel gebruikers als TP2 — aanzienlijk beter dan de ruwe TPS-schaling ten opzichte van TP2 (1.47x), omdat twee effecten elkaar versterken: C_max verdubbelt <em>en</em> de latentie op C_max is lager, zodat elk slot sneller weer vrijkomt. Merk ook op dat de efficiëntie per Spark door de SLO-bril <em>behouden blijft</em>: TP2 bedient ~29 gebruikers per machine, TP4 ~31 — het toevoegen van machines verwatert de waarde per apparaat niet, anders dan het beeld van de ruwe doorvoer suggereert.</p>
+<h3 id="53-gevoeligheid-denktijd">
+  
+  
+    <a href="#53-gevoeligheid-denktijd" class="anchor-heading" aria-labelledby="53-gevoeligheid-denktijd"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.3 Gevoeligheid: denktijd
+  
+  
+</h3>
+    
+
+<p>De denktijd hangt af van de use case; 45 s past bij bedachtzame chat. N_users opnieuw berekend:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Scenario</th>
+      <th>T_think</th>
+      <th>TP2</th>
+      <th>TP4</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Agentisch / snel achter elkaar</td>
+      <td>15 s</td>
+      <td>~25</td>
+      <td>~52</td>
+    </tr>
+    <tr>
+      <td>Actieve chat</td>
+      <td>30 s</td>
+      <td>~41</td>
+      <td>~88</td>
+    </tr>
+    <tr>
+      <td>Bedachtzame chat (primair)</td>
+      <td>45 s</td>
+      <td>~58</td>
+      <td>~124</td>
+    </tr>
+    <tr>
+      <td>Veel lezen / af en toe</td>
+      <td>60 s</td>
+      <td>~74</td>
+      <td>~160</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>De verhouding TP4/TP2 blijft over de hele linie ~2.1x — de aanname over de denktijd verschuift de absolute capaciteit, niet de vergelijking.</p>
+<h3 id="54-gevoeligheid-slo-drempels--een-resultaat-op-het-scherp-van-de-snede">
+  
+  
+    <a href="#54-gevoeligheid-slo-drempels--een-resultaat-op-het-scherp-van-de-snede" class="anchor-heading" aria-labelledby="54-gevoeligheid-slo-drempels--een-resultaat-op-het-scherp-van-de-snede"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.4 Gevoeligheid: SLO-drempels — een resultaat op het scherp van de snede
+  
+  
+</h3>
+    
+
+<p>Twee van de gemeten punten liggen vrijwel precies op de SLO-drempels, en de conclusies over de capaciteit zijn daar gevoelig voor:</p>
+
+<ul>
+  <li><strong>TP2 levert bij C=16 een TPS van 14.96 — 0.3% onder de drempel van 15 tok/s.</strong> Als de SLO 14.9 tok/s bedroeg, zou de C_max van TP2 naar 16 springen en de capaciteit naar <strong>~100 gebruikers</strong> — bijna gelijk aan de 124 van TP4 met de helft van de hardware.</li>
+  <li><strong>TP4 mist bij C=32 beide drempels op een haar na</strong> (TTFT 1005 ms, TPS 14.61). Een iets ruimere SLO (1100 ms / 14.5 tok/s) zou de C_max van TP4 verdubbelen tot 32 en de capaciteit tot <strong>~197 gebruikers</strong>.</li>
+  <li><strong>Een strengere TTFT-SLO (≤ 500 ms, bijvoorbeeld voor RAG- of agentpijplijnen)</strong> begrenst TP4 op C_max = 8 (TTFT 805 ms bij C=16) → ~78 gebruikers, waardoor het voordeel ten opzichte van TP2 krimpt tot 1.35x.</li>
+  <li><strong>Een ruimere TPS-SLO (≥ 10 tok/s, informeel gebruik)</strong> brengt eindelijk TP1 in het spel: C_max = 8, <strong>~38 gebruikers</strong> op één Spark.</li>
+</ul>
+
+<blockquote>
+  <p><strong>Aanbeveling:</strong> behandel de SLO-drempels als volwaardige deploymentparameters, niet als vaste constanten. Op deze hardware kan het antwoord over de capaciteit binnen het plausibele bereik van drempels met ~2x veranderen — valideer C_max tegen <em>uw</em> SLO voordat u een cluster dimensioneert.</p>
+</blockquote><hr />
+<h2 id="6-deploymenttopologieën-tensorparallellisme-versus-replicatie">
+  
+  
+    <a href="#6-deploymenttopologieën-tensorparallellisme-versus-replicatie" class="anchor-heading" aria-labelledby="6-deploymenttopologieën-tensorparallellisme-versus-replicatie"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6. Deploymenttopologieën: tensorparallellisme versus replicatie
+  
+  
+</h2>
+    
+
+<p>Vier DGX Sparks bezitten betekent niet dat u TP=4 moet draaien. Dezelfde vloot ondersteunt drie topologieën, en onze gegevens beantwoorden alle drie (2x TP2 en 4x TP1 zijn afgeleid door de resultaten van één instantie te vermenigvuldigen; er wordt uitgegaan van een loadbalancer ervoor):</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Topologie</th>
+      <th>SLO-gebruikers (45 s denktijd)</th>
+      <th>Maximale totale doorvoer</th>
+      <th>Hoge beschikbaarheid (HA)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>4x TP1 (replica’s)</td>
+      <td><strong>0</strong></td>
+      <td><strong>~1203 tok/s</strong></td>
+      <td>het best</td>
+    </tr>
+    <tr>
+      <td>2x TP2 (replicapaar)</td>
+      <td>~116</td>
+      <td>~867 tok/s</td>
+      <td>één paar blijft overeind</td>
+    </tr>
+    <tr>
+      <td>1x TP4</td>
+      <td><strong>~124</strong></td>
+      <td>~508 tok/s</td>
+      <td>geen — single point of failure</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Het patroon laat zich veralgemenen tot een eenvoudige beslisregel:</p>
+
+<blockquote>
+  <p><strong>Latentie en naleving van SLO’s → tensorparallellisme. Ruwe doorvoer → replica’s.</strong></p>
+</blockquote>
+
+<p>TP bundelt geheugenbandbreedte om <em>elk verzoek</em> sneller te maken; replicatie vermenigvuldigt het aantal <em>slots</em> zonder dat een verzoek sneller wordt. Omdat de TPS-SLO een ondergrens voor de snelheid per verzoek is, kan alleen TP een configuratie daarboven tillen — geen enkel aantal TP1-replica’s zal dat ooit doen. Omgekeerd leveren replica’s voor offline workloads zonder SLO per verzoek (batchsamenvattingen, het genereren van synthetische data, evaluatieruns) 2.4x zoveel tokens in totaal als TP4, met dezelfde vier machines.</p>
+
+<p><strong>Aanbevelingsmatrix:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Doel van de deployment</th>
+      <th>Configuratie</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Ontwikkeling, prototyping, één power user</td>
+      <td>1x DGX Spark (TP1)</td>
+    </tr>
+    <tr>
+      <td>Interactieve dienst, klein team (~50 gebruikers)</td>
+      <td>2x DGX Spark, TP2</td>
+    </tr>
+    <tr>
+      <td>Interactieve dienst, ~100+ gebruikers, HA vereist</td>
+      <td>4x DGX Spark als <strong>2x TP2</strong> + loadbalancer</td>
+    </tr>
+    <tr>
+      <td>Interactieve dienst, maximale capaciteit per vloot, HA-risico aanvaardbaar</td>
+      <td>4x DGX Spark als <strong>1x TP4</strong></td>
+    </tr>
+    <tr>
+      <td>Offline / batchproductie van tokens</td>
+      <td>N x TP1-replica’s</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Merk op hoe dicht 2x TP2 (~116 gebruikers) en 1x TP4 (~124 gebruikers) bij elkaar liggen: voor de ~7% extra capaciteit van TP4 krijgt u een single point of failure, terwijl 2x TP2 bij uitval van een nodepaar blijft bedienen (op halve capaciteit) — en in het scenario met de ruimere SLO uit Sectie 5.4 zonder meer wint. Voor de meeste productiedeployments is <strong>2x TP2 de robuustere keuze</strong>; TP4 is bedoeld voor het maximaliseren van de capaciteit voor één tenant of de snelheid voor één gebruiker (33 tok/s).</p><hr />
+<h2 id="7-nauwkeurigheid-nvfp4-versus-fp8">
+  
+  
+    <a href="#7-nauwkeurigheid-nvfp4-versus-fp8" class="anchor-heading" aria-labelledby="7-nauwkeurigheid-nvfp4-versus-fp8"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7. Nauwkeurigheid: NVFP4 versus FP8
+  
+  
+</h2>
+    
+
+<p>Conclusies over schaling zijn alleen van belang als het 4-bit-model het bedienen waard is. De <a href="https://huggingface.co/nvidia/Qwen3.6-27B-NVFP4">modelkaart</a> van NVIDIA rapporteert vrijwel gelijke resultaten voor FP8 en NVFP4 op tekst- en multimodale benchmarks:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Benchmark</th>
+      <th>FP8</th>
+      <th>NVFP4</th>
+      <th>Δ</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>MMLU Pro</td>
+      <td>86.1</td>
+      <td>86.3</td>
+      <td>+0.2</td>
+    </tr>
+    <tr>
+      <td>GPQA Diamond</td>
+      <td>86.0</td>
+      <td>85.5</td>
+      <td>−0.5</td>
+    </tr>
+    <tr>
+      <td>HLE</td>
+      <td>21.7</td>
+      <td>21.8</td>
+      <td>+0.1</td>
+    </tr>
+    <tr>
+      <td>τ²-Bench Telecom</td>
+      <td>95.2</td>
+      <td>95.4</td>
+      <td>+0.2</td>
+    </tr>
+    <tr>
+      <td>MMMU Pro</td>
+      <td>74.6</td>
+      <td>74.3</td>
+      <td>−0.3</td>
+    </tr>
+    <tr>
+      <td>SciCode</td>
+      <td>44.8</td>
+      <td>44.5</td>
+      <td>−0.3</td>
+    </tr>
+    <tr>
+      <td>AIME 2025</td>
+      <td>93.1</td>
+      <td>92.7</td>
+      <td>−0.4</td>
+    </tr>
+    <tr>
+      <td>AA-LCR</td>
+      <td>68.8</td>
+      <td>68.3</td>
+      <td>−0.5</td>
+    </tr>
+    <tr>
+      <td>IFBench</td>
+      <td>65.1</td>
+      <td>65.5</td>
+      <td>+0.4</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Het verlies aan nauwkeurigheid is op elke benchmark minder dan 1 punt, tegenover een ~4x kleinere geheugenvoetafdruk ten opzichte van 16-bit — en volgens Sectie 4.3 zijn de kleinere gewichten zelf een deel van de reden waarom TP over meerdere nodes op dit platform efficiënt is. Voor een analyse op hardwareniveau van de uitvoering van NVFP4 op GB10 (inclusief de beperkingen van SM121), zie de <a href="/nl/papers/qwen3.6-27b-dgx-spark-benchmark/">begeleidende paper</a>.</p><hr />
+<h2 id="8-beperkingen-en-toekomstig-werk">
+  
+  
+    <a href="#8-beperkingen-en-toekomstig-werk" class="anchor-heading" aria-labelledby="8-beperkingen-en-toekomstig-werk"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8. Beperkingen en toekomstig werk
+  
+  
+</h2>
+    
+
+<ul>
+  <li><strong>Eén workloadvorm.</strong> Alle resultaten gelden voor inputs van ~128 tokens en outputs van 128 tokens. Workloads met lange context (RAG over het venster van 262K) verschuiven het werk naar rekengebonden prefill, waar de TP-winst het kleinst is — het voordeel van TP4 zou bij TTFT-zwaar verkeer met lange prompts waarschijnlijk krimpen. Workloads met lange output (redeneren) verschuiven de andere kant op. Beide verdienen een eigen meetreeks.</li>
+  <li><strong>Afgeleide replicagetallen.</strong> De cijfers voor de topologieën 2x TP2 en 4x TP1 in Sectie 6 zijn berekend uit metingen van één instantie; een gemeten deployment met loadbalancing zou effecten van wachtrijen en routering toevoegen.</li>
+  <li><strong>Alleen tekst.</strong> De beeld- en videomogelijkheden van het model zijn niet getest.</li>
+  <li><strong>Hardwarespecifiek.</strong> Deze resultaten karakteriseren de GB10-klasse (unified memory met lage bandbreedte + 200GbE-fabric). Ze zijn niet over te dragen op HBM/NVLink-systemen, waar de rekensom uit Sectie 4.3 omdraait — en dus voorspellen de cijfers uit de GB300-modelkaart van NVIDIA ook niet het gedrag van DGX Spark.</li>
+  <li><strong>Toekomstig werk:</strong> pipelineparallellisme als alternatief voor TP op deze fabric (minder, grotere overdrachten), gemeten replicadeployments, meetreeksen met lange context en de wisselwerking tussen MTP en TP.</li>
+</ul><hr />
+<h2 id="9-conclusie">
+  
+  
+    <a href="#9-conclusie" class="anchor-heading" aria-labelledby="9-conclusie"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 9. Conclusie
+  
+  
+</h2>
+    
+
+<ol>
+  <li><strong>Eén DGX Spark draait Qwen3.6-27B, maar als werkstation, niet als server.</strong> 12.6 tok/s is prima voor één ontwikkelaar en ligt voor een gebruikersbestand onder de interactieve SLO. Twee Sparks zijn de minimale productie-eenheid.</li>
+  <li><strong>Tensorparallellisme over 200GbE werkt op dit platform echt</strong> — 2.62x versnelling voor één gebruiker op vier nodes — omdat de lage geheugenbandbreedte van GB10, de dense architectuur van het model en de kleine gewichten van NVFP4 de balans tussen rekenwerk en communicatie allemaal in het voordeel van TP doen doorslaan. Dit is niet te veralgemenen naar hardware van de HBM-klasse.</li>
+  <li><strong>TP=4 is op deze fabric de praktische schalingsgrens.</strong> De marginale efficiëntie daalt onder belasting tot 1.17x; besteed de vijfde Spark aan een replica.</li>
+  <li><strong>Onder de SLO’s bedient TP4 ~124 gebruikers, TP2 ~58 en TP1 nul</strong> (45 s denktijd) — en de capaciteit per Spark blijft stabiel op ~30 gebruikers per machine, dus uitschalen verspilt geen hardware.</li>
+  <li><strong>Dezelfde vier Sparks zijn drie verschillende producten:</strong> een interactieve dienst voor ~124 gebruikers (TP4), een HA-dienst voor ~116 gebruikers (2x TP2), of een batchengine van ~1200 tok/s (4x TP1). Kies de topologie op basis van het doel — TP voor snelheid per verzoek, replica’s voor totale doorvoer — en behandel SLO-drempels als instelbare inputs, omdat het antwoord over de capaciteit binnen hun plausibele bereik met ~2x verschuift.</li>
+</ol><hr />
+<h2 id="bijlage-a-grafieken-per-configuratie">
+  
+  
+    <a href="#bijlage-a-grafieken-per-configuratie" class="anchor-heading" aria-labelledby="bijlage-a-grafieken-per-configuratie"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Bijlage A: grafieken per configuratie
+  
+  
+</h2>
+    
+<h3 id="a1-tp1--één-dgx-spark">
+  
+  
+    <a href="#a1-tp1--één-dgx-spark" class="anchor-heading" aria-labelledby="a1-tp1--één-dgx-spark"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> A.1 TP1 — één DGX Spark
+  
+  
+</h3>
+    
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-scaling/TP1/Qwen3.6-27B-NVFP4-TTFT.png" alt="TP1 TTFT" />
+<img src="/papers/qwen3.6-27b-dgx-spark-scaling/TP1/Qwen3.6-27B-NVFP4-ITL.png" alt="TP1 ITL" />
+<img src="/papers/qwen3.6-27b-dgx-spark-scaling/TP1/Qwen3.6-27B-NVFP4-TPS.png" alt="TP1 TPS" />
+<img src="/papers/qwen3.6-27b-dgx-spark-scaling/TP1/Qwen3.6-27B-NVFP4-Latency.png" alt="TP1 latentie" />
+<img src="/papers/qwen3.6-27b-dgx-spark-scaling/TP1/Qwen3.6-27B-NVFP4-Throughput.png" alt="TP1 doorvoer" /></p>
+<h3 id="a2-tp2--2x-dgx-spark">
+  
+  
+    <a href="#a2-tp2--2x-dgx-spark" class="anchor-heading" aria-labelledby="a2-tp2--2x-dgx-spark"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> A.2 TP2 — 2x DGX Spark
+  
+  
+</h3>
+    
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-scaling/TP2/Qwen3.6-27B-NVFP4-TTFT.png" alt="TP2 TTFT" />
+<img src="/papers/qwen3.6-27b-dgx-spark-scaling/TP2/Qwen3.6-27B-NVFP4-ITL.png" alt="TP2 ITL" />
+<img src="/papers/qwen3.6-27b-dgx-spark-scaling/TP2/Qwen3.6-27B-NVFP4-TPS.png" alt="TP2 TPS" />
+<img src="/papers/qwen3.6-27b-dgx-spark-scaling/TP2/Qwen3.6-27B-NVFP4-Latency.png" alt="TP2 latentie" />
+<img src="/papers/qwen3.6-27b-dgx-spark-scaling/TP2/Qwen3.6-27B-NVFP4-Throughput.png" alt="TP2 doorvoer" /></p>
+<h3 id="a3-tp4--4x-dgx-spark">
+  
+  
+    <a href="#a3-tp4--4x-dgx-spark" class="anchor-heading" aria-labelledby="a3-tp4--4x-dgx-spark"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> A.3 TP4 — 4x DGX Spark
+  
+  
+</h3>
+    
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-scaling/TP4/Qwen3.6-27B-NVFP4-TTFT.png" alt="TP4 TTFT" />
+<img src="/papers/qwen3.6-27b-dgx-spark-scaling/TP4/Qwen3.6-27B-NVFP4-ITL.png" alt="TP4 ITL" />
+<img src="/papers/qwen3.6-27b-dgx-spark-scaling/TP4/Qwen3.6-27B-NVFP4-TPS.png" alt="TP4 TPS" />
+<img src="/papers/qwen3.6-27b-dgx-spark-scaling/TP4/Qwen3.6-27B-NVFP4-Latency.png" alt="TP4 latentie" />
+<img src="/papers/qwen3.6-27b-dgx-spark-scaling/TP4/Qwen3.6-27B-NVFP4-Throughput.png" alt="TP4 doorvoer" /></p><hr />
+
+<p><em>Aetherix B.V. — <a href="https://aetherix.com">aetherix.com</a> · <a href="mailto:info@aetherix.com">info@aetherix.com</a></em></p>
+
+<p><em>Oude Apeldoornseweg 41, A1.08, 7333 NR Apeldoorn, Nederland</em></p>
+
+          
+
+          
+        </main>
+        
+
+
+      </div>
+    </div>
+    
+      
+
+<div class="search-overlay"></div>
+
+    
+  </div>
+
+  
+
+  <script>
+    window.JTD_I18N = {
+      search_no_results: "Geen resultaten gevonden",
+      copy_code: "Code naar klembord kopiëren"
+    };
+  </script>
+
+  
+
+
+<div id="cookie-consent-banner" class="cookie-consent" role="dialog"
+     aria-modal="false" aria-label="Cookie consent"
+     data-consent-state="pending" hidden>
+  <div class="cookie-consent__body">
+    <div class="cookie-consent__text">
+      <span class="cookie-consent__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+          <path d="M21 12a9 9 0 1 1-9-9 4.5 4.5 0 0 0 4.5 4.5A4.5 4.5 0 0 0 21 12zm-9-3.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-1.5 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm6-1.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-3 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0z"/>
+        </svg>
+      </span>
+      <p>Wij gebruiken cookies om het websiteverkeer te analyseren en uw ervaring te verbeteren. Door op 'Accepteren' te klikken, stemt u in met het gebruik van analytische cookies zoals beschreven in ons privacybeleid.
+        <a href="https://aetherix.com/privacy-policy/" target="_blank" rel="noopener noreferrer"
+           class="cookie-consent__link">Privacybeleid</a>
+      </p>
+    </div>
+    <div class="cookie-consent__actions">
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--reject"
+              data-consent-action="rejected">Weigeren</button>
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--accept"
+              data-consent-action="accepted">Accepteren</button>
+    </div>
+  </div>
+</div>
+<script>
+  // Eski karar önbellekte varsa bannerı gösterme
+  (function() {
+    try {
+      var v = localStorage.getItem('cookieConsent');
+      if (v === 'accepted' || v === 'rejected') {
+        document.documentElement.dataset.cookieConsent = v;
+      }
+    } catch (e) {}
+  })();
+</script>
+<script src="/assets/js/cookie-banner.js" defer></script>
+
+</body>
+</html>
+

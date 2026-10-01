@@ -1,0 +1,52 @@
+# Aetherix White Papers
+
+> Aetherix B.V. technical white papers — NVIDIA DGX Spark, Jetson edge AI and RTX PRO systems: deployment guides, cluster setups and measured LLM and computer-vision inference benchmarks.
+
+Every benchmark figure was measured with the CordatusAI LLM Benchmark Tool
+(LLM) or the cordatus-benchmark tool (CV). The
+Intelligence Index and Agentic Index fields in benchmarks.json are republished
+from Artificial Analysis (https://artificialanalysis.ai) and must be attributed
+to them wherever they are shown.
+
+## Benchmark explorers
+
+- [LLM Inference Benchmark Explorer](https://whitepapers.aetherix.com/llm-inference-benchmarks/): 103 runs — time to first token and per-request tokens/s at concurrency 1–64, with Max C (concurrent requests meeting TTFT ≤ 1 s and ≥ 20 tok/s by default) and estimated chat / agentic user capacity per model × device — how many people a model on a given device can serve. Each run's plain-language explanation is in the page HTML and in llms-full.txt.
+- [CV Inference Benchmark Explorer](https://whitepapers.aetherix.com/cv-inference-benchmarks/): 10 device × model results — FPS per camera and frame drop by camera count.
+
+## Results as sentences
+
+- [All results, explained](https://whitepapers.aetherix.com/llms-full.txt): one paragraph per benchmark run — measured speed, Max C, estimated chat and agentic user capacity and what limits it; for CV, FPS per camera and max cameras.
+
+## Raw data
+
+- [LLM benchmarks (JSON)](https://whitepapers.aetherix.com/assets/data/benchmarks.json): one entry per run; `data_points` holds `c` (concurrent requests), `ttft_ms` and `tps` (per-request output tokens/s). 128 input / 128 output tokens, ten rounds per level, mean values.
+- [CV benchmarks index (JSON)](https://whitepapers.aetherix.com/assets/data/cv-benchmarks/index.json): devices and models; each model's measurements are in the file named by its `path`.
+
+LLM models benchmarked: DeepSeek V4 Flash 0731, DeepSeek-V3.1, DeepSeek-V4-Flash-Vision-Exp, DeepSeek-V4-Pro, DeepSeek-V4-Pro-0813, DeepSeek-V4.1-Flash, GLM-4.5-Air, GLM-4.6, GLM-4.7, GLM-5, GLM-5.1, GLM-5.2, GLM-5.3, GLM-5.3-Flash, GPT-OSS 120B, Gemma-4-26B-A4B-it, Gemma-4-31B-it, Inkling, Kimi K3, Kimi-K2-Thinking, Kimi-K2.5, Kimi-K2.6, Laguna-S-2.1, MiMo-V2.5-Pro, MiMo-V2.6-Pro-RL, MiniMax-M2, MiniMax-M2.5, MiniMax-M2.7, MiniMax-M3, Muse-Glimmer-30B, Nemotron-3-Ultra, Qwen3-235B-A22B, Qwen3-4B-Instruct-2507, Qwen3-Coder-30B-A3B-Instruct, Qwen3.5-27B, Qwen3.5-35B-A3B, Qwen3.5-397B-A17B, Qwen3.6-27B, Qwen3.6-35B-A3B, Qwen3.8-2.4T-A95B, Qwen3.8-27B, Qwen3.8-Flash-Next, Tencent-Hy3, Tencent-Hy4-preview
+
+LLM devices: 1× DGX Spark, 2× DGX Spark, 3× DGX Spark, 4× DGX Spark, 8× DGX Spark, DGX B300, RTX PRO 6000, Thor
+
+CV models benchmarked: PeopleNet, YOLO11-N, YOLO11L, YOLO11M, YOLO11S
+
+CV devices: GB10, Jetson AGX Thor, Jetson Orin Nano, RTX 3060, RTX 3090
+
+## White papers
+
+- [Conditional Memory and Offloading in LLM Inference](https://whitepapers.aetherix.com/papers/conditional-memory-offloading/): How model architecture decides what must remain in GPU memory and what can move to host RAM or NVMe: conditional memory, memory hierarchies of DGX Spark, RTX PRO 6000 and DGX B300, and measured results with DeepSeek-V4.1-Flash and Qwen3.8-Flash-Next.
+- [DGX Spark 2-Node AI Cluster Setup Guide](https://whitepapers.aetherix.com/papers/dgx-spark-2node-cluster-setup/): Point-to-point topology AI cluster setup with 2 NVIDIA DGX Spark nodes: management and compute networks, RoCEv2/RDMA, sparkrun configuration.
+- [DGX Spark 3-Node AI Cluster Setup Guide](https://whitepapers.aetherix.com/papers/dgx-spark-3node-cluster-setup/): Ring (mesh) topology AI cluster setup with 3 NVIDIA DGX Spark nodes: management and compute networks, RoCEv2/RDMA, sparkrun configuration.
+- [DGX Spark 4-Node AI Cluster Setup Guide](https://whitepapers.aetherix.com/papers/dgx-spark-4node-cluster-setup/): Switch-based AI cluster setup with 4 NVIDIA DGX Spark nodes over a MikroTik CRS812: management and compute networks, RoCEv2/RDMA, sparkrun and NAS.
+- [DGX Spark 8-Node AI Cluster Setup Guide](https://whitepapers.aetherix.com/papers/dgx-spark-8node-cluster-setup/): Switch-based AI cluster setup with 8 NVIDIA DGX Spark nodes over a MikroTik CRS804 with 200G breakout: management and compute networks, RoCEv2/RDMA, sparkrun and NAS.
+- [DeepSeek-V4.1-Flash 4× DGX Spark Deployment](https://whitepapers.aetherix.com/papers/deepseek-v4.1-flash-4spark-deployment/): Deployment of DeepSeek-V4.1-Flash (763B MoE, FP8, DSpark k=5) on 4× NVIDIA DGX Spark (GB10) with tensor parallelism: vLLM build chain, 7 SM 12.1a patches, Engram-on-disk, benchmark results and B300 comparison.
+- [DeepSeek-V4.1-Flash 8× DGX Spark TP8 Deployment](https://whitepapers.aetherix.com/papers/deepseek-v4.1-flash-8spark-deployment/): Deployment of DeepSeek-V4.1-Flash (763B MoE, FP8, DSpark k=5) on 8× NVIDIA DGX Spark (GB10) with TP8: two configurations (300K Engram-in-memory, 1M Engram-on-disk), NCCL optimization, benchmark results and TP4 comparison.
+- [Kimi K3 Inference Benchmark on DGX-B300](https://whitepapers.aetherix.com/papers/kimi-k3-dgx-b300-inference-benchmark/): Performance evaluation of Moonshot AI Kimi K3 (2.8T MoE, MXFP4) on NVIDIA DGX-B300 (8x Blackwell Ultra, TP=8): vLLM vs SGLang, direct vs DSpark speculative decoding, with SLO-driven capacity planning.
+- [Local LLM Usage Guide](https://whitepapers.aetherix.com/papers/local-llm-guide/): End-to-end decision guide for local LLM usage: hardware (NVIDIA Jetson, RTX PRO, DGX Spark, DGX/HGX), model selection, software stack and scenario mapping.
+- [NVIDIA DGX B300 vs GB300 NVL72 Cluster Architecture Comparison](https://whitepapers.aetherix.com/papers/b300-gb300-cluster-architecture/): Technical comparison of two NVIDIA Blackwell Ultra architectures, DGX B300 and GB300 NVL72: system design, scaling approach, network fabric, power and cooling, and which workloads suit which platform.
+- [Qwen3.6-27B DGX Spark Benchmark](https://whitepapers.aetherix.com/papers/qwen3.6-27b-dgx-spark-benchmark/): Performance evaluation of the Qwen3.6-27B model on the NVIDIA DGX Spark (GB10) platform with FP8, FP8-MTP, AWQ-MTP, NVFP4, and NVFP4-MTP quantization variants.
+- [Qwen3.6-27B DGX Spark Cluster Scaling](https://whitepapers.aetherix.com/papers/qwen3.6-27b-dgx-spark-scaling/): Multi-node scaling study of Qwen3.6-27B-NVFP4 on 1x, 2x, and 4x NVIDIA DGX Spark (GB10): tensor parallelism over 200GbE, SLO-driven capacity planning, and TP-vs-replication deployment guidance.
+
+## Other pages
+
+- [About](https://whitepapers.aetherix.com/about/): Aetherix B.V. — Netherlands-based provider of NVIDIA Jetson hardware for edge AI.
+- [Home](https://whitepapers.aetherix.com/): Aetherix B.V. technical white papers — NVIDIA DGX Spark, Jetson edge AI and RTX PRO systems: deployment guides, cluster setups and measured inference benchmarks.
+- [White Papers](https://whitepapers.aetherix.com/papers/): Aetherix technical white paper list.

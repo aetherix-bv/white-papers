@@ -1,0 +1,3499 @@
+
+
+<!DOCTYPE html>
+
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-default.css">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet">
+
+  <style id="jtd-nav-activation">
+  
+
+.site-nav > ul.nav-list:first-child > li > a,
+.site-nav > ul.nav-list:first-child > li > ul > li:not(:nth-child(8)) > a,
+.site-nav > ul.nav-list:first-child > li > ul > li > ul > li > a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:not(:first-child) a,
+.site-nav li.external a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(8) > a {
+  font-weight: 600;
+  text-decoration: none;
+}.site-nav > ul.nav-list:first-child > li:nth-child(3) > button svg,
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(8) > button svg {
+  transform: rotate(-90deg);
+}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list,
+.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list > li.nav-list-item:nth-child(8) > ul.nav-list {
+  display: block;
+}
+  </style>
+
+  
+
+  
+    <script src="/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="icon" href="/nl/favicon.ico" type="image/x-icon">
+
+
+
+  <!-- Begin Jekyll SEO tag v2.9.1 -->
+<title>Qwen3.6-27B DGX Spark-benchmark | Aetherix White Papers</title>
+<meta name="generator" content="Jekyll v4.3.4" />
+<meta property="og:title" content="Qwen3.6-27B DGX Spark-benchmark" />
+<meta property="og:locale" content="nl" />
+<meta name="description" content="Prestatie-evaluatie van het Qwen3.6-27B-model op het NVIDIA DGX Spark (GB10)-platform met de kwantisatievarianten FP8, FP8-MTP, AWQ-MTP, NVFP4 en NVFP4-MTP." />
+<meta name="twitter:description" property="og:description" content="Prestatie-evaluatie van het Qwen3.6-27B-model op het NVIDIA DGX Spark (GB10)-platform met de kwantisatievarianten FP8, FP8-MTP, AWQ-MTP, NVFP4 en NVFP4-MTP." />
+<link rel="canonical" href="https://whitepapers.aetherix.com/nl/papers/qwen3.6-27b-dgx-spark-benchmark/" />
+<meta property="og:url" content="https://whitepapers.aetherix.com/nl/papers/qwen3.6-27b-dgx-spark-benchmark/" />
+<meta property="og:site_name" content="Aetherix White Papers" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-07-03T11:10:23+00:00" />
+<meta property="article:modified_time" content="2026-07-03T11:10:23+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Qwen3.6-27B DGX Spark-benchmark" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2026-07-03T11:10:23+00:00","datePublished":"2026-07-03T11:10:23+00:00","description":"Prestatie-evaluatie van het Qwen3.6-27B-model op het NVIDIA DGX Spark (GB10)-platform met de kwantisatievarianten FP8, FP8-MTP, AWQ-MTP, NVFP4 en NVFP4-MTP.","headline":"Qwen3.6-27B DGX Spark-benchmark","mainEntityOfPage":{"@type":"WebPage","@id":"https://whitepapers.aetherix.com/nl/papers/qwen3.6-27b-dgx-spark-benchmark/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://whitepapers.aetherix.com/assets/images/aetherix-logo.png"}},"url":"https://whitepapers.aetherix.com/nl/papers/qwen3.6-27b-dgx-spark-benchmark/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  
+<!-- Google tag (gtag.js) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JWLN33085T"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+
+  // Consent Mode v2 — default DENIED. Banner onayı ile GRANTED olur.
+  // KVKK/GDPR uyumu: ziyaretçi onay vermeden çerez set edilmez.
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    functionality_storage: 'granted',
+    security_storage: 'granted',
+    wait_for_update: 500
+  });
+
+  gtag('js', new Date());
+  gtag('config', 'G-JWLN33085T', {
+    anonymize_ip: true
+  });
+</script>
+
+<link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/papers/qwen3.6-27b-dgx-spark-benchmark/">
+<link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/papers/qwen3.6-27b-dgx-spark-benchmark/">
+<link rel="alternate" hreflang="x-default" href="https://whitepapers.aetherix.com/papers/qwen3.6-27b-dgx-spark-benchmark/">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/images/favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+<script>
+(function () {
+  var open = XMLHttpRequest.prototype.open;
+  var own = "/nl/search-data.json";
+  XMLHttpRequest.prototype.open = function (method, url) {
+    if (typeof url === "string" && /assets\/js\/search-data\.json$/.test(url)) arguments[1] = own;
+    return open.apply(this, arguments);
+  };
+})();
+</script>
+
+
+</head>
+
+<body>
+  <a class="skip-to-main" href="#main-content">Naar de hoofdinhoud</a>
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="svg-link" viewBox="0 0 24 24">
+  <title>Link</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+</symbol>
+
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+  <title>Menu</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+    <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</symbol>
+
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+  <title>Expand</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</symbol>
+
+  <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
+<symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+  <title id="svg-external-link-title">(external link)</title>
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+</symbol>
+
+  
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+  <title>Document</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+</symbol>
+
+    <symbol id="svg-search" viewBox="0 0 24 24">
+  <title>Search</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</symbol>
+
+  
+  
+    <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+<symbol id="svg-copy" viewBox="0 0 16 16">
+  <title>Copy</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+</symbol>
+<symbol id="svg-copied" viewBox="0 0 16 16">
+  <title>Copied</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"/>
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"/>
+  </svg>
+</symbol>
+
+  
+</svg>
+
+  
+    <div class="side-bar">
+  <div class="site-header" role="banner">
+    <a href="/nl/" class="site-title lh-tight">
+  <div class="site-logo" role="img" aria-label="Aetherix White Papers"></div>
+
+</a>
+    <button id="menu-button" class="site-button btn-reset" aria-label="Toggle menu" aria-pressed="false">
+      <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  <nav aria-label="Main" id="site-nav" class="site-nav">
+  
+  
+    <ul class="nav-list"><li class="nav-list-item"><a href="/nl/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/nl/about/" class="nav-list-link">Over ons</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in White Papers category" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+    </button><a href="/nl/papers/" class="nav-list-link">White Papers</a><ul class="nav-list"><li class="nav-list-item"><a href="/nl/papers/local-llm-guide/" class="nav-list-link">Handleiding voor lokaal LLM-gebruik</a></li><li class="nav-list-item"><a href="/nl/papers/conditional-memory-offloading/" class="nav-list-link">Conditional memory en offloading bij LLM-inferentie</a></li><li class="nav-list-item"><a href="/nl/papers/b300-gb300-cluster-architecture/" class="nav-list-link">NVIDIA DGX B300 vs GB300 NVL72: vergelijking van clusterarchitecturen</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-2node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 2 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-3node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 3 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-4node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 4 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-8node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 8 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/qwen3.6-27b-dgx-spark-benchmark/" class="nav-list-link">Qwen3.6-27B DGX Spark-benchmark</a></li><li class="nav-list-item"><a href="/nl/papers/qwen3.6-27b-dgx-spark-scaling/" class="nav-list-link">Schaling van Qwen3.6-27B op een DGX Spark-cluster</a></li><li class="nav-list-item"><a href="/nl/papers/deepseek-v4.1-flash-4spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash-deployment op 4× DGX Spark</a></li><li class="nav-list-item"><a href="/nl/papers/deepseek-v4.1-flash-8spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash-deployment op 8× DGX Spark met TP8</a></li><li class="nav-list-item"><a href="/nl/papers/kimi-k3-dgx-b300-inference-benchmark/" class="nav-list-link">Kimi K3-inferentiebenchmark op DGX-B300</a></li></ul></li><li class="nav-list-item"><a href="/nl/llm-inference-benchmarks/" class="nav-list-link">LLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/nl/cv-inference-benchmarks/" class="nav-list-link">CV Inference Benchmark Explorer</a></li></ul>
+
+  
+</nav>
+
+
+  
+  
+    <div class="lang-switcher">
+  
+    
+    
+      <a class="lang-switcher-item" href="/papers/qwen3.6-27b-dgx-spark-benchmark/">EN</a>
+    
+  
+    
+    
+      <span class="lang-switcher-item active">NL</span>
+    
+  
+</div>
+<script src="/assets/js/lang-switch.js"></script>
+
+  
+</div>
+
+  
+  <div class="main" id="top">
+    <div id="main-header" class="main-header">
+  
+    
+
+<div class="search" role="search">
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Zoeken" aria-label="Zoeken" autocomplete="off">
+    <label for="search-input" class="search-label"><svg viewBox="0 0 24 24" class="search-icon"><use xlink:href="#svg-search"></use></svg></label>
+  </div>
+  <div id="search-results" class="search-results"></div>
+</div>
+
+  
+  
+  
+    <nav aria-label="Auxiliary" class="aux-nav">
+  <ul class="aux-nav-list">
+    
+      <li class="aux-nav-list-item">
+        <a href="https://aetherix.com" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          aetherix.com
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://github.com/aetherix-bv" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          GitHub
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+  
+</div>
+
+    <div class="main-content-wrap">
+      <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+  <ol class="breadcrumb-nav-list">
+    <li class="breadcrumb-nav-list-item"><a href="/nl/papers/">White Papers</a></li>
+    <li class="breadcrumb-nav-list-item"><span>Qwen3.6-27B DGX Spark-benchmark</span></li>
+  </ol>
+</nav>
+      <div id="main-content" class="main-content">
+        <main>
+          
+            <p><em>Opgesteld door: <strong>Aetherix B.V.</strong> — Trusted Jetson Hardware Provider for Edge AI</em></p>
+
+<p><em>Testplatform: NVIDIA DGX Spark (GB10) · Model: Qwen3.6-27B · Rapportdatum: juli 2026</em></p><hr />
+<h2 class="no_toc" id="inhoud">
+  
+  
+    <a href="#inhoud" class="anchor-heading" aria-labelledby="inhoud"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Inhoud
+  
+  
+</h2>
+    
+
+<ul id="markdown-toc">
+  <li><a href="#1-inleiding-en-testmethodologie" id="markdown-toc-1-inleiding-en-testmethodologie">1. Inleiding en testmethodologie</a>    <ul>
+      <li><a href="#11-introductie-van-het-model" id="markdown-toc-11-introductie-van-het-model">1.1 Introductie van het model</a></li>
+      <li><a href="#12-geteste-varianten" id="markdown-toc-12-geteste-varianten">1.2 Geteste varianten</a></li>
+      <li><a href="#13-kwantisatieformaten" id="markdown-toc-13-kwantisatieformaten">1.3 Kwantisatieformaten</a></li>
+      <li><a href="#14-wat-is-mtp-multi-token-prediction" id="markdown-toc-14-wat-is-mtp-multi-token-prediction">1.4 Wat is MTP (Multi-Token Prediction)?</a></li>
+      <li><a href="#15-definities-van-de-metrieken" id="markdown-toc-15-definities-van-de-metrieken">1.5 Definities van de metrieken</a></li>
+      <li><a href="#16-testomstandigheden" id="markdown-toc-16-testomstandigheden">1.6 Testomstandigheden</a></li>
+      <li><a href="#17-meettool" id="markdown-toc-17-meettool">1.7 Meettool</a></li>
+      <li><a href="#18-configuratie-van-de-inferentieserver" id="markdown-toc-18-configuratie-van-de-inferentieserver">1.8 Configuratie van de inferentieserver</a></li>
+    </ul>
+  </li>
+  <li><a href="#2-prestaties-van-de-kwantisatievarianten" id="markdown-toc-2-prestaties-van-de-kwantisatievarianten">2. Prestaties van de kwantisatievarianten</a>    <ul>
+      <li><a href="#21-qwen36-27b-fp8" id="markdown-toc-21-qwen36-27b-fp8">2.1 Qwen3.6-27B-FP8</a></li>
+      <li><a href="#22-qwen36-27b-fp8-mtp" id="markdown-toc-22-qwen36-27b-fp8-mtp">2.2 Qwen3.6-27B-FP8-MTP</a></li>
+      <li><a href="#23-qwen36-27b-awq-mtp" id="markdown-toc-23-qwen36-27b-awq-mtp">2.3 Qwen3.6-27B-AWQ-MTP</a></li>
+      <li><a href="#24-qwen36-27b-nvfp4" id="markdown-toc-24-qwen36-27b-nvfp4">2.4 Qwen3.6-27B-NVFP4</a></li>
+      <li><a href="#25-qwen36-27b-nvfp4-mtp" id="markdown-toc-25-qwen36-27b-nvfp4-mtp">2.5 Qwen3.6-27B-NVFP4-MTP</a></li>
+    </ul>
+  </li>
+  <li><a href="#3-vergelijking-van-de-kwantisatieformaten" id="markdown-toc-3-vergelijking-van-de-kwantisatieformaten">3. Vergelijking van de kwantisatieformaten</a>    <ul>
+      <li><a href="#31-zonder-mtp-fp8-vs-nvfp4" id="markdown-toc-31-zonder-mtp-fp8-vs-nvfp4">3.1 Zonder MTP: FP8 vs NVFP4</a></li>
+      <li><a href="#32-met-mtp-fp8-mtp-vs-awq-mtp-vs-nvfp4-mtp" id="markdown-toc-32-met-mtp-fp8-mtp-vs-awq-mtp-vs-nvfp4-mtp">3.2 Met MTP: FP8-MTP vs AWQ-MTP vs NVFP4-MTP</a></li>
+    </ul>
+  </li>
+  <li><a href="#4-diepgaande-analyse-van-het-mtp-effect" id="markdown-toc-4-diepgaande-analyse-van-het-mtp-effect">4. Diepgaande analyse van het MTP-effect</a>    <ul>
+      <li><a href="#41-effect-van-de-overstap-fp8--fp8-mtp" id="markdown-toc-41-effect-van-de-overstap-fp8--fp8-mtp">4.1 Effect van de overstap FP8 → FP8-MTP</a></li>
+      <li><a href="#42-effect-van-de-overstap-nvfp4--nvfp4-mtp" id="markdown-toc-42-effect-van-de-overstap-nvfp4--nvfp4-mtp">4.2 Effect van de overstap NVFP4 → NVFP4-MTP</a></li>
+      <li><a href="#43-mtp-versnellingsfactor-vs-gelijktijdigheid" id="markdown-toc-43-mtp-versnellingsfactor-vs-gelijktijdigheid">4.3 MTP-versnellingsfactor vs gelijktijdigheid</a></li>
+    </ul>
+  </li>
+  <li><a href="#5-analyse-van-het-effect-van-gelijktijdigheid" id="markdown-toc-5-analyse-van-het-effect-van-gelijktijdigheid">5. Analyse van het effect van gelijktijdigheid</a>    <ul>
+      <li><a href="#51-daling-van-de-tps-tokengeneratiesnelheid" id="markdown-toc-51-daling-van-de-tps-tokengeneratiesnelheid">5.1 Daling van de TPS (tokengeneratiesnelheid)</a></li>
+      <li><a href="#52-toename-van-de-itl-inter-token-latentie" id="markdown-toc-52-toename-van-de-itl-inter-token-latentie">5.2 Toename van de ITL (inter-token-latentie)</a></li>
+      <li><a href="#53-toename-van-de-ttft-latentie-tot-het-eerste-token" id="markdown-toc-53-toename-van-de-ttft-latentie-tot-het-eerste-token">5.3 Toename van de TTFT (latentie tot het eerste token)</a></li>
+      <li><a href="#54-toename-van-de-totale-latentie" id="markdown-toc-54-toename-van-de-totale-latentie">5.4 Toename van de totale latentie</a></li>
+      <li><a href="#55-curve-van-de-totale-doorvoer-rps" id="markdown-toc-55-curve-van-de-totale-doorvoer-rps">5.5 Curve van de totale doorvoer (RPS)</a></li>
+    </ul>
+  </li>
+  <li><a href="#6-analyse-van-schaalbaarheid-en-gpu-efficiëntie" id="markdown-toc-6-analyse-van-schaalbaarheid-en-gpu-efficiëntie">6. Analyse van schaalbaarheid en GPU-efficiëntie</a>    <ul>
+      <li><a href="#61-ideale-lineaire-schaling-vs-werkelijke-prestaties" id="markdown-toc-61-ideale-lineaire-schaling-vs-werkelijke-prestaties">6.1 Ideale lineaire schaling vs werkelijke prestaties</a></li>
+      <li><a href="#62-verzadigingskaart-van-de-gpu" id="markdown-toc-62-verzadigingskaart-van-de-gpu">6.2 Verzadigingskaart van de GPU</a></li>
+      <li><a href="#63-knelpunt-vaststellen-prefill-vs-decode" id="markdown-toc-63-knelpunt-vaststellen-prefill-vs-decode">6.3 Knelpunt vaststellen: prefill vs decode</a></li>
+      <li><a href="#64-hardwarebeperkingen-van-dgx-spark-sm121-en-nvfp4-prestaties" id="markdown-toc-64-hardwarebeperkingen-van-dgx-spark-sm121-en-nvfp4-prestaties">6.4 Hardwarebeperkingen van DGX Spark (SM121) en NVFP4-prestaties</a>        <ul>
+          <li><a href="#641-vergelijking-van-de-architecturen-sm121-en-sm100" id="markdown-toc-641-vergelijking-van-de-architecturen-sm121-en-sm100">6.4.1 Vergelijking van de architecturen SM121 en SM100</a></li>
+          <li><a href="#642-waarom-kan-nvfp4-de-theoretische-versnelling-niet-waarmaken" id="markdown-toc-642-waarom-kan-nvfp4-de-theoretische-versnelling-niet-waarmaken">6.4.2 Waarom kan NVFP4 de theoretische versnelling niet waarmaken?</a></li>
+          <li><a href="#643-waarom-is-mtp--nvfp4-problematisch" id="markdown-toc-643-waarom-is-mtp--nvfp4-problematisch">6.4.3 Waarom is MTP + NVFP4 problematisch?</a></li>
+          <li><a href="#644-tekortkomingen-aan-de-softwarekant" id="markdown-toc-644-tekortkomingen-aan-de-softwarekant">6.4.4 Tekortkomingen aan de softwarekant</a></li>
+          <li><a href="#645-referenties" id="markdown-toc-645-referenties">6.4.5 Referenties</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#7-staartlatentie-en-stabiliteit" id="markdown-toc-7-staartlatentie-en-stabiliteit">7. Staartlatentie en stabiliteit</a>    <ul>
+      <li><a href="#71-p90p50-verhoudingen" id="markdown-toc-71-p90p50-verhoudingen">7.1 p90/p50-verhoudingen</a></li>
+      <li><a href="#72-welke-variant-is-het-best-voorspelbaar" id="markdown-toc-72-welke-variant-is-het-best-voorspelbaar">7.2 Welke variant is het best voorspelbaar?</a></li>
+      <li><a href="#73-schommeling-van-de-latentie-onder-belasting" id="markdown-toc-73-schommeling-van-de-latentie-onder-belasting">7.3 Schommeling van de latentie onder belasting</a></li>
+    </ul>
+  </li>
+  <li><a href="#8-optimaal-werkpunt-en-aanbevelingen" id="markdown-toc-8-optimaal-werkpunt-en-aanbevelingen">8. Optimaal werkpunt en aanbevelingen</a>    <ul>
+      <li><a href="#81-handleiding-voor-de-keuze-van-een-variant" id="markdown-toc-81-handleiding-voor-de-keuze-van-een-variant">8.1 Handleiding voor de keuze van een variant</a></li>
+      <li><a href="#82-optimale-gelijktijdigheidsniveaus" id="markdown-toc-82-optimale-gelijktijdigheidsniveaus">8.2 Optimale gelijktijdigheidsniveaus</a></li>
+      <li><a href="#83-aanbevelingen-voor-de-keuze-van-de-kwantisatie" id="markdown-toc-83-aanbevelingen-voor-de-keuze-van-de-kwantisatie">8.3 Aanbevelingen voor de keuze van de kwantisatie</a></li>
+    </ul>
+  </li>
+  <li><a href="#9-conclusie" id="markdown-toc-9-conclusie">9. Conclusie</a>    <ul>
+      <li><a href="#91-samenvatting-van-de-belangrijkste-bevindingen" id="markdown-toc-91-samenvatting-van-de-belangrijkste-bevindingen">9.1 Samenvatting van de belangrijkste bevindingen</a></li>
+    </ul>
+  </li>
+  <li><a href="#bijlage-a-kwantitatieve-impact-van-de-hardwaretekortkomingen-van-sm121" id="markdown-toc-bijlage-a-kwantitatieve-impact-van-de-hardwaretekortkomingen-van-sm121">Bijlage A: Kwantitatieve impact van de hardwaretekortkomingen van SM121</a>    <ul>
+      <li><a href="#a1-concrete-prestatie-impact-van-de-hardwaretekortkomingen" id="markdown-toc-a1-concrete-prestatie-impact-van-de-hardwaretekortkomingen">A.1 Concrete prestatie-impact van de hardwaretekortkomingen</a></li>
+      <li><a href="#a2-analyse-van-theoretische-vs-gerealiseerde-versnelling" id="markdown-toc-a2-analyse-van-theoretische-vs-gerealiseerde-versnelling">A.2 Analyse van theoretische vs gerealiseerde versnelling</a></li>
+      <li><a href="#a3-haalbaar-plafond-met-softwareverbeteringen" id="markdown-toc-a3-haalbaar-plafond-met-softwareverbeteringen">A.3 Haalbaar plafond met softwareverbeteringen</a></li>
+    </ul>
+  </li>
+  <li><a href="#bijlage-b-grafieken-per-variant" id="markdown-toc-bijlage-b-grafieken-per-variant">Bijlage B: Grafieken per variant</a></li>
+  <li><a href="#over-ons--aetherix" id="markdown-toc-over-ons--aetherix">Over ons — Aetherix</a></li>
+</ul><hr />
+<h2 id="1-inleiding-en-testmethodologie">
+  
+  
+    <a href="#1-inleiding-en-testmethodologie" class="anchor-heading" aria-labelledby="1-inleiding-en-testmethodologie"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1. Inleiding en testmethodologie
+  
+  
+</h2>
+    
+<h3 id="11-introductie-van-het-model">
+  
+  
+    <a href="#11-introductie-van-het-model" class="anchor-heading" aria-labelledby="11-introductie-van-het-model"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1.1 Introductie van het model
+  
+  
+</h3>
+    
+
+<p>Qwen3.6-27B is een groot taalmodel met 27 miljard parameters uit de Qwen-familie van Alibaba. Deze versie, ontwikkeld na de Qwen3.5-serie op basis van feedback uit de community, biedt aanzienlijke verbeteringen, met name op het gebied van <strong>agentic coding</strong> (front-end-workflows en reasoning op repositoryniveau) en <strong>thinking preservation</strong> (het behouden van de reasoning-context uit eerdere berichten).</p>
+
+<p>Dit rapport evalueert de prestaties van hetzelfde model met verschillende <strong>kwantisatie</strong>formaten (quantization) en <strong>MTP-configuraties (Multi-Token Prediction)</strong> op het NVIDIA DGX Spark-platform.</p>
+
+<p><strong>Modelarchitectuur:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Waarde</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Aantal parameters</td>
+      <td>27B</td>
+    </tr>
+    <tr>
+      <td>Verborgen dimensie (hidden dimension)</td>
+      <td>5120</td>
+    </tr>
+    <tr>
+      <td>Aantal lagen</td>
+      <td>64</td>
+    </tr>
+    <tr>
+      <td>Indeling van de architectuur</td>
+      <td>16 × (3 × Gated DeltaNet → FFN → 1 × Gated Attention → FFN)</td>
+    </tr>
+    <tr>
+      <td>DeltaNet-attention-heads</td>
+      <td>V: 48, QK: 16, Head dim: 128</td>
+    </tr>
+    <tr>
+      <td>Gated Attention-heads</td>
+      <td>Q: 24, KV: 4, Head dim: 256</td>
+    </tr>
+    <tr>
+      <td>RoPE-dimensie</td>
+      <td>64</td>
+    </tr>
+    <tr>
+      <td>Tussenliggende FFN-grootte</td>
+      <td>17408</td>
+    </tr>
+    <tr>
+      <td>Grootte van de token-embedding</td>
+      <td>248320 (padded)</td>
+    </tr>
+    <tr>
+      <td>Contextlengte (context length)</td>
+      <td>262,144 tokens (native), met YaRN uit te breiden tot 1,010,000</td>
+    </tr>
+    <tr>
+      <td>MTP-ondersteuning</td>
+      <td>Ondersteund, met multi-step-training</td>
+    </tr>
+    <tr>
+      <td>Visuele encoder</td>
+      <td>Aanwezig (Image-Text-to-Text)</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Opmerking:</strong> In het kader van deze benchmark is uitsluitend tekstinvoer/-uitvoer gebruikt; de visuele encoder is niet actief.</p>
+</blockquote>
+<h3 id="12-geteste-varianten">
+  
+  
+    <a href="#12-geteste-varianten" class="anchor-heading" aria-labelledby="12-geteste-varianten"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1.2 Geteste varianten
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Variant</th>
+      <th>Kwantisatie</th>
+      <th>MTP</th>
+      <th>Beschrijving</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>FP8</strong></td>
+      <td>FP8 (8-bit floating point)</td>
+      <td>Geen</td>
+      <td>Floating-point-kwantisatie met 8 bits</td>
+    </tr>
+    <tr>
+      <td><strong>FP8-MTP</strong></td>
+      <td>FP8</td>
+      <td>Ja</td>
+      <td>FP8 + multi-token prediction</td>
+    </tr>
+    <tr>
+      <td><strong>AWQ-MTP</strong></td>
+      <td>AWQ (Activation-aware Weight Quantization)</td>
+      <td>Ja</td>
+      <td>Activatiebewuste gewichtskwantisatie + MTP</td>
+    </tr>
+    <tr>
+      <td><strong>NVFP4</strong></td>
+      <td>NVFP4 (NVIDIA-formaat met 4 bits)</td>
+      <td>Geen</td>
+      <td>NVIDIA-specifieke 4-bitkwantisatie</td>
+    </tr>
+    <tr>
+      <td><strong>NVFP4-MTP</strong></td>
+      <td>NVFP4</td>
+      <td>Ja</td>
+      <td>NVFP4 + multi-token prediction</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Opmerking:</strong> Van de AWQ-variant is geen test zonder MTP beschikbaar. Een directe vergelijking van het MTP-effect is daarom alleen mogelijk voor FP8 en NVFP4.</p>
+</blockquote>
+<h3 id="13-kwantisatieformaten">
+  
+  
+    <a href="#13-kwantisatieformaten" class="anchor-heading" aria-labelledby="13-kwantisatieformaten"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1.3 Kwantisatieformaten
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>FP8 (Float8):</strong> Floating-point-getalformaat met 8 bits. Zet de modelgewichten (weights) om van BF16 naar FP8. De kwantisatiemethode die Qwen toepast, is fijnmazige (fine-grained) FP8-kwantisatie met een blokgrootte van 128; de prestatiemetrieken zijn vrijwel identiek aan die van het oorspronkelijke model. Het precisieverlies is minimaal. Omdat FP8 8 bits per gewicht gebruikt, halveert het de modelgrootte en de benodigde geheugenbandbreedte (memory bandwidth) ten opzichte van het oorspronkelijke BF16-model; het is echter ~2x groter dan de 4-bitformaten (AWQ, NVFP4) in dit rapport en vraagt meer geheugenbandbreedte — de belangrijkste reden waarom NVFP4 FP8 overtreft in de decode-fase (geheugengebonden) (zie paragraaf 3.1). Bron: <a href="https://huggingface.co/Qwen/Qwen3.6-27B-FP8"><code class="language-plaintext highlighter-rouge">Qwen/Qwen3.6-27B-FP8</code></a></li>
+  <li><strong>AWQ (Activation-aware Weight Quantization):</strong> Een methode die de gewichten naar 4-bit kwantiseert maar de activaties behoudt. Alleen de gewichten worden gekwantiseerd; de activaties blijven op volledige precisie. Dit bespaart geheugenbandbreedte. Tijdens runtime zet vLLM AWQ-gewichten automatisch om naar de <strong>Marlin-kernel</strong>; deze versnelling op hardwareniveau is een van de belangrijkste redenen voor het prestatievoordeel in de decode-fase. Bron: <a href="https://huggingface.co/shawnw3i/Qwen3.6-27B-AWQ-MTP"><code class="language-plaintext highlighter-rouge">shawnw3i/Qwen3.6-27B-AWQ-MTP</code></a></li>
+  <li><strong>NVFP4 (NVIDIA Float4):</strong> Floating-point-formaat met 4 bits dat NVIDIA heeft geoptimaliseerd voor de Blackwell-architectuur. Biedt de hoogste compressieverhouding, met ondersteuning voor versnelling op hardwareniveau. Het is gekalibreerd op de UltraChat-dataset, voorbereid met sequenties tot 16K contextlengte en een kalibratiebudget van ongeveer 2M tokens. Doordat de kalibratie gebaseerd is op een op chat gerichte UltraChat-verdeling, kan het nauwkeurigheidsgedrag in andere domeinen (bijv. code, wiskunde) worden beïnvloed; omdat deze benchmark alleen snelheid meet, is dat effect niet geëvalueerd. Bron: <a href="https://huggingface.co/unsloth/Qwen3.6-27B-NVFP4"><code class="language-plaintext highlighter-rouge">unsloth/Qwen3.6-27B-NVFP4</code></a></li>
+</ul>
+<h3 id="14-wat-is-mtp-multi-token-prediction">
+  
+  
+    <a href="#14-wat-is-mtp-multi-token-prediction" class="anchor-heading" aria-labelledby="14-wat-is-mtp-multi-token-prediction"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1.4 Wat is MTP (Multi-Token Prediction)?
+  
+  
+</h3>
+    
+
+<p>MTP is een techniek waarmee het model meerdere tokens per forward pass kan voorspellen. Waar traditionele autoregressieve modellen per stap slechts één token genereren, kunnen met MTP meerdere tokens per stap worden gegenereerd. Dit verhoogt de tokengeneratiesnelheid (TPS) aanzienlijk en verlaagt tegelijk de inter-token-latentie (ITL).</p>
+
+<p><strong>Hoe MTP werkt:</strong></p>
+<ul>
+  <li>Bij elke decode-stap genereert het model N tokens</li>
+  <li>De gegenereerde tokens worden gecontroleerd met een verificatiemechanisme</li>
+  <li>Correct voorspelde tokens worden direct aan de uitvoer toegevoegd</li>
+  <li>Onjuiste voorspellingen worden verworpen en opnieuw gegenereerd</li>
+</ul>
+<h3 id="15-definities-van-de-metrieken">
+  
+  
+    <a href="#15-definities-van-de-metrieken" class="anchor-heading" aria-labelledby="15-definities-van-de-metrieken"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1.5 Definities van de metrieken
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Metriek</th>
+      <th>Eenheid</th>
+      <th>Beschrijving</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>TTFT</strong> (Time To First Token)</td>
+      <td>ms</td>
+      <td>De tijd die verstrijkt tussen het verzenden van het verzoek en de generatie van het eerste token. Weerspiegelt de snelheid van de prefill-fase.</td>
+    </tr>
+    <tr>
+      <td><strong>ITL</strong> (Inter-Token Latency)</td>
+      <td>ms</td>
+      <td>De vertraging tussen twee opeenvolgende tokens. Weerspiegelt de snelheid van de decode-fase.</td>
+    </tr>
+    <tr>
+      <td><strong>TPS</strong> (Tokens Per Second)</td>
+      <td>tokens/s</td>
+      <td>Het gemiddelde aantal tokens dat per seconde wordt gegenereerd. De waargenomen snelheid aan de kant van de gebruiker.</td>
+    </tr>
+    <tr>
+      <td><strong>Latentie</strong> (latency)</td>
+      <td>s</td>
+      <td>De totale tijd vanaf het begin van een verzoek tot de voltooiing ervan (end-to-end).</td>
+    </tr>
+    <tr>
+      <td><strong>Doorvoer</strong> (throughput)</td>
+      <td>RPS</td>
+      <td>Definitie per verzoek van de meettool: <code class="language-plaintext highlighter-rouge">valid_request_count / Σ(latency) = 1 / average_latency</code>. Dit is <strong>de voltooiingssnelheid per seconde van één enkele verzoekstroom</strong>; het is NIET de totale werkcapaciteit (fleet) van het systeem.</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>⚠️ Belangrijk — Correcte interpretatie van de metriek “Throughput (RPS)”:</strong> De gebruikte meettool (CordatusAI/llm-benchmark) berekent deze waarde in de broncode als <code class="language-plaintext highlighter-rouge">throughput = valid_request_count / Σ(latency_i)</code>; dit is algebraïsch gelijk aan <code class="language-plaintext highlighter-rouge">1 / average_latency</code> en <strong>is per definitie onafhankelijk van de gelijktijdigheid (concurrency)</strong>. Met andere woorden: dat de metriek vlak blijft, bewijst niet dat de GPU niet schaalt — het weerspiegelt alleen dat één enkele stroom de inverse van de latentie meet. De werkelijke totale capaciteit van het systeem wordt gemeten als <code class="language-plaintext highlighter-rouge">TPS × Concurrency</code> (totaal aantal tokens/s) of <code class="language-plaintext highlighter-rouge">Concurrency / average_latency</code> (totale RPS) en neemt duidelijk toe met de gelijktijdigheid (zie paragrafen 5.5 en 6.1). Dit onderscheid is cruciaal voor de interpretaties van gelijktijdigheid in dit rapport (paragrafen 5.5, 8.2, 9.1).</p>
+</blockquote>
+<h3 id="16-testomstandigheden">
+  
+  
+    <a href="#16-testomstandigheden" class="anchor-heading" aria-labelledby="16-testomstandigheden"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1.6 Testomstandigheden
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>Platform:</strong> NVIDIA DGX Spark</li>
+  <li><strong>Gelijktijdigheidsniveaus:</strong> 1, 2, 4, 8, 16 gelijktijdige verzoeken</li>
+  <li><strong>Statistische metingen:</strong> Voor elke metriek zijn het gemiddelde, p50 (mediaan) en p90 (90e percentiel) vastgelegd</li>
+  <li><strong>Per variant zijn 5 metrieken × 5 gelijktijdigheidsniveaus = 25 datapunten</strong> verzameld</li>
+</ul>
+<h3 id="17-meettool">
+  
+  
+    <a href="#17-meettool" class="anchor-heading" aria-labelledby="17-meettool"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1.7 Meettool
+  
+  
+</h3>
+    
+
+<p>Alle metingen zijn uitgevoerd met de opensourcetool <strong><a href="https://github.com/CordatusAI/llm-benchmark">CordatusAI/llm-benchmark</a></strong>. Deze tool is een op Streamlit gebaseerde applicatie, ontworpen om de prestaties van LLM-inferentieservers (inference) te meten via de OpenAI-compatibele streaming-API.</p>
+
+<p><strong>Werkwijze:</strong></p>
+
+<ul>
+  <li>Er worden streaming-verzoeken verzonden naar het OpenAI-compatibele endpoint <code class="language-plaintext highlighter-rouge">/v1/chat/completions</code></li>
+  <li>Het aantal tokens wordt aan de serverkant geverifieerd met <code class="language-plaintext highlighter-rouge">stream_options={"include_usage": True}</code></li>
+  <li>Dankzij ondersteuning voor <code class="language-plaintext highlighter-rouge">reasoning_content</code> worden ook de reasoning-tokens van reasoning-modellen in de meting meegenomen</li>
+</ul>
+
+<p><strong>Meetparameters:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Waarde</th>
+      <th>Beschrijving</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Aantal prompts</td>
+      <td>100</td>
+      <td>Geladen uit het bestand <code class="language-plaintext highlighter-rouge">prompts.txt</code>, bij elke run in willekeurige volgorde</td>
+    </tr>
+    <tr>
+      <td>Promptlengte</td>
+      <td>~128 tokens</td>
+      <td>Elke prompt vraagt expliciet om een antwoord van minstens 128 tokens</td>
+    </tr>
+    <tr>
+      <td>Maximaal aantal uitvoertokens</td>
+      <td>128</td>
+      <td>Antwoorden worden bij 128 tokens afgekapt</td>
+    </tr>
+    <tr>
+      <td>Minimaal aantal rondes</td>
+      <td>10</td>
+      <td>Minstens 10 rondes per gelijktijdigheidsniveau</td>
+    </tr>
+    <tr>
+      <td>Totaal aantal verzoeken</td>
+      <td>10 × gelijktijdigheid</td>
+      <td>Concurrency=8 → 80 verzoeken, Concurrency=16 → 160 verzoeken</td>
+    </tr>
+    <tr>
+      <td>Opwarmen</td>
+      <td>1 verzoek</td>
+      <td>Vóór de benchmark wordt 1 opwarmverzoek verzonden</td>
+    </tr>
+    <tr>
+      <td>Statistische metingen</td>
+      <td>Gemiddelde, p50, p90</td>
+      <td>Voor elke metriek worden het gemiddelde, de mediaan en het 90e percentiel berekend</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Beperking:</strong> Het aantal verzoeken per gelijktijdigheidsniveau is 10 × gelijktijdigheid; bij C=1 worden slechts ~10 samples gemeten. Daarom kunnen vooral de p90-waarden bij lage gelijktijdigheid en de TTFT-schommelingen (bijv. het onregelmatige TTFT-verloop van AWQ-MTP, paragraaf 2.3; de p90/p50-waarde van 1.56 van NVFP4-MTP, paragraaf 7.1) deels ruis door de kleine steekproef weerspiegelen. Voor een definitieve karakterisering van de staartlatentie (tail latency) wordt een nieuwe meting met meer verzoeken aanbevolen.</p>
+</blockquote>
+<h3 id="18-configuratie-van-de-inferentieserver">
+  
+  
+    <a href="#18-configuratie-van-de-inferentieserver" class="anchor-heading" aria-labelledby="18-configuratie-van-de-inferentieserver"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1.8 Configuratie van de inferentieserver
+  
+  
+</h3>
+    
+
+<p>Alle varianten zijn gedraaid met <strong>vLLM v0.22.0</strong> (Docker-image <code class="language-plaintext highlighter-rouge">vllm/vllm-openai:v0.22.0-ubuntu2404</code>).</p>
+
+<p><strong>Gemeenschappelijke configuratie:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Waarde</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Inferentie-engine</td>
+      <td>vLLM v0.22.0</td>
+    </tr>
+    <tr>
+      <td>Docker-image</td>
+      <td><code class="language-plaintext highlighter-rouge">vllm/vllm-openai:v0.22.0-ubuntu2404</code></td>
+    </tr>
+    <tr>
+      <td>Benutting van het GPU-geheugen</td>
+      <td>0.8 (80%)</td>
+    </tr>
+    <tr>
+      <td>Maximaal aantal gebatchte tokens</td>
+      <td>8192</td>
+    </tr>
+    <tr>
+      <td>Prefix caching</td>
+      <td>Ingeschakeld (<code class="language-plaintext highlighter-rouge">--enable-prefix-caching</code>)</td>
+    </tr>
+    <tr>
+      <td>Chunked prefill</td>
+      <td>Ingeschakeld (<code class="language-plaintext highlighter-rouge">--enable-chunked-prefill</code>)</td>
+    </tr>
+    <tr>
+      <td>Reasoning-parser</td>
+      <td><code class="language-plaintext highlighter-rouge">qwen3</code></td>
+    </tr>
+    <tr>
+      <td>Tool-call-parser</td>
+      <td><code class="language-plaintext highlighter-rouge">qwen3_coder</code></td>
+    </tr>
+    <tr>
+      <td>API-poort</td>
+      <td>8000</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Opmerking:</strong> Bij de NVFP4-varianten is de parameter <code class="language-plaintext highlighter-rouge">--max-num-batched-tokens</code> niet opgegeven; vLLM gebruikt de standaardwaarde. Bij de NVFP4-MTP-variant zijn de generatieparameters aangepast met <code class="language-plaintext highlighter-rouge">--override-generation-config</code>.</p>
+</blockquote><hr />
+<h2 id="2-prestaties-van-de-kwantisatievarianten">
+  
+  
+    <a href="#2-prestaties-van-de-kwantisatievarianten" class="anchor-heading" aria-labelledby="2-prestaties-van-de-kwantisatievarianten"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2. Prestaties van de kwantisatievarianten
+  
+  
+</h2>
+    
+<h3 id="21-qwen36-27b-fp8">
+  
+  
+    <a href="#21-qwen36-27b-fp8" class="anchor-heading" aria-labelledby="21-qwen36-27b-fp8"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.1 Qwen3.6-27B-FP8
+  
+  
+</h3>
+    
+
+<p>FP8-kwantisatie slaat de modelgewichten op in een floating-point-formaat met 8 bits. Deze variant gebruikt geen MTP.</p>
+
+<p><strong>Prestatietabel:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Gelijktijdigheid</th>
+      <th>TTFT (ms)</th>
+      <th>ITL (ms)</th>
+      <th>TPS (tok/s)</th>
+      <th>Latentie (s)</th>
+      <th>Doorvoer (RPS)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>270.57</td>
+      <td>121.87</td>
+      <td>8.13</td>
+      <td>15.75</td>
+      <td>0.06</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>357.77</td>
+      <td>121.13</td>
+      <td>8.13</td>
+      <td>15.74</td>
+      <td>0.06</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>447.17</td>
+      <td>124.23</td>
+      <td>7.89</td>
+      <td>16.23</td>
+      <td>0.06</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>511.45</td>
+      <td>129.14</td>
+      <td>7.57</td>
+      <td>16.91</td>
+      <td>0.06</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>866.95</td>
+      <td>142.24</td>
+      <td>6.76</td>
+      <td>18.93</td>
+      <td>0.05</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-FP8/Qwen3.6-27B-FP8-TTFT.png" alt="FP8 TTFT" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-FP8/Qwen3.6-27B-FP8-ITL.png" alt="FP8 ITL" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-FP8/Qwen3.6-27B-FP8-TPS.png" alt="FP8 TPS" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-FP8/Qwen3.6-27B-FP8-Latency.png" alt="FP8 latentie" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-FP8/Qwen3.6-27B-FP8-Throughput.png" alt="FP8 doorvoer" /></p>
+
+<p><strong>Beoordeling:</strong></p>
+
+<p>Omdat de FP8-variant geen MTP gebruikt, is de tokengeneratiesnelheid beperkt. Dat de ITL rond ~122ms blijft, betekent dat er slechts ~8 tokens per seconde kunnen worden gegenereerd. Naarmate de gelijktijdigheid toeneemt, stijgt de ITL licht (122ms → 142ms), maar de daling van de TPS (17%) en de toename van de latentie (20%) blijven relatief beperkt. Dit toont aan dat FP8 de GPU niet volledig kan verzadigen en dat er ongebruikte capaciteit is.</p>
+
+<p>De TTFT daarentegen neemt duidelijk toe met de gelijktijdigheid (271ms → 867ms, +221%). Dit laat zien dat de prefill-fase de rekenresources van de GPU intensief gebruikt en dat er bij gelijktijdige verzoeken wachtrijvorming optreedt.</p>
+
+<p><strong>Waarom gedragen ITL en TTFT zich verschillend?</strong> Dat de GPU in de twee fasen met twee verschillende knelpunten te maken heeft, verklaart dit: de <strong>decode-fase</strong> is geheugengebonden (memory-bound) — per stap wordt slechts 1 token gegenereerd en de dominante bewerking is het laden van gewichten uit het GPU-geheugen; de rekeneenheden hebben ongebruikte capaciteit. De <strong>prefill-fase</strong> is rekengebonden (compute-bound) — alle invoertokens worden in één keer verwerkt, wat intensieve matrixvermenigvuldigingen vereist, en de SM-eenheden van de GPU werken op volle capaciteit. Daarom wordt decode bij toenemende gelijktijdigheid slechts licht beïnvloed, terwijl bij prefill ernstige wachtrijvorming optreedt (zie paragraaf 6.3 voor een gedetailleerde analyse).</p><hr />
+<h3 id="22-qwen36-27b-fp8-mtp">
+  
+  
+    <a href="#22-qwen36-27b-fp8-mtp" class="anchor-heading" aria-labelledby="22-qwen36-27b-fp8-mtp"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.2 Qwen3.6-27B-FP8-MTP
+  
+  
+</h3>
+    
+
+<p>Combinatie van FP8-kwantisatie + MTP. Dankzij MTP worden per decode-stap meerdere tokens gegenereerd.</p>
+
+<p><strong>Prestatietabel:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Gelijktijdigheid</th>
+      <th>TTFT (ms)</th>
+      <th>ITL (ms)</th>
+      <th>TPS (tok/s)</th>
+      <th>Latentie (s)</th>
+      <th>Doorvoer (RPS)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>322.95</td>
+      <td>49.40</td>
+      <td>19.50</td>
+      <td>6.60</td>
+      <td>0.15</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>516.27</td>
+      <td>46.87</td>
+      <td>19.83</td>
+      <td>6.47</td>
+      <td>0.15</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>530.80</td>
+      <td>50.26</td>
+      <td>18.56</td>
+      <td>6.92</td>
+      <td>0.14</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>620.59</td>
+      <td>55.97</td>
+      <td>16.62</td>
+      <td>7.73</td>
+      <td>0.13</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>812.93</td>
+      <td>66.66</td>
+      <td>13.84</td>
+      <td>9.28</td>
+      <td>0.11</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-FP8-MTP/Qwen3.6-27B-FP8-MTP-TTFT.png" alt="FP8-MTP TTFT" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-FP8-MTP/Qwen3.6-27B-FP8-MTP-ITL.png" alt="FP8-MTP ITL" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-FP8-MTP/Qwen3.6-27B-FP8-MTP-TPS.png" alt="FP8-MTP TPS" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-FP8-MTP/Qwen3.6-27B-FP8-MTP-Latency.png" alt="FP8-MTP latentie" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-FP8-MTP/Qwen3.6-27B-FP8-MTP-Throughput.png" alt="FP8-MTP doorvoer" /></p>
+
+<p><strong>Beoordeling:</strong></p>
+
+<p>Het effect van MTP is opvallend: de ITL daalde van 122ms naar 49ms (~60% lager) en de TPS steeg van 8.13 naar 19.50 (~140% hoger). De totale latentie daalde van 15.75s naar 6.60s (~58% lager). Dit bevestigt dat MTP de decode-fase drastisch versnelt.</p>
+
+<p>De gevoeligheid voor een toename van de gelijktijdigheid is echter groter: de TPS daalt 29% (tegenover 17% bij FP8 zonder MTP), de latentie neemt 40% toe (tegenover 20% bij FP8 zonder MTP). Het lijkt erop dat een snel model de GPU effectiever gebruikt en dat de concurrentie om resources onder extra belasting sterker wordt.</p>
+
+<p>De TTFT heeft een hogere beginwaarde dan de FP8-variant zonder MTP (323ms tegenover 271ms). Dit wijst erop dat MTP extra rekenbelasting in de prefill-fase kan meebrengen. De duidelijke toename van de TTFT met de gelijktijdigheid komt voort uit het rekengebonden karakter van de prefill-fase (zie de uitleg over het prefill/decode-knelpunt in paragraaf 2.1).</p><hr />
+<h3 id="23-qwen36-27b-awq-mtp">
+  
+  
+    <a href="#23-qwen36-27b-awq-mtp" class="anchor-heading" aria-labelledby="23-qwen36-27b-awq-mtp"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.3 Qwen3.6-27B-AWQ-MTP
+  
+  
+</h3>
+    
+
+<p>Combinatie van AWQ-kwantisatie + MTP. AWQ comprimeert de gewichten naar 4-bit en bespaart geheugenbandbreedte.</p>
+
+<p><strong>Prestatietabel:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Gelijktijdigheid</th>
+      <th>TTFT (ms)</th>
+      <th>ITL (ms)</th>
+      <th>TPS (tok/s)</th>
+      <th>Latentie (s)</th>
+      <th>Doorvoer (RPS)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>266.65</td>
+      <td>37.57</td>
+      <td>25.45</td>
+      <td>5.04</td>
+      <td>0.20</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>562.95</td>
+      <td>35.34</td>
+      <td>25.42</td>
+      <td>5.05</td>
+      <td>0.20</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>845.97</td>
+      <td>38.05</td>
+      <td>23.08</td>
+      <td>5.68</td>
+      <td>0.18</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>625.74</td>
+      <td>45.44</td>
+      <td>20.09</td>
+      <td>6.40</td>
+      <td>0.16</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>876.55</td>
+      <td>60.73</td>
+      <td>14.99</td>
+      <td>8.59</td>
+      <td>0.12</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-AWQ-MTP/Qwen3.6-27B-AWQ-TTFT.png" alt="AWQ-MTP TTFT" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-AWQ-MTP/Qwen3.6-27B-AWQ-ITL.png" alt="AWQ-MTP ITL" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-AWQ-MTP/Qwen3.6-27B-AWQ-TPS.png" alt="AWQ-MTP TPS" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-AWQ-MTP/Qwen3.6-27B-AWQ-Latency.png" alt="AWQ-MTP latentie" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-AWQ-MTP/Qwen3.6-27B-AWQ-Throughput.png" alt="AWQ-MTP doorvoer" /></p>
+
+<p><strong>Beoordeling:</strong></p>
+
+<p>AWQ-MTP levert de hoogste prestaties van alle varianten. Bij Concurrency=1 is het de duidelijke koploper met een TPS van 25.45 tok/s, een ITL van 37.57ms en een latentie van 5.04s. Wanneer de geheugenbandbreedtebesparing van AWQ wordt gecombineerd met de generatie van meerdere tokens door MTP, wordt de decode-fase drastisch versneld.</p>
+
+<p>Deze variant is echter het gevoeligst voor een toename van de gelijktijdigheid: de TPS daalt 41% (25.45 → 14.99), de ITL neemt 62% toe (37.57ms → 60.73ms), de latentie neemt 70% toe (5.04s → 8.59s). Dit wijst erop dat de GPU al bij lage belasting sterk wordt benut en dat extra belasting tot concurrentie om resources leidt.</p>
+
+<p>De TTFT-waarden volgen een onregelmatig verloop (267ms, 563ms, 846ms, 626ms, 877ms). De stijging naar 846ms bij Concurrency=4 en de daling naar 626ms bij C=8 wijzen erop dat de waarde wordt beïnvloed door systeemomstandigheden of schommelingen in de scheduling tijdens de test. Over het geheel genomen komt de toename van de TTFT met de gelijktijdigheid voort uit het rekengebonden karakter van de prefill-fase (zie de uitleg over het prefill/decode-knelpunt in paragraaf 2.1).</p><hr />
+<h3 id="24-qwen36-27b-nvfp4">
+  
+  
+    <a href="#24-qwen36-27b-nvfp4" class="anchor-heading" aria-labelledby="24-qwen36-27b-nvfp4"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.4 Qwen3.6-27B-NVFP4
+  
+  
+</h3>
+    
+
+<p>Het eigen 4-bitformaat van NVIDIA. Wordt geleverd met ondersteuning voor versnelling op hardwareniveau; MTP is niet gebruikt.</p>
+
+<p><strong>Prestatietabel:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Gelijktijdigheid</th>
+      <th>TTFT (ms)</th>
+      <th>ITL (ms)</th>
+      <th>TPS (tok/s)</th>
+      <th>Latentie (s)</th>
+      <th>Doorvoer (RPS)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>228.42</td>
+      <td>100.40</td>
+      <td>9.86</td>
+      <td>12.98</td>
+      <td>0.08</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>339.55</td>
+      <td>100.29</td>
+      <td>9.79</td>
+      <td>13.08</td>
+      <td>0.08</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>387.42</td>
+      <td>103.28</td>
+      <td>9.48</td>
+      <td>13.50</td>
+      <td>0.07</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>451.22</td>
+      <td>108.04</td>
+      <td>9.03</td>
+      <td>14.17</td>
+      <td>0.07</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>659.95</td>
+      <td>120.80</td>
+      <td>8.00</td>
+      <td>16.00</td>
+      <td>0.06</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-NVFP4/Qwen3.6-27B-NVFP4-TTFT.png" alt="NVFP4 TTFT" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-NVFP4/Qwen3.6-27B-NVFP4-ITL.png" alt="NVFP4 ITL" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-NVFP4/Qwen3.6-27B-NVFP4-TPS.png" alt="NVFP4 TPS" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-NVFP4/Qwen3.6-27B-NVFP4-Latency.png" alt="NVFP4 latentie" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-NVFP4/Qwen3.6-27B-NVFP4-Throughput.png" alt="NVFP4 doorvoer" /></p>
+
+<p><strong>Beoordeling:</strong></p>
+
+<p>NVFP4 presteert consequent beter dan de FP8-variant. ITL ~100ms (tegenover ~122ms bij FP8), TPS ~9.86 tok/s (tegenover ~8.13 bij FP8), latentie ~13s (tegenover ~15.75s bij FP8). Het geheugenbandbreedtevoordeel van 4-bitcompressie overtreft, in combinatie met hardwareversnelling, FP8.</p>
+
+<p>De TTFT-waarden van NVFP4 zijn de laagste van alle varianten (228ms @ C=1). Dit toont aan dat NVFP4 in de prefill-fase profiteert van hardwareversnelling.</p>
+
+<p>De gevoeligheid voor gelijktijdigheid is vergelijkbaar met die van FP8: de TPS daalt 19%, de ITL neemt 20% toe, de latentie neemt 23% toe. Omdat beide modellen zonder MTP de GPU niet volledig kunnen verzadigen, heeft de toename van de gelijktijdigheid een relatief mild effect — het verschil in knelpunt, met een geringe invloed op de ITL (decode geheugengebonden) en een grote invloed op de TTFT (prefill rekengebonden), geldt ook hier (zie de uitleg in paragraaf 2.1).</p><hr />
+<h3 id="25-qwen36-27b-nvfp4-mtp">
+  
+  
+    <a href="#25-qwen36-27b-nvfp4-mtp" class="anchor-heading" aria-labelledby="25-qwen36-27b-nvfp4-mtp"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.5 Qwen3.6-27B-NVFP4-MTP
+  
+  
+</h3>
+    
+
+<p>Combinatie van NVFP4-kwantisatie + MTP. 4-bitcompressie en multi-token prediction worden samen gebruikt.</p>
+
+<p><strong>Prestatietabel:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Gelijktijdigheid</th>
+      <th>TTFT (ms)</th>
+      <th>ITL (ms)</th>
+      <th>TPS (tok/s)</th>
+      <th>Latentie (s)</th>
+      <th>Doorvoer (RPS)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>519.21</td>
+      <td>44.32</td>
+      <td>21.02</td>
+      <td>6.15</td>
+      <td>0.16</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>634.90</td>
+      <td>41.92</td>
+      <td>21.68</td>
+      <td>5.96</td>
+      <td>0.17</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>849.66</td>
+      <td>44.79</td>
+      <td>19.94</td>
+      <td>6.54</td>
+      <td>0.15</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>592.18</td>
+      <td>50.64</td>
+      <td>18.27</td>
+      <td>7.03</td>
+      <td>0.14</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>838.59</td>
+      <td>63.38</td>
+      <td>14.47</td>
+      <td>8.89</td>
+      <td>0.11</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-NVFP4-MTP/Qwen3.6-27B-NVFP4-MTP-TTFT.png" alt="NVFP4-MTP TTFT" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-NVFP4-MTP/Qwen3.6-27B-NVFP4-MTP-ITL.png" alt="NVFP4-MTP ITL" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-NVFP4-MTP/Qwen3.6-27B-NVFP4-MTP-TPS.png" alt="NVFP4-MTP TPS" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-NVFP4-MTP/Qwen3.6-27B-NVFP4-MTP-Latency.png" alt="NVFP4-MTP latentie" /></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/Qwen3.6-27B-NVFP4-MTP/Qwen3.6-27B-NVFP4-MTP-Throughput.png" alt="NVFP4-MTP doorvoer" /></p>
+
+<p><strong>Beoordeling:</strong></p>
+
+<p>NVFP4-MTP levert prestaties die dicht bij die van FP8-MTP liggen. Bij Concurrency=1 is de TPS 21.02 tok/s (FP8-MTP: 19.50), de ITL 44.32ms (FP8-MTP: 49.40ms) en de latentie 6.15s (FP8-MTP: 6.60s). Wanneer het geheugenbandbreedtevoordeel van NVFP4 wordt gecombineerd met MTP, levert dat een kleine extra snelheidswinst op.</p>
+
+<p>Wat de TTFT betreft, heeft NVFP4-MTP bij Concurrency=1 met 519ms de hoogste waarde van alle varianten. Dit duidelijke verschil wijst erop dat de NVFP4+MTP-configuratie een extra rekenbelasting in de prefill-fase veroorzaakt. Bij deze variant wacht de gebruiker het langst op het eerste token. Door hardwarebeperkingen van SM121 veroorzaakt de combinatie MTP+NVFP4 extra belasting in de prefill (zie paragraaf 6.4.3 voor details).</p>
+
+<p>De gevoeligheid voor gelijktijdigheid is vergelijkbaar met die van FP8-MTP: de TPS daalt 31%, de ITL neemt 43% toe, de latentie neemt 45% toe. De duidelijke toename van de ITL met de gelijktijdigheid komt doordat de concurrentie om geheugenbandbreedte toeneemt naarmate de GPU in de decode-fase verzadiging nadert; de toename van de TTFT komt voort uit het rekengebonden karakter van prefill (zie de uitleg in paragraaf 2.1). De lichte stijging van de TPS bij Concurrency=2 (21.02 → 21.68) en de daling van de latentie (6.15s → 5.96s) zijn opmerkelijk; dit kan wijzen op een mogelijk batching-effect bij C=2. Het verschil (~3% TPS) valt echter binnen de ruismarges van een kleine steekproef; voor een definitieve bewering over een “sweet spot” zijn meer metingen nodig (zie paragraaf 1.7, Beperking).</p><hr />
+<h2 id="3-vergelijking-van-de-kwantisatieformaten">
+  
+  
+    <a href="#3-vergelijking-van-de-kwantisatieformaten" class="anchor-heading" aria-labelledby="3-vergelijking-van-de-kwantisatieformaten"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. Vergelijking van de kwantisatieformaten
+  
+  
+</h2>
+    
+
+<p><strong>TTFT-vergelijking (alle varianten):</strong></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/comparison-charts/comparison-TTFT.png" alt="TTFT-vergelijking" /></p>
+<h3 id="31-zonder-mtp-fp8-vs-nvfp4">
+  
+  
+    <a href="#31-zonder-mtp-fp8-vs-nvfp4" class="anchor-heading" aria-labelledby="31-zonder-mtp-fp8-vs-nvfp4"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.1 Zonder MTP: FP8 vs NVFP4
+  
+  
+</h3>
+    
+
+<p>Vergelijking van de twee varianten zonder MTP over de gelijktijdigheidsniveaus:</p>
+
+<p><strong>Vergelijking van de TPS (tokens/s):</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Gelijktijdigheid</th>
+      <th>FP8</th>
+      <th>NVFP4</th>
+      <th>Verschil</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>8.13</td>
+      <td>9.86</td>
+      <td>+21.3%</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>8.13</td>
+      <td>9.79</td>
+      <td>+20.4%</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>7.89</td>
+      <td>9.48</td>
+      <td>+20.2%</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>7.57</td>
+      <td>9.03</td>
+      <td>+19.3%</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>6.76</td>
+      <td>8.00</td>
+      <td>+18.3%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Vergelijking van de ITL (ms):</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Gelijktijdigheid</th>
+      <th>FP8</th>
+      <th>NVFP4</th>
+      <th>Verschil</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>121.87</td>
+      <td>100.40</td>
+      <td>-17.6%</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>121.13</td>
+      <td>100.29</td>
+      <td>-17.2%</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>124.23</td>
+      <td>103.28</td>
+      <td>-16.9%</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>129.14</td>
+      <td>108.04</td>
+      <td>-16.3%</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>142.24</td>
+      <td>120.80</td>
+      <td>-15.1%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Vergelijking van de latentie (s):</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Gelijktijdigheid</th>
+      <th>FP8</th>
+      <th>NVFP4</th>
+      <th>Verschil</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>15.75</td>
+      <td>12.98</td>
+      <td>-17.6%</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>15.74</td>
+      <td>13.08</td>
+      <td>-16.9%</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>16.23</td>
+      <td>13.50</td>
+      <td>-16.8%</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>16.91</td>
+      <td>14.17</td>
+      <td>-16.2%</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>18.93</td>
+      <td>16.00</td>
+      <td>-15.5%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Beoordeling:</strong></p>
+
+<p>NVFP4 is op alle metrieken consequent beter dan FP8. De belangrijkste reden voor dit voordeel is dat de 4-bitcompressie van NVFP4 de benodigde geheugenbandbreedte halveert. De decode-fase van een LLM is een geheugengebonden workload; NVFP4 verplaatst minder data en kan de rekeneenheden van de GPU daardoor efficiënter voeden.</p>
+
+<p>De voorsprong wordt iets kleiner naarmate de gelijktijdigheid toeneemt (van 21.3% naar 18.3% in TPS). Dit wijst erop dat het geheugenbandbreedtevoordeel afneemt naarmate onder hoge belasting de grens van de rekenresources van de GPU in zicht komt.</p>
+<h3 id="32-met-mtp-fp8-mtp-vs-awq-mtp-vs-nvfp4-mtp">
+  
+  
+    <a href="#32-met-mtp-fp8-mtp-vs-awq-mtp-vs-nvfp4-mtp" class="anchor-heading" aria-labelledby="32-met-mtp-fp8-mtp-vs-awq-mtp-vs-nvfp4-mtp"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.2 Met MTP: FP8-MTP vs AWQ-MTP vs NVFP4-MTP
+  
+  
+</h3>
+    
+
+<p>Vergelijking van de drie varianten met MTP:</p>
+
+<p><strong>Vergelijking bij Concurrency=1:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Metriek</th>
+      <th>FP8-MTP</th>
+      <th>AWQ-MTP</th>
+      <th>NVFP4-MTP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TPS (tok/s)</td>
+      <td>19.50</td>
+      <td><strong>25.45</strong></td>
+      <td>21.02</td>
+    </tr>
+    <tr>
+      <td>ITL (ms)</td>
+      <td>49.40</td>
+      <td><strong>37.57</strong></td>
+      <td>44.32</td>
+    </tr>
+    <tr>
+      <td>Latentie (s)</td>
+      <td>6.60</td>
+      <td><strong>5.04</strong></td>
+      <td>6.15</td>
+    </tr>
+    <tr>
+      <td>TTFT (ms)</td>
+      <td>322.95</td>
+      <td><strong>266.65</strong></td>
+      <td>519.21</td>
+    </tr>
+    <tr>
+      <td>Doorvoer (RPS)</td>
+      <td>0.15</td>
+      <td><strong>0.20</strong></td>
+      <td>0.16</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Vergelijking bij Concurrency=16:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Metriek</th>
+      <th>FP8-MTP</th>
+      <th>AWQ-MTP</th>
+      <th>NVFP4-MTP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TPS (tok/s)</td>
+      <td>13.84</td>
+      <td><strong>14.99</strong></td>
+      <td>14.47</td>
+    </tr>
+    <tr>
+      <td>ITL (ms)</td>
+      <td>66.66</td>
+      <td><strong>60.73</strong></td>
+      <td>63.38</td>
+    </tr>
+    <tr>
+      <td>Latentie (s)</td>
+      <td>9.28</td>
+      <td><strong>8.59</strong></td>
+      <td>8.89</td>
+    </tr>
+    <tr>
+      <td>TTFT (ms)</td>
+      <td><strong>812.93</strong></td>
+      <td>876.55</td>
+      <td>838.59</td>
+    </tr>
+    <tr>
+      <td>Doorvoer (RPS)</td>
+      <td>0.11</td>
+      <td><strong>0.12</strong></td>
+      <td>0.11</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Beoordeling:</strong></p>
+
+<p>AWQ-MTP is bij lage gelijktijdigheid de duidelijke koploper. In TPS is het 30% sneller dan FP8-MTP en 21% sneller dan NVFP4-MTP. Bij hoge gelijktijdigheid (C=16) wordt het verschil echter aanzienlijk kleiner: de TPS-voorsprong van AWQ-MTP daalt tot 8% ten opzichte van FP8-MTP en 3% ten opzichte van NVFP4-MTP.</p>
+
+<p>Dit toont aan dat het geheugenbandbreedtevoordeel van AWQ het effectiefst is bij lage belasting en dat de rekenresources het knelpunt worden naarmate de belasting toeneemt. Bij hoge gelijktijdigheid gaan alle varianten vergelijkbare prestaties vertonen.</p>
+
+<p>Hoewel NVFP4-MTP prestaties levert die dicht bij die van FP8-MTP liggen, heeft het de slechtste TTFT-waarden. Met dit nadeel moet rekening worden gehouden in scenario’s waarin de latentie tot het eerste token cruciaal is (bijv. chatbots).</p><hr />
+<h2 id="4-diepgaande-analyse-van-het-mtp-effect">
+  
+  
+    <a href="#4-diepgaande-analyse-van-het-mtp-effect" class="anchor-heading" aria-labelledby="4-diepgaande-analyse-van-het-mtp-effect"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. Diepgaande analyse van het MTP-effect
+  
+  
+</h2>
+    
+
+<p><strong>TPS-vergelijking (alle varianten):</strong></p>
+
+<p><img src="/papers/qwen3.6-27b-dgx-spark-benchmark/comparison-charts/comparison-TPS.png" alt="TPS-vergelijking" /></p>
+<h3 id="41-effect-van-de-overstap-fp8--fp8-mtp">
+  
+  
+    <a href="#41-effect-van-de-overstap-fp8--fp8-mtp" class="anchor-heading" aria-labelledby="41-effect-van-de-overstap-fp8--fp8-mtp"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.1 Effect van de overstap FP8 → FP8-MTP
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Metriek</th>
+      <th>FP8 (C=1)</th>
+      <th>FP8-MTP (C=1)</th>
+      <th>Verandering</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TPS</td>
+      <td>8.13 tok/s</td>
+      <td>19.50 tok/s</td>
+      <td><strong>+139.7%</strong></td>
+    </tr>
+    <tr>
+      <td>ITL</td>
+      <td>121.87 ms</td>
+      <td>49.40 ms</td>
+      <td><strong>-59.5%</strong></td>
+    </tr>
+    <tr>
+      <td>Latentie</td>
+      <td>15.75 s</td>
+      <td>6.60 s</td>
+      <td><strong>-58.1%</strong></td>
+    </tr>
+    <tr>
+      <td>TTFT</td>
+      <td>270.57 ms</td>
+      <td>322.95 ms</td>
+      <td>+19.4%</td>
+    </tr>
+    <tr>
+      <td>Doorvoer</td>
+      <td>0.06 RPS</td>
+      <td>0.15 RPS</td>
+      <td><strong>+150.0%</strong></td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Het effect van MTP op FP8 is op alle gelijktijdigheidsniveaus consistent:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Gelijktijdigheid</th>
+      <th>TPS-toename</th>
+      <th>ITL-afname</th>
+      <th>Latentie-afname</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>+139.7%</td>
+      <td>-59.5%</td>
+      <td>-58.1%</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>+143.5%</td>
+      <td>-61.3%</td>
+      <td>-58.8%</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>+135.2%</td>
+      <td>-59.6%</td>
+      <td>-57.4%</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>+119.4%</td>
+      <td>-56.6%</td>
+      <td>-54.3%</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>+104.7%</td>
+      <td>-53.1%</td>
+      <td>-51.0%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Belangrijkste bevinding:</strong> De snelheidswinst van MTP neemt af naarmate de gelijktijdigheid toeneemt. De TPS-toename daalt van 140% naar 105%. Dit wijst erop dat de extra rekenbelasting van MTP onder hoge belasting tot concurrentie om resources leidt.</p>
+<h3 id="42-effect-van-de-overstap-nvfp4--nvfp4-mtp">
+  
+  
+    <a href="#42-effect-van-de-overstap-nvfp4--nvfp4-mtp" class="anchor-heading" aria-labelledby="42-effect-van-de-overstap-nvfp4--nvfp4-mtp"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.2 Effect van de overstap NVFP4 → NVFP4-MTP
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Metriek</th>
+      <th>NVFP4 (C=1)</th>
+      <th>NVFP4-MTP (C=1)</th>
+      <th>Verandering</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TPS</td>
+      <td>9.86 tok/s</td>
+      <td>21.02 tok/s</td>
+      <td><strong>+113.2%</strong></td>
+    </tr>
+    <tr>
+      <td>ITL</td>
+      <td>100.40 ms</td>
+      <td>44.32 ms</td>
+      <td><strong>-55.9%</strong></td>
+    </tr>
+    <tr>
+      <td>Latentie</td>
+      <td>12.98 s</td>
+      <td>6.15 s</td>
+      <td><strong>-52.6%</strong></td>
+    </tr>
+    <tr>
+      <td>TTFT</td>
+      <td>228.42 ms</td>
+      <td>519.21 ms</td>
+      <td><strong>+127.3%</strong></td>
+    </tr>
+    <tr>
+      <td>Doorvoer</td>
+      <td>0.08 RPS</td>
+      <td>0.16 RPS</td>
+      <td><strong>+100.0%</strong></td>
+    </tr>
+  </tbody>
+</table></div>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Gelijktijdigheid</th>
+      <th>TPS-toename</th>
+      <th>ITL-afname</th>
+      <th>Latentie-afname</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>+113.2%</td>
+      <td>-55.9%</td>
+      <td>-52.6%</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>+121.3%</td>
+      <td>-58.2%</td>
+      <td>-54.4%</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>+110.3%</td>
+      <td>-56.7%</td>
+      <td>-51.6%</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>+102.3%</td>
+      <td>-53.1%</td>
+      <td>-50.4%</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>+80.9%</td>
+      <td>-47.5%</td>
+      <td>-44.4%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Belangrijkste bevinding:</strong> Het negatieve effect van MTP op de TTFT bij NVFP4 is opvallend. De TTFT steeg van 228ms naar 519ms (127% hoger). Dit wijst erop dat de NVFP4+MTP-configuratie een aanzienlijke extra belasting in de prefill-fase veroorzaakt. De gebruiker zal een aanzienlijke vertraging ervaren bij het wachten op het eerste token.</p>
+
+<p>Daarnaast is de snelheidswinst van MTP bij NVFP4 op alle gelijktijdigheidsniveaus lager dan bij FP8 (TPS-toename 113% tegenover 140%). Dit suggereert dat de hardwareversnelling van NVFP4 mogelijk niet volledig compatibel is met MTP.</p>
+<h3 id="43-mtp-versnellingsfactor-vs-gelijktijdigheid">
+  
+  
+    <a href="#43-mtp-versnellingsfactor-vs-gelijktijdigheid" class="anchor-heading" aria-labelledby="43-mtp-versnellingsfactor-vs-gelijktijdigheid"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.3 MTP-versnellingsfactor vs gelijktijdigheid
+  
+  
+</h3>
+    
+
+<p>De TPS-verhouding met MTP / zonder MTP laat zien hoe het voordeel van MTP onder belasting verandert:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Gelijktijdigheid</th>
+      <th>FP8 MTP-verhouding</th>
+      <th>NVFP4 MTP-verhouding</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>2.40x</td>
+      <td>2.13x</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>2.44x</td>
+      <td>2.21x</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>2.35x</td>
+      <td>2.10x</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>2.19x</td>
+      <td>2.02x</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>2.05x</td>
+      <td>1.81x</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Beoordeling:</strong></p>
+
+<p>In beide kwantisatieformaten neemt de MTP-versnellingsfactor af naarmate de gelijktijdigheid toeneemt. Bij FP8 daalt die van 2.40x naar 2.05x, bij NVFP4 van 2.13x naar 1.81x. Dit bewijst dat MTP het grootste voordeel biedt bij lage belasting en dat het rendement onder hoge belasting afneemt.</p>
+
+<p>De MTP-verhouding is bij NVFP4 op alle niveaus lager dan bij FP8. Dat komt doordat de hardwareversnelling van NVFP4 zonder MTP al efficiënter is, zodat de marginale bijdrage van MTP kleiner is.</p><hr />
+<h2 id="5-analyse-van-het-effect-van-gelijktijdigheid">
+  
+  
+    <a href="#5-analyse-van-het-effect-van-gelijktijdigheid" class="anchor-heading" aria-labelledby="5-analyse-van-het-effect-van-gelijktijdigheid"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5. Analyse van het effect van gelijktijdigheid
+  
+  
+</h2>
+    
+<h3 id="51-daling-van-de-tps-tokengeneratiesnelheid">
+  
+  
+    <a href="#51-daling-van-de-tps-tokengeneratiesnelheid" class="anchor-heading" aria-labelledby="51-daling-van-de-tps-tokengeneratiesnelheid"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.1 Daling van de TPS (tokengeneratiesnelheid)
+  
+  
+</h3>
+    
+
+<p>Naarmate de gelijktijdigheid toeneemt, daalt de TPS bij alle varianten:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Variant</th>
+      <th>C=1</th>
+      <th>C=2</th>
+      <th>C=4</th>
+      <th>C=8</th>
+      <th>C=16</th>
+      <th>Totale daling</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FP8</td>
+      <td>8.13</td>
+      <td>8.13</td>
+      <td>7.89</td>
+      <td>7.57</td>
+      <td>6.76</td>
+      <td>-17%</td>
+    </tr>
+    <tr>
+      <td>FP8-MTP</td>
+      <td>19.50</td>
+      <td>19.83</td>
+      <td>18.56</td>
+      <td>16.62</td>
+      <td>13.84</td>
+      <td>-29%</td>
+    </tr>
+    <tr>
+      <td>AWQ-MTP</td>
+      <td>25.45</td>
+      <td>25.42</td>
+      <td>23.08</td>
+      <td>20.09</td>
+      <td>14.99</td>
+      <td>-41%</td>
+    </tr>
+    <tr>
+      <td>NVFP4</td>
+      <td>9.86</td>
+      <td>9.79</td>
+      <td>9.48</td>
+      <td>9.03</td>
+      <td>8.00</td>
+      <td>-19%</td>
+    </tr>
+    <tr>
+      <td>NVFP4-MTP</td>
+      <td>21.02</td>
+      <td>21.68</td>
+      <td>19.94</td>
+      <td>18.27</td>
+      <td>14.47</td>
+      <td>-31%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Analyse:</strong></p>
+
+<ul>
+  <li><strong>Modellen zonder MTP</strong> (FP8, NVFP4) vertonen een lage daling (17-19%). Omdat deze modellen de GPU niet op volle capaciteit kunnen benutten, kan de toegenomen gelijktijdigheid de GPU verder belasten zonder dat de individuele TPS veel wordt beïnvloed.</li>
+  <li><strong>Modellen met MTP</strong> (FP8-MTP, AWQ-MTP, NVFP4-MTP) vertonen een grotere daling (29-41%). Vooral AWQ-MTP heeft met een daling van 41% het hoogste percentage. Dit bevestigt dat snelle modellen de GPU beter verzadigen en dat extra belasting tot concurrentie om resources leidt.</li>
+  <li>De daling is bij FP8-MTP en NVFP4-MTP vergelijkbaar (29% tegenover 31%), wat erop wijst dat de GPU in beide formaten in vergelijkbare mate verzadigd raakt.</li>
+</ul>
+<h3 id="52-toename-van-de-itl-inter-token-latentie">
+  
+  
+    <a href="#52-toename-van-de-itl-inter-token-latentie" class="anchor-heading" aria-labelledby="52-toename-van-de-itl-inter-token-latentie"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.2 Toename van de ITL (inter-token-latentie)
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Variant</th>
+      <th>C=1</th>
+      <th>C=16</th>
+      <th>Toename</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FP8</td>
+      <td>121.87 ms</td>
+      <td>142.24 ms</td>
+      <td>+17%</td>
+    </tr>
+    <tr>
+      <td>FP8-MTP</td>
+      <td>49.40 ms</td>
+      <td>66.66 ms</td>
+      <td>+35%</td>
+    </tr>
+    <tr>
+      <td>AWQ-MTP</td>
+      <td>37.57 ms</td>
+      <td>60.73 ms</td>
+      <td>+62%</td>
+    </tr>
+    <tr>
+      <td>NVFP4</td>
+      <td>100.40 ms</td>
+      <td>120.80 ms</td>
+      <td>+20%</td>
+    </tr>
+    <tr>
+      <td>NVFP4-MTP</td>
+      <td>44.32 ms</td>
+      <td>63.38 ms</td>
+      <td>+43%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Analyse:</strong></p>
+
+<p>De toename van de ITL is een directe indicator van concurrentie om geheugenbandbreedte. Bij modellen met MTP is de toename van de ITL duidelijk groter:</p>
+<ul>
+  <li>62% toename bij AWQ-MTP: het laden van 4-bitgewichten vraagt veel bandbreedte; met MTP vermenigvuldigt deze vraag zich doordat meerdere tokens worden gegenereerd.</li>
+  <li>Slechts 17% toename bij FP8: de geheugenbandbreedte van de GPU heeft nog capaciteit over.</li>
+</ul>
+<h3 id="53-toename-van-de-ttft-latentie-tot-het-eerste-token">
+  
+  
+    <a href="#53-toename-van-de-ttft-latentie-tot-het-eerste-token" class="anchor-heading" aria-labelledby="53-toename-van-de-ttft-latentie-tot-het-eerste-token"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.3 Toename van de TTFT (latentie tot het eerste token)
+  
+  
+</h3>
+    
+
+<p>De TTFT is de metriek die het sterkst wordt beïnvloed door de toename van de gelijktijdigheid:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Variant</th>
+      <th>C=1</th>
+      <th>C=16</th>
+      <th>Toename</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FP8</td>
+      <td>270.57 ms</td>
+      <td>866.95 ms</td>
+      <td>+220%</td>
+    </tr>
+    <tr>
+      <td>FP8-MTP</td>
+      <td>322.95 ms</td>
+      <td>812.93 ms</td>
+      <td>+152%</td>
+    </tr>
+    <tr>
+      <td>AWQ-MTP</td>
+      <td>266.65 ms</td>
+      <td>876.55 ms</td>
+      <td>+229%</td>
+    </tr>
+    <tr>
+      <td>NVFP4</td>
+      <td>228.42 ms</td>
+      <td>659.95 ms</td>
+      <td>+189%</td>
+    </tr>
+    <tr>
+      <td>NVFP4-MTP</td>
+      <td>519.21 ms</td>
+      <td>838.59 ms</td>
+      <td>+61%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Analyse:</strong></p>
+
+<ul>
+  <li>De 2-3x toename van de TTFT toont aan dat de prefill-fase de rekenresources van de GPU intensief gebruikt en dat er bij gelijktijdige verzoeken ernstige wachtrijvorming optreedt.</li>
+  <li>De toename van slechts 61% bij NVFP4-MTP is opmerkelijk. Deze variant heeft echter al de hoogste begin-TTFT (519ms); in absolute termen is die bij C=16 839ms, dicht bij de andere varianten. (De 61% hier is het effect van de gelijktijdigheid C=1→C=16; de 127% in paragraaf 4.2 is het effect van het toevoegen van MTP bij een vaste C=1 — de twee percentages horen bij verschillende vergelijkingen.)</li>
+  <li>De prefill-fase vereist intensieve matrixvermenigvuldigingen, waaronder het opbouwen van de KV-cache. Deze fase wordt eerder begrensd door rekenkracht dan door geheugenbandbreedte, en het delen van de rekeneenheden van de GPU veroorzaakt vertraging.</li>
+</ul>
+
+<p><strong>Praktische gevolgen:</strong> Vanuit het perspectief van de gebruiker kan de “tijd tot het antwoord begint binnen te komen” bij toenemende gelijktijdigheid tot 3x zo lang worden. Dit heeft een direct negatief effect op de gebruikerservaring in interactieve chatscenario’s.</p>
+<h3 id="54-toename-van-de-totale-latentie">
+  
+  
+    <a href="#54-toename-van-de-totale-latentie" class="anchor-heading" aria-labelledby="54-toename-van-de-totale-latentie"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.4 Toename van de totale latentie
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Variant</th>
+      <th>C=1</th>
+      <th>C=16</th>
+      <th>Toename</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FP8</td>
+      <td>15.75 s</td>
+      <td>18.93 s</td>
+      <td>+20%</td>
+    </tr>
+    <tr>
+      <td>FP8-MTP</td>
+      <td>6.60 s</td>
+      <td>9.28 s</td>
+      <td>+40%</td>
+    </tr>
+    <tr>
+      <td>AWQ-MTP</td>
+      <td>5.04 s</td>
+      <td>8.59 s</td>
+      <td>+70%</td>
+    </tr>
+    <tr>
+      <td>NVFP4</td>
+      <td>12.98 s</td>
+      <td>16.00 s</td>
+      <td>+23%</td>
+    </tr>
+    <tr>
+      <td>NVFP4-MTP</td>
+      <td>6.15 s</td>
+      <td>8.89 s</td>
+      <td>+45%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Analyse:</strong></p>
+
+<p>De totale latentie is een combinatie van TTFT en decode-tijd. Ondanks de grote toename van de TTFT is de toename van de totale latentie kleiner, omdat de decode-tijd (ITL × aantal tokens) de dominante component is.</p>
+
+<p>De toename van de totale latentie blijft bij modellen zonder MTP beperkt (20-23%). Bij modellen met MTP ligt die tussen 40-70%. AWQ-MTP heeft met een toename van 70% het hoogste percentage.</p>
+<h3 id="55-curve-van-de-totale-doorvoer-rps">
+  
+  
+    <a href="#55-curve-van-de-totale-doorvoer-rps" class="anchor-heading" aria-labelledby="55-curve-van-de-totale-doorvoer-rps"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.5 Curve van de totale doorvoer (RPS)
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Variant</th>
+      <th>C=1</th>
+      <th>C=2</th>
+      <th>C=4</th>
+      <th>C=8</th>
+      <th>C=16</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FP8</td>
+      <td>0.06</td>
+      <td>0.06</td>
+      <td>0.06</td>
+      <td>0.06</td>
+      <td>0.05</td>
+    </tr>
+    <tr>
+      <td>FP8-MTP</td>
+      <td>0.15</td>
+      <td>0.15</td>
+      <td>0.14</td>
+      <td>0.13</td>
+      <td>0.11</td>
+    </tr>
+    <tr>
+      <td>AWQ-MTP</td>
+      <td>0.20</td>
+      <td>0.20</td>
+      <td>0.18</td>
+      <td>0.16</td>
+      <td>0.12</td>
+    </tr>
+    <tr>
+      <td>NVFP4</td>
+      <td>0.08</td>
+      <td>0.08</td>
+      <td>0.07</td>
+      <td>0.07</td>
+      <td>0.06</td>
+    </tr>
+    <tr>
+      <td>NVFP4-MTP</td>
+      <td>0.16</td>
+      <td>0.17</td>
+      <td>0.15</td>
+      <td>0.14</td>
+      <td>0.11</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Analyse:</strong></p>
+
+<p>De bovenstaande waarde “Throughput (RPS)” is een metriek <strong>per verzoek</strong> (<code class="language-plaintext highlighter-rouge">1 / average_latency</code>; zie paragraaf 1.5). Die is per definitie onafhankelijk van de gelijktijdigheid; dat de waarde vlak lijkt, <strong>bewijst</strong> dus <strong>niet</strong> dat de GPU niet schaalt — de metriek kan structureel niet toenemen met de gelijktijdigheid.</p>
+
+<p>De werkelijke totale capaciteit van het systeem wordt gemeten als <code class="language-plaintext highlighter-rouge">Concurrency / average_latency</code> (totale RPS) of <code class="language-plaintext highlighter-rouge">TPS × Concurrency</code> (totaal aantal gelijktijdig gegenereerde tokens/s). Hieronder staat de <strong>systeembrede RPS</strong>:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Variant</th>
+      <th>C=1</th>
+      <th>C=2</th>
+      <th>C=4</th>
+      <th>C=8</th>
+      <th>C=16</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FP8</td>
+      <td>0.06</td>
+      <td>0.13</td>
+      <td>0.25</td>
+      <td>0.47</td>
+      <td>0.85</td>
+    </tr>
+    <tr>
+      <td>FP8-MTP</td>
+      <td>0.15</td>
+      <td>0.31</td>
+      <td>0.58</td>
+      <td>1.04</td>
+      <td>1.72</td>
+    </tr>
+    <tr>
+      <td>AWQ-MTP</td>
+      <td>0.20</td>
+      <td>0.40</td>
+      <td>0.70</td>
+      <td>1.25</td>
+      <td>1.86</td>
+    </tr>
+    <tr>
+      <td>NVFP4</td>
+      <td>0.08</td>
+      <td>0.15</td>
+      <td>0.30</td>
+      <td>0.56</td>
+      <td>1.00</td>
+    </tr>
+    <tr>
+      <td>NVFP4-MTP</td>
+      <td>0.16</td>
+      <td>0.34</td>
+      <td>0.61</td>
+      <td>1.14</td>
+      <td>1.80</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Zoals te zien is, <strong>neemt</strong> de systeembrede RPS <strong>duidelijk toe</strong> met de gelijktijdigheid (bijv. FP8-MTP: 0.15 bij C=1 → 1.72 bij C=16, ~11x; FP8: ~13x). Dit is consistent met de tabel <code class="language-plaintext highlighter-rouge">TPS × Concurrency</code> in paragraaf 6.1.</p>
+
+<p><strong>Juiste conclusie:</strong> Het verhogen van de gelijktijdigheid op één GPU <strong>verhoogt</strong> de totale werkcapaciteit <strong>aanzienlijk</strong>; in ruil daarvoor dalen de latentie en de TPS per individueel verzoek enigszins. Gelijktijdigheid is dus een <strong>afweging</strong> tussen latentie en totale doorvoer. Hoewel de schalingsefficiëntie onder belasting afneemt (83% voor FP8 bij C=16, 59% voor AWQ-MTP; zie paragraaf 6.1), blijft de totale capaciteit toenemen.</p><hr />
+<h2 id="6-analyse-van-schaalbaarheid-en-gpu-efficiëntie">
+  
+  
+    <a href="#6-analyse-van-schaalbaarheid-en-gpu-efficiëntie" class="anchor-heading" aria-labelledby="6-analyse-van-schaalbaarheid-en-gpu-efficiëntie"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6. Analyse van schaalbaarheid en GPU-efficiëntie
+  
+  
+</h2>
+    
+<h3 id="61-ideale-lineaire-schaling-vs-werkelijke-prestaties">
+  
+  
+    <a href="#61-ideale-lineaire-schaling-vs-werkelijke-prestaties" class="anchor-heading" aria-labelledby="61-ideale-lineaire-schaling-vs-werkelijke-prestaties"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.1 Ideale lineaire schaling vs werkelijke prestaties
+  
+  
+</h3>
+    
+
+<p>Als de GPU perfect zou kunnen schalen, zou gelijktijdigheid × TPS naar verwachting constant blijven. Dat wil zeggen: bij C=2 zou de TPS niet mogen halveren en bij C=4 niet mogen dalen tot een kwart.</p>
+
+<p><strong>TPS × Concurrency (totale tokengeneratiecapaciteit):</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Gelijktijdigheid</th>
+      <th>FP8</th>
+      <th>FP8-MTP</th>
+      <th>AWQ-MTP</th>
+      <th>NVFP4</th>
+      <th>NVFP4-MTP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>8.1</td>
+      <td>19.5</td>
+      <td>25.5</td>
+      <td>9.9</td>
+      <td>21.0</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>16.3</td>
+      <td>39.7</td>
+      <td>50.8</td>
+      <td>19.6</td>
+      <td>43.4</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>31.6</td>
+      <td>74.2</td>
+      <td>92.3</td>
+      <td>37.9</td>
+      <td>79.8</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>60.6</td>
+      <td>133.0</td>
+      <td>160.7</td>
+      <td>72.2</td>
+      <td>146.2</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>108.2</td>
+      <td>221.4</td>
+      <td>239.8</td>
+      <td>128.0</td>
+      <td>231.5</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Opmerking:</strong> Deze tabel is de maat voor de <strong>werkelijke totale capaciteit</strong> van het systeem en groeit met de gelijktijdigheid (bijv. FP8: 8.1 → 108.2 tok/s, ~13x). Dit is niet in tegenspraak met de vlakke curve “Throughput (RPS)” in paragraaf 5.5; omdat de metriek daar per verzoek is (<code class="language-plaintext highlighter-rouge">1/latency</code>), ligt die per definitie vast. Deze tabel is de juiste indicator voor de totale capaciteit.</p>
+</blockquote>
+
+<p><strong>Ideale schaling (TPS bij C=1 × gelijktijdigheid):</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Gelijktijdigheid</th>
+      <th>FP8 (ideaal)</th>
+      <th>FP8 (werkelijk)</th>
+      <th>Efficiëntie</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>8.1</td>
+      <td>8.1</td>
+      <td>100%</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>16.3</td>
+      <td>16.3</td>
+      <td>100%</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>32.5</td>
+      <td>31.6</td>
+      <td>97.2%</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>65.0</td>
+      <td>60.6</td>
+      <td>93.2%</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>130.0</td>
+      <td>108.2</td>
+      <td>83.2%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Gelijktijdigheid</th>
+      <th>AWQ-MTP (ideaal)</th>
+      <th>AWQ-MTP (werkelijk)</th>
+      <th>Efficiëntie</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>25.5</td>
+      <td>25.5</td>
+      <td>100%</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>50.9</td>
+      <td>50.8</td>
+      <td>99.8%</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>101.8</td>
+      <td>92.3</td>
+      <td>90.7%</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>203.6</td>
+      <td>160.7</td>
+      <td>78.9%</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>407.2</td>
+      <td>239.8</td>
+      <td>58.9%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Beoordeling:</strong></p>
+
+<ul>
+  <li>FP8 schaalt relatief goed, zelfs bij concurrency=16 nog met een efficiëntie van 83.2%. Dat komt doordat de GPU door de lage individuele TPS nog niet op volle capaciteit werkt.</li>
+  <li>AWQ-MTP zakt bij C=16 terug tot een efficiëntie van 58.9%. Omdat de GPU intensief wordt gebruikt, leidt extra belasting direct tot concurrentie om resources.</li>
+  <li>Deze gegevens laten zien dat elke variant een eigen “optimaal gelijktijdigheidspunt” heeft.</li>
+</ul>
+<h3 id="62-verzadigingskaart-van-de-gpu">
+  
+  
+    <a href="#62-verzadigingskaart-van-de-gpu" class="anchor-heading" aria-labelledby="62-verzadigingskaart-van-de-gpu"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.2 Verzadigingskaart van de GPU
+  
+  
+</h3>
+    
+
+<p>Analyse die laat zien in welke mate elke variant de GPU op verschillende gelijktijdigheidsniveaus verzadigt:</p>
+
+<p><strong>Verhouding van de individuele TPS tot C=1 (verzadigingsindex):</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Gelijktijdigheid</th>
+      <th>FP8</th>
+      <th>FP8-MTP</th>
+      <th>AWQ-MTP</th>
+      <th>NVFP4</th>
+      <th>NVFP4-MTP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>100%</td>
+      <td>100%</td>
+      <td>100%</td>
+      <td>100%</td>
+      <td>100%</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>100%</td>
+      <td>102%</td>
+      <td>100%</td>
+      <td>99%</td>
+      <td>103%</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>97%</td>
+      <td>95%</td>
+      <td>91%</td>
+      <td>96%</td>
+      <td>95%</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>93%</td>
+      <td>85%</td>
+      <td>79%</td>
+      <td>92%</td>
+      <td>87%</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>83%</td>
+      <td>71%</td>
+      <td>59%</td>
+      <td>81%</td>
+      <td>69%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Hoe leest u deze tabel?</strong></p>
+
+  <p>De verzadigingsindex is de verhouding tussen de snelheid die een verzoek onder gelijktijdige belasting ziet en de snelheid die het zou zien als het alleen op de GPU zou draaien:</p>
+
+  <p><code class="language-plaintext highlighter-rouge">Saturation Index = (Individual TPS at level C) / (Individual TPS at C=1) × 100</code></p>
+
+  <p><strong>Concreet voorbeeld (FP8, C=16):</strong> Totale capaciteit 108.2 tok/s (tabel in paragraaf 6.1) ÷ 16 verzoeken ≈ 6.8 tok/s per verzoek. Omdat de individuele snelheid bij C=1 8.1 tok/s is, geldt 6.8 / 8.1 ≈ <strong>83%</strong>.</p>
+
+  <p><strong>100%</strong> betekent dat de prestaties van C=1 behouden blijven — verzoeken vertragen elkaar niet en er is nog ongebruikte capaciteit op de GPU. Een daling geeft aan dat verzoeken zijn gaan concurreren om dezelfde resources (vooral geheugenbandbreedte), dat wil zeggen dat de GPU verzadiging nadert. Waarden als 102-103% bij C=2 zijn meetruis.</p>
+
+  <p><strong>Belangrijke nuance:</strong> Een lage index betekent niet dat het een “slechte variant” is; terwijl de index daalt, blijft de totale capaciteit toenemen (bijv. hoewel AWQ-MTP bij C=16 terugzakt tot 59%, is de totale uitvoer van 239.8 tok/s meer dan het dubbele van die van FP8). Het praktische nut van de index is dit: als de SLA van de dienst een minimumsnelheid per gebruiker vereist, kan het redelijke gelijktijdigheidsplafond voor elke variant uit deze tabel worden afgelezen. Deze index is wiskundig identiek aan de kolom “Efficiëntie” in paragraaf 6.1; waar 6.1 de berekening voor twee varianten uitwerkt, brengt deze tabel alle vijf varianten samen in één kaart.</p>
+</blockquote>
+
+<p><strong>Beoordeling:</strong></p>
+
+<ul>
+  <li>AWQ-MTP zakt terug tot 79% bij C=8 en 59% bij C=16. De GPU heeft verzadiging bereikt en extra belasting veroorzaakt ernstig prestatieverlies.</li>
+  <li>FP8 en NVFP4 zitten zelfs bij C=16 nog op 81-83%. Er is nog rekencapaciteit op de GPU; het knelpunt ligt bij de geheugenbandbreedte.</li>
+  <li>Varianten met MTP hebben op alle niveaus een lagere verzadigingsindex, omdat ze de GPU efficiënter gebruiken en er minder ongebruikte capaciteit overblijft voor extra belasting.</li>
+</ul>
+<h3 id="63-knelpunt-vaststellen-prefill-vs-decode">
+  
+  
+    <a href="#63-knelpunt-vaststellen-prefill-vs-decode" class="anchor-heading" aria-labelledby="63-knelpunt-vaststellen-prefill-vs-decode"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.3 Knelpunt vaststellen: prefill vs decode
+  
+  
+</h3>
+    
+
+<p>Analyse van het knelpunt op basis van het gedrag van de twee hoofdfasen onder gelijktijdigheid:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Fase</th>
+      <th>Metriek</th>
+      <th>Verandering C=1→C=16</th>
+      <th>Type knelpunt</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Prefill</td>
+      <td>TTFT</td>
+      <td>2-3x toename</td>
+      <td>Rekengebonden</td>
+    </tr>
+    <tr>
+      <td>Decode</td>
+      <td>ITL</td>
+      <td>17-62% toename</td>
+      <td>Gebonden aan geheugenbandbreedte</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Beoordeling:</strong></p>
+
+<ul>
+  <li><strong>De prefill-fase</strong> is rekengebonden: alle invoertokens worden in één keer verwerkt, wat intensieve matrixvermenigvuldigingen vereist. Gelijktijdige verzoeken moeten de SM-eenheden (Streaming Multiprocessor) van de GPU delen.</li>
+  <li><strong>De decode-fase</strong> is gebonden aan geheugenbandbreedte: per stap wordt slechts één token gegenereerd (of enkele met MTP); de dominante bewerking is het laden van gewichten uit het GPU-geheugen. Sterker gecomprimeerde formaten (AWQ, NVFP4) verlichten dit knelpunt doordat ze minder data verplaatsen.</li>
+</ul>
+
+<p><strong>Praktische gevolgen:</strong></p>
+<ul>
+  <li>In scenario’s met lange prompts (samenvatten van lange documenten enz.) zal het prefill-knelpunt domineren</li>
+  <li>In scenario’s met korte prompts maar lange antwoorden (codegeneratie, creatief schrijven) zal het decode-knelpunt domineren</li>
+  <li>AWQ-MTP is de configuratie die het bandbreedteknelpunt van decode het best oplost</li>
+</ul>
+<h3 id="64-hardwarebeperkingen-van-dgx-spark-sm121-en-nvfp4-prestaties">
+  
+  
+    <a href="#64-hardwarebeperkingen-van-dgx-spark-sm121-en-nvfp4-prestaties" class="anchor-heading" aria-labelledby="64-hardwarebeperkingen-van-dgx-spark-sm121-en-nvfp4-prestaties"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.4 Hardwarebeperkingen van DGX Spark (SM121) en NVFP4-prestaties
+  
+  
+</h3>
+    
+
+<p>NVFP4 halveert met 4-bitcompressie de benodigde geheugenbandbreedte ten opzichte van FP8. Omdat de decode-fase geheugengebonden is, belooft dit theoretisch een versnelling van ~2x. Zoals in paragraaf 3.1 te zien is, is NVFP4 echter slechts 21-18% sneller dan FP8. Deze paragraaf onderzoekt vanuit hardware- en softwareperspectief waarom NVFP4 zijn theoretische versnelling niet kan waarmaken.</p>
+<h4 id="641-vergelijking-van-de-architecturen-sm121-en-sm100">
+  
+  
+    <a href="#641-vergelijking-van-de-architecturen-sm121-en-sm100" class="anchor-heading" aria-labelledby="641-vergelijking-van-de-architecturen-sm121-en-sm100"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.4.1 Vergelijking van de architecturen SM121 en SM100
+  
+  
+</h4>
+    
+
+<p>DGX Spark bevat de GB10-SoC, waarin de NVIDIA Grace-CPU (ARM64) en de Blackwell-GPU in dezelfde package zitten. Het systeem gebruikt <strong>128 GB LPDDR5x (273 GB/s) unified memory</strong> dat door CPU en GPU wordt gedeeld; er is geen afzonderlijk VRAM. De GPU is gebaseerd op de SM 12.1-architectuur (compute capability) en bevat 48 SM’s en 6,144 CUDA-cores. Volgens de gangbare telling zijn er 4 tensor cores per SM (≈192 in totaal); anders dan de 5e generatie <code class="language-plaintext highlighter-rouge">tcgen05</code> + TMEM-infrastructuur van de datacenter-Blackwell (SM100) werken ze echter alleen via het <code class="language-plaintext highlighter-rouge">mma.sync</code>-pad op warp-niveau.</p>
+
+<p>De datacenter-GPU’s van Blackwell (B200, GB200) zijn gebaseerd op de SM 10.0-architectuur (compute capability). Hoewel beide architecturen “Blackwell” worden genoemd, verschilt hun tensor-core-infrastructuur aanzienlijk:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Kenmerk</th>
+      <th>SM100 (B200, CC 10.0)</th>
+      <th>SM121 (DGX Spark/GB10, CC 12.1)</th>
+      <th>Bron</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FP4 <code class="language-plaintext highlighter-rouge">mma.sync</code> (e2m1)</td>
+      <td>—</td>
+      <td>✅ Ondersteund</td>
+      <td>PTX ISA §9.7.15.5.14 <a href="#ref1">[1]</a></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">tcgen05.mma</code> (TC-pad 5e generatie)</td>
+      <td>✅ Ondersteund</td>
+      <td>❌ Niet ondersteund</td>
+      <td>PTX ISA §9.7.17.7.1 <a href="#ref2">[2]</a></td>
+    </tr>
+    <tr>
+      <td>Tensor Memory (TMEM)</td>
+      <td>256 KB</td>
+      <td>Geen</td>
+      <td>PTX ISA §9.7.17.1 <a href="#ref3">[3]</a></td>
+    </tr>
+    <tr>
+      <td>CTA Pairs / Cooperative MMA</td>
+      <td>✅ Ondersteund</td>
+      <td>❌ Niet ondersteund</td>
+      <td>PTX ISA §9.7.17.5.1 <a href="#ref4">[4]</a></td>
+    </tr>
+    <tr>
+      <td>SMEM / SM (max)</td>
+      <td>228 KB</td>
+      <td>128 KB</td>
+      <td>Blackwell Tuning Guide <a href="#ref5">[5]</a></td>
+    </tr>
+    <tr>
+      <td>SMEM / thread block (max)</td>
+      <td>227 KB</td>
+      <td>99 KB</td>
+      <td>Blackwell Tuning Guide <a href="#ref5">[5]</a></td>
+    </tr>
+    <tr>
+      <td>Aantal SM’s</td>
+      <td>148 (actief; 160 fysiek)</td>
+      <td>48</td>
+      <td>deviceQuery / TechPowerUp <a href="#ref5">[5]</a></td>
+    </tr>
+    <tr>
+      <td>Tensor cores / SM</td>
+      <td>4 (5e generatie, <code class="language-plaintext highlighter-rouge">tcgen05</code>)</td>
+      <td>4 (<code class="language-plaintext highlighter-rouge">mma.sync</code> op warp-niveau)</td>
+      <td>CUDA PG / TechPowerUp <a href="#ref5">[5]</a></td>
+    </tr>
+    <tr>
+      <td>FP4-piek (met sparsity)</td>
+      <td>~9 PFLOP</td>
+      <td>~1 PFLOP</td>
+      <td>NVIDIA-specificatie</td>
+    </tr>
+    <tr>
+      <td>Geheugenbandbreedte</td>
+      <td>~8 TB/s (HBM3e)</td>
+      <td>273 GB/s (LPDDR5x)</td>
+      <td>NVIDIA-specificatie</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>DGX Spark (SM121) heeft Blackwell-FP4-tensor-cores en de instructie <code class="language-plaintext highlighter-rouge">mma.sync.aligned.m16n8k64.f32.e2m1.e2m1</code> draait op hardwareniveau. SM121 behoort tot de familie <code class="language-plaintext highlighter-rouge">compute_120f</code>, die CC 12.0 en 12.1 omvat <a href="#ref1">[1]</a>, <a href="#ref6">[6]</a>. Anders dan bij de datacenter-GPU’s van Blackwell (SM100) is de volledige tensor-core-infrastructuur van de 5e generatie op SM121 echter niet beschikbaar: de instructieset <code class="language-plaintext highlighter-rouge">tcgen05.mma</code> <a href="#ref2">[2]</a>, Tensor Memory <a href="#ref3">[3]</a> en CTA Pairs/Cooperative MMA <a href="#ref4">[4]</a> worden op SM121 niet ondersteund.</p>
+<h4 id="642-waarom-kan-nvfp4-de-theoretische-versnelling-niet-waarmaken">
+  
+  
+    <a href="#642-waarom-kan-nvfp4-de-theoretische-versnelling-niet-waarmaken" class="anchor-heading" aria-labelledby="642-waarom-kan-nvfp4-de-theoretische-versnelling-niet-waarmaken"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.4.2 Waarom kan NVFP4 de theoretische versnelling niet waarmaken?
+  
+  
+</h4>
+    
+
+<p>De redenen waarom NVFP4 op SM121 zijn theoretische potentieel niet bereikt, liggen zowel bij de hardware als bij de software:</p>
+
+<p><strong>1. Ontbreken van TMEM en druk op SMEM:</strong></p>
+
+<p>Op SM100 stelt 256KB TMEM FP4-kernels in staat tussenresultaten buiten SMEM te houden. Op SM121 is er geen TMEM; alle tussendata moeten passen in de 99KB SMEM per blok. Het block-scaled formaat van NVFP4 vereist dat E2M1-gewichten en FP8-blokschalen tegelijk in SMEM worden gehouden. De standaardtilegroottes van CUTLASS voor FP4, ontworpen voor SM100, overschrijden de SMEM-grens van 99KB per blok van SM121; metingen uit de community bevestigen dat de tilegroottes moeten worden verkleind om binnen dit budget te passen (tile-sweep van BTankut: 256×128 ≈154 TFLOPS voor prefill/grote batch en 128×128 ≈147 TFLOPS voor decode/kleine batch zijn de beste resultaten <a href="#ref10">[10]</a>). Deze verkleining leidt tot een lagere rekenintensiteit (arithmetic intensity) en een eerdere confrontatie met de grens van de geheugenbandbreedte.</p>
+
+<p><strong>2. Ontbreken van tcgen05.mma:</strong></p>
+
+<p><code class="language-plaintext highlighter-rouge">tcgen05.mma</code> is de PTX-instructie die FP4-matrixvermenigvuldigingen het efficiëntst dispatcht <a href="#ref2">[2]</a>. Op SM121 kan alleen <code class="language-plaintext highlighter-rouge">mma.sync.aligned.m16n8k64.f32.e2m1.e2m1</code> worden gebruikt; CUTLASS moet via het abstractiepad van de CuTe-API gaan.</p>
+
+<p><strong>3. Ontbreken van CTA Pairs / Cooperative MMA:</strong></p>
+
+<p>Op SM100 kunnen twee SM’s samen één MMA-bewerking uitvoeren <a href="#ref4">[4]</a>. Op SM121 is dit samenwerkingsmechanisme niet beschikbaar.</p>
+
+<p><strong>4. Minder SM’s en een zwakker tensor-core-pad:</strong></p>
+
+<p>Waar SM100 (B200) 148 actieve SM’s heeft, bevat DGX Spark (SM121) slechts 48 SM’s (~3x verschil). Bovendien ontbreekt op SM121 de 5e generatie <code class="language-plaintext highlighter-rouge">tcgen05</code> + TMEM-tensor-core-infrastructuur van SM100; SM121 valt terug op het <code class="language-plaintext highlighter-rouge">mma.sync</code>-pad op warp-niveau <a href="#ref5">[5]</a>. Samen beperken deze twee factoren de piekrekencapaciteit voor FP4 tot ~1 PFLOP (SM121) tegenover ~9 PFLOP (SM100) (zie bijlage A.1-4).</p>
+
+<p><strong>5. Geheugenbandbreedte:</strong></p>
+
+<p>273 GB/s LPDDR5x (SM121) tegenover ~8 TB/s HBM3e (SM100). Omdat de decode-fase geheugengebonden is, bespaart de 4-bitcompressie van NVFP4 op beide platforms bandbreedte; de lage bandbreedte van DGX Spark zorgt er echter voor dat de rekenversnelling tegen de bandbreedtegrens aanloopt en dat het rekenvoordeel van NVFP4 verloren gaat.</p>
+
+<p><strong>6. Overhead van E2M1-activatiekwantisatie:</strong></p>
+
+<p>In de W4A4-modus (gewichten en activaties 4-bit) vereist NVFP4 dat activaties tijdens runtime van BF16 naar E2M1 worden omgezet. Op SM121 kan de PTX-instructie <code class="language-plaintext highlighter-rouge">cvt.rn.satfinite.e2m1x2.f32</code> worden gebruikt met de juiste compileervlaggen (<code class="language-plaintext highlighter-rouge">sm_121a</code>); het CMake-proces van vLLM v0.22.0 geeft deze vlaggen echter niet correct door (zie paragraaf 6.4.4).</p>
+<h4 id="643-waarom-is-mtp--nvfp4-problematisch">
+  
+  
+    <a href="#643-waarom-is-mtp--nvfp4-problematisch" class="anchor-heading" aria-labelledby="643-waarom-is-mtp--nvfp4-problematisch"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.4.3 Waarom is MTP + NVFP4 problematisch?
+  
+  
+</h4>
+    
+
+<p>De NVFP4+MTP-configuratie heeft, zoals in paragraaf 2.5 besproken, de hoogste TTFT-waarde (519ms). De redenen:</p>
+
+<ul>
+  <li>MTP brengt per decode-stap extra rekenbelasting mee (generatie van meerdere tokens + verificatie)</li>
+  <li>De SMEM-beperkingen van NVFP4 maken het moeilijker om de extra rekenbelasting die MTP toevoegt op te vangen</li>
+  <li>De prefill-fase is rekengebonden (paragraaf 6.3); terwijl de combinatie NVFP4+MTP de belasting in deze fase verhoogt, kan door het ontbreken van tcgen05 en de SMEM-beperkingen geen extra rekencapaciteit worden geleverd</li>
+  <li>Resultaat: 127% toename van de TTFT (NVFP4 zonder MTP 228ms → NVFP4-MTP 519ms)</li>
+</ul>
+<h4 id="644-tekortkomingen-aan-de-softwarekant">
+  
+  
+    <a href="#644-tekortkomingen-aan-de-softwarekant" class="anchor-heading" aria-labelledby="644-tekortkomingen-aan-de-softwarekant"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.4.4 Tekortkomingen aan de softwarekant
+  
+  
+</h4>
+    
+
+<p>Naast de hardwarebeperkingen is ook de softwareondersteuning voor NVFP4 op SM121 onvolledig. Deze tekortkomingen versterken de impact van de hardwarebeperkingen:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Probleem</th>
+      <th>Beschrijving</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Verwijdering van het CMake-suffix <code class="language-plaintext highlighter-rouge">sm_121a</code></td>
+      <td>vLLM compileert als <code class="language-plaintext highlighter-rouge">sm_121a</code> → <code class="language-plaintext highlighter-rouge">sm_120</code>, E2M1-PTX uitgeschakeld</td>
+      <td>Opgelost met PR #37725 <a href="#ref7">[7]</a></td>
+    </tr>
+    <tr>
+      <td>Fout in de SM121-capability-gate</td>
+      <td>De controle <code class="language-plaintext highlighter-rouge">cuda_device_capability &gt;= 110</code> maakt SM121 (121) ongeldig</td>
+      <td>Opgelost met PR #38126 <a href="#ref8">[8]</a></td>
+    </tr>
+    <tr>
+      <td>Software-E2M1-conversie ontbreekt</td>
+      <td>Als <code class="language-plaintext highlighter-rouge">cvt.rn.satfinite.e2m1x2.f32</code> niet correct wordt gecompileerd, is er geen software-fallback</td>
+      <td>Upstream opgenomen met PR #35947 <a href="#ref9">[9]</a></td>
+    </tr>
+    <tr>
+      <td>CUTLASS-tilegroottes niet geoptimaliseerd voor SM121</td>
+      <td>Standaardtiles ontworpen voor de 228KB SMEM van SM100</td>
+      <td>Oplossing uit de community beschikbaar (BTankut) <a href="#ref10">[10]</a></td>
+    </tr>
+    <tr>
+      <td>Grouped-GEMM-kernel voor MoE ontbreekt</td>
+      <td>Geen kernel die is geoptimaliseerd voor SM121</td>
+      <td>FlashInfer PR #2650 in behandeling <a href="#ref11">[11]</a></td>
+    </tr>
+    <tr>
+      <td>Beperking MTP + NVFP4</td>
+      <td>In vLLM wordt de MTP-head in bepaalde NVFP4+MTP-paden niet geladen (geen algemeen verbod, afhankelijk van het pad)</td>
+      <td>Oplosbaar met een workaround die de MTP-head in BF16 houdt / Avarok-patch <a href="#ref12">[12]</a></td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Bron:</strong> <a href="https://github.com/vllm-project/vllm/issues/37141">vLLM Issue #37141 — Upstream DGX Spark improvements from Avarok-Cybersecurity/dgx-vllm</a></p>
+</blockquote>
+
+<p>De softwareondersteuning voor NVFP4 op SM121 is nog niet volwassen; oplossingen uit de community kunnen de NVFP4-prestaties echter aanzienlijk verbeteren. Avarok-Cybersecurity biedt een geoptimaliseerde Docker-image met een Marlin W4A16-backend en software-E2M1-conversie <a href="#ref12">[12]</a>. BTankut levert verbeteringen met CUTLASS-tile-tuning en SM121-patches voor admissible_archs <a href="#ref10">[10]</a>. Er wordt gewerkt aan het upstream opnemen van deze ontwikkelingen in vLLM <a href="https://github.com/vllm-project/vllm/issues/37141">[vLLM Issue #37141]</a>. Het ontbreken van tcgen05, TMEM en CTA Pairs vormt echter een hardwarematig plafond dat softwareverbeteringen niet kunnen doorbreken.</p>
+
+<p><strong>Alle metingen in dit rapport zijn uitgevoerd met de standaardimage <code class="language-plaintext highlighter-rouge">vllm/vllm-openai:v0.22.0-ubuntu2404</code>, zonder dat de genoemde community-patches zijn toegepast.</strong> De NVFP4- en NVFP4-MTP-resultaten hier weerspiegelen daarom de huidige upstream-toestand; met de patches toegepast kunnen verbeteringen worden verwacht (zie bijlage A.3 voor kwantitatieve schattingen).</p>
+<h4 id="645-referenties">
+  
+  
+    <a href="#645-referenties" class="anchor-heading" aria-labelledby="645-referenties"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.4.5 Referenties
+  
+  
+</h4>
+    
+
+<p><a id="ref1"></a>[1] NVIDIA, <em>PTX ISA v9.3</em>, Section 9.7.15.5.14 — Multiply-and-Accumulate Instruction: mma. “.e2m1 alternate floating point type mma operation requires sm_120a and is supported on sm_120f from PTX ISA version 8.8.” <a href="https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#warp-level-matrix-instructions-mma">https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#warp-level-matrix-instructions-mma</a></p>
+
+<p><a id="ref2"></a>[2] NVIDIA, <em>PTX ISA v9.3</em>, Section 9.7.17.7.1 — tcgen05 Memory Alloc/Manage Instructions. Ondersteunde architecturen: sm_100a, sm_101a, sm_100f, sm_110f. SM120/SM121 staan niet in de lijst. <a href="https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#tcgen05-memory-alloc-manage-instructions">https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#tcgen05-memory-alloc-manage-instructions</a></p>
+
+<p><a id="ref3"></a>[3] NVIDIA, <em>PTX ISA v9.3</em>, Section 9.7.17.1 — Tensor Memory. “On architecture sm_100a/sm_100f, the 5th generation TensorCore’s Tensor Memory has a two-dimensional structure of 512 columns and 128 rows per CTA, each cell 32-bits.” Geen TMEM-definitie voor SM120/SM121. <a href="https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#tensor-memory">https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#tensor-memory</a></p>
+
+<p><a id="ref4"></a>[4] NVIDIA, <em>PTX ISA v9.3</em>, Section 9.7.17.5.1 — CTA Pair. “Any 2 CTAs within the cluster whose %cluster_ctarank differs by the last bit only is said to form a CTA pair.” CTA Pairs maken deel uit van de tcgen05-instructiefamilie; niet geldig op architecturen die tcgen05 niet ondersteunen. <a href="https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#tcgen05-cta-pair">https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#tcgen05-cta-pair</a></p>
+
+<p><a id="ref5"></a>[5] NVIDIA, <em>Blackwell Tuning Guide</em> — SMEM-limieten: CC 10.0 = 228 KB/SM, 227 KB/blok; CC 12.0/12.1 = 128 KB/SM, 99 KB/blok. Zie ook <em>CUDA C++ Programming Guide</em> Section 20.9/20.10. Aantallen SM’s en tensor cores van de B200 (148 actieve SM’s, 592 tensor cores; 160 fysieke SM’s) uit de TechPowerUp-database voor de B200; de waarde van 48 SM’s voor DGX Spark is bevestigd met de uitvoer van <code class="language-plaintext highlighter-rouge">deviceQuery</code>. <a href="https://docs.nvidia.com/cuda/blackwell-tuning-guide/index.html">https://docs.nvidia.com/cuda/blackwell-tuning-guide/index.html</a> · <a href="https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html">https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html</a></p>
+
+<p><a id="ref6"></a>[6] NVIDIA, <em>CUDA C++ Programming Guide</em>, Table 25 — Family-Specific Compatibility. “compute_120f: Compatible with Compute Capability 12.0, 12.1.” <a href="https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#feature-availability">https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#feature-availability</a></p>
+
+<p><a id="ref7"></a>[7] RobTand, <em>vLLM PR #37725</em> — Preserve CUDA arch suffix (a/f) for SM12x — fixes NVFP4 NaN on desktop Blackwell. <a href="https://github.com/vllm-project/vllm/pull/37725">https://github.com/vllm-project/vllm/pull/37725</a></p>
+
+<p><a id="ref8"></a>[8] johnnynunez, <em>vLLM PR #38126</em> — Fix DGX Spark logic. <a href="https://github.com/vllm-project/vllm/pull/38126">https://github.com/vllm-project/vllm/pull/38126</a></p>
+
+<p><a id="ref9"></a>[9] blake-snc, <em>vLLM PR #35947</em> — Software E2M1 conversion for SM12x NVFP4 activation quantization. <a href="https://github.com/vllm-project/vllm/pull/35947">https://github.com/vllm-project/vllm/pull/35947</a></p>
+
+<p><a id="ref10"></a>[10] NVIDIA Developer Forums, <em>FP4 on DGX Spark — Why It Doesn’t Scale Like You’d Expect</em>. Resultaten van de CUTLASS-tile-tuning door BTankut. <a href="https://forums.developer.nvidia.com/t/fp4-on-dgx-spark-why-it-doesnt-scale-like-youd-expect/360142">https://forums.developer.nvidia.com/t/fp4-on-dgx-spark-why-it-doesnt-scale-like-youd-expect/360142</a></p>
+
+<p><a id="ref11"></a>[11] kahyunnam, <em>FlashInfer PR #2650</em> — Enable sm120f compilation. <a href="https://github.com/flashinfer-ai/flashinfer/pull/2650">https://github.com/flashinfer-ai/flashinfer/pull/2650</a></p>
+
+<p><a id="ref12"></a>[12] Avarok-Cybersecurity, <em>dgx-vllm GitHub</em>. NVFP4-verbeteringen voor DGX Spark. <a href="https://github.com/Avarok-Cybersecurity/dgx-vllm">https://github.com/Avarok-Cybersecurity/dgx-vllm</a></p><hr />
+<h2 id="7-staartlatentie-en-stabiliteit">
+  
+  
+    <a href="#7-staartlatentie-en-stabiliteit" class="anchor-heading" aria-labelledby="7-staartlatentie-en-stabiliteit"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7. Staartlatentie en stabiliteit
+  
+  
+</h2>
+    
+<h3 id="71-p90p50-verhoudingen">
+  
+  
+    <a href="#71-p90p50-verhoudingen" class="anchor-heading" aria-labelledby="71-p90p50-verhoudingen"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7.1 p90/p50-verhoudingen
+  
+  
+</h3>
+    
+
+<p>De p90/p50-verhouding geeft aan hoe dik de staart van de latentieverdeling is. Ligt de verhouding dicht bij 1.0, dan is de verdeling smal en voorspelbaar; is die hoog, dan worden sommige verzoeken veel langzamer voltooid dan verwacht.</p>
+
+<p><strong>p90/p50-verhoudingen van de ITL:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Variant</th>
+      <th>C=1</th>
+      <th>C=4</th>
+      <th>C=8</th>
+      <th>C=16</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FP8</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>1.01</td>
+      <td>1.02</td>
+    </tr>
+    <tr>
+      <td>FP8-MTP</td>
+      <td>1.05</td>
+      <td>1.06</td>
+      <td>1.10</td>
+      <td>1.08</td>
+    </tr>
+    <tr>
+      <td>AWQ-MTP</td>
+      <td>1.05</td>
+      <td>1.08</td>
+      <td>1.11</td>
+      <td>1.11</td>
+    </tr>
+    <tr>
+      <td>NVFP4</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>1.01</td>
+      <td>1.02</td>
+    </tr>
+    <tr>
+      <td>NVFP4-MTP</td>
+      <td>1.12</td>
+      <td>1.08</td>
+      <td>1.08</td>
+      <td>1.12</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>p90/p50-verhoudingen van de TTFT:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Variant</th>
+      <th>C=1</th>
+      <th>C=4</th>
+      <th>C=8</th>
+      <th>C=16</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FP8</td>
+      <td>1.20</td>
+      <td>1.28</td>
+      <td>1.08</td>
+      <td>1.19</td>
+    </tr>
+    <tr>
+      <td>FP8-MTP</td>
+      <td>1.02</td>
+      <td>1.05</td>
+      <td>1.08</td>
+      <td>1.13</td>
+    </tr>
+    <tr>
+      <td>AWQ-MTP</td>
+      <td>1.35</td>
+      <td>1.15</td>
+      <td>1.24</td>
+      <td>1.29</td>
+    </tr>
+    <tr>
+      <td>NVFP4</td>
+      <td>1.13</td>
+      <td>1.15</td>
+      <td>1.29</td>
+      <td>1.11</td>
+    </tr>
+    <tr>
+      <td>NVFP4-MTP</td>
+      <td>1.02</td>
+      <td>1.42</td>
+      <td>1.15</td>
+      <td>1.56</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>p90/p50-verhoudingen van de TPS:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Variant</th>
+      <th>C=1</th>
+      <th>C=4</th>
+      <th>C=8</th>
+      <th>C=16</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FP8</td>
+      <td>1.00</td>
+      <td>1.01</td>
+      <td>1.01</td>
+      <td>1.01</td>
+    </tr>
+    <tr>
+      <td>FP8-MTP</td>
+      <td>1.11</td>
+      <td>1.06</td>
+      <td>1.07</td>
+      <td>1.07</td>
+    </tr>
+    <tr>
+      <td>AWQ-MTP</td>
+      <td>1.07</td>
+      <td>1.10</td>
+      <td>1.08</td>
+      <td>1.09</td>
+    </tr>
+    <tr>
+      <td>NVFP4</td>
+      <td>1.01</td>
+      <td>1.01</td>
+      <td>1.01</td>
+      <td>1.00</td>
+    </tr>
+    <tr>
+      <td>NVFP4-MTP</td>
+      <td>1.03</td>
+      <td>1.08</td>
+      <td>1.06</td>
+      <td>1.07</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Beoordeling:</strong></p>
+
+<ul>
+  <li><strong>Stabiliteit van de ITL:</strong> Modellen zonder MTP (FP8, NVFP4) hebben een vrijwel perfecte stabiliteit (p90/p50 ≈ 1.00-1.02). Bij modellen met MTP ligt de verhouding tussen 1.05-1.12. Dit wijst erop dat MTP schommelingen veroorzaakt in de acceptatieverhouding van de tokengeneratie.</li>
+  <li><strong>Stabiliteit van de TTFT:</strong> De grootste schommeling wordt waargenomen bij NVFP4-MTP (1.56 bij C=16). Dit wijst erop dat de NVFP4+MTP-configuratie onvoorspelbaar gedrag vertoont in de prefill-fase. Ook AWQ-MTP vertoont grote schommelingen (1.29-1.35).</li>
+  <li><strong>Stabiliteit van de TPS:</strong> Die ligt bij alle varianten op een acceptabel niveau (1.00-1.11). Omdat de TPS de inverse van de ITL is, worden vergelijkbare verhoudingen verwacht; het meetgemiddelde is echter stabieler.</li>
+</ul>
+<h3 id="72-welke-variant-is-het-best-voorspelbaar">
+  
+  
+    <a href="#72-welke-variant-is-het-best-voorspelbaar" class="anchor-heading" aria-labelledby="72-welke-variant-is-het-best-voorspelbaar"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7.2 Welke variant is het best voorspelbaar?
+  
+  
+</h3>
+    
+
+<p>Rangschikking (van best tot minst voorspelbaar):</p>
+
+<ol>
+  <li><strong>NVFP4</strong> — Uitstekende stabiliteit in ITL en TPS, gemiddeld in TTFT</li>
+  <li><strong>FP8</strong> — Dicht bij NVFP4, lage schommeling op alle metrieken</li>
+  <li><strong>FP8-MTP</strong> — Gemiddeld in ITL en TPS, goede stabiliteit in TTFT</li>
+  <li><strong>AWQ-MTP</strong> — Gemiddeld in ITL, grote schommeling in TTFT</li>
+  <li><strong>NVFP4-MTP</strong> — Grootste schommeling in ITL, grootste schommeling in TTFT</li>
+</ol>
+<h3 id="73-schommeling-van-de-latentie-onder-belasting">
+  
+  
+    <a href="#73-schommeling-van-de-latentie-onder-belasting" class="anchor-heading" aria-labelledby="73-schommeling-van-de-latentie-onder-belasting"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7.3 Schommeling van de latentie onder belasting
+  
+  
+</h3>
+    
+
+<p>De belangrijkste reden voor de grotere schommeling bij modellen met MTP is de werking van MTP:</p>
+
+<ul>
+  <li>Per stap worden meerdere tokens gegenereerd, maar een deel daarvan wordt verworpen</li>
+  <li>Het verwerpingspercentage varieert afhankelijk van de context en de toestand van het model</li>
+  <li>In stappen met een hoog verwerpingspercentage daalt de effectieve TPS en neemt de ITL toe</li>
+  <li>Hierdoor stijgt de p90/p50-verhouding</li>
+</ul>
+
+<p>De grote TTFT-schommeling die vooral bij NVFP4-MTP wordt waargenomen (p90/p50 = 1.56 @ C=16) suggereert dat deze configuratie een risico kan vormen voor kritieke toepassingen; deze waarde kan echter zijn beïnvloed door de beperkte steekproefgrootte (zie paragraaf 1.7, Beperking) en moet vóór een SLA-beslissing worden bevestigd met een groter aantal verzoeken. In systemen met SLA-eisen (bijv. “99% van de verzoeken moet binnen 1 seconde antwoorden”) moet met deze schommeling rekening worden gehouden.</p><hr />
+<h2 id="8-optimaal-werkpunt-en-aanbevelingen">
+  
+  
+    <a href="#8-optimaal-werkpunt-en-aanbevelingen" class="anchor-heading" aria-labelledby="8-optimaal-werkpunt-en-aanbevelingen"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8. Optimaal werkpunt en aanbevelingen
+  
+  
+</h2>
+    
+<h3 id="81-handleiding-voor-de-keuze-van-een-variant">
+  
+  
+    <a href="#81-handleiding-voor-de-keuze-van-een-variant" class="anchor-heading" aria-labelledby="81-handleiding-voor-de-keuze-van-een-variant"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8.1 Handleiding voor de keuze van een variant
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Scenario</th>
+      <th>Aanbevolen variant</th>
+      <th>Gelijktijdigheid</th>
+      <th>Motivatie</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Interactieve chatbot</strong></td>
+      <td>AWQ-MTP</td>
+      <td>1-2</td>
+      <td>Laagste latentie (5.04s), hoogste TPS (25.45). De gebruiker krijgt snel antwoord.</td>
+    </tr>
+    <tr>
+      <td><strong>Codeassistent (autocomplete)</strong></td>
+      <td>AWQ-MTP</td>
+      <td>1-2</td>
+      <td>Lage TTFT (267ms) + hoge TPS. Directe suggesties zijn cruciaal tijdens het programmeren.</td>
+    </tr>
+    <tr>
+      <td><strong>API-dienst (lage belasting)</strong></td>
+      <td>AWQ-MTP</td>
+      <td>1-4</td>
+      <td>Zelfs bij C=4 zijn een TPS van 23 tok/s en een latentie van 5.68s acceptabel.</td>
+    </tr>
+    <tr>
+      <td><strong>API-dienst (hoge belasting)</strong></td>
+      <td>NVFP4-MTP</td>
+      <td>8-16</td>
+      <td>De totale doorvoer neemt toe met de gelijktijdigheid (systeembreed 231 tok/s bij C=16); NVFP4-MTP biedt onder hoge belasting een doorvoer die dicht bij die van AWQ-MTP ligt, met een evenwichtigere schaling.</td>
+    </tr>
+    <tr>
+      <td><strong>Batchverwerking</strong></td>
+      <td>NVFP4-MTP of FP8-MTP</td>
+      <td>8-16</td>
+      <td>Bij batchverwerking telt het totale aantal tokens/s; bij C=16 halen varianten met MTP ~221-232 tok/s, ongeveer het dubbele van die zonder MTP (~108-128) (zie paragraaf 6.1).</td>
+    </tr>
+    <tr>
+      <td><strong>Systeem met SLA-eisen</strong></td>
+      <td>FP8 of NVFP4</td>
+      <td>1-4</td>
+      <td>Laagste schommeling. p90/p50 ≈ 1.0. Voorspelbare prestaties zijn cruciaal.</td>
+    </tr>
+    <tr>
+      <td><strong>Latentie tot het eerste token cruciaal</strong></td>
+      <td>NVFP4</td>
+      <td>1-2</td>
+      <td>Laagste TTFT (228ms). De gebruiker ziet direct een antwoord.</td>
+    </tr>
+    <tr>
+      <td><strong>Omgeving met beperkt geheugen</strong></td>
+      <td>NVFP4-MTP</td>
+      <td>1-4</td>
+      <td>4-bitcompressie + MTP levert de kleinste geheugenvoetafdruk + hoge snelheid. (Op DGX Spark wordt het geheugen gedeeld tussen CPU en GPU; een kleine voetafdruk laat ruimte voor andere workloads.)</td>
+    </tr>
+  </tbody>
+</table></div>
+<h3 id="82-optimale-gelijktijdigheidsniveaus">
+  
+  
+    <a href="#82-optimale-gelijktijdigheidsniveaus" class="anchor-heading" aria-labelledby="82-optimale-gelijktijdigheidsniveaus"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8.2 Optimale gelijktijdigheidsniveaus
+  
+  
+</h3>
+    
+
+<p>Voor elke variant het optimale evenwichtspunt tussen de prestaties per individueel verzoek en de totale doorvoer:</p>
+
+<p>De optimale gelijktijdigheid hangt af van <strong>waarvoor u optimaliseert</strong>; er is geen enkele “juiste” waarde:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Variant</th>
+      <th>Optimale C voor latentie</th>
+      <th>Optimale C voor doorvoer</th>
+      <th>Opmerking</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FP8</td>
+      <td>1-2</td>
+      <td>8-16</td>
+      <td>Schalingsefficiëntie 83% bij C=16; systeembrede RPS 0.06 → 0.85.</td>
+    </tr>
+    <tr>
+      <td>FP8-MTP</td>
+      <td>1-2</td>
+      <td>8-16</td>
+      <td>Systeembrede RPS 1.72 bij C=16 (~11x).</td>
+    </tr>
+    <tr>
+      <td>AWQ-MTP</td>
+      <td>1-2</td>
+      <td>4-8</td>
+      <td>Hoogste snelheid per verzoek; de schalingsefficiëntie daalt snel bij C≥8 (59%).</td>
+    </tr>
+    <tr>
+      <td>NVFP4</td>
+      <td>1-2</td>
+      <td>8-16</td>
+      <td>Stabielste variant; systeembrede RPS 1.00 bij C=16.</td>
+    </tr>
+    <tr>
+      <td>NVFP4-MTP</td>
+      <td>1-2</td>
+      <td>8-16</td>
+      <td>TPS/latentie verbetert licht bij C=2 (verschil binnen de ruismarge; zie paragraaf 1.7); systeembrede RPS 1.80 bij C=16.</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Algemene regel:</strong></p>
+
+<ul>
+  <li><strong>Latentiekritisch / één gebruiker</strong> (chatbot, codeassistent): <strong>C=1-2.</strong> Het individuele verzoek krijgt hier het snelste antwoord.</li>
+  <li><strong>Doorvoerkritisch / dienst voor meerdere gebruikers</strong> (API, batch): <strong>C=8-16.</strong> De systeembrede capaciteit (totale RPS en tokens/s) neemt met de gelijktijdigheid ~9-13x toe (zie paragrafen 5.5 en 6.1); in ruil daarvoor dalen de latentie/TPS per verzoek enigszins.</li>
+</ul>
+
+<p>Zoals in paragraaf 5.5 uitgelegd, komt de indruk dat “gelijktijdigheid de totale capaciteit niet verhoogt” voort uit een verkeerde lezing van de metriek “Throughput (RPS)” per verzoek van de meettool (<code class="language-plaintext highlighter-rouge">1/latency</code>). In werkelijkheid raakt de GPU met één enkel verzoek niet verzadigd; batching verhoogt de systeemdoorvoer aanzienlijk. De schalingsefficiëntie daalt echter onder belasting (83% voor FP8 bij C=16, 59% voor AWQ-MTP), zodat het rendement niet onbeperkt is — daarom moet ook in doorvoerkritische scenario’s bij zeer hoge gelijktijdigheid worden gelet op de toename van de staartlatentie.</p>
+<h3 id="83-aanbevelingen-voor-de-keuze-van-de-kwantisatie">
+  
+  
+    <a href="#83-aanbevelingen-voor-de-keuze-van-de-kwantisatie" class="anchor-heading" aria-labelledby="83-aanbevelingen-voor-de-keuze-van-de-kwantisatie"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8.3 Aanbevelingen voor de keuze van de kwantisatie
+  
+  
+</h3>
+    
+
+<p><strong>Waarom is AWQ-MTP de prestatiewinnaar?</strong></p>
+
+<p>AWQ kwantiseert de gewichten naar 4-bit en houdt de activaties op volledige precisie. Dit brengt de besparing op geheugenbandbreedte in evenwicht met de nauwkeurigheid van het model. In combinatie met MTP:</p>
+<ul>
+  <li>Wordt de druk op de geheugenbandbreedte in de decode-fase verlicht (kleinere gewichten)</li>
+  <li>Genereert MTP meerdere tokens, waarvan de meeste worden geaccepteerd</li>
+  <li>Nettoresultaat: de ITL daalt 69%, de TPS stijgt 213% (ten opzichte van de FP8-baseline)</li>
+</ul>
+
+<p>Benadrukt moet worden dat deze aanwijzing als “winnaar” uitsluitend op snelheidsmetrieken is gebaseerd; het meten van de nauwkeurigheid valt buiten het bestek van dit werk en moet vóór een productiebeslissing afzonderlijk worden uitgevoerd.</p>
+
+<p><strong>Maar de risico’s van AWQ:</strong></p>
+<ul>
+  <li>4-bitkwantisatie kan tot verlies van modelnauwkeurigheid leiden. Deze benchmark <strong>omvat geen nauwkeurigheidsmeting</strong>; de modelkwaliteit moet voor zowel AWQ als NVFP4 afzonderlijk worden beoordeeld. (De NVFP4-variant is gekalibreerd op UltraChat met een budget van ~2M tokens; zie paragraaf 1.3.)</li>
+  <li>De prestatiedaling is steiler bij hoge gelijktijdigheid (41%)</li>
+  <li>De TTFT-schommeling is groter</li>
+</ul>
+
+<p><strong>Wanneer verdient NVFP4-MTP de voorkeur?</strong></p>
+<ul>
+  <li>Als u volledig wilt profiteren van hardwareversnelling op NVIDIA Blackwell-GPU’s</li>
+  <li>In omgevingen met beperkt geheugen (kleinste geheugenvoetafdruk)</li>
+  <li>Bij hoge belasting (C=8-16)</li>
+</ul>
+
+<p><strong>Vooruitblik:</strong> De superioriteit van AWQ-MTP in dit rapport is een momentopname van ongepatchte standaard-vLLM v0.22.0. Naarmate de softwarecorrecties uit paragraaf 6.4.4 upstream worden opgenomen, wordt verwacht dat NVFP4-MTP gelijk komt met AWQ-MTP en het bij hoge gelijktijdigheid overtreft (zie bijlage A.3 voor een kwantitatieve analyse). Als op DGX Spark installaties met een lange levensduur worden gepland, moet NVFP4, het hardware-native formaat, als strategische keuze worden overwogen.</p><hr />
+<h2 id="9-conclusie">
+  
+  
+    <a href="#9-conclusie" class="anchor-heading" aria-labelledby="9-conclusie"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 9. Conclusie
+  
+  
+</h2>
+    
+<h3 id="91-samenvatting-van-de-belangrijkste-bevindingen">
+  
+  
+    <a href="#91-samenvatting-van-de-belangrijkste-bevindingen" class="anchor-heading" aria-labelledby="91-samenvatting-van-de-belangrijkste-bevindingen"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 9.1 Samenvatting van de belangrijkste bevindingen
+  
+  
+</h3>
+    
+
+<ol>
+  <li>
+    <p><strong>MTP levert een drastische versnelling op:</strong> De TPS stijgt 140% bij FP8 en 113% bij NVFP4. De latentie daalt met meer dan de helft. MTP is op DGX Spark de effectiefste techniek om de prestaties ingrijpend te verbeteren.</p>
+  </li>
+  <li>
+    <p><strong>AWQ-MTP is de snelste variant:</strong> 25.45 tok/s (C=1), 37.57ms ITL, 5.04s latentie. De combinatie van besparing op geheugenbandbreedte + MTP levert in de decode-fase een uniek snelheidsvoordeel op. (Opmerking: deze beoordeling is uitsluitend op snelheid gebaseerd; de nauwkeurigheid is niet gemeten.)</p>
+  </li>
+  <li>
+    <p><strong>NVFP4 is consequent beter dan FP8:</strong> In de vergelijking zonder MTP is de TPS 21% hoger, de ITL 18% lager en de latentie 18% lager. Het bandbreedtevoordeel van 4-bitcompressie is duidelijk.</p>
+  </li>
+  <li>
+    <p><strong>Gelijktijdigheid is een afweging tussen latentie en doorvoer:</strong> Het verhogen van de gelijktijdigheid vermindert de prestaties per individueel verzoek enigszins (latentie, TPS per verzoek); het <strong>verhoogt echter de systeembrede totale capaciteit aanzienlijk</strong> (totaal aantal tokens/s en RPS ~13x bij FP8, ~9-11x bij varianten met MTP). Opmerking: omdat de metriek “Throughput (RPS)” van de meettool per verzoek is (<code class="language-plaintext highlighter-rouge">1/latency</code>), is die per definitie onafhankelijk van de gelijktijdigheid; de systeemcapaciteit wordt gemeten als <code class="language-plaintext highlighter-rouge">TPS × Concurrency</code> (zie paragrafen 5.5, 6.1). De schalingsefficiëntie neemt onder belasting wel af (59-83% bij C=16).</p>
+  </li>
+  <li>
+    <p><strong>De TTFT is de gevoeligste metriek:</strong> Die stijgt 2-3x bij toenemende gelijktijdigheid. De prefill-fase is rekengebonden en bij gelijktijdige verzoeken ontstaan ernstige vertragingen.</p>
+  </li>
+  <li>
+    <p><strong>Het voordeel van MTP neemt onder belasting af:</strong> De TPS-versnellingsfactor daalt bij FP8 van 2.40x (C=1) naar 2.05x (C=16). Bij NVFP4 daalt die van 2.13x naar 1.81x.</p>
+  </li>
+  <li>
+    <p><strong>Modellen zonder MTP zijn stabieler:</strong> De p90/p50-verhoudingen zijn ~1.00 in ITL en ~1.15 in TTFT. Bij modellen met MTP: ITL ~1.05-1.12, TTFT ~1.02-1.56.</p>
+  </li>
+  <li>
+    <p><strong>De huidige achterstand van NVFP4 is niet blijvend:</strong> Alle metingen zijn uitgevoerd met standaard-vLLM v0.22.0 zonder toegepaste community-patches. Wanneer de softwarecorrecties uit paragraaf 6.4.4 worden toegepast, wordt verwacht dat NVFP4-MTP AWQ-MTP inhaalt en het onder hoge belasting overtreft — zelfs bij C=16 is het verschil vandaag slechts ~3.5% (zie bijlage A.3).</p>
+  </li>
+</ol><hr />
+<h2 id="bijlage-a-kwantitatieve-impact-van-de-hardwaretekortkomingen-van-sm121">
+  
+  
+    <a href="#bijlage-a-kwantitatieve-impact-van-de-hardwaretekortkomingen-van-sm121" class="anchor-heading" aria-labelledby="bijlage-a-kwantitatieve-impact-van-de-hardwaretekortkomingen-van-sm121"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Bijlage A: Kwantitatieve impact van de hardwaretekortkomingen van SM121
+  
+  
+</h2>
+    
+
+<p>Paragraaf 6.4 legt vanuit hardware- en softwareperspectief uit waarom NVFP4 op SM121 zijn theoretische potentieel niet kan bereiken. De concrete prestatie-impact van elke tekortkoming is daar echter niet kwantitatief gegeven. Deze bijlage maakt de impact van elk van de genoemde tekortkomingen op de NVFP4-prestaties concreet.</p>
+<h3 id="a1-concrete-prestatie-impact-van-de-hardwaretekortkomingen">
+  
+  
+    <a href="#a1-concrete-prestatie-impact-van-de-hardwaretekortkomingen" class="anchor-heading" aria-labelledby="a1-concrete-prestatie-impact-van-de-hardwaretekortkomingen"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> A.1 Concrete prestatie-impact van de hardwaretekortkomingen
+  
+  
+</h3>
+    
+
+<p><strong>1. Ontbreken van TMEM → noodzaak om tiles te verkleinen</strong></p>
+
+<p>Op SM100 is 256KB TMEM + 228KB SMEM = in totaal 484KB ruimte voor tussendata beschikbaar. Op SM121 is er geen TMEM; alle tussendata moeten passen in de 99KB SMEM per blok. De standaardtilegroottes van CUTLASS voor FP4, ontworpen voor SM100, overschrijden dit budget van 99KB (bevestigd door metingen uit de community <a href="#ref10">[10]</a>), zodat de tilegrootte moet worden verkleind:</p>
+
+<ul>
+  <li>Kleinere tile = lagere rekenintensiteit (verhouding rekenwerk/bandbreedte)</li>
+  <li>Lage rekenintensiteit = eerdere confrontatie met de grens van de geheugenbandbreedte</li>
+  <li>Resultaat: de bandbreedtebesparing die de 4-bitcompressie van NVFP4 oplevert, kan niet worden benut omdat de rekeneenheden niet voldoende worden gevoed</li>
+</ul>
+
+<p><strong>2. Ontbreken van tcgen05.mma → geen efficiënt dispatchmechanisme</strong></p>
+
+<p><code class="language-plaintext highlighter-rouge">tcgen05.mma</code> is de PTX-instructie op SM100 die een FP4-GEMM in één instructie direct naar de tensor core dispatcht. Op SM121 kan alleen <code class="language-plaintext highlighter-rouge">mma.sync.aligned.m16n8k64.f32.e2m1.e2m1</code> worden gebruikt. CUTLASS moet via de abstractielaag van de CuTe-API gaan:</p>
+
+<ul>
+  <li>Meer overhead voor registerbeheer</li>
+  <li>Meer overhead voor SMEM-beheer</li>
+  <li>Minder optimale scheduling (handmatige pipelining op softwareniveau in plaats van de automatische pipelining op hardwareniveau van tcgen05)</li>
+</ul>
+
+<p><strong>3. Ontbreken van CTA Pairs / Cooperative MMA → samenwerking tussen SM’s onmogelijk</strong></p>
+
+<p>Op SM100 kunnen twee SM’s samen één MMA-bewerking uitvoeren (CTA Pair). Dit is een cruciale mogelijkheid voor grote tilegroottes: matrixvermenigvuldigingen die te groot zijn om door één SM alleen te worden verwerkt, kunnen over twee SM’s worden verdeeld. Op SM121 moet elke SM geïsoleerd werken:</p>
+
+<ul>
+  <li>Grote matrixvermenigvuldigingen moeten in kleinere stukken worden opgedeeld</li>
+  <li>Overhead door het opdelen: afzonderlijk laden van SMEM en afzonderlijke synchronisatie voor elk stuk</li>
+  <li>Werk dat op SM100 met één CTA Pair wordt gedaan, gebeurt op SM121 met meerdere onafhankelijke CTA’s → extra coördinatiekosten</li>
+</ul>
+
+<p><strong>4. Minder SM’s en ontbreken van de tensor-core-infrastructuur van de 5e generatie → ~9x verschil in totale FP4-rekencapaciteit</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Architectuur</th>
+      <th>Aantal SM’s</th>
+      <th>Tensor cores / SM</th>
+      <th>Totaal aantal tensor cores</th>
+      <th>Tensor-core-pad</th>
+      <th>FP4-piek (met sparsity)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>SM100 (B200)</td>
+      <td>148 (actief)</td>
+      <td>4</td>
+      <td>592</td>
+      <td>5e generatie <code class="language-plaintext highlighter-rouge">tcgen05</code> + TMEM</td>
+      <td>~9 PFLOP</td>
+    </tr>
+    <tr>
+      <td>SM121 (DGX Spark)</td>
+      <td>48</td>
+      <td>4</td>
+      <td>~192</td>
+      <td><code class="language-plaintext highlighter-rouge">mma.sync</code> op warp-niveau</td>
+      <td>~1 PFLOP</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Het verschil is niet het vaak genoemde “1 vs 4 tensor cores per SM” — volgens de gangbare telling hebben beide architecturen 4 tensor cores per SM. Het werkelijke verschil komt uit twee bronnen: <strong>(a)</strong> het aantal SM’s (148 actief tegenover 48, ~3x) en <strong>(b)</strong> de <strong>generatie/het programmeermodel</strong> van de tensor cores — SM100 heeft de 5e generatie <code class="language-plaintext highlighter-rouge">tcgen05</code> + TMEM-infrastructuur die met één instructie dispatcht, terwijl SM121 alleen het <code class="language-plaintext highlighter-rouge">mma.sync</code>-pad op warp-niveau heeft. Samen leiden deze twee factoren tot een FP4-piekrekenkracht van ~1 PFLOP (SM121) tegenover ~9 PFLOP (SM100), een verschil van ongeveer een orde van grootte (≈9x). Dit verschil treft vooral de <strong>prefill-fase</strong> (rekengebonden); het hangt direct samen met de hoge TTFT (519ms) die bij NVFP4-MTP is waargenomen.</p>
+
+<p><strong>5. Geheugenbandbreedte → 273 GB/s vs ~8 TB/s</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Architectuur</th>
+      <th>Geheugentype</th>
+      <th>Bandbreedte</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>SM100 (B200)</td>
+      <td>HBM3e</td>
+      <td>~8 TB/s</td>
+    </tr>
+    <tr>
+      <td>SM121 (DGX Spark)</td>
+      <td>LPDDR5x</td>
+      <td>273 GB/s</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Het verschil in bandbreedte is ~29x. De 4-bitcompressie van NVFP4 bespaart op beide platforms bandbreedte; de lage bandbreedte van DGX Spark zorgt er echter voor dat de rekenversnelling tegen de bandbreedtegrens aanloopt. Met andere woorden: NVFP4 verplaatst minder data dan FP8 (4-bit tegenover 8-bit), maar de bandbreedte van 273 GB/s is al zo laag dat het rekenvoordeel van NVFP4 onder de bandbreedtegrens verloren gaat.</p>
+
+<p><strong>6. Overhead van E2M1-activatiekwantisatie</strong></p>
+
+<p>In de W4A4-modus (gewichten en activaties 4-bit) vereist NVFP4 dat activaties tijdens runtime van BF16 naar E2M1 worden omgezet. Op SM121 kan de PTX-instructie <code class="language-plaintext highlighter-rouge">cvt.rn.satfinite.e2m1x2.f32</code> worden gebruikt met de juiste compileervlaggen (<code class="language-plaintext highlighter-rouge">sm_121a</code>); het CMake-proces van vLLM v0.22.0 geeft deze vlaggen echter niet correct door (paragraaf 6.4.4). Als de hardware-instructie is uitgeschakeld, is softwareconversie nodig; deze extra rekenbelasting vertraagt zowel de prefill- als de decode-fase.</p>
+<h3 id="a2-analyse-van-theoretische-vs-gerealiseerde-versnelling">
+  
+  
+    <a href="#a2-analyse-van-theoretische-vs-gerealiseerde-versnelling" class="anchor-heading" aria-labelledby="a2-analyse-van-theoretische-vs-gerealiseerde-versnelling"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> A.2 Analyse van theoretische vs gerealiseerde versnelling
+  
+  
+</h3>
+    
+
+<p>NVFP4 halveert de benodigde geheugenbandbreedte ten opzichte van FP8 door de gewichten naar 4-bit te comprimeren. Omdat de decode-fase geheugengebonden is, belooft dit theoretisch een versnelling van ~2x. De werkelijke prestaties:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Platform</th>
+      <th>TPS-verhouding NVFP4 / FP8</th>
+      <th>Verwacht</th>
+      <th>Gerealiseerd</th>
+      <th>Verlies</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>SM121 (DGX Spark) [dit rapport]</td>
+      <td>~1.21x</td>
+      <td>~2.0x</td>
+      <td>~1.21x</td>
+      <td>~40%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Op SM121 realiseert NVFP4 slechts ~60% van de theoretische versnelling van ~2x (gemeten ~1.21x; verlies ~40%). In deze studie is geen vergelijkende meting op datacenter-Blackwell (SM100) uitgevoerd; de SM121-specifieke hardwaretekortkomingen die in paragraaf 6.4 zijn gedocumenteerd (het ontbreken van TMEM, tcgen05 en CTA Pairs, en de SMEM-beperking) wijzen er echter op dat een aanzienlijk deel van het verlies platformspecifiek is. De uitsplitsing van het verlies wordt in de onderstaande tabel als schatting gegeven.</p>
+
+<p><strong>Uitsplitsing van het verlies:</strong></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Bron</th>
+      <th>Geschatte bijdrage</th>
+      <th>Beschrijving</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Lage bandbreedte (273 GB/s)</td>
+      <td>~15%</td>
+      <td>De rekenversnelling van NVFP4 loopt tegen de bandbreedtegrens aan</td>
+    </tr>
+    <tr>
+      <td>SMEM-beperking + verkleining van tiles</td>
+      <td>~8%</td>
+      <td>Lage rekenintensiteit vermindert het bandbreedtevoordeel</td>
+    </tr>
+    <tr>
+      <td>Minder SM’s (48 vs 148)</td>
+      <td>~5%</td>
+      <td>Beperkt de totale FP4-capaciteit; treft prefill direct, decode indirect</td>
+    </tr>
+    <tr>
+      <td>Ontbreken van tcgen05 + TMEM + CTA Pairs</td>
+      <td>~5%</td>
+      <td>Inefficiënte dispatch + isolatie van SM’s (terugval op het <code class="language-plaintext highlighter-rouge">mma.sync</code>-pad op warp-niveau)</td>
+    </tr>
+    <tr>
+      <td>Software-E2M1-conversie</td>
+      <td>~3-5%</td>
+      <td>Extra rekenbelasting bij onjuiste compilatie</td>
+    </tr>
+    <tr>
+      <td><strong>Totaal</strong></td>
+      <td><strong>~36-38%</strong></td>
+      <td><strong>Consistent met een verlies van ≈40%</strong></td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Opmerking:</strong> De bovenstaande percentages zijn schattingen en vertegenwoordigen onderling samenhangende interacties die moeilijk te isoleren zijn. Het totaal is geen eenvoudige som van de afzonderlijke bijdragen, maar weerspiegelt hun gecombineerde effecten.</p>
+</blockquote>
+<h3 id="a3-haalbaar-plafond-met-softwareverbeteringen">
+  
+  
+    <a href="#a3-haalbaar-plafond-met-softwareverbeteringen" class="anchor-heading" aria-labelledby="a3-haalbaar-plafond-met-softwareverbeteringen"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> A.3 Haalbaar plafond met softwareverbeteringen
+  
+  
+</h3>
+    
+
+<p>Als de in paragraaf 6.4.4 genoemde softwarecorrecties (CMake-suffixfout, capability-gate-fout, software-E2M1-conversie, CUTLASS-tile-tuning, Marlin W4A16-backend) worden toegepast:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Scenario</th>
+      <th>TPS-verhouding NVFP4 / FP8</th>
+      <th>Verbetering</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Huidig (vLLM v0.22.0, niet gecorrigeerd)</td>
+      <td>~1.21x</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>Na toepassing van de softwarecorrecties (geschat)</td>
+      <td>~1.30-1.40x</td>
+      <td>~+8-19%</td>
+    </tr>
+    <tr>
+      <td>Theoretisch plafond (hardwaregrens)</td>
+      <td>~1.30-1.40x</td>
+      <td>—</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Softwareverbeteringen kunnen de versnellingsfactor van NVFP4 ten opzichte van FP8 verhogen van ~1.21x naar ~1.30-1.40x. <strong>Het ontbreken van tcgen05, TMEM en CTA Pairs vormt echter een hardwarematig plafond dat softwareverbeteringen niet kunnen doorbreken.</strong> Een versnelling van NVFP4 ten opzichte van FP8 van meer dan ~1.4x is op SM121 door deze hardwaretekortkomingen niet mogelijk.</p>
+
+<p><strong>Vergelijking met AWQ-MTP — verwachting na de softwarecorrecties:</strong></p>
+
+<p>De verhouding van AWQ-MTP, de snelheidswinnaar in dit rapport, tot FP8-MTP is ~1.31x (25.45 / 19.50 tok/s). Omdat de voorspelde band van ~1.30-1.40x voor NVFP4 na de softwarecorrecties deze waarde omvat en overschrijdt, <strong>wordt verwacht dat NVFP4-MTP, wanneer alle correcties zijn toegepast, AWQ-MTP inhaalt en het waarschijnlijk met een kleine marge overtreft</strong> (schatting: 19.50 × 1.30-1.40 ≈ 25.4-27.3 tok/s tegenover AWQ-MTP 25.45 tok/s).</p>
+
+<p>Drie factoren ondersteunen deze verwachting:</p>
+
+<ol>
+  <li><strong>Bij hoge gelijktijdigheid is het verschil al gedicht:</strong> Bij C=16 is de totale capaciteit van NVFP4-MTP 231.5 tegenover AWQ-MTP 239.8 tok/s — zelfs ongepatcht is het verschil slechts ~3.5% (paragraaf 6.1). Omdat de verzadigingsindex van AWQ-MTP steiler daalt (59% tegenover NVFP4-MTP 69% bij C=16, paragraaf 6.2), is NVFP4-MTP de meest waarschijnlijke kandidaat om onder belasting de leiding te nemen.</li>
+  <li><strong>De bekende bugs in het NVFP4+MTP-pad zijn direct softwaregerelateerd:</strong> Wanneer het TTFT-probleem van 519ms en de beperking bij het laden van de MTP-head (paragraaf 6.4.3-6.4.4) zijn opgelost, ontstaat voor NVFP4-MTP een verbeterruimte die aan de AWQ-kant geen tegenhanger heeft.</li>
+  <li><strong>Voordeel van het hardware-native pad:</strong> AWQ (W4A16) zet de gewichten vóór de berekening met de Marlin-kernel om naar BF16; NVFP4 gebruikt de native FP4-tensor-core-instructie van Blackwell (<code class="language-plaintext highlighter-rouge">mma.sync</code> e2m1). Naarmate de kernelsoftware volwassener wordt, neigt het verschil te groeien in het voordeel van het hardware-native formaat.</li>
+</ol>
+
+<p>Toch geldt het hardwareplafond uit A.2 ook hier: op SM121 moet deze omslag worden verwacht op het niveau van <strong>gelijkstand of een voordeel van enkele procenten</strong>, niet als een grote sprong. Bovendien is deze vergelijking uitsluitend op snelheid gebaseerd; het nauwkeurigheidsgedrag van de twee formaten moet afzonderlijk worden beoordeeld (paragraaf 8.3).</p>
+
+<blockquote>
+  <p><strong>Begeleidende whitepaper:</strong> Het vervolgrapport <a href="/nl/papers/qwen3.6-27b-dgx-spark-scaling/">Schaling van Qwen3.6-27B op een DGX Spark-cluster</a> breidt dit werk uit naar configuraties met meerdere nodes (TP1/TP2/TP4) met een nieuwere nightly-image van vLLM. De TP1-resultaten (één node) daarin voor hetzelfde NVFP4-model wijken af van de hier gemeten NVFP4-baseline; zie §1.5 van dat rapport voor een vergelijking van de twee runtimes naast elkaar.</p>
+</blockquote><hr />
+<h2 id="bijlage-b-grafieken-per-variant">
+  
+  
+    <a href="#bijlage-b-grafieken-per-variant" class="anchor-heading" aria-labelledby="bijlage-b-grafieken-per-variant"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Bijlage B: Grafieken per variant
+  
+  
+</h2>
+    
+
+<p>Alle grafieken zijn beschikbaar in de mappen van de betreffende varianten:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Variant</th>
+      <th>Map</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FP8</td>
+      <td><code class="language-plaintext highlighter-rouge">Qwen3.6-27B-FP8/</code></td>
+    </tr>
+    <tr>
+      <td>FP8-MTP</td>
+      <td><code class="language-plaintext highlighter-rouge">Qwen3.6-27B-FP8-MTP/</code></td>
+    </tr>
+    <tr>
+      <td>AWQ-MTP</td>
+      <td><code class="language-plaintext highlighter-rouge">Qwen3.6-27B-AWQ-MTP/</code></td>
+    </tr>
+    <tr>
+      <td>NVFP4</td>
+      <td><code class="language-plaintext highlighter-rouge">Qwen3.6-27B-NVFP4/</code></td>
+    </tr>
+    <tr>
+      <td>NVFP4-MTP</td>
+      <td><code class="language-plaintext highlighter-rouge">Qwen3.6-27B-NVFP4-MTP/</code></td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Elke map bevat 5 PNG-grafieken (TTFT, ITL, TPS, latentie, doorvoer), 5 interactieve HTML-grafieken en 1 CSV-gegevensbestand.</p><hr />
+<h2 id="over-ons--aetherix">
+  
+  
+    <a href="#over-ons--aetherix" class="anchor-heading" aria-labelledby="over-ons--aetherix"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Over ons — Aetherix
+  
+  
+</h2>
+    
+
+<p><strong>Aetherix B.V.</strong> is een in Nederland gevestigde leverancier van NVIDIA Jetson™-hardware voor edge AI. Het bedrijf is gespecialiseerd in Jetson-platforms voor robotica, automatisering en embedded systemen, en levert in heel Europa vanuit zijn distributiecentrum in Nederland.</p>
+
+<p>Alle metingen in dit rapport zijn uitgevoerd met de opensourcetool <strong><a href="https://github.com/CordatusAI/llm-benchmark">CordatusAI/llm-benchmark</a></strong>, op een <strong>NVIDIA DGX Spark (GB10)</strong>-systeem.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Web</strong></td>
+      <td><a href="https://aetherix.com">aetherix.com</a></td>
+    </tr>
+    <tr>
+      <td><strong>E-mail</strong></td>
+      <td><a href="mailto:info@aetherix.com">info@aetherix.com</a></td>
+    </tr>
+    <tr>
+      <td><strong>Contact</strong></td>
+      <td><a href="https://aetherix.com/contact/">aetherix.com/contact</a></td>
+    </tr>
+    <tr>
+      <td><strong>Adres</strong></td>
+      <td>Oude Apeldoornseweg 41, A1.08, 7333 NR Apeldoorn, Nederland</td>
+    </tr>
+  </tbody>
+</table></div><hr />
+
+<p><em>Rapportdatum: juli 2026</em></p>
+
+<p><em>Testplatform: NVIDIA DGX Spark (GB10) · Model: Qwen3.6-27B</em></p>
+
+<p><em>Opgesteld door: Aetherix B.V.</em></p>
+
+          
+
+          
+        </main>
+        
+
+
+      </div>
+    </div>
+    
+      
+
+<div class="search-overlay"></div>
+
+    
+  </div>
+
+  
+
+  <script>
+    window.JTD_I18N = {
+      search_no_results: "Geen resultaten gevonden",
+      copy_code: "Code naar klembord kopiëren"
+    };
+  </script>
+
+  
+
+
+<div id="cookie-consent-banner" class="cookie-consent" role="dialog"
+     aria-modal="false" aria-label="Cookie consent"
+     data-consent-state="pending" hidden>
+  <div class="cookie-consent__body">
+    <div class="cookie-consent__text">
+      <span class="cookie-consent__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+          <path d="M21 12a9 9 0 1 1-9-9 4.5 4.5 0 0 0 4.5 4.5A4.5 4.5 0 0 0 21 12zm-9-3.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-1.5 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm6-1.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-3 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0z"/>
+        </svg>
+      </span>
+      <p>Wij gebruiken cookies om het websiteverkeer te analyseren en uw ervaring te verbeteren. Door op 'Accepteren' te klikken, stemt u in met het gebruik van analytische cookies zoals beschreven in ons privacybeleid.
+        <a href="https://aetherix.com/privacy-policy/" target="_blank" rel="noopener noreferrer"
+           class="cookie-consent__link">Privacybeleid</a>
+      </p>
+    </div>
+    <div class="cookie-consent__actions">
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--reject"
+              data-consent-action="rejected">Weigeren</button>
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--accept"
+              data-consent-action="accepted">Accepteren</button>
+    </div>
+  </div>
+</div>
+<script>
+  // Eski karar önbellekte varsa bannerı gösterme
+  (function() {
+    try {
+      var v = localStorage.getItem('cookieConsent');
+      if (v === 'accepted' || v === 'rejected') {
+        document.documentElement.dataset.cookieConsent = v;
+      }
+    } catch (e) {}
+  })();
+</script>
+<script src="/assets/js/cookie-banner.js" defer></script>
+
+</body>
+</html>
+

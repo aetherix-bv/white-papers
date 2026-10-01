@@ -1,0 +1,1180 @@
+
+
+<!DOCTYPE html>
+
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-default.css">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet">
+
+  <style id="jtd-nav-activation">
+  
+
+.site-nav > ul.nav-list:first-child > li > a,
+.site-nav > ul.nav-list:first-child > li > ul > li:not(:nth-child(5)) > a,
+.site-nav > ul.nav-list:first-child > li > ul > li > ul > li > a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:not(:first-child) a,
+.site-nav li.external a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(5) > a {
+  font-weight: 600;
+  text-decoration: none;
+}.site-nav > ul.nav-list:first-child > li:nth-child(3) > button svg,
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(5) > button svg {
+  transform: rotate(-90deg);
+}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list,
+.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list > li.nav-list-item:nth-child(5) > ul.nav-list {
+  display: block;
+}
+  </style>
+
+  
+
+  
+    <script src="/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="icon" href="/nl/favicon.ico" type="image/x-icon">
+
+
+
+  <!-- Begin Jekyll SEO tag v2.9.1 -->
+<title>Installatiehandleiding voor een DGX Spark AI-cluster met 3 nodes | Aetherix White Papers</title>
+<meta name="generator" content="Jekyll v4.3.4" />
+<meta property="og:title" content="Installatiehandleiding voor een DGX Spark AI-cluster met 3 nodes" />
+<meta property="og:locale" content="nl" />
+<meta name="description" content="Installatie van een AI-cluster in ringtopologie (mesh) met 3 NVIDIA DGX Spark-nodes: management- en compute-netwerk, RoCEv2/RDMA, sparkrun-configuratie." />
+<meta name="twitter:description" property="og:description" content="Installatie van een AI-cluster in ringtopologie (mesh) met 3 NVIDIA DGX Spark-nodes: management- en compute-netwerk, RoCEv2/RDMA, sparkrun-configuratie." />
+<link rel="canonical" href="https://whitepapers.aetherix.com/nl/papers/dgx-spark-3node-cluster-setup/" />
+<meta property="og:url" content="https://whitepapers.aetherix.com/nl/papers/dgx-spark-3node-cluster-setup/" />
+<meta property="og:site_name" content="Aetherix White Papers" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-07-30T05:21:44+00:00" />
+<meta property="article:modified_time" content="2026-07-30T05:21:44+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Installatiehandleiding voor een DGX Spark AI-cluster met 3 nodes" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2026-07-30T05:21:44+00:00","datePublished":"2026-07-30T05:21:44+00:00","description":"Installatie van een AI-cluster in ringtopologie (mesh) met 3 NVIDIA DGX Spark-nodes: management- en compute-netwerk, RoCEv2/RDMA, sparkrun-configuratie.","headline":"Installatiehandleiding voor een DGX Spark AI-cluster met 3 nodes","mainEntityOfPage":{"@type":"WebPage","@id":"https://whitepapers.aetherix.com/nl/papers/dgx-spark-3node-cluster-setup/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://whitepapers.aetherix.com/assets/images/aetherix-logo.png"}},"url":"https://whitepapers.aetherix.com/nl/papers/dgx-spark-3node-cluster-setup/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  
+<!-- Google tag (gtag.js) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JWLN33085T"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+
+  // Consent Mode v2 — default DENIED. Banner onayı ile GRANTED olur.
+  // KVKK/GDPR uyumu: ziyaretçi onay vermeden çerez set edilmez.
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    functionality_storage: 'granted',
+    security_storage: 'granted',
+    wait_for_update: 500
+  });
+
+  gtag('js', new Date());
+  gtag('config', 'G-JWLN33085T', {
+    anonymize_ip: true
+  });
+</script>
+
+<link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/papers/dgx-spark-3node-cluster-setup/">
+<link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/papers/dgx-spark-3node-cluster-setup/">
+<link rel="alternate" hreflang="x-default" href="https://whitepapers.aetherix.com/papers/dgx-spark-3node-cluster-setup/">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/images/favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+<script>
+(function () {
+  var open = XMLHttpRequest.prototype.open;
+  var own = "/nl/search-data.json";
+  XMLHttpRequest.prototype.open = function (method, url) {
+    if (typeof url === "string" && /assets\/js\/search-data\.json$/.test(url)) arguments[1] = own;
+    return open.apply(this, arguments);
+  };
+})();
+</script>
+
+
+</head>
+
+<body>
+  <a class="skip-to-main" href="#main-content">Naar de hoofdinhoud</a>
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="svg-link" viewBox="0 0 24 24">
+  <title>Link</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+</symbol>
+
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+  <title>Menu</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+    <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</symbol>
+
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+  <title>Expand</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</symbol>
+
+  <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
+<symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+  <title id="svg-external-link-title">(external link)</title>
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+</symbol>
+
+  
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+  <title>Document</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+</symbol>
+
+    <symbol id="svg-search" viewBox="0 0 24 24">
+  <title>Search</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</symbol>
+
+  
+  
+    <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+<symbol id="svg-copy" viewBox="0 0 16 16">
+  <title>Copy</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+</symbol>
+<symbol id="svg-copied" viewBox="0 0 16 16">
+  <title>Copied</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"/>
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"/>
+  </svg>
+</symbol>
+
+  
+</svg>
+
+  
+    <div class="side-bar">
+  <div class="site-header" role="banner">
+    <a href="/nl/" class="site-title lh-tight">
+  <div class="site-logo" role="img" aria-label="Aetherix White Papers"></div>
+
+</a>
+    <button id="menu-button" class="site-button btn-reset" aria-label="Toggle menu" aria-pressed="false">
+      <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  <nav aria-label="Main" id="site-nav" class="site-nav">
+  
+  
+    <ul class="nav-list"><li class="nav-list-item"><a href="/nl/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/nl/about/" class="nav-list-link">Over ons</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in White Papers category" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+    </button><a href="/nl/papers/" class="nav-list-link">White Papers</a><ul class="nav-list"><li class="nav-list-item"><a href="/nl/papers/local-llm-guide/" class="nav-list-link">Handleiding voor lokaal LLM-gebruik</a></li><li class="nav-list-item"><a href="/nl/papers/conditional-memory-offloading/" class="nav-list-link">Conditional memory en offloading bij LLM-inferentie</a></li><li class="nav-list-item"><a href="/nl/papers/b300-gb300-cluster-architecture/" class="nav-list-link">NVIDIA DGX B300 vs GB300 NVL72: vergelijking van clusterarchitecturen</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-2node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 2 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-3node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 3 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-4node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 4 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-8node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 8 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/qwen3.6-27b-dgx-spark-benchmark/" class="nav-list-link">Qwen3.6-27B DGX Spark-benchmark</a></li><li class="nav-list-item"><a href="/nl/papers/qwen3.6-27b-dgx-spark-scaling/" class="nav-list-link">Schaling van Qwen3.6-27B op een DGX Spark-cluster</a></li><li class="nav-list-item"><a href="/nl/papers/deepseek-v4.1-flash-4spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash-deployment op 4× DGX Spark</a></li><li class="nav-list-item"><a href="/nl/papers/deepseek-v4.1-flash-8spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash-deployment op 8× DGX Spark met TP8</a></li><li class="nav-list-item"><a href="/nl/papers/kimi-k3-dgx-b300-inference-benchmark/" class="nav-list-link">Kimi K3-inferentiebenchmark op DGX-B300</a></li></ul></li><li class="nav-list-item"><a href="/nl/llm-inference-benchmarks/" class="nav-list-link">LLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/nl/cv-inference-benchmarks/" class="nav-list-link">CV Inference Benchmark Explorer</a></li></ul>
+
+  
+</nav>
+
+
+  
+  
+    <div class="lang-switcher">
+  
+    
+    
+      <a class="lang-switcher-item" href="/papers/dgx-spark-3node-cluster-setup/">EN</a>
+    
+  
+    
+    
+      <span class="lang-switcher-item active">NL</span>
+    
+  
+</div>
+<script src="/assets/js/lang-switch.js"></script>
+
+  
+</div>
+
+  
+  <div class="main" id="top">
+    <div id="main-header" class="main-header">
+  
+    
+
+<div class="search" role="search">
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Zoeken" aria-label="Zoeken" autocomplete="off">
+    <label for="search-input" class="search-label"><svg viewBox="0 0 24 24" class="search-icon"><use xlink:href="#svg-search"></use></svg></label>
+  </div>
+  <div id="search-results" class="search-results"></div>
+</div>
+
+  
+  
+  
+    <nav aria-label="Auxiliary" class="aux-nav">
+  <ul class="aux-nav-list">
+    
+      <li class="aux-nav-list-item">
+        <a href="https://aetherix.com" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          aetherix.com
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://github.com/aetherix-bv" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          GitHub
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+  
+</div>
+
+    <div class="main-content-wrap">
+      <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+  <ol class="breadcrumb-nav-list">
+    <li class="breadcrumb-nav-list-item"><a href="/nl/papers/">White Papers</a></li>
+    <li class="breadcrumb-nav-list-item"><span>Installatiehandleiding voor een DGX Spark AI-cluster met 3 nodes</span></li>
+  </ol>
+</nav>
+      <div id="main-content" class="main-content">
+        <main>
+          
+            <h2 id="inhoudsopgave">
+  
+  
+    <a href="#inhoudsopgave" class="anchor-heading" aria-labelledby="inhoudsopgave"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Inhoudsopgave
+  
+  
+</h2>
+    
+
+<ul>
+  <li><a href="#architectuuroverzicht">Architectuuroverzicht</a></li>
+  <li><a href="#vereisten">Vereisten</a></li>
+  <li><a href="#voorbereiding-van-de-dgx-spark-nodes">Voorbereiding van de DGX Spark-nodes</a>
+    <ul>
+      <li><a href="#updates-van-systeem-en-firmware">Updates van systeem en firmware</a></li>
+      <li><a href="#docker-configuratie">Docker-configuratie</a></li>
+    </ul>
+  </li>
+  <li><a href="#aansluiting-van-het-managementnetwerk-10gbe">Aansluiting van het managementnetwerk (10GbE)</a></li>
+  <li><a href="#fysieke-aansluiting-van-het-compute-netwerk-200gbe-qsfp">Fysieke aansluiting van het compute-netwerk (200GbE QSFP)</a></li>
+  <li><a href="#sparkrun-installeren-op-de-spark-nodes">sparkrun installeren op de Spark-nodes</a>
+    <ul>
+      <li><a href="#configuratie-van-gebruiker-en-ssh">Configuratie van gebruiker en SSH</a></li>
+      <li><a href="#installatie-van-sparkrun">Installatie van sparkrun</a></li>
+    </ul>
+  </li>
+  <li><a href="#snelheidstests-en-rdma-tests">Snelheidstests en RDMA-tests</a></li>
+  <li><a href="#modellen-draaien-met-sparkrun">Modellen draaien met sparkrun</a></li>
+  <li><a href="#resultaten-en-verificatie">Resultaten en verificatie</a></li>
+  <li><a href="#probleemoplossing">Probleemoplossing</a></li>
+</ul>
+
+<div class="product-card">
+  <div class="product-card-image">
+<img src="/papers/dgx-spark-3node-cluster-setup/images/DGX_Spark_Triple_2-500x499.webp" alt="NVIDIA DGX Spark Triple" />
+</div>
+  <div class="product-card-body">
+<h3>
+  
+  
+    <a href="#inhoudsopgave" class="anchor-heading" aria-labelledby="inhoudsopgave"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> NVIDIA DGX Spark Triple
+  
+  
+</h3>
+    
+<p>3 DGX Spark-nodes, 200GbE RoCEv2 RDMA en sparkrun-clusterbeheer voor een end-to-end AI-infrastructuur.</p>
+<a class="product-card-btn" href="https://aetherix.com/product/nvidia-dgx-spark-triple/">Dit product kopen →</a>
+</div>
+</div>
+
+<p>Dit document beschrijft de volledige installatie- en configuratiestappen voor een AI-cluster dat bestaat uit 3 NVIDIA DGX Spark-nodes in een ringtopologie (mesh). Het cluster gebruikt de <strong>sparkrun</strong>-toolkit om gedistribueerde AI-workloads en de uitvoering van modellen te beheren.</p>
+
+<p>Het document behandelt de voorbereiding van het managementnetwerk en het compute-netwerk, de configuratie van de ConnectX-7 QSFP112-poorten, de RoCEv2/RDMA-instellingen, SSH-toegang en de stappen voor de statuscontrole van het cluster.</p>
+<h2 id="architectuuroverzicht">
+  
+  
+    <a href="#architectuuroverzicht" class="anchor-heading" aria-labelledby="architectuuroverzicht"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Architectuuroverzicht
+  
+  
+</h2>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Component</th>
+      <th style="text-align: left">Beschrijving</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><strong>DGX Spark × 3</strong></td>
+      <td style="text-align: left">Elk met een ConnectX-7 200GbE QSFP112-poort</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>QSFP112-kabel × 3</strong></td>
+      <td style="text-align: left">Amphenol: NJAAKK-N911</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>sparkrun</strong></td>
+      <td style="text-align: left">Toolkit voor clusterbeheer, SSH-mesh en CX7-configuratie</td>
+    </tr>
+  </tbody>
+</table></div>
+<h2 id="vereisten">
+  
+  
+    <a href="#vereisten" class="anchor-heading" aria-labelledby="vereisten"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Vereisten
+  
+  
+</h2>
+    
+
+<p><strong>Hardware</strong></p>
+
+<ul>
+  <li>3× NVIDIA DGX Spark-systemen</li>
+  <li>3× Amphenol: NJAAKK-N911-kabels</li>
+  <li>Cat6-kabels (managementnetwerk)</li>
+</ul>
+
+<p><strong>Software en besturingssysteem</strong></p>
+
+<ul>
+  <li>DGX OS (vooraf geïnstalleerd op elk Spark-systeem)</li>
+  <li>Internettoegang (voor het downloaden van pakketten en updates)</li>
+</ul>
+
+<p><strong>Kennis en toegang</strong></p>
+
+<ul>
+  <li>Basiskennis van de Linux-opdrachtregel</li>
+  <li>Fysieke toegang tot alle apparaten (voor het aansluiten van de kabels)</li>
+</ul>
+
+<p><strong>Installatie van DGX Spark OS</strong></p>
+
+<p>U kunt de volgende video gebruiken voor de installatie van DGX Spark OS:</p>
+
+<p><a href="https://www.youtube.com/watch?v=-z8GqGKDyXE">NVIDIA DGX Spark Kurulumu Part 1</a></p>
+<h2 id="voorbereiding-van-de-dgx-spark-nodes">
+  
+  
+    <a href="#voorbereiding-van-de-dgx-spark-nodes" class="anchor-heading" aria-labelledby="voorbereiding-van-de-dgx-spark-nodes"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <strong>Voorbereiding van de DGX Spark-nodes</strong>
+  
+  
+</h2>
+    
+
+<p>Zorg ervoor dat alle Spark-systemen de nieuwste software- en firmwareversies draaien voordat u verdergaat met de fysieke verbindingen en de netwerkconfiguratie. Een aanzienlijk deel van de prestatieproblemen die tijdens de installatie optreden, komt voort uit verouderde drivers, ontbrekende updates of incompatibele firmware.</p>
+
+<p>De volgende stappen moeten op alle drie de Spark-systemen worden uitgevoerd.</p>
+<h3 id="updates-van-systeem-en-firmware">
+  
+  
+    <a href="#updates-van-systeem-en-firmware" class="anchor-heading" aria-labelledby="updates-van-systeem-en-firmware"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <strong>Updates van systeem en firmware</strong>
+  
+  
+</h3>
+    
+
+<p>Werk eerst de pakketten van het besturingssysteem bij:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt update
+<span class="nb">sudo </span>apt dist-upgrade
+</code></pre></div></div>
+
+<p>Werk daarna de systeemfirmware bij:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>fwupdmgr refresh <span class="nt">--force</span>
+<span class="nb">sudo </span>fwupdmgr upgrade
+</code></pre></div></div>
+
+<p>Controleer in het DGX Dashboard of er updates beschikbaar zijn en installeer deze als dat het geval is:</p>
+
+<p><img src="/papers/dgx-spark-3node-cluster-setup/images/01-dgx-dashboard.png" alt="" /></p>
+
+<p>Start het systeem opnieuw op nadat de updates zijn voltooid:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>reboot
+</code></pre></div></div>
+
+<p>Tijdens het testen werd vastgesteld dat verouderde firmwareversies ertoe leidden dat de verbindingsprestaties achterbleven bij het verwachte niveau. Daarom wordt aanbevolen om als eerste stap alle systemen bij te werken.</p>
+<h3 id="docker-configuratie">
+  
+  
+    <a href="#docker-configuratie" class="anchor-heading" aria-labelledby="docker-configuratie"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <strong>Docker-configuratie</strong>
+  
+  
+</h3>
+    
+
+<p>Om de containergebaseerde tools die in de volgende stappen worden gebruikt zonder sudo te kunnen draaien, worden op elke Spark de post-installatiestappen van Docker uitgevoerd.</p>
+
+<p>Voeg eerst de huidige gebruiker toe aan de Docker-groep:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>groupadd docker
+<span class="nb">sudo </span>usermod <span class="nt">-aG</span> docker <span class="nv">$USER</span>
+newgrp docker
+</code></pre></div></div>
+
+<p>Controleer de configuratie met de volgende test:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run hello-world
+</code></pre></div></div>
+
+<p><img src="/papers/dgx-spark-3node-cluster-setup/images/02-docker-hello.png" alt="" /></p>
+
+<p>Als de opdracht met succes wordt uitgevoerd en Docker de voorbeeldcontainer kan starten, is bevestigd dat de benodigde voorbereiding voor de containergebaseerde tools in de volgende stappen voltooid is.</p>
+
+<p><strong>De storage driver controleren</strong></p>
+
+<p>Daarnaast werd op alle Spark-nodes de storage driver van Docker gecontroleerd. De uitvoer van <code class="language-plaintext highlighter-rouge">docker info</code> bevestigde dat de waarde van Storage Driver <code class="language-plaintext highlighter-rouge">overlayfs</code> is. Als <code class="language-plaintext highlighter-rouge">overlay2</code> of een andere storage driver werd aangetroffen, werd Docker geconfigureerd om de containerd-snapshotter (<code class="language-plaintext highlighter-rouge">overlayfs</code>) te gebruiken en werd de Docker-service opnieuw gestart. Zo werd een consistente runtime-omgeving op alle nodes gewaarborgd.</p>
+
+<p>Eerst werd de huidige storage driver gecontroleerd met de volgende opdracht:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker info <span class="nt">-f</span> <span class="s1">'Driver= DriverStatus= DockerRootDir='</span>
+</code></pre></div></div>
+
+<p>Als de uitvoer <code class="language-plaintext highlighter-rouge">overlay2</code> toont, werd de volgende configuratie toegepast:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo tee</span> /etc/docker/daemon.json <span class="o">&gt;</span>/dev/null <span class="o">&lt;&lt;</span><span class="sh">'</span><span class="no">EOF</span><span class="sh">'
+{
+  "features": {
+    "containerd-snapshotter": true
+  }
+}
+</span><span class="no">EOF
+
+</span><span class="nb">sudo </span>systemctl restart docker
+</code></pre></div></div>
+
+<p>Na de configuratie werd dezelfde controleopdracht opnieuw uitgevoerd en werd bevestigd dat de storage driver <code class="language-plaintext highlighter-rouge">overlayfs</code> is.</p>
+
+<p><img src="/papers/dgx-spark-3node-cluster-setup/images/03-docker-storage.png" alt="" /></p>
+<h2 id="aansluiting-van-het-managementnetwerk-10gbe">
+  
+  
+    <a href="#aansluiting-van-het-managementnetwerk-10gbe" class="anchor-heading" aria-labelledby="aansluiting-van-het-managementnetwerk-10gbe"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Aansluiting van het managementnetwerk (10GbE)
+  
+  
+</h2>
+    
+
+<p>De 10GbE-ethernetpoort van elke DGX Spark wordt met een Cat6-kabel aangesloten op een van de RJ45-poorten van de switch. Controleer na het aansluiten of de linkindicator van de betreffende poort op de switch brandt.</p>
+
+<p>Open een terminal op het bureaublad van de Spark en controleer of het apparaat een IP-adres heeft gekregen:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip addr show
+</code></pre></div></div>
+
+<p><img src="/papers/dgx-spark-3node-cluster-setup/images/04-ip-addr.png" alt="" /></p>
+
+<p>Als u, zoals in het voorbeeld, een IP-adres op de 10GbE-interface ziet, is SSH-toegang via het managementnetwerk beschikbaar. Als er geen IP-adres is toegewezen, wijs er dan handmatig een toe via het bureaublad van DGX OS:</p>
+
+<ol>
+  <li>Klik op het netwerkpictogram in de rechterbovenhoek → selecteer Wired Settings</li>
+  <li>Klik op het tandwielpictogram (⚙) naast de betreffende 10GbE-verbinding</li>
+  <li>Ga naar het tabblad IPv4</li>
+  <li>Wijzig Method in Manual</li>
+  <li>Voer de volgende gegevens in:
+    <ul>
+      <li>Address: 192.168.1.163 (verschillend voor elke Spark, bijv. .147, .148 — pas dit aan uw netwerk aan)</li>
+      <li>Netmask: 255.255.255.0</li>
+      <li>Gateway: 192.168.1.1 (indien beschikbaar, laat het veld anders leeg)</li>
+      <li>DNS: 1.1.1.1,8.8.8.8</li>
+    </ul>
+  </li>
+  <li>Klik op Apply en schakel de verbinding uit en weer in</li>
+</ol>
+
+<p><img src="/papers/dgx-spark-3node-cluster-setup/images/05-wired-settings.png" alt="" /></p>
+
+<p>Als er internettoegang is, is de 10GbE-managementverbinding gereed. Herhaal dezelfde stappen op de andere twee Spark-systemen en wijs elk daarvan een ander IP-adres toe.</p>
+
+<p><strong>Controle van de verbinding tussen de nodes</strong></p>
+
+<p>Controleer of alle Spark-systemen elkaar via het managementnetwerk kunnen zien. Ping vanaf één Spark de andere Sparks:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ping <span class="nt">-c</span> 4 192.168.1.147
+ping <span class="nt">-c</span> 4 192.168.1.148
+</code></pre></div></div>
+
+<p>Als alle pings slagen, is het managementnetwerk gereed en kunnen alle nodes met elkaar communiceren.</p>
+<h2 id="fysieke-aansluiting-van-het-compute-netwerk-200gbe-qsfp">
+  
+  
+    <a href="#fysieke-aansluiting-van-het-compute-netwerk-200gbe-qsfp" class="anchor-heading" aria-labelledby="fysieke-aansluiting-van-het-compute-netwerk-200gbe-qsfp"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Fysieke aansluiting van het compute-netwerk (200GbE QSFP)
+  
+  
+</h2>
+    
+
+<p>In deze opstelling is elke Spark via zijn twee ConnectX-7 QSFP-poorten met 100GbE verbonden met de andere twee Sparks (twee poorten, samen 200GbE).</p>
+
+<p><strong>Kabelplan</strong></p>
+
+<p>De poorttoewijzingen voor de fysieke verbindingen tussen de drie Spark-systemen zijn als volgt:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Bron</th>
+      <th>Bestemming</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Spark1 Port0</td>
+      <td>Spark2 Port1</td>
+    </tr>
+    <tr>
+      <td>Spark1 Port1</td>
+      <td>Spark3 Port0</td>
+    </tr>
+    <tr>
+      <td>Spark2 Port0</td>
+      <td>Spark3 Port1</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong><img src="/papers/dgx-spark-3node-cluster-setup/images/06-cable-plan.png" alt="" /></strong></p>
+<h2 id="sparkrun-installeren-op-de-spark-nodes">
+  
+  
+    <a href="#sparkrun-installeren-op-de-spark-nodes" class="anchor-heading" aria-labelledby="sparkrun-installeren-op-de-spark-nodes"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> sparkrun installeren op de Spark-nodes
+  
+  
+</h2>
+    
+<h3 id="configuratie-van-gebruiker-en-ssh">
+  
+  
+    <a href="#configuratie-van-gebruiker-en-ssh" class="anchor-heading" aria-labelledby="configuratie-van-gebruiker-en-ssh"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configuratie van gebruiker en SSH
+  
+  
+</h3>
+    
+
+<p>Nadat de netwerkconfiguratie is voltooid, moet op alle nodes een gemeenschappelijke gebruiker worden aangemaakt, zodat de Spark-systemen zonder wachtwoord met elkaar kunnen communiceren. sparkrun gebruikt deze gebruiker om via SSH verbinding te maken met alle nodes en de clusterbeheertaken uit te voeren.</p>
+
+<p><strong>Hostnamen instellen</strong>
+Geef elke Spark een unieke hostnaam. Dit is essentieel voor het beheer van SSH known_hosts, voor loganalyse en om de nodes van het cluster te kunnen volgen:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># On Spark 1:</span>
+<span class="nb">sudo </span>hostnamectl set-hostname spark1
+
+<span class="c"># On Spark 2:</span>
+<span class="nb">sudo </span>hostnamectl set-hostname spark2
+
+<span class="c"># On Spark 3:</span>
+<span class="nb">sudo </span>hostnamectl set-hostname spark3
+</code></pre></div></div>
+
+<p><strong>Een gedeelde gebruiker aanmaken</strong>
+Op alle Spark-systemen moet dezelfde gebruikersnaam worden aangemaakt. In dit document wordt de gebruikersnaam <code class="language-plaintext highlighter-rouge">nvidia</code> gebruikt. Voer de volgende opdrachten uit op alle drie de Spark-systemen:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>useradd <span class="nt">-m</span> nvidia
+<span class="nb">sudo </span>usermod <span class="nt">-aG</span> <span class="nb">sudo </span>nvidia
+<span class="nb">sudo </span>passwd nvidia
+</code></pre></div></div>
+
+<p>Gebruik op alle systemen hetzelfde wachtwoord — dat vereenvoudigt het beheer. Tijdens het opzetten van de SSH-mesh door sparkrun wordt dit wachtwoord bij de eerste verbinding gevraagd; daarna neemt authenticatie op basis van sleutels het over.</p>
+
+<p><strong>Sudo zonder wachtwoord configureren</strong></p>
+
+<p>sparkrun voert tijdens de CX7-netwerkconfiguratie opdrachten uit met sudo. Om te voorkomen dat er telkens om een wachtwoord wordt gevraagd, moet sudo zonder wachtwoord worden geconfigureerd:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo</span> <span class="s2">"nvidia ALL=(ALL) NOPASSWD:ALL"</span> | <span class="nb">sudo tee</span> /etc/sudoers.d/nvidia
+<span class="nb">sudo chmod </span>440 /etc/sudoers.d/nvidia
+</code></pre></div></div>
+
+<p><img src="/papers/dgx-spark-3node-cluster-setup/images/07-passwordless-sudo.png" alt="" /></p>
+<h3 id="installatie-van-sparkrun">
+  
+  
+    <a href="#installatie-van-sparkrun" class="anchor-heading" aria-labelledby="installatie-van-sparkrun"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Installatie van sparkrun
+  
+  
+</h3>
+    
+
+<p>De installatie wordt uitgevoerd onder het gebruikersaccount <code class="language-plaintext highlighter-rouge">nvidia</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>su - nvidia
+</code></pre></div></div>
+
+<p>Installeer eerst het pakket <code class="language-plaintext highlighter-rouge">uv</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-LsSf</span> https://astral.sh/uv/install.sh | sh
+<span class="nb">source</span> ~/.bashrc
+</code></pre></div></div>
+
+<p>Installeer daarna sparkrun:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>uvx sparkrun setup
+</code></pre></div></div>
+
+<p>Beantwoord de vragen tijdens de installatie:</p>
+
+<ol>
+  <li>Voer eerst de IP-adressen van de apparaten in:</li>
+  <li>Geef het cluster een naam</li>
+  <li>Voer <code class="language-plaintext highlighter-rouge">nvidia</code> in als SSH-gebruikersnaam (aangemaakt in de vorige stap)</li>
+  <li>
+    <p>Kies Y voor de MESH-installatie</p>
+
+    <p><img src="/papers/dgx-spark-3node-cluster-setup/images/08-sparkrun-wizard.png" alt="" /></p>
+  </li>
+  <li>Antwoord Y op “Configure CX7 networking?”:</li>
+  <li>
+    <p>Laat de topologiekeuze op “auto” staan of kies “ring”:</p>
+
+    <p><img src="/papers/dgx-spark-3node-cluster-setup/images/09-sparkrun-topology.png" alt="" /></p>
+  </li>
+  <li>Antwoord Y op “Add ‘nvidia’ to the docker group on all hosts?”</li>
+  <li>Antwoord Y op “Install sudoers entries?”</li>
+  <li>Antwoord Y op “Install earlyoom?”</li>
+  <li>
+    <p>Wanneer het bericht “Setup complete” verschijnt, is de installatie met succes voltooid</p>
+
+    <p><img src="/papers/dgx-spark-3node-cluster-setup/images/10-sparkrun-complete.png" alt="" /></p>
+  </li>
+</ol>
+<h2 id="snelheidstests-en-rdma-tests">
+  
+  
+    <a href="#snelheidstests-en-rdma-tests" class="anchor-heading" aria-labelledby="snelheidstests-en-rdma-tests"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Snelheidstests en RDMA-tests
+  
+  
+</h2>
+    
+
+<p>In deze stap controleren we of het compute-netwerk correct functioneert en of de RDMA-communicatie via RoCEv2 naar verwachting presteert. De tests worden uitgevoerd tussen twee Spark-systemen.</p>
+
+<p><strong>Referentie voor IP-toewijzing</strong>
+Hieronder staan de IP-adressen die de sparkrun-wizard aan de CX7-interfaces heeft toegewezen. Gebruik in uw scenario in plaats daarvan uw eigen adressen:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Spark</th>
+      <th>Management (enP7s7)</th>
+      <th>enp1s0f0np0</th>
+      <th>enp1s0f1np1</th>
+      <th>enP2p1s0f0np0</th>
+      <th>enP2p1s0f1np1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Spark 1</td>
+      <td>192.168.1.163</td>
+      <td>192.168.0.2</td>
+      <td>192.168.3.1</td>
+      <td>192.168.2.2</td>
+      <td>192.168.4.1</td>
+    </tr>
+    <tr>
+      <td>Spark 2</td>
+      <td>192.168.1.147</td>
+      <td>192.168.5.2</td>
+      <td>192.168.2.1</td>
+      <td>192.168.6.2</td>
+      <td>192.168.0.1</td>
+    </tr>
+    <tr>
+      <td>Spark 3</td>
+      <td>192.168.1.148</td>
+      <td>192.168.4.2</td>
+      <td>192.168.6.1</td>
+      <td>192.168.3.2</td>
+      <td>192.168.5.1</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>In een ringtopologie zijn er 2 subnetten tussen elk paar nodes (in totaal 6 subnetten). De tests worden uitgevoerd op één paar nodes en kunnen op dezelfde manier voor de andere paren worden herhaald:</p>
+
+<ul>
+  <li>Link 0 (Spark 1 ↔ Spark 2): 192.168.0.0/24 + 192.168.2.0/24</li>
+  <li>Link 1 (Spark 1 ↔ Spark 3): 192.168.3.0/24 + 192.168.4.0/24</li>
+  <li>Link 2 (Spark 2 ↔ Spark 3): 192.168.5.0/24 + 192.168.6.0/24</li>
+</ul>
+
+<p><strong>IP- en MTU-test</strong>
+Test vanaf Spark 1 de connectiviteit en jumboframes door Spark 2 te pingen:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># On Spark 1:</span>
+ping <span class="nt">-c</span> 4 192.168.0.1
+ping <span class="nt">-M</span> <span class="k">do</span> <span class="nt">-s</span> 8972 <span class="nt">-c</span> 4 192.168.0.1
+</code></pre></div></div>
+
+<p>De eerste ping test de basisconnectiviteit; de tweede test een MTU van 9000 bytes. <code class="language-plaintext highlighter-rouge">-M do</code> verhindert fragmentatie — als het pakket niet wegvalt, werkt MTU 9000 end-to-end.</p>
+
+<p>Herhaal dit voor het tweede subnet:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ping <span class="nt">-c</span> 4 192.168.2.1
+ping <span class="nt">-M</span> <span class="k">do</span> <span class="nt">-s</span> 8972 <span class="nt">-c</span> 4 192.168.2.1
+</code></pre></div></div>
+
+<p><img src="/papers/dgx-spark-3node-cluster-setup/images/11-ping-mtu.png" alt="" /></p>
+
+<p><strong>TCP-doorvoertest (iperf3)</strong>
+Meet de basisbandbreedte (bandwidth) over de Ethernet/IP-laag. Deze test is geen RDMA — hij gebruikt TCP, waarbij de CPU betrokken is.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># On Spark 2 (server):</span>
+iperf3 <span class="nt">-s</span>
+<span class="c"># On Spark 1 (client):</span>
+iperf3 <span class="nt">-c</span> 192.168.0.1 <span class="nt">-P</span> 8 <span class="nt">-t</span> 30
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">-P 8</code> betekent acht parallelle streams, <code class="language-plaintext highlighter-rouge">-t 30</code> een testduur van dertig seconden. Verwacht resultaat: in totaal ~100-120 Gbps doorvoer (throughput).</p>
+
+<p>Opmerking: installeer iperf3 als het nog niet is geïnstalleerd:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>iperf3
+</code></pre></div></div>
+
+<p><img src="/papers/dgx-spark-3node-cluster-setup/images/12-iperf3.png" alt="" /></p>
+
+<p><strong>RDMA-apparaten identificeren</strong>
+Toon de namen van de RDMA-apparaten:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ibdev2netdev
+</code></pre></div></div>
+
+<p>Voorbeelduitvoer:
+rocep1s0f0 port 1 ==&gt; enp1s0f0np0 (Up)
+rocep1s0f1 port 1 ==&gt; enp1s0f1np1 (Up)
+roceP2p1s0f0 port 1 ==&gt; enP2p1s0f0np0 (Up)
+roceP2p1s0f1 port 1 ==&gt; enP2p1s0f1np1 (Up)</p>
+
+<p><img src="/papers/dgx-spark-3node-cluster-setup/images/13-ibdev2netdev.png" alt="" /></p>
+
+<p><strong>RDMA-schrijftest (ib_write_bw)</strong>
+Meet de bandbreedte van RDMA-schrijfbewerkingen via RoCEv2. Hiermee wordt directe geheugenoverdracht zonder betrokkenheid van de CPU getest.</p>
+
+<p><strong>Subnet 192.168.0.0/24:</strong>
+Op Spark 2 (server):</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ib_write_bw <span class="nt">-d</span> roceP2p1s0f1 <span class="nt">-F</span> <span class="nt">--report_gbits</span>
+</code></pre></div></div>
+
+<p>Op Spark 1 (client):</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ib_write_bw <span class="nt">-d</span> rocep1s0f0 <span class="nt">-F</span> <span class="nt">--report_gbits</span> 192.168.0.1
+</code></pre></div></div>
+
+<p>Verwacht resultaat: ~100-111 Gbps.
+<img src="/papers/dgx-spark-3node-cluster-setup/images/14-ib-write-bw-1.png" alt="" /></p>
+
+<p><strong>Subnet 192.168.2.0/24:</strong>
+Op Spark 2 (server):</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ib_write_bw <span class="nt">-d</span> rocep1s0f1 <span class="nt">-F</span> <span class="nt">--report_gbits</span>
+</code></pre></div></div>
+
+<p>Op Spark 1 (client):</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ib_write_bw <span class="nt">-d</span> roceP2p1s0f0 <span class="nt">-F</span> <span class="nt">--report_gbits</span> 192.168.2.1
+</code></pre></div></div>
+
+<p>Verwacht resultaat: ~100-111 Gbps.
+<img src="/papers/dgx-spark-3node-cluster-setup/images/15-ib-write-bw-2.png" alt="" /></p>
+
+<p>Als beide interfaces ~100 Gbps leveren, heeft elk paar Sparks in totaal ~200 Gbps RDMA-bandbreedte.</p>
+
+<p><strong>RDMA-leestest (ib_read_bw)</strong>
+Meet de bandbreedte van RDMA-leesbewerkingen:</p>
+
+<p><strong>Subnet 192.168.0.0/24:</strong>
+Op Spark 2 (server):</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ib_read_bw <span class="nt">-d</span> roceP2p1s0f1 <span class="nt">-F</span> <span class="nt">--report_gbits</span>
+</code></pre></div></div>
+
+<p>Op Spark 1 (client):</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ib_read_bw <span class="nt">-d</span> rocep1s0f0 <span class="nt">-F</span> <span class="nt">--report_gbits</span> 192.168.0.1
+</code></pre></div></div>
+
+<p>Verwacht resultaat: ~95-110 Gbps.
+<img src="/papers/dgx-spark-3node-cluster-setup/images/16-ib-read-bw-1.png" alt="" /></p>
+
+<p><strong>Subnet 192.168.2.0/24:</strong>
+Op Spark 2 (server):</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ib_read_bw <span class="nt">-d</span> rocep1s0f1 <span class="nt">-F</span> <span class="nt">--report_gbits</span>
+</code></pre></div></div>
+
+<p>Op Spark 1 (client):</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ib_read_bw <span class="nt">-d</span> roceP2p1s0f0 <span class="nt">-F</span> <span class="nt">--report_gbits</span> 192.168.2.1
+</code></pre></div></div>
+
+<p><img src="/papers/dgx-spark-3node-cluster-setup/images/17-ib-read-bw-2.png" alt="" /></p>
+
+<p>Verwacht resultaat: ~95-110 Gbps.</p>
+
+<p><strong>RDMA-latentietest (ib_write_lat)</strong>
+Op Spark 2 (server):</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ib_write_lat <span class="nt">-d</span> roceP2p1s0f1
+</code></pre></div></div>
+
+<p>Op Spark 1 (client):</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ib_write_lat <span class="nt">-d</span> rocep1s0f0 192.168.0.1
+</code></pre></div></div>
+
+<p><img src="/papers/dgx-spark-3node-cluster-setup/images/18-ib-write-lat.png" alt="" /></p>
+
+<p>Verwacht resultaat: een latentie (latency) van ~1-3 microseconden.</p>
+<h2 id="modellen-draaien-met-sparkrun">
+  
+  
+    <a href="#modellen-draaien-met-sparkrun" class="anchor-heading" aria-labelledby="modellen-draaien-met-sparkrun"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Modellen draaien met sparkrun
+  
+  
+</h2>
+    
+
+<p>In deze stap draaien we via sparkrun een inferentieworkload (inference) over meerdere nodes om te controleren of het cluster end-to-end werkt.</p>
+
+<p><strong>Model en recipe</strong>
+Voor deze test wordt het model Intel/Qwen3.5-397B-A17B-int4-AutoRound gebruikt. Het model draait met pipelineparallellisme (pipeline parallelism) over 3 nodes. Het standaardrecipe van sparkrun is geconfigureerd voor tensorparallellisme (tensor parallelism); daarom is een eigen YAML-bestand opgesteld om voor 3 nodes pipelineparallellisme te gebruiken.</p>
+
+<p><strong>Het model draaien</strong>
+Sla het volgende YAML-bestand op als <em>qwen3.5-397b-a17b-int4-vllm.yaml</em>:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">model</span><span class="pi">:</span> <span class="s">Intel/Qwen3.5-397B-A17B-int4-AutoRound</span>
+<span class="na">runtime</span><span class="pi">:</span> <span class="s">vllm-ray</span>
+<span class="na">min_nodes</span><span class="pi">:</span> <span class="m">3</span>
+<span class="na">container</span><span class="pi">:</span> <span class="s">ghcr.io/spark-arena/dgx-vllm-eugr-nightly:latest</span>
+
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">description</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Qwen3.5-397B-A17B</span><span class="nv"> </span><span class="s">int4</span><span class="nv"> </span><span class="s">AutoRound</span><span class="nv"> </span><span class="s">-</span><span class="nv"> </span><span class="s">3</span><span class="nv"> </span><span class="s">Node</span><span class="nv"> </span><span class="s">PP3"</span>
+
+<span class="na">defaults</span><span class="pi">:</span>
+  <span class="na">port</span><span class="pi">:</span> <span class="m">8000</span>
+  <span class="na">host</span><span class="pi">:</span> <span class="s">0.0.0.0</span>
+  <span class="na">tensor_parallel</span><span class="pi">:</span> <span class="m">1</span>
+  <span class="na">pipeline_parallel</span><span class="pi">:</span> <span class="m">3</span>
+  <span class="na">gpu_memory_utilization</span><span class="pi">:</span> <span class="m">0.85</span>
+  <span class="na">max_model_len</span><span class="pi">:</span> <span class="m">131072</span>
+  <span class="na">load_format</span><span class="pi">:</span> <span class="s">auto</span>
+  <span class="na">tool_call_parser</span><span class="pi">:</span> <span class="s">qwen3_coder</span>
+  <span class="na">reasoning_parser</span><span class="pi">:</span> <span class="s">qwen3</span>
+
+<span class="na">env</span><span class="pi">:</span>
+  <span class="na">VLLM_MARLIN_USE_ATOMIC_ADD</span><span class="pi">:</span> <span class="s2">"</span><span class="s">1"</span>
+  <span class="na">NCCL_DEBUG</span><span class="pi">:</span> <span class="s2">"</span><span class="s">INFO"</span>
+  <span class="na">HF_TOKEN</span><span class="pi">:</span> <span class="s">${HF_TOKEN}</span>
+  <span class="na">HF_HUB_OFFLINE</span><span class="pi">:</span> <span class="s2">"</span><span class="s">1"</span>
+  <span class="na">TRANSFORMERS_OFFLINE</span><span class="pi">:</span> <span class="s2">"</span><span class="s">1"</span>
+  <span class="na">HF_DATASETS_OFFLINE</span><span class="pi">:</span> <span class="s2">"</span><span class="s">1"</span>
+
+<span class="na">command</span><span class="pi">:</span> <span class="pi">|</span>
+  <span class="s">vllm serve {model} \</span>
+    <span class="s">--trust-remote-code \</span>
+    <span class="s">--gpu-memory-utilization {gpu_memory_utilization} \</span>
+    <span class="s">-tp {tensor_parallel} \</span>
+    <span class="s">-pp {pipeline_parallel} \</span>
+    <span class="s">--max-model-len {max_model_len} \</span>
+    <span class="s">--load-format {load_format} \</span>
+    <span class="s">--enable-auto-tool-choice \</span>
+    <span class="s">--tool-call-parser {tool_call_parser} \</span>
+    <span class="s">--reasoning-parser {reasoning_parser} \</span>
+    <span class="s">--host {host} \</span>
+    <span class="s">--port {port}</span>
+</code></pre></div></div>
+
+<p>Start daarna het model:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sparkrun run qwen3.5-397b-a17b-int4-vllm.yaml
+</code></pre></div></div>
+
+<p><strong>SSH-autorisatiefout oplossen</strong>
+Als u na het uitvoeren van de opdracht een autorisatiegerelateerde fout krijgt wanneer sparkrun verbinding probeert te maken met zichzelf, gebruik dan de volgende opdracht en voer sparkrun opnieuw uit:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> ~/.ssh/id_ed25519.pub <span class="o">&gt;&gt;</span> ~/.ssh/authorized_keys
+</code></pre></div></div>
+
+<p><img src="/papers/dgx-spark-3node-cluster-setup/images/19-ssh-auth-fix.png" alt="" /></p>
+
+<p><strong>Controleren of het model gereed is</strong>
+Wanneer het model start, ziet u het bericht “Application startup complete.”; dit geeft aan dat het model klaar is voor gebruik:
+<img src="/papers/dgx-spark-3node-cluster-setup/images/20-model-startup.png" alt="" /></p>
+
+<p><strong>Benchmarkresultaten</strong>
+De gemiddelde waarden uit tests met de <a href="https://github.com/CordatusAI/llm-benchmark">benchmarktool</a> op het op deze manier uitgerolde model zijn als volgt:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Gelijktijdige verzoeken</th>
+      <th>TTFT (ms)</th>
+      <th>Token/s</th>
+      <th>Latentie (s)</th>
+      <th>Doorvoer (RPS)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>452</td>
+      <td>16.69</td>
+      <td>7.67</td>
+      <td>0.13</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>708</td>
+      <td>13.63</td>
+      <td>9.40</td>
+      <td>0.11</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>827</td>
+      <td>10.19</td>
+      <td>12.57</td>
+      <td>0.08</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>1394</td>
+      <td>6.54</td>
+      <td>19.57</td>
+      <td>0.05</td>
+    </tr>
+  </tbody>
+</table></div>
+<h2 id="resultaten-en-verificatie">
+  
+  
+    <a href="#resultaten-en-verificatie" class="anchor-heading" aria-labelledby="resultaten-en-verificatie"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Resultaten en verificatie
+  
+  
+</h2>
+    
+
+<p>Door de stappen in dit document te volgen, wordt een volledig functioneel DGX Spark AI-cluster opgezet dat uit de volgende componenten bestaat:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Component</th>
+      <th style="text-align: left">Status</th>
+      <th style="text-align: left">Verificatiemethode</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Managementnetwerk (10GbE)</td>
+      <td style="text-align: left">Gereed</td>
+      <td style="text-align: left">Ping tussen de nodes geslaagd</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Compute-netwerk (200GbE QSFP)</td>
+      <td style="text-align: left">Gereed</td>
+      <td style="text-align: left">ib_write_bw ~100-111 Gbps</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">RoCEv2 / RDMA</td>
+      <td style="text-align: left">Gereed</td>
+      <td style="text-align: left">ib_write_lat ~1-3 µs</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">sparkrun-cluster</td>
+      <td style="text-align: left">Gereed</td>
+      <td style="text-align: left">sparkrun setup voltooid</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Modelservice</td>
+      <td style="text-align: left">Gereed</td>
+      <td style="text-align: left">Bericht “Application startup complete.”</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Samenvatting van de statuscontrole van het cluster</strong></p>
+
+<p>U kunt de volgende controles uitvoeren om te verifiëren dat de installatie voltooid is:</p>
+
+<ol>
+  <li><strong>Managementnetwerk:</strong> Kunnen alle nodes elkaar pingen?</li>
+  <li><strong>Compute-netwerk:</strong> Levert elk subnet ~100 Gbps in de test <code class="language-plaintext highlighter-rouge">ib_write_bw</code>?</li>
+  <li><strong>MTU:</strong> Slaagt de test <code class="language-plaintext highlighter-rouge">ping -M do -s 8972</code> zonder pakketverlies?</li>
+  <li><strong>sparkrun-mesh:</strong> Werkt SSH-toegang zonder wachtwoord naar alle nodes?</li>
+  <li><strong>Model:</strong> Komen de benchmarkresultaten overeen met de tabel hierboven?</li>
+</ol>
+
+<p>Als alle controles slagen, is het cluster gereed voor AI-workloads.</p>
+<h2 id="probleemoplossing">
+  
+  
+    <a href="#probleemoplossing" class="anchor-heading" aria-labelledby="probleemoplossing"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Probleemoplossing
+  
+  
+</h2>
+    
+
+<p><strong>De storage driver van Docker toont <code class="language-plaintext highlighter-rouge">overlay2</code></strong></p>
+
+<p>Als u <code class="language-plaintext highlighter-rouge">overlay2</code> ziet in de uitvoer van <code class="language-plaintext highlighter-rouge">docker info</code>, voeg dan de feature <code class="language-plaintext highlighter-rouge">containerd-snapshotter</code> toe aan het bestand <code class="language-plaintext highlighter-rouge">/etc/docker/daemon.json</code> en start Docker opnieuw (zie Docker-configuratie).</p>
+
+<p><strong>Jumboframetest met <code class="language-plaintext highlighter-rouge">ping -M do</code> mislukt</strong></p>
+
+<p>Controleer of de MTU-waarden van de CX7-interfaces aan de kant van de Spark op 9000 zijn ingesteld: <code class="language-plaintext highlighter-rouge">ip link show</code>.</p>
+
+<p><strong>Lage RDMA-bandbreedte (onder ~100 Gbps)</strong></p>
+
+<ul>
+  <li>Controleer of alle systeem- en firmware-updates zijn toegepast (zie Updates van systeem en firmware).</li>
+  <li>Controleer of de kabels goed vastzitten.</li>
+  <li>Controleer de toewijzing van interfaces aan apparaten met de uitvoer van <code class="language-plaintext highlighter-rouge">ibdev2netdev</code>.</li>
+</ul>
+
+<p><strong>SSH-autorisatiefout bij sparkrun</strong></p>
+
+<p>Als u bij het uitvoeren van sparkrun een autorisatiefout krijgt:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> ~/.ssh/id_ed25519.pub <span class="o">&gt;&gt;</span> ~/.ssh/authorized_keys
+</code></pre></div></div>
+
+<p>Voer de bovenstaande opdracht uit en voer sparkrun opnieuw uit.</p><hr />
+
+<div class="product-card">
+  <div class="product-card-image">
+<img src="/papers/dgx-spark-3node-cluster-setup/images/DGX_Spark_Triple_2-500x499.webp" alt="NVIDIA DGX Spark Triple" />
+</div>
+  <div class="product-card-body">
+<h3>
+  
+  
+    <a href="#probleemoplossing" class="anchor-heading" aria-labelledby="probleemoplossing"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> NVIDIA DGX Spark Triple
+  
+  
+</h3>
+    
+<p>3 DGX Spark-nodes, 200GbE RoCEv2 RDMA en sparkrun-clusterbeheer voor een end-to-end AI-infrastructuur.</p>
+<a class="product-card-btn" href="https://aetherix.com/product/nvidia-dgx-spark-triple/">Dit product kopen →</a>
+</div>
+</div>
+
+          
+
+          
+        </main>
+        
+
+
+      </div>
+    </div>
+    
+      
+
+<div class="search-overlay"></div>
+
+    
+  </div>
+
+  
+
+  <script>
+    window.JTD_I18N = {
+      search_no_results: "Geen resultaten gevonden",
+      copy_code: "Code naar klembord kopiëren"
+    };
+  </script>
+
+  
+
+
+<div id="cookie-consent-banner" class="cookie-consent" role="dialog"
+     aria-modal="false" aria-label="Cookie consent"
+     data-consent-state="pending" hidden>
+  <div class="cookie-consent__body">
+    <div class="cookie-consent__text">
+      <span class="cookie-consent__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+          <path d="M21 12a9 9 0 1 1-9-9 4.5 4.5 0 0 0 4.5 4.5A4.5 4.5 0 0 0 21 12zm-9-3.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-1.5 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm6-1.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-3 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0z"/>
+        </svg>
+      </span>
+      <p>Wij gebruiken cookies om het websiteverkeer te analyseren en uw ervaring te verbeteren. Door op 'Accepteren' te klikken, stemt u in met het gebruik van analytische cookies zoals beschreven in ons privacybeleid.
+        <a href="https://aetherix.com/privacy-policy/" target="_blank" rel="noopener noreferrer"
+           class="cookie-consent__link">Privacybeleid</a>
+      </p>
+    </div>
+    <div class="cookie-consent__actions">
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--reject"
+              data-consent-action="rejected">Weigeren</button>
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--accept"
+              data-consent-action="accepted">Accepteren</button>
+    </div>
+  </div>
+</div>
+<script>
+  // Eski karar önbellekte varsa bannerı gösterme
+  (function() {
+    try {
+      var v = localStorage.getItem('cookieConsent');
+      if (v === 'accepted' || v === 'rejected') {
+        document.documentElement.dataset.cookieConsent = v;
+      }
+    } catch (e) {}
+  })();
+</script>
+<script src="/assets/js/cookie-banner.js" defer></script>
+
+</body>
+</html>
+

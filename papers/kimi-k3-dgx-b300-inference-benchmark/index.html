@@ -1,0 +1,2650 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-default.css">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet">
+
+  <style id="jtd-nav-activation">
+  
+
+.site-nav > ul.nav-list:first-child > li > a,
+.site-nav > ul.nav-list:first-child > li > ul > li:not(:nth-child(12)) > a,
+.site-nav > ul.nav-list:first-child > li > ul > li > ul > li > a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:not(:first-child) a,
+.site-nav li.external a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(12) > a {
+  font-weight: 600;
+  text-decoration: none;
+}.site-nav > ul.nav-list:first-child > li:nth-child(3) > button svg,
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(12) > button svg {
+  transform: rotate(-90deg);
+}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list,
+.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list > li.nav-list-item:nth-child(12) > ul.nav-list {
+  display: block;
+}
+  </style>
+
+  
+
+  
+    <script src="/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+
+
+  <!-- Begin Jekyll SEO tag v2.9.1 -->
+<title>Kimi K3 Inference Benchmark on DGX-B300 | Aetherix White Papers</title>
+<meta name="generator" content="Jekyll v4.3.4" />
+<meta property="og:title" content="Kimi K3 Inference Benchmark on DGX-B300" />
+<meta property="og:locale" content="en" />
+<meta name="description" content="Performance evaluation of Moonshot AI Kimi K3 (2.8T MoE, MXFP4) on NVIDIA DGX-B300 (8x Blackwell Ultra, TP=8): vLLM vs SGLang, direct vs DSpark speculative decoding, with SLO-driven capacity planning." />
+<meta name="twitter:description" property="og:description" content="Performance evaluation of Moonshot AI Kimi K3 (2.8T MoE, MXFP4) on NVIDIA DGX-B300 (8x Blackwell Ultra, TP=8): vLLM vs SGLang, direct vs DSpark speculative decoding, with SLO-driven capacity planning." />
+<link rel="canonical" href="https://whitepapers.aetherix.com/papers/kimi-k3-dgx-b300-inference-benchmark/" />
+<meta property="og:url" content="https://whitepapers.aetherix.com/papers/kimi-k3-dgx-b300-inference-benchmark/" />
+<meta property="og:site_name" content="Aetherix White Papers" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-07-30T05:27:02+00:00" />
+<meta property="article:modified_time" content="2026-07-30T05:27:02+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Kimi K3 Inference Benchmark on DGX-B300" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2026-07-30T05:27:02+00:00","datePublished":"2026-07-30T05:27:02+00:00","description":"Performance evaluation of Moonshot AI Kimi K3 (2.8T MoE, MXFP4) on NVIDIA DGX-B300 (8x Blackwell Ultra, TP=8): vLLM vs SGLang, direct vs DSpark speculative decoding, with SLO-driven capacity planning.","headline":"Kimi K3 Inference Benchmark on DGX-B300","mainEntityOfPage":{"@type":"WebPage","@id":"https://whitepapers.aetherix.com/papers/kimi-k3-dgx-b300-inference-benchmark/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://whitepapers.aetherix.com/assets/images/aetherix-logo.png"}},"url":"https://whitepapers.aetherix.com/papers/kimi-k3-dgx-b300-inference-benchmark/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  
+<!-- Google tag (gtag.js) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JWLN33085T"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+
+  // Consent Mode v2 — default DENIED. Banner onayı ile GRANTED olur.
+  // KVKK/GDPR uyumu: ziyaretçi onay vermeden çerez set edilmez.
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    functionality_storage: 'granted',
+    security_storage: 'granted',
+    wait_for_update: 500
+  });
+
+  gtag('js', new Date());
+  gtag('config', 'G-JWLN33085T', {
+    anonymize_ip: true
+  });
+</script>
+
+<link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/papers/kimi-k3-dgx-b300-inference-benchmark/">
+<link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/papers/kimi-k3-dgx-b300-inference-benchmark/">
+<link rel="alternate" hreflang="x-default" href="https://whitepapers.aetherix.com/papers/kimi-k3-dgx-b300-inference-benchmark/">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/images/favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+
+
+</head>
+
+<body>
+  <a class="skip-to-main" href="#main-content">Skip to main content</a>
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="svg-link" viewBox="0 0 24 24">
+  <title>Link</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+</symbol>
+
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+  <title>Menu</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+    <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</symbol>
+
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+  <title>Expand</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</symbol>
+
+  <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
+<symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+  <title id="svg-external-link-title">(external link)</title>
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+</symbol>
+
+  
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+  <title>Document</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+</symbol>
+
+    <symbol id="svg-search" viewBox="0 0 24 24">
+  <title>Search</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</symbol>
+
+  
+  
+    <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+<symbol id="svg-copy" viewBox="0 0 16 16">
+  <title>Copy</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+</symbol>
+<symbol id="svg-copied" viewBox="0 0 16 16">
+  <title>Copied</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"/>
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"/>
+  </svg>
+</symbol>
+
+  
+</svg>
+
+  
+    <div class="side-bar">
+  <div class="site-header" role="banner">
+    <a href="/" class="site-title lh-tight">
+  <div class="site-logo" role="img" aria-label="Aetherix White Papers"></div>
+
+</a>
+    <button id="menu-button" class="site-button btn-reset" aria-label="Toggle menu" aria-pressed="false">
+      <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  <nav aria-label="Main" id="site-nav" class="site-nav">
+  
+  
+    <ul class="nav-list"><li class="nav-list-item"><a href="/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/about/" class="nav-list-link">About</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in White Papers category" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+    </button><a href="/papers/" class="nav-list-link">White Papers</a><ul class="nav-list"><li class="nav-list-item"><a href="/papers/local-llm-guide/" class="nav-list-link">Local LLM Usage Guide</a></li><li class="nav-list-item"><a href="/papers/conditional-memory-offloading/" class="nav-list-link">Conditional Memory and Offloading in LLM Inference</a></li><li class="nav-list-item"><a href="/papers/b300-gb300-cluster-architecture/" class="nav-list-link">NVIDIA DGX B300 vs GB300 NVL72 Cluster Architecture Comparison</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-2node-cluster-setup/" class="nav-list-link">DGX Spark 2-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-3node-cluster-setup/" class="nav-list-link">DGX Spark 3-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-4node-cluster-setup/" class="nav-list-link">DGX Spark 4-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-8node-cluster-setup/" class="nav-list-link">DGX Spark 8-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/qwen3.6-27b-dgx-spark-benchmark/" class="nav-list-link">Qwen3.6-27B DGX Spark Benchmark</a></li><li class="nav-list-item"><a href="/papers/qwen3.6-27b-dgx-spark-scaling/" class="nav-list-link">Qwen3.6-27B DGX Spark Cluster Scaling</a></li><li class="nav-list-item"><a href="/papers/deepseek-v4.1-flash-4spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash 4× DGX Spark Deployment</a></li><li class="nav-list-item"><a href="/papers/deepseek-v4.1-flash-8spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash 8× DGX Spark TP8 Deployment</a></li><li class="nav-list-item"><a href="/papers/kimi-k3-dgx-b300-inference-benchmark/" class="nav-list-link">Kimi K3 Inference Benchmark on DGX-B300</a></li></ul></li><li class="nav-list-item"><a href="/llm-inference-benchmarks/" class="nav-list-link">LLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/cv-inference-benchmarks/" class="nav-list-link">CV Inference Benchmark Explorer</a></li></ul>
+
+  
+</nav>
+
+
+  
+  
+    <div class="lang-switcher">
+  
+    
+    
+      <span class="lang-switcher-item active">EN</span>
+    
+  
+    
+    
+      <a class="lang-switcher-item" href="/nl/papers/kimi-k3-dgx-b300-inference-benchmark/">NL</a>
+    
+  
+</div>
+<script src="/assets/js/lang-switch.js"></script>
+
+  
+</div>
+
+  
+  <div class="main" id="top">
+    <div id="main-header" class="main-header">
+  
+    
+
+<div class="search" role="search">
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Search" aria-label="Search" autocomplete="off">
+    <label for="search-input" class="search-label"><svg viewBox="0 0 24 24" class="search-icon"><use xlink:href="#svg-search"></use></svg></label>
+  </div>
+  <div id="search-results" class="search-results"></div>
+</div>
+
+  
+  
+  
+    <nav aria-label="Auxiliary" class="aux-nav">
+  <ul class="aux-nav-list">
+    
+      <li class="aux-nav-list-item">
+        <a href="https://aetherix.com" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          aetherix.com
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://github.com/aetherix-bv" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          GitHub
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+  
+</div>
+
+    <div class="main-content-wrap">
+      <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+  <ol class="breadcrumb-nav-list">
+    <li class="breadcrumb-nav-list-item"><a href="/papers/">White Papers</a></li>
+    <li class="breadcrumb-nav-list-item"><span>Kimi K3 Inference Benchmark on DGX-B300</span></li>
+  </ol>
+</nav>
+      <div id="main-content" class="main-content">
+        <main>
+          
+            <p><em>Prepared by: <strong>Aetherix B.V.</strong> — Trusted Jetson Hardware Provider for Edge AI</em></p>
+
+<p><em>Test platform: NVIDIA DGX-B300 (8× Blackwell Ultra, TP=8) · Model: Moonshot AI Kimi K3 · Report date: July 2026</em></p><hr />
+<h2 class="no_toc" id="contents">
+  
+  
+    <a href="#contents" class="anchor-heading" aria-labelledby="contents"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Contents
+  
+  
+</h2>
+    
+
+<ul id="markdown-toc">
+  <li><a href="#1-executive-summary" id="markdown-toc-1-executive-summary">1. Executive Summary</a>    <ul>
+      <li><a href="#key-findings" id="markdown-toc-key-findings">Key Findings</a></li>
+      <li><a href="#scenario-based-recommendation" id="markdown-toc-scenario-based-recommendation">Scenario-Based Recommendation</a></li>
+    </ul>
+  </li>
+  <li><a href="#2-test-setup--methodology" id="markdown-toc-2-test-setup--methodology">2. Test Setup &amp; Methodology</a>    <ul>
+      <li><a href="#21-about-the-model" id="markdown-toc-21-about-the-model">2.1 About the Model</a>        <ul>
+          <li><a href="#key-features" id="markdown-toc-key-features">Key Features</a></li>
+          <li><a href="#model-summary" id="markdown-toc-model-summary">Model Summary</a></li>
+        </ul>
+      </li>
+      <li><a href="#22-quantization--license" id="markdown-toc-22-quantization--license">2.2 Quantization &amp; License</a></li>
+      <li><a href="#23-hardware--deployment" id="markdown-toc-23-hardware--deployment">2.3 Hardware &amp; Deployment</a></li>
+      <li><a href="#24-benchmark-tool" id="markdown-toc-24-benchmark-tool">2.4 Benchmark Tool</a></li>
+      <li><a href="#25-test-parameters" id="markdown-toc-25-test-parameters">2.5 Test Parameters</a></li>
+      <li><a href="#26-metrics" id="markdown-toc-26-metrics">2.6 Metrics</a></li>
+      <li><a href="#27-slo-thresholds-defaults" id="markdown-toc-27-slo-thresholds-defaults">2.7 SLO Thresholds (defaults)</a></li>
+      <li><a href="#28-capacity-planning-littles-law" id="markdown-toc-28-capacity-planning-littles-law">2.8 Capacity Planning (Little’s Law)</a></li>
+    </ul>
+  </li>
+  <li><a href="#3-deployment-configurations" id="markdown-toc-3-deployment-configurations">3. Deployment Configurations</a>    <ul>
+      <li><a href="#31-summary" id="markdown-toc-31-summary">3.1 Summary</a></li>
+      <li><a href="#32-about-speculative-decoding-dspark" id="markdown-toc-32-about-speculative-decoding-dspark">3.2 About Speculative Decoding (DSpark)</a></li>
+      <li><a href="#33-docker-commands-full" id="markdown-toc-33-docker-commands-full">3.3 Docker Commands (Full)</a>        <ul>
+          <li><a href="#331-vllm-direct--no-speculation" id="markdown-toc-331-vllm-direct--no-speculation">3.3.1 vLLM (Direct — No Speculation)</a></li>
+          <li><a href="#332-vllm--speculative-dspark" id="markdown-toc-332-vllm--speculative-dspark">3.3.2 vLLM + Speculative (DSpark)</a></li>
+          <li><a href="#333-sglang-direct--no-speculation" id="markdown-toc-333-sglang-direct--no-speculation">3.3.3 SGLang (Direct — No Speculation)</a></li>
+          <li><a href="#334-sglang--speculative-dspark" id="markdown-toc-334-sglang--speculative-dspark">3.3.4 SGLang + Speculative (DSpark)</a></li>
+        </ul>
+      </li>
+      <li><a href="#34-configuration-differences" id="markdown-toc-34-configuration-differences">3.4 Configuration Differences</a></li>
+    </ul>
+  </li>
+  <li><a href="#4-results" id="markdown-toc-4-results">4. Results</a>    <ul>
+      <li><a href="#41-general-comparison-c1-and-c64" id="markdown-toc-41-general-comparison-c1-and-c64">4.1 General Comparison (c=1 and c=64)</a>        <ul>
+          <li><a href="#low-load-c1--single-user" id="markdown-toc-low-load-c1--single-user">Low Load (c=1) — single user</a></li>
+          <li><a href="#high-load-c64--64-concurrent-users" id="markdown-toc-high-load-c64--64-concurrent-users">High Load (c=64) — 64 concurrent users</a></li>
+        </ul>
+      </li>
+      <li><a href="#42-ttft-time-to-first-token" id="markdown-toc-42-ttft-time-to-first-token">4.2 TTFT (Time To First Token)</a></li>
+      <li><a href="#43-itl-inter-token-latency" id="markdown-toc-43-itl-inter-token-latency">4.3 ITL (Inter-Token Latency)</a></li>
+      <li><a href="#44-tps-per-user-tokens-per-second" id="markdown-toc-44-tps-per-user-tokens-per-second">4.4 TPS (Per-User Tokens Per Second)</a></li>
+      <li><a href="#45-latency-total-request-duration" id="markdown-toc-45-latency-total-request-duration">4.5 Latency (Total Request Duration)</a></li>
+      <li><a href="#46-throughput-rps" id="markdown-toc-46-throughput-rps">4.6 Throughput (RPS)</a></li>
+      <li><a href="#47-total-tokens-produced--second-aggregate-output" id="markdown-toc-47-total-tokens-produced--second-aggregate-output">4.7 Total Tokens Produced / Second (Aggregate Output)</a></li>
+      <li><a href="#48-speculative-speedup-analysis" id="markdown-toc-48-speculative-speedup-analysis">4.8 Speculative Speedup Analysis</a></li>
+    </ul>
+  </li>
+  <li><a href="#5-slo--relative-capacity-analysis" id="markdown-toc-5-slo--relative-capacity-analysis">5. SLO &amp; Relative Capacity Analysis</a>    <ul>
+      <li><a href="#51-slo-compliance-matrix-p90" id="markdown-toc-51-slo-compliance-matrix-p90">5.1 SLO Compliance Matrix (P90)</a></li>
+      <li><a href="#52-maximum-concurrency-c_max--total-users-littles-law" id="markdown-toc-52-maximum-concurrency-c_max--total-users-littles-law">5.2 Maximum Concurrency (C_max) &amp; Total Users (Little’s Law)</a>        <ul>
+          <li><a href="#p90-based-recommended-for-production--strict" id="markdown-toc-p90-based-recommended-for-production--strict">P90-based (recommended for production — strict)</a></li>
+          <li><a href="#mean-based-optimistic--for-low-load" id="markdown-toc-mean-based-optimistic--for-low-load">Mean-based (optimistic — for low load)</a></li>
+        </ul>
+      </li>
+      <li><a href="#53-interpretation" id="markdown-toc-53-interpretation">5.3 Interpretation</a></li>
+    </ul>
+  </li>
+  <li><a href="#6-comparison-framework--interpretation-guide" id="markdown-toc-6-comparison-framework--interpretation-guide">6. Comparison Framework &amp; Interpretation Guide</a>    <ul>
+      <li><a href="#61-what-this-benchmark-does" id="markdown-toc-61-what-this-benchmark-does">6.1 What This Benchmark Does</a></li>
+      <li><a href="#62-comparison-axes" id="markdown-toc-62-comparison-axes">6.2 Comparison Axes</a>        <ul>
+          <li><a href="#this-report-uses-2-axes-simultaneously" id="markdown-toc-this-report-uses-2-axes-simultaneously">This Report Uses 2 Axes Simultaneously</a></li>
+        </ul>
+      </li>
+      <li><a href="#63-workload-limitations-important" id="markdown-toc-63-workload-limitations-important">6.3 Workload Limitations (Important)</a></li>
+      <li><a href="#64-interpreting-results" id="markdown-toc-64-interpreting-results">6.4 Interpreting Results</a>        <ul>
+          <li><a href="#there-is-no-standardized-usage-scenario" id="markdown-toc-there-is-no-standardized-usage-scenario">There Is No Standardized Usage Scenario</a></li>
+          <li><a href="#unpredictable-variables-in-this-report" id="markdown-toc-unpredictable-variables-in-this-report">Unpredictable Variables in This Report</a></li>
+          <li><a href="#observations-for-consistent-interpretation" id="markdown-toc-observations-for-consistent-interpretation">Observations for Consistent Interpretation</a></li>
+        </ul>
+      </li>
+      <li><a href="#65-impact-of-full-context-deployment" id="markdown-toc-65-impact-of-full-context-deployment">6.5 Impact of Full Context Deployment</a></li>
+    </ul>
+  </li>
+  <li><a href="#7-conclusion" id="markdown-toc-7-conclusion">7. Conclusion</a></li>
+  <li><a href="#appendix-a-all-csv-data" id="markdown-toc-appendix-a-all-csv-data">Appendix A: All CSV Data</a>    <ul>
+      <li><a href="#a1-vllm-direct" id="markdown-toc-a1-vllm-direct">A.1 vLLM (direct)</a></li>
+      <li><a href="#a2-vllm--spec-dspark" id="markdown-toc-a2-vllm--spec-dspark">A.2 vLLM + Spec (DSpark)</a></li>
+      <li><a href="#a3-sglang-direct" id="markdown-toc-a3-sglang-direct">A.3 SGLang (direct)</a></li>
+      <li><a href="#a4-sglang--spec-dspark" id="markdown-toc-a4-sglang--spec-dspark">A.4 SGLang + Spec (DSpark)</a></li>
+    </ul>
+  </li>
+  <li><a href="#appendix-b-comparison-charts" id="markdown-toc-appendix-b-comparison-charts">Appendix B: Comparison Charts</a>    <ul>
+      <li><a href="#b1-summary-at-a-glance-dashboard" id="markdown-toc-b1-summary-at-a-glance-dashboard">B.1 Summary at a Glance (Dashboard)</a></li>
+    </ul>
+  </li>
+</ul><hr />
+<h2 id="1-executive-summary">
+  
+  
+    <a href="#1-executive-summary" class="anchor-heading" aria-labelledby="1-executive-summary"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1. Executive Summary
+  
+  
+</h2>
+    
+
+<p>This report compares <strong>four different deployment configurations</strong> of the Kimi K3 model on the same hardware (DGX-B300, TP8):
+vLLM (direct), vLLM + DSpark speculative, SGLang (direct), and SGLang + DSpark speculative.</p>
+<h3 id="key-findings">
+  
+  
+    <a href="#key-findings" class="anchor-heading" aria-labelledby="key-findings"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Key Findings
+  
+  
+</h3>
+    
+
+<ol>
+  <li>
+    <p><strong>At low load (c=1) speculative decoding yields a clear gain:</strong>
+vLLM + Spec is <strong>1.86x faster</strong> than vLLM direct (188 vs 101 tok/s).
+SGLang + Spec is 1.56x faster (130 vs 83 tok/s).</p>
+  </li>
+  <li>
+    <p><strong>At high load speculative decoding becomes a bottleneck:</strong>
+vLLM + Spec @c=64: per-user TPS <strong>drops to 11 tok/s</strong> (vLLM direct 27 tok/s).
+Break-even point: ~c16 for vLLM, ~c4 for SGLang.</p>
+  </li>
+  <li>
+    <p><strong>Despite SGLang direct’s higher TTFT issue</strong>, at high load (c=64) it produces
+<strong>similar aggregate output</strong> (1863 vs 1759 tok/s).</p>
+  </li>
+  <li>
+    <p><strong>vLLM direct is the most reliable general-purpose choice:</strong>
+Fast at low load (66ms TTFT), scales linearly at high load,
+and fully meets the P90 SLO up to c=32 (at c=64 it only slightly exceeds TTFT: 1107ms).</p>
+  </li>
+  <li>
+    <p><strong>SGLang + Spec shows a severe anomaly:</strong> at c=64, TTFT <strong>spikes to 4752ms</strong>
+(was 777ms at c=32) — the scheduler collapses under extreme load.</p>
+  </li>
+</ol>
+<h3 id="scenario-based-recommendation">
+  
+  
+    <a href="#scenario-based-recommendation" class="anchor-heading" aria-labelledby="scenario-based-recommendation"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Scenario-Based Recommendation
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Scenario</th>
+      <th>Recommended Config</th>
+      <th>Rationale</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Low-load interactive chat (c&lt;=8)</td>
+      <td><strong>vLLM + Spec</strong></td>
+      <td>1.4-1.9x faster per-user TPS</td>
+    </tr>
+    <tr>
+      <td>Production / high-load serving (c&gt;16)</td>
+      <td><strong>vLLM (direct)</strong></td>
+      <td>Scalable, meets SLO, stable</td>
+    </tr>
+    <tr>
+      <td>Maximum aggregate throughput</td>
+      <td><strong>vLLM (direct) or SGLang (direct)</strong></td>
+      <td>c=64: ~1759 / 1863 tok/s aggregate</td>
+    </tr>
+    <tr>
+      <td>Minimum ITL (real-time)</td>
+      <td><strong>vLLM + Spec (only c&lt;=4)</strong></td>
+      <td>ITL 4.8ms (direct 9.5ms)</td>
+    </tr>
+    <tr>
+      <td>Long-context-heavy workloads</td>
+      <td>(out of scope for this report)</td>
+      <td>128/128 token test is limited</td>
+    </tr>
+  </tbody>
+</table></div><hr />
+<h2 id="2-test-setup--methodology">
+  
+  
+    <a href="#2-test-setup--methodology" class="anchor-heading" aria-labelledby="2-test-setup--methodology"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2. Test Setup &amp; Methodology
+  
+  
+</h2>
+    
+<h3 id="21-about-the-model">
+  
+  
+    <a href="#21-about-the-model" class="anchor-heading" aria-labelledby="21-about-the-model"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.1 About the Model
+  
+  
+</h3>
+    
+
+<p><strong>Kimi K3</strong> is an open-weight, native multimodal and agentic model developed by Moonshot AI.
+This 2.8T-parameter model is built on the <strong>Kimi Delta Attention (KDA)</strong> and <strong>Attention
+Residuals (AttnRes)</strong> architectures and has a 1M-token context window. As the world’s first
+open 3T-class model, it is designed for long-horizon coding, knowledge work, and reasoning.</p>
+
+<ul>
+  <li><strong>Model page:</strong> <a href="https://huggingface.co/moonshotai/Kimi-K3">huggingface.co/moonshotai/Kimi-K3</a></li>
+</ul>
+<h4 id="key-features">
+  
+  
+    <a href="#key-features" class="anchor-heading" aria-labelledby="key-features"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Key Features
+  
+  
+</h4>
+    
+
+<ul>
+  <li><strong>New Architecture:</strong> Built on KDA + AttnRes, with the Stable LatentMoE framework activating
+16 of 896 experts — ~2.5x scaling efficiency over Kimi K2.</li>
+  <li><strong>Long-Horizon Coding:</strong> Sustains long engineering sessions with minimal human supervision;
+GPU kernel optimization, compiler development, CAD, and chip design.</li>
+  <li><strong>Agentic Knowledge Work:</strong> Produces deep research, interactive visualizations, widgets,
+dashboards, and motion design.</li>
+  <li><strong>Native Multimodality &amp; Long Context:</strong> Understands text, image, and video within the same
+model; supports a 1M-token context window.</li>
+  <li><strong>Open Frontier Weights:</strong> Full model weights released under the Kimi K3 License.</li>
+</ul>
+<h4 id="model-summary">
+  
+  
+    <a href="#model-summary" class="anchor-heading" aria-labelledby="model-summary"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Model Summary
+  
+  
+</h4>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Architecture</strong></td>
+      <td>Mixture-of-Experts (MoE)</td>
+    </tr>
+    <tr>
+      <td><strong>Total Parameters</strong></td>
+      <td>2.8T</td>
+    </tr>
+    <tr>
+      <td><strong>Active Parameters</strong></td>
+      <td>104B</td>
+    </tr>
+    <tr>
+      <td><strong>Layer Count</strong></td>
+      <td>93</td>
+    </tr>
+    <tr>
+      <td><strong>Dense Layer Count</strong></td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td><strong>Attention Layer Composition</strong></td>
+      <td>69 KDA + 24 Gated MLA</td>
+    </tr>
+    <tr>
+      <td><strong>Attention Hidden Dimension</strong></td>
+      <td>7168</td>
+    </tr>
+    <tr>
+      <td><strong>Attention Head Count</strong></td>
+      <td>96</td>
+    </tr>
+    <tr>
+      <td><strong>Latent MoE Dimension</strong></td>
+      <td>3584</td>
+    </tr>
+    <tr>
+      <td><strong>MoE Hidden Dimension</strong> (per expert)</td>
+      <td>3072</td>
+    </tr>
+    <tr>
+      <td><strong>Expert Count</strong></td>
+      <td>896</td>
+    </tr>
+    <tr>
+      <td><strong>Experts Selected per Token</strong></td>
+      <td>16</td>
+    </tr>
+    <tr>
+      <td><strong>Shared Expert Count</strong></td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td><strong>Vocabulary Size</strong></td>
+      <td>160K</td>
+    </tr>
+    <tr>
+      <td><strong>Context Length</strong></td>
+      <td>1,048,576 (1M tokens)</td>
+    </tr>
+    <tr>
+      <td><strong>Attention Mechanism</strong></td>
+      <td>KDA &amp; Gated MLA</td>
+    </tr>
+    <tr>
+      <td><strong>Activation Function</strong></td>
+      <td>SiTU-GLU</td>
+    </tr>
+    <tr>
+      <td><strong>Vision Encoder</strong></td>
+      <td>MoonViT-V2</td>
+    </tr>
+    <tr>
+      <td><strong>Vision Encoder Parameters</strong></td>
+      <td>401M</td>
+    </tr>
+    <tr>
+      <td><strong>Quantization</strong></td>
+      <td>MXFP4 weights / MXFP8 activations (quantization-aware training)</td>
+    </tr>
+    <tr>
+      <td><strong>Modality</strong></td>
+      <td>Text, Image</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>The model was deployed with <code class="language-plaintext highlighter-rouge">--max-model-len 1048576</code>, i.e. the <strong>full 1M context</strong> capacity active.</p>
+<h3 id="22-quantization--license">
+  
+  
+    <a href="#22-quantization--license" class="anchor-heading" aria-labelledby="22-quantization--license"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.2 Quantization &amp; License
+  
+  
+</h3>
+    
+
+<p><strong>Native MXFP4 Quantization:</strong> Kimi K3 applies quantization-aware training from the SFT stage
+onward. It uses MXFP4 weights with MXFP8 activations — this provides broad hardware
+compatibility and minimizes accuracy loss while reducing weight size.</p>
+
+<p><strong>License:</strong> The code repository and model weights are released under the
+<a href="https://huggingface.co/moonshotai/Kimi-K3/blob/main/LICENSE">Kimi K3 License</a>.</p>
+<h3 id="23-hardware--deployment">
+  
+  
+    <a href="#23-hardware--deployment" class="anchor-heading" aria-labelledby="23-hardware--deployment"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.3 Hardware &amp; Deployment
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>GPU:</strong> NVIDIA DGX-B300 (Blackwell Ultra, 8x GPU)</li>
+  <li><strong>Parallelism:</strong> Tensor Parallel = 8 (TP8)</li>
+  <li><strong>KV Cache:</strong> FP8 (<code class="language-plaintext highlighter-rouge">--kv-cache-dtype fp8</code>)</li>
+  <li><strong>Memory Utilization:</strong> 0.95</li>
+  <li><strong>Prefix Caching:</strong> Enabled (<code class="language-plaintext highlighter-rouge">--enable-prefix-caching</code>)</li>
+</ul>
+<h3 id="24-benchmark-tool">
+  
+  
+    <a href="#24-benchmark-tool" class="anchor-heading" aria-labelledby="24-benchmark-tool"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.4 Benchmark Tool
+  
+  
+</h3>
+    
+
+<p><a href="https://github.com/CordatusAI/llm-benchmark">CordatusAI/llm-benchmark</a> — a Streamlit-based,
+interactive tool that tests OpenAI-compatible APIs.</p>
+<h3 id="25-test-parameters">
+  
+  
+    <a href="#25-test-parameters" class="anchor-heading" aria-labelledby="25-test-parameters"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.5 Test Parameters
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Value</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Input token</td>
+      <td>~128</td>
+      <td>per prompt</td>
+    </tr>
+    <tr>
+      <td>Output token</td>
+      <td>128</td>
+      <td><code class="language-plaintext highlighter-rouge">max_tokens=128</code></td>
+    </tr>
+    <tr>
+      <td>Concurrency</td>
+      <td>1, 2, 4, 8, 16, 32, 64</td>
+      <td>concurrent requests</td>
+    </tr>
+    <tr>
+      <td>Min round / concurrency</td>
+      <td>10</td>
+      <td>min repetitions per level</td>
+    </tr>
+    <tr>
+      <td>Total requests / level</td>
+      <td>10 x c</td>
+      <td>c=64 -&gt; 640 requests</td>
+    </tr>
+    <tr>
+      <td>Warm-up</td>
+      <td>1 request</td>
+      <td>stabilization before measurement</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Important:</strong> Input and output are fixed at 128 tokens. This is designed for <strong>relative
+comparison</strong>; it does not represent real production workloads (variable length, multi-turn,
+long context). See Section 6 for details.</p>
+</blockquote>
+<h3 id="26-metrics">
+  
+  
+    <a href="#26-metrics" class="anchor-heading" aria-labelledby="26-metrics"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.6 Metrics
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Metric</th>
+      <th>Unit</th>
+      <th>Definition</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>TTFT</strong></td>
+      <td>ms</td>
+      <td>Time To First Token — time elapsed until the first token is produced</td>
+    </tr>
+    <tr>
+      <td><strong>ITL</strong></td>
+      <td>ms</td>
+      <td>Inter-Token Latency — average time between consecutive tokens</td>
+    </tr>
+    <tr>
+      <td><strong>TPS</strong></td>
+      <td>tok/s</td>
+      <td>Per-user Tokens Per Second — single-request output rate</td>
+    </tr>
+    <tr>
+      <td><strong>Latency</strong></td>
+      <td>s</td>
+      <td>Total request duration (end to end)</td>
+    </tr>
+    <tr>
+      <td><strong>Throughput</strong></td>
+      <td>RPS</td>
+      <td>Completed requests per second per system</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Each metric is reported as <strong>Mean, P50 (median), P90</strong>.</p>
+<h3 id="27-slo-thresholds-defaults">
+  
+  
+    <a href="#27-slo-thresholds-defaults" class="anchor-heading" aria-labelledby="27-slo-thresholds-defaults"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.7 SLO Thresholds (defaults)
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>SLO</th>
+      <th>Threshold</th>
+      <th>Basis</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TTFT</td>
+      <td>&lt;= 1000 ms</td>
+      <td>Nielsen “flow of thought” limit (1s)</td>
+    </tr>
+    <tr>
+      <td>TPS</td>
+      <td>&gt;= 15 tok/s</td>
+      <td>Human visual reading speed limit (~700 wpm)</td>
+    </tr>
+  </tbody>
+</table></div>
+<h3 id="28-capacity-planning-littles-law">
+  
+  
+    <a href="#28-capacity-planning-littles-law" class="anchor-heading" aria-labelledby="28-capacity-planning-littles-law"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.8 Capacity Planning (Little’s Law)
+  
+  
+</h3>
+    
+
+<p>Find the maximum concurrency that meets the SLO (C_max), then the total user count:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>N = C_max x (1 + T_think / L_mean)
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">T_think = 45s</code> (default: reading + prompt writing)</li>
+  <li><code class="language-plaintext highlighter-rouge">L_mean</code> = mean latency at the C_max level</li>
+</ul>
+
+<blockquote>
+  <p><strong>Important:</strong> These numbers are for <strong>relative comparison</strong>, not absolute production estimates.
+They are based on the 128/128 token workload and a 45s think-time assumption.</p>
+</blockquote><hr />
+<h2 id="3-deployment-configurations">
+  
+  
+    <a href="#3-deployment-configurations" class="anchor-heading" aria-labelledby="3-deployment-configurations"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. Deployment Configurations
+  
+  
+</h2>
+    
+<h3 id="31-summary">
+  
+  
+    <a href="#31-summary" class="anchor-heading" aria-labelledby="31-summary"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.1 Summary
+  
+  
+</h3>
+    
+
+<p>Four deployment configurations are compared in this report:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Config</th>
+      <th>Engine</th>
+      <th>Speculative</th>
+      <th>Draft Model</th>
+      <th>Draft Model Source</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>vLLM (direct)</strong></td>
+      <td>vLLM (kimi-k3 docker)</td>
+      <td>No</td>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td><strong>vLLM + Spec</strong></td>
+      <td>vLLM (kimi-k3 docker)</td>
+      <td>DSpark</td>
+      <td><code class="language-plaintext highlighter-rouge">Inferact/Kimi-K3-DSpark</code></td>
+      <td><a href="https://recipes.vllm.ai/moonshotai/Kimi-K3">vLLM recipes</a></td>
+    </tr>
+    <tr>
+      <td><strong>SGLang (direct)</strong></td>
+      <td>SGLang (kimi-k3 docker)</td>
+      <td>No</td>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td><strong>SGLang + Spec</strong></td>
+      <td>SGLang (kimi-k3 docker)</td>
+      <td>DSpark</td>
+      <td><code class="language-plaintext highlighter-rouge">RadixArk/Kimi-K3-DSpark</code></td>
+      <td><a href="https://docs.sglang.io/cookbook/autoregressive/Moonshotai/Kimi-K3">SGLang cookbook</a></td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Important note:</strong> vLLM and SGLang recommend <strong>two different draft models</strong> in their official
+recipes/cookbooks. In this benchmark, each engine used <strong>its own recommended draft model</strong> —
+i.e. vLLM+Spec ran with <code class="language-plaintext highlighter-rouge">Inferact/Kimi-K3-DSpark</code>, and SGLang+Spec ran with
+<code class="language-plaintext highlighter-rouge">RadixArk/Kimi-K3-DSpark</code>. This reflects each engine’s manufacturer-recommended optimal
+configuration.</p>
+</blockquote>
+<h3 id="32-about-speculative-decoding-dspark">
+  
+  
+    <a href="#32-about-speculative-decoding-dspark" class="anchor-heading" aria-labelledby="32-about-speculative-decoding-dspark"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.2 About Speculative Decoding (DSpark)
+  
+  
+</h3>
+    
+
+<p>DSpark is a <strong>draft-model-based</strong> speculative decoding method specialized for Kimi K3:</p>
+
+<ul>
+  <li>~7 token proposals are generated per step (<code class="language-plaintext highlighter-rouge">num_speculative_tokens=7</code>)</li>
+  <li>Verified via rejection sampling (block method)</li>
+  <li><strong>At low load:</strong> decode speed up to 2x (benefits from KV cache transfer)</li>
+  <li><strong>At high load:</strong> draft model + verification overhead creates scheduler pressure</li>
+</ul>
+
+<p>Both engines use the DSpark method, but with different draft-model weights.
+These draft models are small models trained specifically for Kimi K3 and adapted to each
+engine’s own optimization pipeline.</p>
+<h3 id="33-docker-commands-full">
+  
+  
+    <a href="#33-docker-commands-full" class="anchor-heading" aria-labelledby="33-docker-commands-full"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.3 Docker Commands (Full)
+  
+  
+</h3>
+    
+
+<p>The following commands are taken from vLLM’s and SGLang’s official Kimi K3 recipes:</p>
+<ul>
+  <li>vLLM: <a href="https://recipes.vllm.ai/moonshotai/Kimi-K3">recipes.vllm.ai/moonshotai/Kimi-K3</a></li>
+  <li>SGLang: <a href="https://docs.sglang.io/cookbook/autoregressive/Moonshotai/Kimi-K3">docs.sglang.io/cookbook/autoregressive/Moonshotai/Kimi-K3</a></li>
+</ul>
+<h4 id="331-vllm-direct--no-speculation">
+  
+  
+    <a href="#331-vllm-direct--no-speculation" class="anchor-heading" aria-labelledby="331-vllm-direct--no-speculation"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.3.1 vLLM (Direct — No Speculation)
+  
+  
+</h4>
+    
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">--gpus</span> all <span class="se">\</span>
+  <span class="nt">--privileged</span> <span class="nt">--ipc</span><span class="o">=</span>host <span class="nt">-p</span> 8000:8000 <span class="se">\</span>
+  <span class="nt">-v</span> ~/.cache/huggingface:/root/.cache/huggingface <span class="se">\</span>
+  <span class="nt">-e</span> <span class="nv">VLLM_ENABLE_K3_LATENT_MOE_TAIL_FUSION</span><span class="o">=</span>1 <span class="se">\</span>
+  <span class="nt">-e</span> <span class="nv">VLLM_ALLREDUCE_USE_FLASHINFER</span><span class="o">=</span>1 <span class="se">\</span>
+  <span class="nt">-e</span> <span class="nv">VLLM_ENGINE_READY_TIMEOUT_S</span><span class="o">=</span>3600 <span class="se">\</span>
+  <span class="nt">-e</span> <span class="nv">VLLM_USE_V2_MODEL_RUNNER</span><span class="o">=</span>1 <span class="se">\</span>
+  <span class="nt">-e</span> <span class="nv">VLLM_USE_RUST_FRONTEND</span><span class="o">=</span>1 <span class="se">\</span>
+  vllm/vllm-openai:kimi-k3 moonshotai/Kimi-K3 <span class="se">\</span>
+  <span class="nt">--trust-remote-code</span> <span class="se">\</span>
+  <span class="nt">--load-format</span> fastsafetensors <span class="se">\</span>
+  <span class="nt">--moe-backend</span> auto <span class="se">\</span>
+  <span class="nt">--gpu-memory-utilization</span> 0.95 <span class="se">\</span>
+  <span class="nt">--tensor-parallel-size</span> 8 <span class="se">\</span>
+  <span class="nt">--max-model-len</span> 1048576 <span class="se">\</span>
+  <span class="nt">--kv-cache-dtype</span> fp8 <span class="se">\</span>
+  <span class="nt">--attention-config</span> <span class="s1">'{"mla_prefill_backend":"TRTLLM_RAGGED","use_prefill_query_quantization":true}'</span> <span class="se">\</span>
+  <span class="nt">--enable-prefix-caching</span> <span class="se">\</span>
+  <span class="nt">--enable-auto-tool-choice</span> <span class="se">\</span>
+  <span class="nt">--tool-call-parser</span> kimi_k3 <span class="se">\</span>
+  <span class="nt">--reasoning-parser</span> kimi_k3
+</code></pre></div></div>
+<h4 id="332-vllm--speculative-dspark">
+  
+  
+    <a href="#332-vllm--speculative-dspark" class="anchor-heading" aria-labelledby="332-vllm--speculative-dspark"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.3.2 vLLM + Speculative (DSpark)
+  
+  
+</h4>
+    
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">--gpus</span> all <span class="se">\</span>
+  <span class="nt">--privileged</span> <span class="nt">--ipc</span><span class="o">=</span>host <span class="nt">-p</span> 8000:8000 <span class="se">\</span>
+  <span class="nt">-v</span> ~/.cache/huggingface:/root/.cache/huggingface <span class="se">\</span>
+  <span class="nt">-e</span> <span class="nv">VLLM_ENABLE_K3_LATENT_MOE_TAIL_FUSION</span><span class="o">=</span>1 <span class="se">\</span>
+  <span class="nt">-e</span> <span class="nv">VLLM_ALLREDUCE_USE_FLASHINFER</span><span class="o">=</span>1 <span class="se">\</span>
+  <span class="nt">-e</span> <span class="nv">VLLM_ENGINE_READY_TIMEOUT_S</span><span class="o">=</span>3600 <span class="se">\</span>
+  <span class="nt">-e</span> <span class="nv">VLLM_USE_V2_MODEL_RUNNER</span><span class="o">=</span>1 <span class="se">\</span>
+  <span class="nt">-e</span> <span class="nv">VLLM_USE_RUST_FRONTEND</span><span class="o">=</span>1 <span class="se">\</span>
+  vllm/vllm-openai:kimi-k3 moonshotai/Kimi-K3 <span class="se">\</span>
+  <span class="nt">--trust-remote-code</span> <span class="se">\</span>
+  <span class="nt">--load-format</span> fastsafetensors <span class="se">\</span>
+  <span class="nt">--moe-backend</span> auto <span class="se">\</span>
+  <span class="nt">--gpu-memory-utilization</span> 0.95 <span class="se">\</span>
+  <span class="nt">--tensor-parallel-size</span> 8 <span class="se">\</span>
+  <span class="nt">--max-model-len</span> 1048576 <span class="se">\</span>
+  <span class="nt">--kv-cache-dtype</span> fp8 <span class="se">\</span>
+  <span class="nt">--attention-config</span> <span class="s1">'{"mla_prefill_backend":"TRTLLM_RAGGED","use_prefill_query_quantization":true}'</span> <span class="se">\</span>
+  <span class="nt">--enable-prefix-caching</span> <span class="se">\</span>
+  <span class="nt">--enable-auto-tool-choice</span> <span class="se">\</span>
+  <span class="nt">--tool-call-parser</span> kimi_k3 <span class="se">\</span>
+  <span class="nt">--reasoning-parser</span> kimi_k3 <span class="se">\</span>
+  <span class="nt">--max-num-seqs</span> 32 <span class="se">\</span>
+  <span class="nt">--speculative-config</span> <span class="s1">'{"model":"Inferact/Kimi-K3-DSpark", "num_speculative_tokens":7, "method": "dspark", "attention_backend": "FLASHINFER_MLA", "draft_sample_method": "probabilistic", "rejection_sample_method": "block"}'</span>
+</code></pre></div></div>
+<h4 id="333-sglang-direct--no-speculation">
+  
+  
+    <a href="#333-sglang-direct--no-speculation" class="anchor-heading" aria-labelledby="333-sglang-direct--no-speculation"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.3.3 SGLang (Direct — No Speculation)
+  
+  
+</h4>
+    
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">--gpus</span> all <span class="se">\</span>
+  <span class="nt">--shm-size</span> 32g <span class="se">\</span>
+  <span class="nt">-p</span> 30000:30000 <span class="se">\</span>
+  <span class="nt">-v</span> ~/.cache/huggingface:/root/.cache/huggingface <span class="se">\</span>
+  <span class="nt">--env</span> <span class="s2">"HF_TOKEN=&lt;your-hf-token&gt;"</span> <span class="se">\</span>
+  <span class="nt">--ipc</span><span class="o">=</span>host <span class="se">\</span>
+  lmsysorg/sglang:kimi-k3 <span class="se">\</span>
+  sglang serve <span class="se">\</span>
+    <span class="nt">--trust-remote-code</span> <span class="se">\</span>
+    <span class="nt">--model-path</span> moonshotai/Kimi-K3 <span class="se">\</span>
+    <span class="nt">--tp-size</span> 8 <span class="se">\</span>
+    <span class="nt">--mem-fraction-static</span> 0.85 <span class="se">\</span>
+    <span class="nt">--reasoning-parser</span> kimi_k3 <span class="se">\</span>
+    <span class="nt">--tool-call-parser</span> kimi_k3 <span class="se">\</span>
+    <span class="nt">--mamba-full-memory-ratio</span> 0.9 <span class="se">\</span>
+    <span class="nt">--host</span> 0.0.0.0 <span class="se">\</span>
+    <span class="nt">--port</span> 30000
+</code></pre></div></div>
+<h4 id="334-sglang--speculative-dspark">
+  
+  
+    <a href="#334-sglang--speculative-dspark" class="anchor-heading" aria-labelledby="334-sglang--speculative-dspark"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.3.4 SGLang + Speculative (DSpark)
+  
+  
+</h4>
+    
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">--gpus</span> all <span class="se">\</span>
+  <span class="nt">--shm-size</span> 32g <span class="se">\</span>
+  <span class="nt">-p</span> 30000:30000 <span class="se">\</span>
+  <span class="nt">-v</span> ~/.cache/huggingface:/root/.cache/huggingface <span class="se">\</span>
+  <span class="nt">--env</span> <span class="s2">"HF_TOKEN=&lt;your-hf-token&gt;"</span> <span class="se">\</span>
+  <span class="nt">--ipc</span><span class="o">=</span>host <span class="se">\</span>
+  lmsysorg/sglang:kimi-k3 <span class="se">\</span>
+  sglang serve <span class="se">\</span>
+    <span class="nt">--trust-remote-code</span> <span class="se">\</span>
+    <span class="nt">--model-path</span> moonshotai/Kimi-K3 <span class="se">\</span>
+    <span class="nt">--tp-size</span> 8 <span class="se">\</span>
+    <span class="nt">--mem-fraction-static</span> 0.85 <span class="se">\</span>
+    <span class="nt">--reasoning-parser</span> kimi_k3 <span class="se">\</span>
+    <span class="nt">--tool-call-parser</span> kimi_k3 <span class="se">\</span>
+    <span class="nt">--mamba-full-memory-ratio</span> 0.86 <span class="se">\</span>
+    <span class="nt">--host</span> 0.0.0.0 <span class="se">\</span>
+    <span class="nt">--port</span> 30000 <span class="se">\</span>
+    <span class="nt">--speculative-algorithm</span> DSPARK <span class="se">\</span>
+    <span class="nt">--speculative-draft-model-path</span> RadixArk/Kimi-K3-DSpark <span class="se">\</span>
+    <span class="nt">--speculative-dspark-block-size</span> 7 <span class="se">\</span>
+    <span class="nt">--enable-linear-replayssm-spec</span>
+</code></pre></div></div>
+<h3 id="34-configuration-differences">
+  
+  
+    <a href="#34-configuration-differences" class="anchor-heading" aria-labelledby="34-configuration-differences"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.4 Configuration Differences
+  
+  
+</h3>
+    
+
+<p>Key configuration differences between the two engines:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th>vLLM</th>
+      <th>SGLang</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Port</td>
+      <td>8000</td>
+      <td>30000</td>
+    </tr>
+    <tr>
+      <td>Memory utilization</td>
+      <td>0.95 (<code class="language-plaintext highlighter-rouge">--gpu-memory-utilization</code>)</td>
+      <td>0.85 (<code class="language-plaintext highlighter-rouge">--mem-fraction-static</code>)</td>
+    </tr>
+    <tr>
+      <td>KV cache</td>
+      <td>FP8 (<code class="language-plaintext highlighter-rouge">--kv-cache-dtype fp8</code>)</td>
+      <td>(default)</td>
+    </tr>
+    <tr>
+      <td>Prefill backend</td>
+      <td><code class="language-plaintext highlighter-rouge">TRTLLM_RAGGED</code> + query quantization</td>
+      <td>FlashInfer MLA (default)</td>
+    </tr>
+    <tr>
+      <td>Rust frontend</td>
+      <td>Enabled (<code class="language-plaintext highlighter-rouge">VLLM_USE_RUST_FRONTEND=1</code>)</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Spec block size</td>
+      <td>(inside config)</td>
+      <td><code class="language-plaintext highlighter-rouge">--speculative-dspark-block-size 7</code></td>
+    </tr>
+    <tr>
+      <td>Mamba full memory ratio</td>
+      <td>-</td>
+      <td>0.9 (direct), 0.86 (spec)</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Important:</strong> vLLM’s <code class="language-plaintext highlighter-rouge">TRTLLM_RAGGED</code> + <code class="language-plaintext highlighter-rouge">use_prefill_query_quantization</code> optimization plays
+a significant role in vLLM’s low TTFT in this benchmark (see Section 4.2).</p>
+</blockquote><hr />
+<h2 id="4-results">
+  
+  
+    <a href="#4-results" class="anchor-heading" aria-labelledby="4-results"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. Results
+  
+  
+</h2>
+    
+<h3 id="41-general-comparison-c1-and-c64">
+  
+  
+    <a href="#41-general-comparison-c1-and-c64" class="anchor-heading" aria-labelledby="41-general-comparison-c1-and-c64"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.1 General Comparison (c=1 and c=64)
+  
+  
+</h3>
+    
+<h4 id="low-load-c1--single-user">
+  
+  
+    <a href="#low-load-c1--single-user" class="anchor-heading" aria-labelledby="low-load-c1--single-user"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Low Load (c=1) — single user
+  
+  
+</h4>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Metric</th>
+      <th>vLLM dir</th>
+      <th>vLLM spec</th>
+      <th>sglang dir</th>
+      <th>sglang spec</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TTFT Mean (ms)</td>
+      <td>66.5</td>
+      <td>71.0</td>
+      <td>399.5</td>
+      <td>450.6</td>
+    </tr>
+    <tr>
+      <td>ITL Mean (ms)</td>
+      <td>9.46</td>
+      <td>4.84</td>
+      <td>8.94</td>
+      <td>4.26</td>
+    </tr>
+    <tr>
+      <td>TPS Mean (tok/s)</td>
+      <td>100.8</td>
+      <td><strong>187.7</strong></td>
+      <td>83.4</td>
+      <td>129.9</td>
+    </tr>
+    <tr>
+      <td>Latency Mean (s)</td>
+      <td>1.27</td>
+      <td><strong>0.69</strong></td>
+      <td>1.54</td>
+      <td>0.99</td>
+    </tr>
+    <tr>
+      <td>Spec/Direct</td>
+      <td>1.0x</td>
+      <td><strong>1.86x</strong></td>
+      <td>1.0x</td>
+      <td>1.56x</td>
+    </tr>
+  </tbody>
+</table></div>
+<h4 id="high-load-c64--64-concurrent-users">
+  
+  
+    <a href="#high-load-c64--64-concurrent-users" class="anchor-heading" aria-labelledby="high-load-c64--64-concurrent-users"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> High Load (c=64) — 64 concurrent users
+  
+  
+</h4>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Metric</th>
+      <th>vLLM dir</th>
+      <th>vLLM spec</th>
+      <th>sglang dir</th>
+      <th>sglang spec</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TTFT Mean (ms)</td>
+      <td>731.7</td>
+      <td>1030.9</td>
+      <td>948.4</td>
+      <td><strong>4752.6</strong></td>
+    </tr>
+    <tr>
+      <td>ITL Mean (ms)</td>
+      <td>30.8</td>
+      <td>95.4</td>
+      <td>27.1</td>
+      <td>34.4</td>
+    </tr>
+    <tr>
+      <td>TPS Mean (tok/s)</td>
+      <td><strong>27.5</strong></td>
+      <td>11.2</td>
+      <td>29.1</td>
+      <td>14.5</td>
+    </tr>
+    <tr>
+      <td>Latency Mean (s)</td>
+      <td>4.66</td>
+      <td>13.15</td>
+      <td>4.41</td>
+      <td>9.13</td>
+    </tr>
+    <tr>
+      <td>Aggregate (tok/s)</td>
+      <td>1759</td>
+      <td>717</td>
+      <td><strong>1863</strong></td>
+      <td>931</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p>Note: in the sglang-spec @c=64 data there is an inconsistency between TTFT (4752ms) and Latency
+(9.13s) (TTFT should be &gt; Latency/2); this is a measurement anomaly in the raw data.</p>
+</blockquote><hr />
+<h3 id="42-ttft-time-to-first-token">
+  
+  
+    <a href="#42-ttft-time-to-first-token" class="anchor-heading" aria-labelledby="42-ttft-time-to-first-token"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.2 TTFT (Time To First Token)
+  
+  
+</h3>
+    
+
+<p><img src="/papers/kimi-k3-dgx-b300-inference-benchmark/karsilastirma-en/01-TTFT.png" alt="TTFT" /></p>
+
+<p><strong>Findings:</strong></p>
+<ul>
+  <li><strong>vLLM direct has the fastest TTFT</strong> across all load levels (c=1: 66ms, c=64: 732ms).</li>
+  <li><strong>SGLang direct has high TTFT</strong> (~400ms at c=1) — 6x vLLM’s. The reason is SGLang’s prefill
+kernel configuration; vLLM uses <code class="language-plaintext highlighter-rouge">TRTLLM_RAGGED</code> + query quantization while SGLang uses the
+default FlashInfer MLA.</li>
+  <li><strong>Speculative decoding worsens TTFT</strong> (draft-model init cost):
+    <ul>
+      <li>vLLM: 66 -&gt; 71ms at c=1 (+8%)</li>
+      <li>SGLang: 400 -&gt; 451ms at c=1 (+13%)</li>
+    </ul>
+  </li>
+  <li><strong>SGLang + Spec anomaly @c=64:</strong> 4752ms — 6.1x worse than at c=32.
+The scheduler bottlenecks under extreme load.</li>
+  <li>The SLO threshold (1000ms) for P90: vLLM direct at c=64 slightly <strong>exceeds the SLO</strong> at 1107ms;
+other configs cannot exceed c=32.</li>
+</ul><hr />
+<h3 id="43-itl-inter-token-latency">
+  
+  
+    <a href="#43-itl-inter-token-latency" class="anchor-heading" aria-labelledby="43-itl-inter-token-latency"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.3 ITL (Inter-Token Latency)
+  
+  
+</h3>
+    
+
+<p><img src="/papers/kimi-k3-dgx-b300-inference-benchmark/karsilastirma-en/02-ITL.png" alt="ITL" /></p>
+
+<p><strong>Findings:</strong></p>
+<ul>
+  <li><strong>Speculative decoding halves ITL at low load:</strong>
+    <ul>
+      <li>vLLM: 9.46ms -&gt; 4.84ms (49% reduction)</li>
+      <li>SGLang: 8.94ms -&gt; 4.26ms (52% reduction)</li>
+    </ul>
+  </li>
+  <li><strong>At high load, speculative ITL explodes:</strong>
+    <ul>
+      <li>vLLM + Spec @c=64: <strong>95.4ms</strong> (direct 30.8ms — 3.1x worse)</li>
+      <li>vLLM + Spec @c=32: 43.9ms (direct 23.6ms — 1.9x worse)</li>
+    </ul>
+  </li>
+  <li>vLLM direct and SGLang direct ITL increases are linear-and-close: ~27-31ms at c=64.</li>
+  <li><strong>Lowest ITL (for real-time applications):</strong>
+vLLM + Spec @c=1: 4.84ms — but unusable at high load.</li>
+</ul><hr />
+<h3 id="44-tps-per-user-tokens-per-second">
+  
+  
+    <a href="#44-tps-per-user-tokens-per-second" class="anchor-heading" aria-labelledby="44-tps-per-user-tokens-per-second"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.4 TPS (Per-User Tokens Per Second)
+  
+  
+</h3>
+    
+
+<p><img src="/papers/kimi-k3-dgx-b300-inference-benchmark/karsilastirma-en/03-TPS.png" alt="TPS" /></p>
+
+<p><strong>Findings:</strong></p>
+<ul>
+  <li><strong>Low load (c&lt;=4):</strong> Spec is clearly faster than direct
+    <ul>
+      <li>vLLM c=1: 101 -&gt; 188 tok/s (1.86x)</li>
+      <li>vLLM c=4: 73 -&gt; 99 tok/s (1.36x)</li>
+      <li>SGLang c=1: 83 -&gt; 130 tok/s (1.56x)</li>
+    </ul>
+  </li>
+  <li><strong>Break-even points:</strong>
+    <ul>
+      <li>vLLM: <strong>c~16</strong> (43.95 vs 43.60 tok/s) — equal</li>
+      <li>SGLang: <strong>c~4</strong> (59.3 vs 56.9 tok/s) — spec slightly worse</li>
+    </ul>
+  </li>
+  <li><strong>High load (c=64):</strong> Spec hurts
+    <ul>
+      <li>vLLM: 27.5 -&gt; 11.2 tok/s (0.41x — <strong>2.4x slower</strong>)</li>
+      <li>SGLang: 29.1 -&gt; 14.5 tok/s (0.50x)</li>
+    </ul>
+  </li>
+  <li><strong>SLO (15 tok/s) P90 (TPS threshold):</strong>
+    <ul>
+      <li>vLLM direct: passes all levels (P90 TPS 28.6 at c=64)</li>
+      <li>vLLM spec: passes all levels (P90 TPS 16.5 at c=64 — but very low)</li>
+      <li>SGLang direct: passes all levels (P90 TPS 30.2 at c=64)</li>
+      <li>SGLang spec: passes up to c=32 (P90 TPS 20.3), at c=64 16.8 (barely passes)</li>
+    </ul>
+  </li>
+  <li><strong>SLO (1000ms) P90 (TTFT threshold):</strong>
+    <ul>
+      <li>vLLM direct: passes up to c=32 (P90 887ms), at c=64 1107ms <strong>slightly exceeds</strong></li>
+      <li>vLLM spec: passes up to c=32 (P90 802ms), at c=64 1466ms exceeds</li>
+      <li>SGLang direct: passes up to c=16 (P90 949ms), at c=32 1205ms exceeds</li>
+      <li>SGLang spec: passes up to c=2 (P90 496ms), at c=4 1111ms exceeds</li>
+    </ul>
+  </li>
+</ul><hr />
+<h3 id="45-latency-total-request-duration">
+  
+  
+    <a href="#45-latency-total-request-duration" class="anchor-heading" aria-labelledby="45-latency-total-request-duration"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.5 Latency (Total Request Duration)
+  
+  
+</h3>
+    
+
+<p><img src="/papers/kimi-k3-dgx-b300-inference-benchmark/karsilastirma-en/04-Latency.png" alt="Latency" /></p>
+
+<p><strong>Findings:</strong></p>
+<ul>
+  <li><strong>At low load Spec dramatically reduces latency:</strong>
+    <ul>
+      <li>vLLM c=1: 1.27s -&gt; 0.69s (46% reduction)</li>
+      <li>SGLang c=1: 1.54s -&gt; 0.99s (36% reduction)</li>
+    </ul>
+  </li>
+  <li><strong>At high load Spec blows up latency:</strong>
+    <ul>
+      <li>vLLM + Spec @c=64: <strong>13.15s</strong> (direct 4.66s — 2.8x worse)</li>
+      <li>SGLang + Spec @c=32: 9.28s (direct 3.92s — 2.4x worse)</li>
+    </ul>
+  </li>
+  <li><strong>vLLM direct vs SGLang direct</strong> are similar at high load (c=64: 4.66 vs 4.41s).</li>
+  <li>vLLM direct shows linear scaling (c=1: 1.27s, c=64: 4.66s — 3.7x increase for 64x load).</li>
+</ul><hr />
+<h3 id="46-throughput-rps">
+  
+  
+    <a href="#46-throughput-rps" class="anchor-heading" aria-labelledby="46-throughput-rps"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.6 Throughput (RPS)
+  
+  
+</h3>
+    
+
+<p><img src="/papers/kimi-k3-dgx-b300-inference-benchmark/karsilastirma-en/05-Throughput.png" alt="Throughput" /></p>
+
+<p><strong>Findings:</strong></p>
+<ul>
+  <li><strong>At low load Spec yields higher RPS</strong> (because it completes faster):
+    <ul>
+      <li>c=1: vLLM spec 1.46 RPS vs vLLM direct 0.79 RPS (1.85x)</li>
+    </ul>
+  </li>
+  <li><strong>At high load direct yields better RPS</strong> (less overhead):
+    <ul>
+      <li>c=64: vLLM direct 0.21 RPS vs vLLM spec 0.08 RPS (0.38x)</li>
+    </ul>
+  </li>
+  <li>RPS drops for all configs as concurrency rises — this is expected;
+each request takes longer but there are more concurrent requests.</li>
+  <li><strong>SGLang + Spec @c=64 RPS is the same as c=32 (0.11)</strong> — a sign of bottleneck.</li>
+</ul><hr />
+<h3 id="47-total-tokens-produced--second-aggregate-output">
+  
+  
+    <a href="#47-total-tokens-produced--second-aggregate-output" class="anchor-heading" aria-labelledby="47-total-tokens-produced--second-aggregate-output"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.7 Total Tokens Produced / Second (Aggregate Output)
+  
+  
+</h3>
+    
+
+<p><img src="/papers/kimi-k3-dgx-b300-inference-benchmark/karsilastirma-en/07-Aggregate-Output.png" alt="Aggregate Output" /></p>
+
+<p>This metric shows the <strong>total production capacity of the system</strong>: <code class="language-plaintext highlighter-rouge">TPS x Concurrency</code>.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>c</th>
+      <th>vLLM dir</th>
+      <th>vLLM spec</th>
+      <th>sglang dir</th>
+      <th>sglang spec</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>101</td>
+      <td>188</td>
+      <td>83</td>
+      <td>130</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>293</td>
+      <td>398</td>
+      <td>237</td>
+      <td>228</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>703</td>
+      <td>698</td>
+      <td>697</td>
+      <td>355</td>
+    </tr>
+    <tr>
+      <td>32</td>
+      <td>1126</td>
+      <td>740</td>
+      <td>1074</td>
+      <td>493</td>
+    </tr>
+    <tr>
+      <td>64</td>
+      <td><strong>1759</strong></td>
+      <td>717</td>
+      <td><strong>1863</strong></td>
+      <td>931</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Findings:</strong></p>
+<ul>
+  <li><strong>vLLM direct linear scaling:</strong> c=1 (101) -&gt; c=64 (1759) — 17.4x increase for 64x load (sub-linear but strong).</li>
+  <li><strong>SGLang direct highest at c=64:</strong> 1863 tok/s — 6% better than vLLM.</li>
+  <li><strong>vLLM + Spec bottleneck:</strong> c=32 to 740 -&gt; c=64 717 — <strong>drops!</strong>
+i.e. doubling the load reduces total output — a classic bottleneck.</li>
+  <li><strong>SGLang + Spec bad from c=16 onward:</strong> c=16 355 (direct 697) — half of direct.</li>
+  <li><strong>Most efficient point (peak aggregate):</strong>
+    <ul>
+      <li>vLLM direct: c=64 (1759)</li>
+      <li>vLLM spec: c=16 (698) — drops afterward</li>
+      <li>SGLang direct: c=64 (1863)</li>
+      <li>SGLang spec: c=32 (493)</li>
+    </ul>
+  </li>
+</ul><hr />
+<h3 id="48-speculative-speedup-analysis">
+  
+  
+    <a href="#48-speculative-speedup-analysis" class="anchor-heading" aria-labelledby="48-speculative-speedup-analysis"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.8 Speculative Speedup Analysis
+  
+  
+</h3>
+    
+
+<p><img src="/papers/kimi-k3-dgx-b300-inference-benchmark/karsilastirma-en/08-Spec-Speedup.png" alt="Spec Speedup" /></p>
+
+<p>Spec/Direct TPS ratio vs concurrency:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>c</th>
+      <th>vLLM (spec/dir)</th>
+      <th>SGLang (spec/dir)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td><strong>1.86x</strong></td>
+      <td><strong>1.56x</strong></td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>1.55x</td>
+      <td>1.36x</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>1.36x</td>
+      <td>0.96x</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>1.13x</td>
+      <td>0.71x</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td><strong>0.99x</strong> (break-even)</td>
+      <td>0.51x</td>
+    </tr>
+    <tr>
+      <td>32</td>
+      <td>0.66x</td>
+      <td>0.46x</td>
+    </tr>
+    <tr>
+      <td>64</td>
+      <td><strong>0.41x</strong></td>
+      <td>0.50x</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Findings:</strong></p>
+<ul>
+  <li><strong>vLLM Spec break-even: c~16.</strong> Beyond that, a net loss.</li>
+  <li><strong>SGLang Spec break-even: c~4.</strong> Breaks very early.</li>
+  <li>The reason Spec breaks earlier on SGLang: SGLang’s already-high TTFT
+    <ul>
+      <li>draft-model overhead pushes it over the edge sooner.</li>
+    </ul>
+  </li>
+  <li><strong>Rule of thumb:</strong> Speculative decoding should only be used in <strong>low-load interactive</strong>
+scenarios (c&lt;16 vLLM, c&lt;4 SGLang). For high-load production it <strong>hurts</strong>.</li>
+</ul><hr />
+<h2 id="5-slo--relative-capacity-analysis">
+  
+  
+    <a href="#5-slo--relative-capacity-analysis" class="anchor-heading" aria-labelledby="5-slo--relative-capacity-analysis"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5. SLO &amp; Relative Capacity Analysis
+  
+  
+</h2>
+    
+<h3 id="51-slo-compliance-matrix-p90">
+  
+  
+    <a href="#51-slo-compliance-matrix-p90" class="anchor-heading" aria-labelledby="51-slo-compliance-matrix-p90"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.1 SLO Compliance Matrix (P90)
+  
+  
+</h3>
+    
+
+<p><img src="/papers/kimi-k3-dgx-b300-inference-benchmark/karsilastirma-en/09-SLO-Heatmap.png" alt="SLO Heatmap" /></p>
+
+<p>SLO status for each config/concurrency combination at the P90 percentile:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Config</th>
+      <th>c=1</th>
+      <th>c=2</th>
+      <th>c=4</th>
+      <th>c=8</th>
+      <th>c=16</th>
+      <th>c=32</th>
+      <th>c=64</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>vLLM direct</td>
+      <td>✓✓</td>
+      <td>✓✓</td>
+      <td>✓✓</td>
+      <td>✓✓</td>
+      <td>✓✓</td>
+      <td>✓✓</td>
+      <td>✗✓</td>
+    </tr>
+    <tr>
+      <td>vLLM + Spec</td>
+      <td>✓✓</td>
+      <td>✓✓</td>
+      <td>✓✓</td>
+      <td>✓✓</td>
+      <td>✓✓</td>
+      <td>✓✓</td>
+      <td>✗✓</td>
+    </tr>
+    <tr>
+      <td>SGLang direct</td>
+      <td>✓✓</td>
+      <td>✓✓</td>
+      <td>✓✓</td>
+      <td>✓✓</td>
+      <td>✓✓</td>
+      <td>✗✓</td>
+      <td>✗✓</td>
+    </tr>
+    <tr>
+      <td>SGLang + Spec</td>
+      <td>✓✓</td>
+      <td>✓✓</td>
+      <td>✗✓</td>
+      <td>✗✓</td>
+      <td>✗✓</td>
+      <td>✗✓</td>
+      <td>✗✓</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>(✓/✗ = TTFT/TPS P90; first symbol TTFT, second TPS. ✓✓ = both pass, ✗✓ = only TPS passes, TTFT slightly exceeds SLO)</p>
+<h3 id="52-maximum-concurrency-c_max--total-users-littles-law">
+  
+  
+    <a href="#52-maximum-concurrency-c_max--total-users-littles-law" class="anchor-heading" aria-labelledby="52-maximum-concurrency-c_max--total-users-littles-law"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.2 Maximum Concurrency (C_max) &amp; Total Users (Little’s Law)
+  
+  
+</h3>
+    
+
+<p><img src="/papers/kimi-k3-dgx-b300-inference-benchmark/karsilastirma-en/06-Kapasite.png" alt="Capacity" /></p>
+
+<p>Total user count computed with <code class="language-plaintext highlighter-rouge">N = C_max x (1 + 45s / L_mean)</code>:</p>
+<h4 id="p90-based-recommended-for-production--strict">
+  
+  
+    <a href="#p90-based-recommended-for-production--strict" class="anchor-heading" aria-labelledby="p90-based-recommended-for-production--strict"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> P90-based (recommended for production — strict)
+  
+  
+</h4>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Config</th>
+      <th>C_max (P90)</th>
+      <th>L_mean @ C_max (s)</th>
+      <th>Total Users (N)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>vLLM direct</strong></td>
+      <td>32</td>
+      <td>3.65</td>
+      <td><strong>427</strong></td>
+    </tr>
+    <tr>
+      <td>vLLM + Spec</td>
+      <td>32</td>
+      <td>6.15</td>
+      <td>266</td>
+    </tr>
+    <tr>
+      <td>SGLang direct</td>
+      <td>16</td>
+      <td>2.94</td>
+      <td>261</td>
+    </tr>
+    <tr>
+      <td>SGLang + Spec</td>
+      <td>2</td>
+      <td>1.58</td>
+      <td>59</td>
+    </tr>
+  </tbody>
+</table></div>
+<h4 id="mean-based-optimistic--for-low-load">
+  
+  
+    <a href="#mean-based-optimistic--for-low-load" class="anchor-heading" aria-labelledby="mean-based-optimistic--for-low-load"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Mean-based (optimistic — for low load)
+  
+  
+</h4>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Config</th>
+      <th>C_max (Mean)</th>
+      <th>L_mean @ C_max (s)</th>
+      <th>Total Users (N)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>vLLM direct</td>
+      <td>64</td>
+      <td>4.66</td>
+      <td>682</td>
+    </tr>
+    <tr>
+      <td>vLLM + Spec</td>
+      <td>32</td>
+      <td>6.15</td>
+      <td>266</td>
+    </tr>
+    <tr>
+      <td><strong>SGLang direct</strong></td>
+      <td>64</td>
+      <td>4.41</td>
+      <td><strong>717</strong></td>
+    </tr>
+    <tr>
+      <td>SGLang + Spec</td>
+      <td>32</td>
+      <td>9.28</td>
+      <td>187</td>
+    </tr>
+  </tbody>
+</table></div>
+<h3 id="53-interpretation">
+  
+  
+    <a href="#53-interpretation" class="anchor-heading" aria-labelledby="53-interpretation"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.3 Interpretation
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>P90-based production capacity:</strong> vLLM direct is highest at <strong>427 users</strong>.
+vLLM + Spec reaches the same C_max but its N is lower due to high latency (266).</li>
+  <li><strong>Mean-based:</strong> SGLang direct is highest at 717 — because at c=64 it still meets the SLO (mean).
+But since it cannot pass c=32 at P90, the Mean figure is optimistic.</li>
+  <li><strong>SGLang + Spec is the worst:</strong> breaks at c=2 at P90 — only suitable for very low load.</li>
+  <li><strong>Speculative decoding does not increase C_max</strong> — although it boosts per-user speed at low load,
+at high load it breaks the SLO and reduces total capacity.</li>
+</ul><hr />
+<h2 id="6-comparison-framework--interpretation-guide">
+  
+  
+    <a href="#6-comparison-framework--interpretation-guide" class="anchor-heading" aria-labelledby="6-comparison-framework--interpretation-guide"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6. Comparison Framework &amp; Interpretation Guide
+  
+  
+</h2>
+    
+<h3 id="61-what-this-benchmark-does">
+  
+  
+    <a href="#61-what-this-benchmark-does" class="anchor-heading" aria-labelledby="61-what-this-benchmark-does"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.1 What This Benchmark Does
+  
+  
+</h3>
+    
+
+<p><a href="https://github.com/CordatusAI/llm-benchmark">CordatusAI/llm-benchmark</a> is designed to <strong>relatively
+compare</strong> LLM inference servers. It uses a fixed workload (128/128 tokens) to provide
+<strong>reproducible</strong> measurements.</p>
+<h3 id="62-comparison-axes">
+  
+  
+    <a href="#62-comparison-axes" class="anchor-heading" aria-labelledby="62-comparison-axes"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.2 Comparison Axes
+  
+  
+</h3>
+    
+
+<p>This tool is suitable for comparison along 3 axes:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Axis</th>
+      <th>Fixed</th>
+      <th>Variable</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Inference Engine</strong></td>
+      <td>Model + Hardware</td>
+      <td>vLLM vs SGLang vs TRT-LLM…</td>
+    </tr>
+    <tr>
+      <td><strong>Model</strong></td>
+      <td>Hardware + Engine</td>
+      <td>Kimi K3 vs Llama vs DeepSeek… or direct vs spec (different draft model)</td>
+    </tr>
+    <tr>
+      <td><strong>Hardware</strong></td>
+      <td>Model + Engine</td>
+      <td>DGX-B300 vs H100 vs MI300X…</td>
+    </tr>
+  </tbody>
+</table></div>
+<h4 id="this-report-uses-2-axes-simultaneously">
+  
+  
+    <a href="#this-report-uses-2-axes-simultaneously" class="anchor-heading" aria-labelledby="this-report-uses-2-axes-simultaneously"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> This Report Uses 2 Axes Simultaneously
+  
+  
+</h4>
+    
+
+<p>This report does not cover a <strong>single axis</strong> but <strong>two axes simultaneously</strong> — the 4 configs form a
+2x2 matrix:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th><strong>Direct (no draft model)</strong></th>
+      <th><strong>Speculative (DSpark draft model)</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>vLLM</strong></td>
+      <td>vLLM (direct)</td>
+      <td>vLLM + Spec (<code class="language-plaintext highlighter-rouge">Inferact/Kimi-K3-DSpark</code>)</td>
+    </tr>
+    <tr>
+      <td><strong>SGLang</strong></td>
+      <td>SGLang (direct)</td>
+      <td>SGLang + Spec (<code class="language-plaintext highlighter-rouge">RadixArk/Kimi-K3-DSpark</code>)</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<ol>
+  <li><strong>Inference engine axis (horizontal):</strong> Same model (Kimi K3), same hardware (DGX-B300),
+same speculative mode — vLLM vs SGLang comparison.
+    <ul>
+      <li>vLLM direct vs SGLang direct</li>
+      <li>vLLM + Spec vs SGLang + Spec</li>
+    </ul>
+  </li>
+  <li><strong>Model configuration axis (vertical):</strong> Same engine, same hardware — direct vs
+speculative comparison. Since speculative decoding uses a different draft model, this is
+technically a <strong>model-based comparison</strong>:
+    <ul>
+      <li>vLLM direct vs vLLM + Spec (draft: <code class="language-plaintext highlighter-rouge">Inferact/Kimi-K3-DSpark</code>)</li>
+      <li>SGLang direct vs SGLang + Spec (draft: <code class="language-plaintext highlighter-rouge">RadixArk/Kimi-K3-DSpark</code>)</li>
+    </ul>
+  </li>
+</ol>
+
+<blockquote>
+  <p><strong>Important:</strong> Because vLLM and SGLang use different draft models, the “vLLM + Spec vs
+SGLang + Spec” comparison includes both the engine difference and the draft-model difference.
+This limitation should be kept in mind when directly comparing the two engines in speculative mode.</p>
+</blockquote>
+<h3 id="63-workload-limitations-important">
+  
+  
+    <a href="#63-workload-limitations-important" class="anchor-heading" aria-labelledby="63-workload-limitations-important"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.3 Workload Limitations (Important)
+  
+  
+</h3>
+    
+
+<p>Keep in mind that these measurements <strong>do not represent real production workloads</strong>:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Limitation</th>
+      <th>Explanation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Fixed 128/128 tokens</strong></td>
+      <td>Real chat has 200-1000+ token output, variable length</td>
+    </tr>
+    <tr>
+      <td><strong>Single-shot requests</strong></td>
+      <td>Multi-turn context accumulation (KV cache hit) not measured</td>
+    </tr>
+    <tr>
+      <td><strong>Full context active</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">--max-model-len 1048576</code> — 1M context overhead reflected in 128-token requests</td>
+    </tr>
+    <tr>
+      <td><strong>Low input</strong></td>
+      <td>Does not measure long-prompt (1K-32K) prefill behavior</td>
+    </tr>
+    <tr>
+      <td><strong>Template prompts</strong></td>
+      <td>Real user prompts show more varied distributions</td>
+    </tr>
+  </tbody>
+</table></div>
+<h3 id="64-interpreting-results">
+  
+  
+    <a href="#64-interpreting-results" class="anchor-heading" aria-labelledby="64-interpreting-results"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.4 Interpreting Results
+  
+  
+</h3>
+    
+<h4 id="there-is-no-standardized-usage-scenario">
+  
+  
+    <a href="#there-is-no-standardized-usage-scenario" class="anchor-heading" aria-labelledby="there-is-no-standardized-usage-scenario"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> There Is No Standardized Usage Scenario
+  
+  
+</h4>
+    
+
+<p>The same model (Kimi K3) is used in practice in very different load profiles, and none of them
+can be considered the “single correct” scenario:</p>
+
+<ul>
+  <li><strong>Chat:</strong> Single user, short input/output, low concurrency, short think time</li>
+  <li><strong>Agent:</strong> Multi-step, variable length, tool calls, medium concurrency</li>
+  <li><strong>Automation / Batch:</strong> High concurrency, long input/output, long think time</li>
+  <li><strong>API service:</strong> Mixed load, unpredictable concurrency/input/output distributions</li>
+</ul>
+
+<p>Because of this diversity, <strong>concurrency, input, and output sizes cannot be predetermined</strong> —
+they vary by application nature, user behavior, and time of day. The 128/128 token + 45s think
+time measurements in this report represent a specific operating point; they do not exactly
+reflect real production workloads.</p>
+<h4 id="unpredictable-variables-in-this-report">
+  
+  
+    <a href="#unpredictable-variables-in-this-report" class="anchor-heading" aria-labelledby="unpredictable-variables-in-this-report"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Unpredictable Variables in This Report
+  
+  
+</h4>
+    
+
+<p>The following factors are fixed in this benchmark but variable in real use:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Variable</th>
+      <th>In This Report</th>
+      <th>Real-World Range</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Concurrency</td>
+      <td>1-64</td>
+      <td>1-1000+ (application-dependent)</td>
+    </tr>
+    <tr>
+      <td>Input token</td>
+      <td>128 (fixed)</td>
+      <td>10-32K+ (prompt-content-dependent)</td>
+    </tr>
+    <tr>
+      <td>Output token</td>
+      <td>128 (fixed)</td>
+      <td>50-4096+ (task-dependent)</td>
+    </tr>
+    <tr>
+      <td>Think time</td>
+      <td>45s (assumption)</td>
+      <td>5s (fast interactive) - 120s (deep work)</td>
+    </tr>
+  </tbody>
+</table></div>
+<h4 id="observations-for-consistent-interpretation">
+  
+  
+    <a href="#observations-for-consistent-interpretation" class="anchor-heading" aria-labelledby="observations-for-consistent-interpretation"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Observations for Consistent Interpretation
+  
+  
+</h4>
+    
+
+<p>In light of the above limitations, this report’s results should be interpreted with the
+following observations:</p>
+
+<ul>
+  <li>This report is valuable for <strong>relative ranking</strong>, not for absolute production estimation.
+Rather than “vLLM direct supports 427 users”, it is more consistent to say “vLLM direct
+supports 1.6x more users than vLLM + Spec”.</li>
+  <li>P90 is a more realistic production indicator than Mean — tail latency is critical in
+production. Production-related decisions in this report are based on P90.</li>
+  <li>The user counts computed via Little’s Law depend on the 45s think-time assumption;
+if your real application’s think time differs, the numbers change.</li>
+  <li>The speculative decoding break-even point measured here is ~c16 for vLLM and ~c4 for SGLang;
+these points may shift under different workloads or hardware.</li>
+  <li>The most suitable config <strong>depends on your target scenario’s load profile</strong> (see Section 1).</li>
+</ul>
+<h3 id="65-impact-of-full-context-deployment">
+  
+  
+    <a href="#65-impact-of-full-context-deployment" class="anchor-heading" aria-labelledby="65-impact-of-full-context-deployment"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.5 Impact of Full Context Deployment
+  
+  
+</h3>
+    
+
+<p>The model was deployed with <code class="language-plaintext highlighter-rouge">--max-model-len 1048576</code>. This means 1M-token KV cache management
+is performed for each request. The TTFT measured for a 128-token input is in fact the cost of
+“processing 128 tokens on a system with 1M context capacity.”</p>
+
+<p>Therefore, the prefill speeds measured here are <strong>not absolute prefill speed</strong>, but <strong>prefill
+speed under the full-context configuration</strong>. With a shorter <code class="language-plaintext highlighter-rouge">--max-model-len</code>, KV cache usage
+may differ and prefill speed may vary.</p><hr />
+<h2 id="7-conclusion">
+  
+  
+    <a href="#7-conclusion" class="anchor-heading" aria-labelledby="7-conclusion"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7. Conclusion
+  
+  
+</h2>
+    
+
+<p>Four different inference-engine configurations of the Kimi K3 model were compared on DGX-B300:
+vLLM (direct), vLLM + DSpark speculative, SGLang (direct), and SGLang + DSpark speculative.</p>
+
+<p><strong>Measured behaviors:</strong></p>
+
+<ul>
+  <li><strong>At low load (c&lt;=4):</strong> Speculative decoding increases per-user TPS by 1.4-1.9x and halves ITL
+(vLLM: 9.5ms -&gt; 4.8ms).</li>
+  <li><strong>Break-even points:</strong> ~c16 for vLLM, ~c4 for SGLang. Beyond that, speculative decoding
+underperforms direct.</li>
+  <li><strong>At high load (c=64):</strong> vLLM + Spec’s per-user TPS drops to 11 tok/s (vLLM direct 27 tok/s).
+Aggregate output drops from c=32 to c=64 for vLLM+Spec.</li>
+  <li><strong>SGLang direct’s TTFT</strong> is higher than vLLM direct’s (400ms vs 66ms at c=1) — this difference
+stems from the engines’ prefill-backend configuration (see Section 3.4).</li>
+  <li><strong>SGLang + Spec @c=64 anomaly:</strong> TTFT 4752ms (was 777ms at c=32).</li>
+</ul>
+
+<p><strong>Important:</strong> All results are for <strong>relative comparison</strong>. They are based on a 128/128 token
+fixed workload and a 45s think-time assumption. A separate benchmark is recommended for real
+production workloads.</p><hr />
+<h2 id="appendix-a-all-csv-data">
+  
+  
+    <a href="#appendix-a-all-csv-data" class="anchor-heading" aria-labelledby="appendix-a-all-csv-data"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Appendix A: All CSV Data
+  
+  
+</h2>
+    
+<h3 id="a1-vllm-direct">
+  
+  
+    <a href="#a1-vllm-direct" class="anchor-heading" aria-labelledby="a1-vllm-direct"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> A.1 vLLM (direct)
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>c</th>
+      <th>TTFT Mean</th>
+      <th>TTFT P90</th>
+      <th>ITL Mean</th>
+      <th>ITL P90</th>
+      <th>TPS Mean</th>
+      <th>TPS P90</th>
+      <th>Lat Mean</th>
+      <th>Lat P90</th>
+      <th>RPS</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>66.5</td>
+      <td>70.5</td>
+      <td>9.46</td>
+      <td>9.47</td>
+      <td>100.84</td>
+      <td>101.30</td>
+      <td>1.27</td>
+      <td>1.27</td>
+      <td>0.79</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>105.5</td>
+      <td>154.9</td>
+      <td>11.16</td>
+      <td>11.58</td>
+      <td>83.98</td>
+      <td>83.99</td>
+      <td>1.52</td>
+      <td>1.54</td>
+      <td>0.66</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>145.9</td>
+      <td>197.6</td>
+      <td>12.61</td>
+      <td>13.22</td>
+      <td>73.17</td>
+      <td>74.47</td>
+      <td>1.75</td>
+      <td>1.77</td>
+      <td>0.57</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>388.0</td>
+      <td>520.9</td>
+      <td>15.59</td>
+      <td>17.57</td>
+      <td>54.03</td>
+      <td>56.11</td>
+      <td>2.37</td>
+      <td>2.44</td>
+      <td>0.42</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>543.8</td>
+      <td>693.4</td>
+      <td>18.54</td>
+      <td>20.95</td>
+      <td>43.95</td>
+      <td>46.19</td>
+      <td>2.92</td>
+      <td>3.18</td>
+      <td>0.34</td>
+    </tr>
+    <tr>
+      <td>32</td>
+      <td>608.1</td>
+      <td>887.5</td>
+      <td>23.56</td>
+      <td>25.73</td>
+      <td>35.18</td>
+      <td>38.43</td>
+      <td>3.65</td>
+      <td>3.95</td>
+      <td>0.27</td>
+    </tr>
+    <tr>
+      <td>64</td>
+      <td>731.7</td>
+      <td>1107.0</td>
+      <td>30.82</td>
+      <td>33.77</td>
+      <td>27.49</td>
+      <td>28.59</td>
+      <td>4.66</td>
+      <td>4.85</td>
+      <td>0.21</td>
+    </tr>
+  </tbody>
+</table></div>
+<h3 id="a2-vllm--spec-dspark">
+  
+  
+    <a href="#a2-vllm--spec-dspark" class="anchor-heading" aria-labelledby="a2-vllm--spec-dspark"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> A.2 vLLM + Spec (DSpark)
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>c</th>
+      <th>TTFT Mean</th>
+      <th>TTFT P90</th>
+      <th>ITL Mean</th>
+      <th>ITL P90</th>
+      <th>TPS Mean</th>
+      <th>TPS P90</th>
+      <th>Lat Mean</th>
+      <th>Lat P90</th>
+      <th>RPS</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>71.0</td>
+      <td>77.8</td>
+      <td>4.84</td>
+      <td>5.74</td>
+      <td>187.74</td>
+      <td>201.34</td>
+      <td>0.69</td>
+      <td>0.80</td>
+      <td>1.46</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>172.9</td>
+      <td>191.2</td>
+      <td>6.67</td>
+      <td>8.15</td>
+      <td>129.75</td>
+      <td>167.10</td>
+      <td>1.02</td>
+      <td>1.18</td>
+      <td>0.98</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>191.5</td>
+      <td>265.9</td>
+      <td>9.11</td>
+      <td>12.07</td>
+      <td>99.43</td>
+      <td>127.29</td>
+      <td>1.35</td>
+      <td>1.74</td>
+      <td>0.74</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>262.9</td>
+      <td>455.0</td>
+      <td>15.89</td>
+      <td>24.13</td>
+      <td>61.04</td>
+      <td>81.74</td>
+      <td>2.28</td>
+      <td>3.35</td>
+      <td>0.44</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>344.3</td>
+      <td>594.2</td>
+      <td>21.69</td>
+      <td>28.15</td>
+      <td>43.60</td>
+      <td>59.14</td>
+      <td>3.10</td>
+      <td>3.98</td>
+      <td>0.32</td>
+    </tr>
+    <tr>
+      <td>32</td>
+      <td>565.2</td>
+      <td>802.0</td>
+      <td>43.93</td>
+      <td>59.60</td>
+      <td>23.14</td>
+      <td>30.79</td>
+      <td>6.15</td>
+      <td>8.16</td>
+      <td>0.16</td>
+    </tr>
+    <tr>
+      <td>64</td>
+      <td>1030.9</td>
+      <td>1465.5</td>
+      <td>95.38</td>
+      <td>135.86</td>
+      <td>11.21</td>
+      <td>16.51</td>
+      <td>13.15</td>
+      <td>18.35</td>
+      <td>0.08</td>
+    </tr>
+  </tbody>
+</table></div>
+<h3 id="a3-sglang-direct">
+  
+  
+    <a href="#a3-sglang-direct" class="anchor-heading" aria-labelledby="a3-sglang-direct"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> A.3 SGLang (direct)
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>c</th>
+      <th>TTFT Mean</th>
+      <th>TTFT P90</th>
+      <th>ITL Mean</th>
+      <th>ITL P90</th>
+      <th>TPS Mean</th>
+      <th>TPS P90</th>
+      <th>Lat Mean</th>
+      <th>Lat P90</th>
+      <th>RPS</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>399.5</td>
+      <td>397.2</td>
+      <td>8.94</td>
+      <td>8.95</td>
+      <td>83.40</td>
+      <td>84.44</td>
+      <td>1.54</td>
+      <td>1.54</td>
+      <td>0.65</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>771.7</td>
+      <td>786.9</td>
+      <td>9.72</td>
+      <td>9.79</td>
+      <td>63.79</td>
+      <td>64.99</td>
+      <td>2.01</td>
+      <td>2.03</td>
+      <td>0.50</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>811.0</td>
+      <td>948.2</td>
+      <td>10.65</td>
+      <td>10.73</td>
+      <td>59.33</td>
+      <td>61.42</td>
+      <td>2.17</td>
+      <td>2.30</td>
+      <td>0.46</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>782.6</td>
+      <td>820.6</td>
+      <td>12.89</td>
+      <td>13.18</td>
+      <td>52.88</td>
+      <td>54.17</td>
+      <td>2.42</td>
+      <td>2.52</td>
+      <td>0.41</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>833.6</td>
+      <td>948.8</td>
+      <td>16.53</td>
+      <td>17.06</td>
+      <td>43.54</td>
+      <td>44.88</td>
+      <td>2.94</td>
+      <td>3.06</td>
+      <td>0.34</td>
+    </tr>
+    <tr>
+      <td>32</td>
+      <td>915.2</td>
+      <td>1204.5</td>
+      <td>23.34</td>
+      <td>24.84</td>
+      <td>33.55</td>
+      <td>36.56</td>
+      <td>3.92</td>
+      <td>4.03</td>
+      <td>0.26</td>
+    </tr>
+    <tr>
+      <td>64</td>
+      <td>948.4</td>
+      <td>1263.5</td>
+      <td>27.08</td>
+      <td>27.32</td>
+      <td>29.11</td>
+      <td>30.20</td>
+      <td>4.41</td>
+      <td>4.74</td>
+      <td>0.23</td>
+    </tr>
+  </tbody>
+</table></div>
+<h3 id="a4-sglang--spec-dspark">
+  
+  
+    <a href="#a4-sglang--spec-dspark" class="anchor-heading" aria-labelledby="a4-sglang--spec-dspark"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> A.4 SGLang + Spec (DSpark)
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>c</th>
+      <th>TTFT Mean</th>
+      <th>TTFT P90</th>
+      <th>ITL Mean</th>
+      <th>ITL P90</th>
+      <th>TPS Mean</th>
+      <th>TPS P90</th>
+      <th>Lat Mean</th>
+      <th>Lat P90</th>
+      <th>RPS</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>450.6</td>
+      <td>630.0</td>
+      <td>4.26</td>
+      <td>4.94</td>
+      <td>129.86</td>
+      <td>142.68</td>
+      <td>0.99</td>
+      <td>1.09</td>
+      <td>1.01</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>484.6</td>
+      <td>495.7</td>
+      <td>8.59</td>
+      <td>12.98</td>
+      <td>87.02</td>
+      <td>122.46</td>
+      <td>1.58</td>
+      <td>2.19</td>
+      <td>0.63</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>588.3</td>
+      <td>1111.4</td>
+      <td>14.39</td>
+      <td>23.24</td>
+      <td>56.92</td>
+      <td>72.54</td>
+      <td>2.42</td>
+      <td>3.36</td>
+      <td>0.41</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>610.3</td>
+      <td>1070.4</td>
+      <td>23.56</td>
+      <td>32.04</td>
+      <td>37.78</td>
+      <td>50.83</td>
+      <td>3.60</td>
+      <td>4.76</td>
+      <td>0.28</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>745.1</td>
+      <td>1155.4</td>
+      <td>61.29</td>
+      <td>79.10</td>
+      <td>22.16</td>
+      <td>33.99</td>
+      <td>8.53</td>
+      <td>10.85</td>
+      <td>0.12</td>
+    </tr>
+    <tr>
+      <td>32</td>
+      <td>776.9</td>
+      <td>1166.4</td>
+      <td>66.93</td>
+      <td>90.59</td>
+      <td>15.42</td>
+      <td>20.27</td>
+      <td>9.28</td>
+      <td>12.20</td>
+      <td>0.11</td>
+    </tr>
+    <tr>
+      <td>64</td>
+      <td>4752.6</td>
+      <td>5252.9</td>
+      <td>34.40</td>
+      <td>45.13</td>
+      <td>14.54</td>
+      <td>16.78</td>
+      <td>9.13</td>
+      <td>10.77</td>
+      <td>0.11</td>
+    </tr>
+  </tbody>
+</table></div><hr />
+<h2 id="appendix-b-comparison-charts">
+  
+  
+    <a href="#appendix-b-comparison-charts" class="anchor-heading" aria-labelledby="appendix-b-comparison-charts"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Appendix B: Comparison Charts
+  
+  
+</h2>
+    
+
+<p>The following charts were produced for this report (<code class="language-plaintext highlighter-rouge">karsilastirma-en/</code> folder):</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>File</th>
+      <th>Content</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td><code class="language-plaintext highlighter-rouge">01-TTFT.png</code></td>
+      <td>TTFT Mean + P90, 4 configs</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td><code class="language-plaintext highlighter-rouge">02-ITL.png</code></td>
+      <td>ITL Mean + P90, 4 configs</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td><code class="language-plaintext highlighter-rouge">03-TPS.png</code></td>
+      <td>Per-User TPS Mean + P90, 4 configs</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td><code class="language-plaintext highlighter-rouge">04-Latency.png</code></td>
+      <td>Latency Mean + P90, 4 configs</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td><code class="language-plaintext highlighter-rouge">05-Throughput.png</code></td>
+      <td>Throughput (RPS), 4 configs</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td><code class="language-plaintext highlighter-rouge">06-Kapasite.png</code></td>
+      <td>C_max + Little’s Law N (P90 &amp; Mean)</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td><code class="language-plaintext highlighter-rouge">07-Aggregate-Output.png</code></td>
+      <td>Total produced tok/s (TPS x c)</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td><code class="language-plaintext highlighter-rouge">08-Spec-Speedup.png</code></td>
+      <td>Spec/Direct TPS ratio, break-even</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td><code class="language-plaintext highlighter-rouge">09-SLO-Heatmap.png</code></td>
+      <td>SLO compliance matrix (P90)</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td><code class="language-plaintext highlighter-rouge">10-Dashboard.png</code></td>
+      <td>2x3 grid summary (Mean values)</td>
+    </tr>
+  </tbody>
+</table></div>
+<h3 id="b1-summary-at-a-glance-dashboard">
+  
+  
+    <a href="#b1-summary-at-a-glance-dashboard" class="anchor-heading" aria-labelledby="b1-summary-at-a-glance-dashboard"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> B.1 Summary at a Glance (Dashboard)
+  
+  
+</h3>
+    
+
+<p><img src="/papers/kimi-k3-dgx-b300-inference-benchmark/karsilastirma-en/10-Dashboard.png" alt="Dashboard" /></p><hr />
+
+<p><em>This report was generated from measurements produced with the
+<a href="https://github.com/CordatusAI/llm-benchmark">CordatusAI/llm-benchmark</a> tool.</em>
+<em>Deployment commands are taken from vLLM’s and SGLang’s official Kimi K3 recipes.</em>
+<em>Charts were produced with matplotlib 3.7.5 + plotly 6.8.0.</em>
+<em>Report date: July 2026</em></p>
+
+          
+
+          
+        </main>
+        
+
+
+      </div>
+    </div>
+    
+      
+
+<div class="search-overlay"></div>
+
+    
+  </div>
+
+  
+
+  <script>
+    window.JTD_I18N = {
+      search_no_results: "No results found",
+      copy_code: "Copy code to clipboard"
+    };
+  </script>
+
+  
+
+
+<div id="cookie-consent-banner" class="cookie-consent" role="dialog"
+     aria-modal="false" aria-label="Cookie consent"
+     data-consent-state="pending" hidden>
+  <div class="cookie-consent__body">
+    <div class="cookie-consent__text">
+      <span class="cookie-consent__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+          <path d="M21 12a9 9 0 1 1-9-9 4.5 4.5 0 0 0 4.5 4.5A4.5 4.5 0 0 0 21 12zm-9-3.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-1.5 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm6-1.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-3 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0z"/>
+        </svg>
+      </span>
+      <p>We use cookies to analyze site traffic and improve your experience. By clicking 'Accept', you consent to the use of analytics cookies as described in our Privacy Policy.
+        <a href="https://aetherix.com/privacy-policy/" target="_blank" rel="noopener noreferrer"
+           class="cookie-consent__link">Privacy Policy</a>
+      </p>
+    </div>
+    <div class="cookie-consent__actions">
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--reject"
+              data-consent-action="rejected">Reject</button>
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--accept"
+              data-consent-action="accepted">Accept</button>
+    </div>
+  </div>
+</div>
+<script>
+  // Eski karar önbellekte varsa bannerı gösterme
+  (function() {
+    try {
+      var v = localStorage.getItem('cookieConsent');
+      if (v === 'accepted' || v === 'rejected') {
+        document.documentElement.dataset.cookieConsent = v;
+      }
+    } catch (e) {}
+  })();
+</script>
+<script src="/assets/js/cookie-banner.js" defer></script>
+
+</body>
+</html>
+
