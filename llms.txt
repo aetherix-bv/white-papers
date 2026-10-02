@@ -1,6 +1,6 @@
 # Aetherix White Papers
 
-> Aetherix B.V. technical white papers — NVIDIA DGX Spark, Jetson edge AI and RTX PRO systems: deployment guides, cluster setups and measured LLM and computer-vision inference benchmarks.
+> Aetherix B.V. technical white papers — NVIDIA DGX Spark, Jetson edge AI and RTX PRO systems: deployment guides, cluster setups and measured LLM and computer-vision inference benchmarks. English at the root, Dutch under /nl/.
 
 Every benchmark figure was measured with the CordatusAI LLM Benchmark Tool
 (LLM) or the cordatus-benchmark tool (CV). The
@@ -10,12 +10,12 @@ to them wherever they are shown.
 
 ## Benchmark explorers
 
-- [LLM Inference Benchmark Explorer](https://whitepapers.aetherix.com/llm-inference-benchmarks/): 109 runs — time to first token and per-request tokens/s at concurrency 1–64, with Max C (concurrent requests meeting TTFT ≤ 1 s and ≥ 20 tok/s by default) and estimated chat / agentic user capacity per model × device — how many people a model on a given device can serve. Each run's plain-language explanation is in the page HTML and in llms-full.txt.
-- [CV Inference Benchmark Explorer](https://whitepapers.aetherix.com/cv-inference-benchmarks/): 10 device × model results — FPS per camera and frame drop by camera count.
+- [LLM Inference Benchmark Explorer](https://whitepapers.aetherix.com/llm-inference-benchmarks/): 109 runs — time to first token and per-request tokens/s at concurrency 1–64, with Max C (concurrent requests meeting TTFT ≤ 1 s and ≥ 20 tok/s by default) and estimated chat / agentic user capacity per model × device — how many people a model on a given device can serve. Each run's plain-language explanation is in the page HTML and in llms-full.txt. Dutch: https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/
+- [CV Inference Benchmark Explorer](https://whitepapers.aetherix.com/cv-inference-benchmarks/): 10 device × model results — FPS per camera and frame drop by camera count. Dutch: https://whitepapers.aetherix.com/nl/cv-inference-benchmarks/
 
 ## Results as sentences
 
-- [All results, explained](https://whitepapers.aetherix.com/llms-full.txt): one paragraph per benchmark run — measured speed, Max C, estimated chat and agentic user capacity and what limits it; for CV, FPS per camera and max cameras.
+- [All results, explained (English and Dutch)](https://whitepapers.aetherix.com/llms-full.txt): one paragraph per benchmark run — measured speed, Max C, estimated chat and agentic user capacity and what limits it; for CV, FPS per camera and max cameras. Dutch pages are under /nl/.
 
 ## Raw data
 
