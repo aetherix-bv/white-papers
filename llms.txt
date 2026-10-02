@@ -10,7 +10,7 @@ to them wherever they are shown.
 
 ## Benchmark explorers
 
-- [LLM Inference Benchmark Explorer](https://whitepapers.aetherix.com/llm-inference-benchmarks/): 103 runs — time to first token and per-request tokens/s at concurrency 1–64, with Max C (concurrent requests meeting TTFT ≤ 1 s and ≥ 20 tok/s by default) and estimated chat / agentic user capacity per model × device — how many people a model on a given device can serve. Each run's plain-language explanation is in the page HTML and in llms-full.txt.
+- [LLM Inference Benchmark Explorer](https://whitepapers.aetherix.com/llm-inference-benchmarks/): 109 runs — time to first token and per-request tokens/s at concurrency 1–64, with Max C (concurrent requests meeting TTFT ≤ 1 s and ≥ 20 tok/s by default) and estimated chat / agentic user capacity per model × device — how many people a model on a given device can serve. Each run's plain-language explanation is in the page HTML and in llms-full.txt.
 - [CV Inference Benchmark Explorer](https://whitepapers.aetherix.com/cv-inference-benchmarks/): 10 device × model results — FPS per camera and frame drop by camera count.
 
 ## Results as sentences
@@ -22,7 +22,7 @@ to them wherever they are shown.
 - [LLM benchmarks (JSON)](https://whitepapers.aetherix.com/assets/data/benchmarks.json): one entry per run; `data_points` holds `c` (concurrent requests), `ttft_ms` and `tps` (per-request output tokens/s). 128 input / 128 output tokens, ten rounds per level, mean values.
 - [CV benchmarks index (JSON)](https://whitepapers.aetherix.com/assets/data/cv-benchmarks/index.json): devices and models; each model's measurements are in the file named by its `path`.
 
-LLM models benchmarked: DeepSeek V4 Flash 0731, DeepSeek-V3.1, DeepSeek-V4-Flash-Vision-Exp, DeepSeek-V4-Pro, DeepSeek-V4-Pro-0813, DeepSeek-V4.1-Flash, GLM-4.5-Air, GLM-4.6, GLM-4.7, GLM-5, GLM-5.1, GLM-5.2, GLM-5.3, GLM-5.3-Flash, GPT-OSS 120B, Gemma-4-26B-A4B-it, Gemma-4-31B-it, Inkling, Kimi K3, Kimi-K2-Thinking, Kimi-K2.5, Kimi-K2.6, Laguna-S-2.1, MiMo-V2.5-Pro, MiMo-V2.6-Pro-RL, MiniMax-M2, MiniMax-M2.5, MiniMax-M2.7, MiniMax-M3, Muse-Glimmer-30B, Nemotron-3-Ultra, Qwen3-235B-A22B, Qwen3-4B-Instruct-2507, Qwen3-Coder-30B-A3B-Instruct, Qwen3.5-27B, Qwen3.5-35B-A3B, Qwen3.5-397B-A17B, Qwen3.6-27B, Qwen3.6-35B-A3B, Qwen3.8-2.4T-A95B, Qwen3.8-27B, Qwen3.8-Flash-Next, Tencent-Hy3, Tencent-Hy4-preview
+LLM models benchmarked: DeepSeek V4 Flash 0731, DeepSeek-V3.1, DeepSeek-V4-Flash-Vision-Exp, DeepSeek-V4-Pro, DeepSeek-V4-Pro-0813, DeepSeek-V4.1-Flash, GLM-4.5-Air, GLM-4.6, GLM-4.7, GLM-5, GLM-5.1, GLM-5.2, GLM-5.3, GLM-5.3-Flash, GPT-OSS 120B, Gemma-4-26B-A4B-it, Gemma-4-31B-it, Inkling, Kimi K3, Kimi-K2-Thinking, Kimi-K2.5, Kimi-K2.6, Laguna-S-2.1, MiMo-V2.5-Pro, MiMo-V2.6-Flash-RL, MiMo-V2.6-Pro-MOPD, MiMo-V2.6-Pro-RL, MiniMax-M2, MiniMax-M2.5, MiniMax-M2.7, MiniMax-M3, Muse-Glimmer-30B, Nemotron-3-Ultra, Qwen3-235B-A22B, Qwen3-4B-Instruct-2507, Qwen3-Coder-30B-A3B-Instruct, Qwen3-VL-30B-A3B-Instruct, Qwen3.5-27B, Qwen3.5-35B-A3B, Qwen3.5-397B-A17B, Qwen3.6-27B, Qwen3.6-35B-A3B, Qwen3.8-2.4T-A95B, Qwen3.8-27B, Qwen3.8-Flash-Next, Tencent-Hy3, Tencent-Hy4-preview
 
 LLM devices: 1× DGX Spark, 2× DGX Spark, 3× DGX Spark, 4× DGX Spark, 8× DGX Spark, DGX B300, RTX PRO 6000, Thor
 

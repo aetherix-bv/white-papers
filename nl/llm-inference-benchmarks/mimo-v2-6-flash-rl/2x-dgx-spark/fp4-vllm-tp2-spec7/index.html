@@ -2,7 +2,7 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="nl">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=Edge">
@@ -31,25 +31,25 @@
 
   
 
-  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/nl/favicon.ico" type="image/x-icon">
 
 
 
   <!-- Begin Jekyll SEO tag v2.9.1 -->
-<title>Gemma-4-31B-it on 2× DGX Spark — NVFP4, vLLM, TP2 inference benchmark | Aetherix White Papers</title>
+<title>MiMo-V2.6-Flash-RL op 2× DGX Spark — FP4, vLLM, TP2, speculatieve decodering k=7 inferentiebenchmark | Aetherix White Papers</title>
 <meta name="generator" content="Jekyll v4.3.4" />
-<meta property="og:title" content="Gemma-4-31B-it on 2× DGX Spark — NVFP4, vLLM, TP2 inference benchmark" />
-<meta property="og:locale" content="en" />
-<meta name="description" content="In this measurement, Gemma-4-31B-it (31B parameters), served in NVFP4 format with vLLM on 2× DGX Spark (TP=2), reached a generation speed of 19.4 tok/s per request and a time to first token (TTFT) of 136 ms with a single request." />
-<meta name="twitter:description" property="og:description" content="In this measurement, Gemma-4-31B-it (31B parameters), served in NVFP4 format with vLLM on 2× DGX Spark (TP=2), reached a generation speed of 19.4 tok/s per request and a time to first token (TTFT) of 136 ms with a single request." />
-<link rel="canonical" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/gemma-4-31b-it/2x-dgx-spark/nvfp4-vllm-tp2/" />
-<meta property="og:url" content="https://whitepapers.aetherix.com/llm-inference-benchmarks/gemma-4-31b-it/2x-dgx-spark/nvfp4-vllm-tp2/" />
+<meta property="og:title" content="MiMo-V2.6-Flash-RL op 2× DGX Spark — FP4, vLLM, TP2, speculatieve decodering k=7 inferentiebenchmark" />
+<meta property="og:locale" content="nl" />
+<meta name="description" content="In deze meting bereikte MiMo-V2.6-Flash-RL (310B parameters), aangeboden in FP4-formaat met vLLM en speculatieve decodering op 2× DGX Spark (TP=2), met één verzoek een generatiesnelheid van 29.2 tok/s per verzoek en een time to first token (TTFT) van 378 ms." />
+<meta name="twitter:description" property="og:description" content="In deze meting bereikte MiMo-V2.6-Flash-RL (310B parameters), aangeboden in FP4-formaat met vLLM en speculatieve decodering op 2× DGX Spark (TP=2), met één verzoek een generatiesnelheid van 29.2 tok/s per verzoek en een time to first token (TTFT) van 378 ms." />
+<link rel="canonical" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/mimo-v2-6-flash-rl/2x-dgx-spark/fp4-vllm-tp2-spec7/" />
+<meta property="og:url" content="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/mimo-v2-6-flash-rl/2x-dgx-spark/fp4-vllm-tp2-spec7/" />
 <meta property="og:site_name" content="Aetherix White Papers" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="Gemma-4-31B-it on 2× DGX Spark — NVFP4, vLLM, TP2 inference benchmark" />
+<meta name="twitter:title" content="MiMo-V2.6-Flash-RL op 2× DGX Spark — FP4, vLLM, TP2, speculatieve decodering k=7 inferentiebenchmark" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","description":"In this measurement, Gemma-4-31B-it (31B parameters), served in NVFP4 format with vLLM on 2× DGX Spark (TP=2), reached a generation speed of 19.4 tok/s per request and a time to first token (TTFT) of 136 ms with a single request.","headline":"Gemma-4-31B-it on 2× DGX Spark — NVFP4, vLLM, TP2 inference benchmark","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://whitepapers.aetherix.com/assets/images/aetherix-logo.png"}},"url":"https://whitepapers.aetherix.com/llm-inference-benchmarks/gemma-4-31b-it/2x-dgx-spark/nvfp4-vllm-tp2/"}</script>
+{"@context":"https://schema.org","@type":"WebPage","description":"In deze meting bereikte MiMo-V2.6-Flash-RL (310B parameters), aangeboden in FP4-formaat met vLLM en speculatieve decodering op 2× DGX Spark (TP=2), met één verzoek een generatiesnelheid van 29.2 tok/s per verzoek en een time to first token (TTFT) van 378 ms.","headline":"MiMo-V2.6-Flash-RL op 2× DGX Spark — FP4, vLLM, TP2, speculatieve decodering k=7 inferentiebenchmark","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://whitepapers.aetherix.com/assets/images/aetherix-logo.png"}},"url":"https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/mimo-v2-6-flash-rl/2x-dgx-spark/fp4-vllm-tp2-spec7/"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -78,17 +78,27 @@
   });
 </script>
 
-<link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/gemma-4-31b-it/2x-dgx-spark/nvfp4-vllm-tp2/">
-<link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/gemma-4-31b-it/2x-dgx-spark/nvfp4-vllm-tp2/">
-<link rel="alternate" hreflang="x-default" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/gemma-4-31b-it/2x-dgx-spark/nvfp4-vllm-tp2/">
+<link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/mimo-v2-6-flash-rl/2x-dgx-spark/fp4-vllm-tp2-spec7/">
+<link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/mimo-v2-6-flash-rl/2x-dgx-spark/fp4-vllm-tp2-spec7/">
+<link rel="alternate" hreflang="x-default" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/mimo-v2-6-flash-rl/2x-dgx-spark/fp4-vllm-tp2-spec7/">
 <link rel="icon" type="image/png" sizes="192x192" href="/assets/images/favicon-192.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+<script>
+(function () {
+  var open = XMLHttpRequest.prototype.open;
+  var own = "/nl/search-data.json";
+  XMLHttpRequest.prototype.open = function (method, url) {
+    if (typeof url === "string" && /assets\/js\/search-data\.json$/.test(url)) arguments[1] = own;
+    return open.apply(this, arguments);
+  };
+})();
+</script>
 
 
 </head>
 
 <body>
-  <a class="skip-to-main" href="#main-content">Skip to main content</a>
+  <a class="skip-to-main" href="#main-content">Naar de hoofdinhoud</a>
   <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
   <symbol id="svg-link" viewBox="0 0 24 24">
   <title>Link</title>
@@ -156,7 +166,7 @@
   
     <div class="side-bar">
   <div class="site-header" role="banner">
-    <a href="/" class="site-title lh-tight">
+    <a href="/nl/" class="site-title lh-tight">
   <div class="site-logo" role="img" aria-label="Aetherix White Papers"></div>
 
 </a>
@@ -168,9 +178,9 @@
   <nav aria-label="Main" id="site-nav" class="site-nav">
   
   
-    <ul class="nav-list"><li class="nav-list-item"><a href="/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/about/" class="nav-list-link">About</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in White Papers category" aria-pressed="false">
+    <ul class="nav-list"><li class="nav-list-item"><a href="/nl/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/nl/about/" class="nav-list-link">Over ons</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in White Papers category" aria-pressed="false">
       <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
-    </button><a href="/papers/" class="nav-list-link">White Papers</a><ul class="nav-list"><li class="nav-list-item"><a href="/papers/local-llm-guide/" class="nav-list-link">Local LLM Usage Guide</a></li><li class="nav-list-item"><a href="/papers/conditional-memory-offloading/" class="nav-list-link">Conditional Memory and Offloading in LLM Inference</a></li><li class="nav-list-item"><a href="/papers/b300-gb300-cluster-architecture/" class="nav-list-link">NVIDIA DGX B300 vs GB300 NVL72 Cluster Architecture Comparison</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-2node-cluster-setup/" class="nav-list-link">DGX Spark 2-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-3node-cluster-setup/" class="nav-list-link">DGX Spark 3-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-4node-cluster-setup/" class="nav-list-link">DGX Spark 4-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-8node-cluster-setup/" class="nav-list-link">DGX Spark 8-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/qwen3.6-27b-dgx-spark-benchmark/" class="nav-list-link">Qwen3.6-27B DGX Spark Benchmark</a></li><li class="nav-list-item"><a href="/papers/qwen3.6-27b-dgx-spark-scaling/" class="nav-list-link">Qwen3.6-27B DGX Spark Cluster Scaling</a></li><li class="nav-list-item"><a href="/papers/deepseek-v4.1-flash-4spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash 4× DGX Spark Deployment</a></li><li class="nav-list-item"><a href="/papers/deepseek-v4.1-flash-8spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash 8× DGX Spark TP8 Deployment</a></li><li class="nav-list-item"><a href="/papers/kimi-k3-dgx-b300-inference-benchmark/" class="nav-list-link">Kimi K3 Inference Benchmark on DGX-B300</a></li></ul></li><li class="nav-list-item"><a href="/llm-inference-benchmarks/" class="nav-list-link">LLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/cv-inference-benchmarks/" class="nav-list-link">CV Inference Benchmark Explorer</a></li></ul>
+    </button><a href="/nl/papers/" class="nav-list-link">White Papers</a><ul class="nav-list"><li class="nav-list-item"><a href="/nl/papers/local-llm-guide/" class="nav-list-link">Handleiding voor lokaal LLM-gebruik</a></li><li class="nav-list-item"><a href="/nl/papers/conditional-memory-offloading/" class="nav-list-link">Conditional memory en offloading bij LLM-inferentie</a></li><li class="nav-list-item"><a href="/nl/papers/b300-gb300-cluster-architecture/" class="nav-list-link">NVIDIA DGX B300 vs GB300 NVL72: vergelijking van clusterarchitecturen</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-2node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 2 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-3node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 3 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-4node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 4 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-8node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 8 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/qwen3.6-27b-dgx-spark-benchmark/" class="nav-list-link">Qwen3.6-27B DGX Spark-benchmark</a></li><li class="nav-list-item"><a href="/nl/papers/qwen3.6-27b-dgx-spark-scaling/" class="nav-list-link">Schaling van Qwen3.6-27B op een DGX Spark-cluster</a></li><li class="nav-list-item"><a href="/nl/papers/deepseek-v4.1-flash-4spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash-deployment op 4× DGX Spark</a></li><li class="nav-list-item"><a href="/nl/papers/deepseek-v4.1-flash-8spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash-deployment op 8× DGX Spark met TP8</a></li><li class="nav-list-item"><a href="/nl/papers/kimi-k3-dgx-b300-inference-benchmark/" class="nav-list-link">Kimi K3-inferentiebenchmark op DGX-B300</a></li></ul></li><li class="nav-list-item"><a href="/nl/llm-inference-benchmarks/" class="nav-list-link">LLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/nl/cv-inference-benchmarks/" class="nav-list-link">CV Inference Benchmark Explorer</a></li></ul>
 
   
 </nav>
@@ -182,12 +192,12 @@
   
     
     
-      <span class="lang-switcher-item active">EN</span>
+      <a class="lang-switcher-item" href="/llm-inference-benchmarks/mimo-v2-6-flash-rl/2x-dgx-spark/fp4-vllm-tp2-spec7/">EN</a>
     
   
     
     
-      <a class="lang-switcher-item" href="/nl/llm-inference-benchmarks/gemma-4-31b-it/2x-dgx-spark/nvfp4-vllm-tp2/">NL</a>
+      <span class="lang-switcher-item active">NL</span>
     
   
 </div>
@@ -204,7 +214,7 @@
 
 <div class="search" role="search">
   <div class="search-input-wrap">
-    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Search" aria-label="Search" autocomplete="off">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Zoeken" aria-label="Zoeken" autocomplete="off">
     <label for="search-input" class="search-label"><svg viewBox="0 0 24 24" class="search-icon"><use xlink:href="#svg-search"></use></svg></label>
   </div>
   <div id="search-results" class="search-results"></div>
@@ -247,59 +257,57 @@
       <div id="main-content" class="main-content">
         <main>
           
-            <p class="oz-crumb"><a href="/llm-inference-benchmarks/">LLM Inference Benchmark Explorer</a></p>
+            <p class="oz-crumb"><a href="/nl/llm-inference-benchmarks/">LLM Inference Benchmark Explorer</a></p>
 <h1>
   
   
-    Gemma-4-31B-it on 2× DGX Spark — NVFP4, vLLM, TP2 inference benchmark
+    MiMo-V2.6-Flash-RL op 2× DGX Spark — FP4, vLLM, TP2, speculatieve decodering k=7 inferentiebenchmark
   
   
 </h1>
     
-<p><a href="/llm-inference-benchmarks/#gemma-4-31b_2spark_nvfp4_vllm">Open this configuration in the LLM Inference Benchmark Explorer</a></p>
+<p><a href="/nl/llm-inference-benchmarks/#mimo-v2.6-flash-rl_2spark_fp4_vllm_256k">Open deze configuratie in de LLM Inference Benchmark Explorer</a></p>
 <link rel="stylesheet" href="/assets/css/benchmark-table.css">
-<div data-bt-src="/assets/data/benchmarks.json" data-bt-logo="/assets/images/benchmark-logo.png" data-bt-only="gemma-4-31b_2spark_nvfp4_vllm">
+<div data-bt-src="/assets/data/benchmarks.json" data-bt-logo="/assets/images/benchmark-logo.png" data-bt-only="mimo-v2.6-flash-rl_2spark_fp4_vllm_256k">
 <div class="bt-static">
 <div class="table-wrapper"><table>
 <tbody>
-<tr><th scope="row">Model</th><td>Gemma-4-31B-it</td></tr>
-<tr><th scope="row">Parameters</th><td>31B</td></tr>
-<tr><th scope="row">Intelligence Index</th><td>14.7</td></tr>
-<tr><th scope="row">Agentic Index</th><td>4.2</td></tr>
-<tr><th scope="row">Device</th><td>2× DGX Spark</td></tr>
-<tr><th scope="row">Quantization</th><td>NVFP4</td></tr>
-<tr><th scope="row">Max C</th><td>0</td></tr>
-<tr><th scope="row">Chat Capacity</th><td>0</td></tr>
-<tr><th scope="row">Agentic Capacity</th><td>0</td></tr>
+<tr><th scope="row">Model</th><td>MiMo-V2.6-Flash-RL</td></tr>
+<tr><th scope="row">Parameters</th><td>310B</td></tr>
+<tr><th scope="row">Intelligence Index</th><td>—</td></tr>
+<tr><th scope="row">Agentic Index</th><td>—</td></tr>
+<tr><th scope="row">Apparaat</th><td>2× DGX Spark</td></tr>
+<tr><th scope="row">Kwantisatie</th><td>FP4</td></tr>
+<tr><th scope="row">Max C</th><td>2</td></tr>
+<tr><th scope="row">Chatcapaciteit</th><td>8</td></tr>
+<tr><th scope="row">Agentische capaciteit</th><td>3</td></tr>
 <tr><th scope="row">TP</th><td>2</td></tr>
 <tr><th scope="row">DP</th><td>—</td></tr>
 <tr><th scope="row">PP</th><td>—</td></tr>
 <tr><th scope="row">Engine</th><td>vLLM</td></tr>
-<tr><th scope="row">Speculative Decoding</th><td>—</td></tr>
+<tr><th scope="row">Speculatieve decodering</th><td>Ja</td></tr>
 </tbody>
 </table></div>
 <div class="table-wrapper"><table>
 <thead><tr><th>C</th><th>TTFT (ms)</th><th>TPS (tok/s)</th><th>Status</th></tr></thead>
 <tbody>
-<tr><td>1</td><td>136</td><td>19.42</td><td>FAIL</td></tr>
-<tr><td>2</td><td>227</td><td>19.59</td><td>FAIL</td></tr>
-<tr><td>4</td><td>246</td><td>19.17</td><td>FAIL</td></tr>
-<tr><td>8</td><td>280</td><td>18.20</td><td>FAIL</td></tr>
-<tr><td>16</td><td>293</td><td>15.81</td><td>FAIL</td></tr>
-<tr><td>32</td><td>337</td><td>13.21</td><td>FAIL</td></tr>
-<tr><td>64</td><td>420</td><td>9.16</td><td>FAIL</td></tr>
+<tr><td>1</td><td>378</td><td>29.20</td><td>PASS</td></tr>
+<tr><td>2</td><td>518</td><td>20.06</td><td>PASS</td></tr>
+<tr><td>4</td><td>693</td><td>15.37</td><td>FAIL</td></tr>
+<tr><td>8</td><td>876</td><td>10.61</td><td>FAIL</td></tr>
 </tbody>
 </table></div>
-<p>In this measurement, Gemma-4-31B-it (31B parameters), served in NVFP4 format with vLLM on 2× DGX Spark (TP=2), reached a generation speed of 19.4 tok/s per request and a time to first token (TTFT) of 136 ms with a single request.</p>
-<p>At the default speed targets (at least 20 tok/s per request, TTFT at most 1,000 ms) there is no capacity estimate for this configuration: no measured load level met them.</p>
+<p>In deze meting bereikte MiMo-V2.6-Flash-RL (310B parameters), aangeboden in FP4-formaat met vLLM en speculatieve decodering op 2× DGX Spark (TP=2), met één verzoek een generatiesnelheid van 29.2 tok/s per verzoek en een time to first token (TTFT) van 378 ms.</p>
+<p>Rekening houdend met de snelheidsdoelen en de beschikbare KV-cachecapaciteit, bedraagt de geschatte capaciteit 8 gebruikers voor chatgebruik en 3 voor agentisch gebruik. De realistische capaciteit ligt waarschijnlijk tussen deze twee waarden. In scenario&#39;s waarin programmeren, toolgebruik, lange workflows en multi-agentgebruik overheersen, benadert de capaciteit de agentische schatting; waar kortere interacties, standaardgesprekken en lichtere taken overheersen, benadert zij de chatschatting.</p>
+<p><strong>Opmerkingen:</strong> DFlash speculative decoding k=7, 256K context. Served as MiMo-V2.6-Flash-RL. Model: XiaomiMiMo/MiMo-V2.6-Flash-RL</p>
 </div>
 </div>
-<p class="bt-attribution">Intelligence Index and Agentic Index values are published by <a href="https://artificialanalysis.ai" rel="noopener">Artificial Analysis</a> and are reproduced here with attribution.</p>
-<div class="bt-explained-src" hidden><div data-bt-explained="gemma-4-31b_2spark_nvfp4_vllm"><p>In this measurement, Gemma-4-31B-it (31B parameters), served in NVFP4 format with vLLM on 2× DGX Spark (TP=2), reached a generation speed of 19.4 tok/s per request and a time to first token (TTFT) of 136 ms with a single request.</p><p>At the default speed targets (at least 20 tok/s per request, TTFT at most 1,000 ms) there is no capacity estimate for this configuration: no measured load level met them.</p></div></div>
+<p class="bt-attribution">De waarden van Intelligence Index en Agentic Index worden gepubliceerd door <a href="https://artificialanalysis.ai" rel="noopener">Artificial Analysis</a> en worden hier met bronvermelding overgenomen.</p>
+<div class="bt-explained-src" hidden><div data-bt-explained="mimo-v2.6-flash-rl_2spark_fp4_vllm_256k"><p>In deze meting bereikte MiMo-V2.6-Flash-RL (310B parameters), aangeboden in FP4-formaat met vLLM en speculatieve decodering op 2× DGX Spark (TP=2), met één verzoek een generatiesnelheid van 29.2 tok/s per verzoek en een time to first token (TTFT) van 378 ms.</p><p>Rekening houdend met de snelheidsdoelen en de beschikbare KV-cachecapaciteit, bedraagt de geschatte capaciteit 8 gebruikers voor chatgebruik en 3 voor agentisch gebruik. De realistische capaciteit ligt waarschijnlijk tussen deze twee waarden. In scenario&#39;s waarin programmeren, toolgebruik, lange workflows en multi-agentgebruik overheersen, benadert de capaciteit de agentische schatting; waar kortere interacties, standaardgesprekken en lichtere taken overheersen, benadert zij de chatschatting.</p></div></div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1"></script>
-<script src="/assets/js/benchmark-table.js"></script>
+<script src="/assets/js/benchmark-table.nl.js"></script>
 
           
 
@@ -322,8 +330,8 @@
 
   <script>
     window.JTD_I18N = {
-      search_no_results: "No results found",
-      copy_code: "Copy code to clipboard"
+      search_no_results: "Geen resultaten gevonden",
+      copy_code: "Code naar klembord kopiëren"
     };
   </script>
 
@@ -340,16 +348,16 @@
           <path d="M21 12a9 9 0 1 1-9-9 4.5 4.5 0 0 0 4.5 4.5A4.5 4.5 0 0 0 21 12zm-9-3.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-1.5 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm6-1.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-3 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0z"/>
         </svg>
       </span>
-      <p>We use cookies to analyze site traffic and improve your experience. By clicking 'Accept', you consent to the use of analytics cookies as described in our Privacy Policy.
+      <p>Wij gebruiken cookies om het websiteverkeer te analyseren en uw ervaring te verbeteren. Door op 'Accepteren' te klikken, stemt u in met het gebruik van analytische cookies zoals beschreven in ons privacybeleid.
         <a href="https://aetherix.com/privacy-policy/" target="_blank" rel="noopener noreferrer"
-           class="cookie-consent__link">Privacy Policy</a>
+           class="cookie-consent__link">Privacybeleid</a>
       </p>
     </div>
     <div class="cookie-consent__actions">
       <button type="button" class="cookie-consent__btn cookie-consent__btn--reject"
-              data-consent-action="rejected">Reject</button>
+              data-consent-action="rejected">Weigeren</button>
       <button type="button" class="cookie-consent__btn cookie-consent__btn--accept"
-              data-consent-action="accepted">Accept</button>
+              data-consent-action="accepted">Accepteren</button>
     </div>
   </div>
 </div>

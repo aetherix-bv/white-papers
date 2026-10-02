@@ -683,6 +683,17 @@ Defaults used below: TTFT ≤ 1000 ms, TPS ≥ 20 tok/s per request; chat sessio
 - agentic capacity (users): 18, limited by KV cache memory
 - In this measurement, Gemma-4-31B-it (31B parameters), served in NVFP4 format with vLLM on RTX PRO 6000, reached a generation speed of 40 tok/s per request and a time to first token (TTFT) of 38 ms with a single request. Considering the speed targets and the available KV cache capacity, the estimated capacity is 53 users for chat use and 18 for agentic use. The realistic capacity will likely fall between these two values. In scenarios dominated by coding, tool use, long workflows and multi-agent use, capacity approaches the agentic estimate; where shorter interactions, standard conversations and lighter tasks dominate, it approaches the chat estimate.
 
+### Gemma-4-31B-it · Thor · NVFP4 · vLLM · speculative decoding
+
+- link: https://whitepapers.aetherix.com/llm-inference-benchmarks/#gemma-4-31b_thor_nvfp4_vllm
+- model: Gemma-4-31B-it; parameters: 31B; checkpoint: https://huggingface.co/nvidia/gemma-4-31B-it-NVFP4
+- setup: Thor, NVFP4, vLLM, TP=1, DP=1, PP=1, speculative decoding: yes
+- measured (C = concurrent requests; TTFT / per-request TPS): C=1: 336 ms / 16.16 tok/s; C=2: 478 ms / 15.38 tok/s; C=4: 491 ms / 14.59 tok/s; C=8: 507 ms / 14.72 tok/s
+- Max C: 0
+- chat capacity (users): 0, limited by speed
+- agentic capacity (users): 0, limited by speed
+- In this measurement, Gemma-4-31B-it (31B parameters), served in NVFP4 format with vLLM and speculative decoding on Thor, reached a generation speed of 16.2 tok/s per request and a time to first token (TTFT) of 336 ms with a single request. At the default speed targets (at least 20 tok/s per request, TTFT at most 1,000 ms) there is no capacity estimate for this configuration: no measured load level met them.
+
 ### Laguna-S-2.1 · Thor · NVFP4 · vLLM
 
 - link: https://whitepapers.aetherix.com/llm-inference-benchmarks/#laguna-s-2.1_thor_nvfp4
@@ -1035,6 +1046,17 @@ Defaults used below: TTFT ≤ 1000 ms, TPS ≥ 20 tok/s per request; chat sessio
 - agentic capacity (users): 1+, limited by speed
 - In this measurement, Qwen3.8-27B (27B parameters), served in NVFP4 format with vLLM and speculative decoding on 1× DGX Spark, reached a generation speed of 30.6 tok/s per request and a time to first token (TTFT) of 281 ms with a single request. Considering the speed targets and the available KV cache capacity, the estimated capacity is at least 4 users for chat use and at least 1 for agentic use. The realistic capacity will likely fall between these two values. In scenarios dominated by coding, tool use, long workflows and multi-agent use, capacity approaches the agentic estimate; where shorter interactions, standard conversations and lighter tasks dominate, it approaches the chat estimate. “At least” means the configuration met the speed targets even at the highest load tested, so the real capacity may be higher. This configuration was measured with a single request only, so the estimate rests on one measurement.
 
+### Qwen3.8-27B · RTX PRO 6000 · FP8 · vLLM · speculative decoding
+
+- link: https://whitepapers.aetherix.com/llm-inference-benchmarks/#qwen3.8-27b_rtxpro6000_fp8_vllm
+- model: Qwen3.8-27B; parameters: 27B; checkpoint: https://huggingface.co/Qwen/Qwen3.8-27B-FP8
+- setup: RTX PRO 6000, FP8, vLLM, TP=1, DP=1, PP=1, speculative decoding: yes
+- measured (C = concurrent requests; TTFT / per-request TPS): C=1: 86 ms / 101.22 tok/s; C=2: 133 ms / 94.32 tok/s; C=4: 141 ms / 85.37 tok/s; C=8: 167 ms / 77.6 tok/s; C=16: 226 ms / 59.74 tok/s; C=32: 337 ms / 41.93 tok/s; C=64: 578 ms / 24.01 tok/s; C=128: 5543 ms / 12.33 tok/s
+- Max C: 64
+- chat capacity (users): 60, limited by KV cache memory
+- agentic capacity (users): 20, limited by KV cache memory
+- In this measurement, Qwen3.8-27B (27B parameters), served in FP8 format with vLLM and speculative decoding on RTX PRO 6000, reached a generation speed of 101.2 tok/s per request and a time to first token (TTFT) of 86 ms with a single request. Considering the speed targets and the available KV cache capacity, the estimated capacity is 60 users for chat use and 20 for agentic use. The realistic capacity will likely fall between these two values. In scenarios dominated by coding, tool use, long workflows and multi-agent use, capacity approaches the agentic estimate; where shorter interactions, standard conversations and lighter tasks dominate, it approaches the chat estimate.
+
 ### DeepSeek V4 Flash 0731 · 4× DGX Spark · NVFP4 · vLLM
 
 - link: https://whitepapers.aetherix.com/llm-inference-benchmarks/#deepseek-v4-flash_4spark_nvfp4_vllm_tp2dp2_c1
@@ -1144,6 +1166,50 @@ Defaults used below: TTFT ≤ 1000 ms, TPS ≥ 20 tok/s per request; chat sessio
 - chat capacity (users): 256+, limited by speed
 - agentic capacity (users): 96+, limited by speed
 - In this measurement, MiMo-V2.6-Pro-RL (1.02T parameters), served in FP4 format with vLLM and speculative decoding on DGX B300 (TP=4), reached a generation speed of 333.5 tok/s per request and a time to first token (TTFT) of 46 ms with a single request. Considering the speed targets and the available KV cache capacity, the estimated capacity is at least 256 users for chat use and at least 96 for agentic use. The realistic capacity will likely fall between these two values. In scenarios dominated by coding, tool use, long workflows and multi-agent use, capacity approaches the agentic estimate; where shorter interactions, standard conversations and lighter tasks dominate, it approaches the chat estimate. “At least” means the configuration met the speed targets even at the highest load tested, so the real capacity may be higher.
+
+### MiMo-V2.6-Pro-MOPD · DGX B300 · FP4 · vLLM · speculative decoding
+
+- link: https://whitepapers.aetherix.com/llm-inference-benchmarks/#mimo-v2.6-pro-mopd_b300_fp4_vllm_tp4
+- model: MiMo-V2.6-Pro-MOPD; parameters: 1.02T; checkpoint: https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-MOPD
+- setup: DGX B300, FP4, vLLM, TP=4, DP=1, PP=1, speculative decoding: yes
+- measured (C = concurrent requests; TTFT / per-request TPS): C=1: 60 ms / 316.5 tok/s; C=2: 68 ms / 257.75 tok/s; C=4: 80 ms / 214.21 tok/s; C=8: 100 ms / 163.11 tok/s; C=16: 126 ms / 131.72 tok/s; C=32: 172 ms / 108.05 tok/s; C=64: 172 ms / 86.08 tok/s; C=128: 307 ms / 51.18 tok/s; C=256: 535 ms / 27.91 tok/s
+- Max C: 256+
+- chat capacity (users): 954, limited by KV cache memory
+- agentic capacity (users): 246, limited by KV cache memory
+- In this measurement, MiMo-V2.6-Pro-MOPD (1.02T parameters), served in FP4 format with vLLM and speculative decoding on DGX B300 (TP=4), reached a generation speed of 316.5 tok/s per request and a time to first token (TTFT) of 60 ms with a single request. Considering the speed targets and the available KV cache capacity, the estimated capacity is 954 users for chat use and 246 for agentic use. The realistic capacity will likely fall between these two values. In scenarios dominated by coding, tool use, long workflows and multi-agent use, capacity approaches the agentic estimate; where shorter interactions, standard conversations and lighter tasks dominate, it approaches the chat estimate.
+
+### MiMo-V2.6-Flash-RL · 2× DGX Spark · FP4 · vLLM · speculative decoding
+
+- link: https://whitepapers.aetherix.com/llm-inference-benchmarks/#mimo-v2.6-flash-rl_2spark_fp4_vllm_256k
+- model: MiMo-V2.6-Flash-RL; parameters: 310B; checkpoint: https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Flash-RL
+- setup: 2× DGX Spark, FP4, vLLM, TP=2, DP=1, PP=1, speculative decoding: yes
+- measured (C = concurrent requests; TTFT / per-request TPS): C=1: 378 ms / 29.2 tok/s; C=2: 518 ms / 20.06 tok/s; C=4: 693 ms / 15.37 tok/s; C=8: 876 ms / 10.61 tok/s
+- Max C: 2
+- chat capacity (users): 8, limited by speed
+- agentic capacity (users): 3, limited by speed
+- In this measurement, MiMo-V2.6-Flash-RL (310B parameters), served in FP4 format with vLLM and speculative decoding on 2× DGX Spark (TP=2), reached a generation speed of 29.2 tok/s per request and a time to first token (TTFT) of 378 ms with a single request. Considering the speed targets and the available KV cache capacity, the estimated capacity is 8 users for chat use and 3 for agentic use. The realistic capacity will likely fall between these two values. In scenarios dominated by coding, tool use, long workflows and multi-agent use, capacity approaches the agentic estimate; where shorter interactions, standard conversations and lighter tasks dominate, it approaches the chat estimate.
+
+### MiMo-V2.6-Flash-RL · 4× DGX Spark · FP4 · vLLM · speculative decoding
+
+- link: https://whitepapers.aetherix.com/llm-inference-benchmarks/#mimo-v2.6-flash-rl_4spark_fp4_vllm_500k
+- model: MiMo-V2.6-Flash-RL; parameters: 310B; checkpoint: https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Flash-RL
+- setup: 4× DGX Spark, FP4, vLLM, TP=4, DP=1, PP=1, speculative decoding: yes
+- measured (C = concurrent requests; TTFT / per-request TPS): C=1: 303 ms / 45.68 tok/s; C=2: 402 ms / 32.47 tok/s; C=4: 497 ms / 22.94 tok/s; C=8: 643 ms / 14.88 tok/s
+- Max C: 4
+- chat capacity (users): 16, limited by speed
+- agentic capacity (users): 6, limited by speed
+- In this measurement, MiMo-V2.6-Flash-RL (310B parameters), served in FP4 format with vLLM and speculative decoding on 4× DGX Spark (TP=4), reached a generation speed of 45.7 tok/s per request and a time to first token (TTFT) of 303 ms with a single request. Considering the speed targets and the available KV cache capacity, the estimated capacity is 16 users for chat use and 6 for agentic use. The realistic capacity will likely fall between these two values. In scenarios dominated by coding, tool use, long workflows and multi-agent use, capacity approaches the agentic estimate; where shorter interactions, standard conversations and lighter tasks dominate, it approaches the chat estimate.
+
+### Qwen3-VL-30B-A3B-Instruct · Thor · FP8 · vLLM · speculative decoding
+
+- link: https://whitepapers.aetherix.com/llm-inference-benchmarks/#qwen3-vl-30b-a3b-instruct_thor_fp8_vllm
+- model: Qwen3-VL-30B-A3B-Instruct; parameters: 30B; checkpoint: https://huggingface.co/Qwen/Qwen3-VL-30B-A3B-Instruct-FP8
+- setup: Thor, FP8, vLLM, TP=1, DP=1, PP=1, speculative decoding: yes
+- measured (C = concurrent requests; TTFT / per-request TPS): C=1: 75 ms / 55.98 tok/s; C=2: 109 ms / 41.07 tok/s; C=4: 149 ms / 27.47 tok/s; C=8: 189 ms / 20.83 tok/s; C=16: 225 ms / 15.63 tok/s; C=32: 300 ms / 12.32 tok/s
+- Max C: 8
+- chat capacity (users): 32, limited by speed
+- agentic capacity (users): 12, limited by speed
+- In this measurement, Qwen3-VL-30B-A3B-Instruct (30B parameters), served in FP8 format with vLLM and speculative decoding on Thor, reached a generation speed of 56 tok/s per request and a time to first token (TTFT) of 75 ms with a single request. Considering the speed targets and the available KV cache capacity, the estimated capacity is 32 users for chat use and 12 for agentic use. The realistic capacity will likely fall between these two values. In scenarios dominated by coding, tool use, long workflows and multi-agent use, capacity approaches the agentic estimate; where shorter interactions, standard conversations and lighter tasks dominate, it approaches the chat estimate.
 
 ## CV inference benchmarks
 

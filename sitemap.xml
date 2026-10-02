@@ -809,6 +809,16 @@
     <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/gemma-4-31b-it/rtx-pro-6000/nvfp4-vllm-tp1/"/>
   </url>
   <url>
+    <loc>https://whitepapers.aetherix.com/llm-inference-benchmarks/gemma-4-31b-it/thor/nvfp4-vllm-tp1-spec3/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/gemma-4-31b-it/thor/nvfp4-vllm-tp1-spec3/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/gemma-4-31b-it/thor/nvfp4-vllm-tp1-spec3/"/>
+  </url>
+  <url>
+    <loc>https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/gemma-4-31b-it/thor/nvfp4-vllm-tp1-spec3/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/gemma-4-31b-it/thor/nvfp4-vllm-tp1-spec3/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/gemma-4-31b-it/thor/nvfp4-vllm-tp1-spec3/"/>
+  </url>
+  <url>
     <loc>https://whitepapers.aetherix.com/llm-inference-benchmarks/laguna-s-2-1/thor/nvfp4-vllm-tp1/</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/laguna-s-2-1/thor/nvfp4-vllm-tp1/"/>
     <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/laguna-s-2-1/thor/nvfp4-vllm-tp1/"/>
@@ -1129,6 +1139,16 @@
     <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/qwen3-8-27b/1x-dgx-spark/nvfp4-vllm-tp1-spec/"/>
   </url>
   <url>
+    <loc>https://whitepapers.aetherix.com/llm-inference-benchmarks/qwen3-8-27b/rtx-pro-6000/fp8-vllm-tp1-spec3/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/qwen3-8-27b/rtx-pro-6000/fp8-vllm-tp1-spec3/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/qwen3-8-27b/rtx-pro-6000/fp8-vllm-tp1-spec3/"/>
+  </url>
+  <url>
+    <loc>https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/qwen3-8-27b/rtx-pro-6000/fp8-vllm-tp1-spec3/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/qwen3-8-27b/rtx-pro-6000/fp8-vllm-tp1-spec3/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/qwen3-8-27b/rtx-pro-6000/fp8-vllm-tp1-spec3/"/>
+  </url>
+  <url>
     <loc>https://whitepapers.aetherix.com/llm-inference-benchmarks/deepseek-v4-flash-0731/4x-dgx-spark/nvfp4-vllm-tp2-dp2/</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/deepseek-v4-flash-0731/4x-dgx-spark/nvfp4-vllm-tp2-dp2/"/>
     <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/deepseek-v4-flash-0731/4x-dgx-spark/nvfp4-vllm-tp2-dp2/"/>
@@ -1227,6 +1247,46 @@
     <loc>https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/mimo-v2-6-pro-rl/dgx-b300/fp4-vllm-tp4-spec7/</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/mimo-v2-6-pro-rl/dgx-b300/fp4-vllm-tp4-spec7/"/>
     <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/mimo-v2-6-pro-rl/dgx-b300/fp4-vllm-tp4-spec7/"/>
+  </url>
+  <url>
+    <loc>https://whitepapers.aetherix.com/llm-inference-benchmarks/mimo-v2-6-pro-mopd/dgx-b300/fp4-vllm-tp4-spec7/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/mimo-v2-6-pro-mopd/dgx-b300/fp4-vllm-tp4-spec7/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/mimo-v2-6-pro-mopd/dgx-b300/fp4-vllm-tp4-spec7/"/>
+  </url>
+  <url>
+    <loc>https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/mimo-v2-6-pro-mopd/dgx-b300/fp4-vllm-tp4-spec7/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/mimo-v2-6-pro-mopd/dgx-b300/fp4-vllm-tp4-spec7/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/mimo-v2-6-pro-mopd/dgx-b300/fp4-vllm-tp4-spec7/"/>
+  </url>
+  <url>
+    <loc>https://whitepapers.aetherix.com/llm-inference-benchmarks/mimo-v2-6-flash-rl/2x-dgx-spark/fp4-vllm-tp2-spec7/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/mimo-v2-6-flash-rl/2x-dgx-spark/fp4-vllm-tp2-spec7/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/mimo-v2-6-flash-rl/2x-dgx-spark/fp4-vllm-tp2-spec7/"/>
+  </url>
+  <url>
+    <loc>https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/mimo-v2-6-flash-rl/2x-dgx-spark/fp4-vllm-tp2-spec7/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/mimo-v2-6-flash-rl/2x-dgx-spark/fp4-vllm-tp2-spec7/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/mimo-v2-6-flash-rl/2x-dgx-spark/fp4-vllm-tp2-spec7/"/>
+  </url>
+  <url>
+    <loc>https://whitepapers.aetherix.com/llm-inference-benchmarks/mimo-v2-6-flash-rl/4x-dgx-spark/fp4-vllm-tp4-spec7/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/mimo-v2-6-flash-rl/4x-dgx-spark/fp4-vllm-tp4-spec7/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/mimo-v2-6-flash-rl/4x-dgx-spark/fp4-vllm-tp4-spec7/"/>
+  </url>
+  <url>
+    <loc>https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/mimo-v2-6-flash-rl/4x-dgx-spark/fp4-vllm-tp4-spec7/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/mimo-v2-6-flash-rl/4x-dgx-spark/fp4-vllm-tp4-spec7/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/mimo-v2-6-flash-rl/4x-dgx-spark/fp4-vllm-tp4-spec7/"/>
+  </url>
+  <url>
+    <loc>https://whitepapers.aetherix.com/llm-inference-benchmarks/qwen3-vl-30b-a3b-instruct/thor/fp8-vllm-tp1-spec/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/qwen3-vl-30b-a3b-instruct/thor/fp8-vllm-tp1-spec/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/qwen3-vl-30b-a3b-instruct/thor/fp8-vllm-tp1-spec/"/>
+  </url>
+  <url>
+    <loc>https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/qwen3-vl-30b-a3b-instruct/thor/fp8-vllm-tp1-spec/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/qwen3-vl-30b-a3b-instruct/thor/fp8-vllm-tp1-spec/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/qwen3-vl-30b-a3b-instruct/thor/fp8-vllm-tp1-spec/"/>
   </url>
   <url>
     <loc>https://whitepapers.aetherix.com/cv-inference-benchmarks/gb10/peoplenet-int8/</loc>

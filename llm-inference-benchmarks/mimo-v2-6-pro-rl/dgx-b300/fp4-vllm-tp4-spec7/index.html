@@ -293,7 +293,7 @@
 <p>In this measurement, MiMo-V2.6-Pro-RL (1.02T parameters), served in FP4 format with vLLM and speculative decoding on DGX B300 (TP=4), reached a generation speed of 333.5 tok/s per request and a time to first token (TTFT) of 46 ms with a single request.</p>
 <p>Considering the speed targets and the available KV cache capacity, the estimated capacity is at least 256 users for chat use and at least 96 for agentic use. The realistic capacity will likely fall between these two values. In scenarios dominated by coding, tool use, long workflows and multi-agent use, capacity approaches the agentic estimate; where shorter interactions, standard conversations and lighter tasks dominate, it approaches the chat estimate.</p>
 <p>“At least” means the configuration met the speed targets even at the highest load tested, so the real capacity may be higher.</p>
-<p><strong>Notes:</strong> DFlash speculative decoding, 1M context. Model: XiaomiMiMo/MiMo-V2.6-Pro-RL</p>
+<p><strong>Notes:</strong> DFlash speculative decoding k=7, 1M context. Model: XiaomiMiMo/MiMo-V2.6-Pro-RL</p>
 </div>
 </div>
 <p class="bt-attribution">Intelligence Index and Agentic Index values are published by <a href="https://artificialanalysis.ai" rel="noopener">Artificial Analysis</a> and are reproduced here with attribution.</p>
