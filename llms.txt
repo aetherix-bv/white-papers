@@ -50,6 +50,7 @@ CV devices: GB10, Jetson AGX Thor, Jetson Orin Nano, RTX 3060, RTX 3090
 - [NVIDIA DGX B300 vs GB300 NVL72 Cluster Architecture Comparison](https://whitepapers.aetherix.com/papers/b300-gb300-cluster-architecture/): Technical comparison of two NVIDIA Blackwell Ultra architectures, DGX B300 and GB300 NVL72: system design, scaling approach, network fabric, power and cooling, and which workloads suit which platform.
 - [Qwen3.6-27B DGX Spark Benchmark](https://whitepapers.aetherix.com/papers/qwen3.6-27b-dgx-spark-benchmark/): Performance evaluation of the Qwen3.6-27B model on the NVIDIA DGX Spark (GB10) platform with FP8, FP8-MTP, AWQ-MTP, NVFP4, and NVFP4-MTP quantization variants.
 - [Qwen3.6-27B DGX Spark Cluster Scaling](https://whitepapers.aetherix.com/papers/qwen3.6-27b-dgx-spark-scaling/): Multi-node scaling study of Qwen3.6-27B-NVFP4 on 1x, 2x, and 4x NVIDIA DGX Spark (GB10): tensor parallelism over 200GbE, SLO-driven capacity planning, and TP-vs-replication deployment guidance.
+- [The First Open-Weight Alternatives to Jev](https://whitepapers.aetherix.com/papers/jev-open-weight-alternatives/): Six open-weight typed-decision models compared on one NVIDIA DGX Spark (GB10) through a shared state + questions interface and one 25-question set: accuracy, calibration, option-order sensitivity and latency — and which model fits which job.
 
 ## Other pages
 

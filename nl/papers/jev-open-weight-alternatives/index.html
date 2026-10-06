@@ -1,0 +1,1022 @@
+
+
+<!DOCTYPE html>
+
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-default.css">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet">
+
+  <style id="jtd-nav-activation">
+  
+
+.site-nav > ul.nav-list:first-child > li > a,
+.site-nav > ul.nav-list:first-child > li > ul > li:not(:nth-child(10)) > a,
+.site-nav > ul.nav-list:first-child > li > ul > li > ul > li > a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:not(:first-child) a,
+.site-nav li.external a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(10) > a {
+  font-weight: 600;
+  text-decoration: none;
+}.site-nav > ul.nav-list:first-child > li:nth-child(3) > button svg,
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(10) > button svg {
+  transform: rotate(-90deg);
+}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list,
+.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list > li.nav-list-item:nth-child(10) > ul.nav-list {
+  display: block;
+}
+  </style>
+
+  
+
+  
+    <script src="/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="icon" href="/nl/favicon.ico" type="image/x-icon">
+
+
+
+  <!-- Begin Jekyll SEO tag v2.9.1 -->
+<title>De eerste open-gewichtsalternatieven voor Jev | Aetherix White Papers</title>
+<meta name="generator" content="Jekyll v4.3.4" />
+<meta property="og:title" content="De eerste open-gewichtsalternatieven voor Jev" />
+<meta property="og:locale" content="nl" />
+<meta name="description" content="Zes open-weight typed-decision-modellen, vergeleken op één NVIDIA DGX Spark (GB10) via één gedeelde state + questions-interface en één set van 25 vragen: nauwkeurigheid, kalibratie, gevoeligheid voor de optievolgorde en latentie — plus welk model bij welke taak past." />
+<meta name="twitter:description" property="og:description" content="Zes open-weight typed-decision-modellen, vergeleken op één NVIDIA DGX Spark (GB10) via één gedeelde state + questions-interface en één set van 25 vragen: nauwkeurigheid, kalibratie, gevoeligheid voor de optievolgorde en latentie — plus welk model bij welke taak past." />
+<link rel="canonical" href="https://whitepapers.aetherix.com/nl/papers/jev-open-weight-alternatives/" />
+<meta property="og:url" content="https://whitepapers.aetherix.com/nl/papers/jev-open-weight-alternatives/" />
+<meta property="og:site_name" content="Aetherix White Papers" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-10-06T00:00:00+00:00" />
+<meta property="article:modified_time" content="2026-10-06T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="De eerste open-gewichtsalternatieven voor Jev" />
+<meta name="twitter:site" content="@Aetherixnl" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2026-10-06T00:00:00+00:00","datePublished":"2026-10-06T00:00:00+00:00","description":"Zes open-weight typed-decision-modellen, vergeleken op één NVIDIA DGX Spark (GB10) via één gedeelde state + questions-interface en één set van 25 vragen: nauwkeurigheid, kalibratie, gevoeligheid voor de optievolgorde en latentie — plus welk model bij welke taak past.","headline":"De eerste open-gewichtsalternatieven voor Jev","mainEntityOfPage":{"@type":"WebPage","@id":"https://whitepapers.aetherix.com/nl/papers/jev-open-weight-alternatives/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://whitepapers.aetherix.com/assets/images/aetherix-logo.png"}},"url":"https://whitepapers.aetherix.com/nl/papers/jev-open-weight-alternatives/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  
+<!-- Google tag (gtag.js) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JWLN33085T"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+
+  // Consent Mode v2 — default DENIED. Banner onayı ile GRANTED olur.
+  // KVKK/GDPR uyumu: ziyaretçi onay vermeden çerez set edilmez.
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    functionality_storage: 'granted',
+    security_storage: 'granted',
+    wait_for_update: 500
+  });
+
+  gtag('js', new Date());
+  gtag('config', 'G-JWLN33085T', {
+    anonymize_ip: true
+  });
+</script>
+
+<link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/papers/jev-open-weight-alternatives/">
+<link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/papers/jev-open-weight-alternatives/">
+<link rel="alternate" hreflang="x-default" href="https://whitepapers.aetherix.com/papers/jev-open-weight-alternatives/">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/images/favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+<script>
+(function () {
+  var open = XMLHttpRequest.prototype.open;
+  var own = "/nl/search-data.json";
+  XMLHttpRequest.prototype.open = function (method, url) {
+    if (typeof url === "string" && /assets\/js\/search-data\.json$/.test(url)) arguments[1] = own;
+    return open.apply(this, arguments);
+  };
+})();
+</script>
+
+
+</head>
+
+<body>
+  <a class="skip-to-main" href="#main-content">Naar de hoofdinhoud</a>
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="svg-link" viewBox="0 0 24 24">
+  <title>Link</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+</symbol>
+
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+  <title>Menu</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+    <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</symbol>
+
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+  <title>Expand</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</symbol>
+
+  <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
+<symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+  <title id="svg-external-link-title">(external link)</title>
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+</symbol>
+
+  
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+  <title>Document</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+</symbol>
+
+    <symbol id="svg-search" viewBox="0 0 24 24">
+  <title>Search</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</symbol>
+
+  
+  
+    <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+<symbol id="svg-copy" viewBox="0 0 16 16">
+  <title>Copy</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+</symbol>
+<symbol id="svg-copied" viewBox="0 0 16 16">
+  <title>Copied</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"/>
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"/>
+  </svg>
+</symbol>
+
+  
+</svg>
+
+  
+    <div class="side-bar">
+  <div class="site-header" role="banner">
+    <a href="/nl/" class="site-title lh-tight">
+  <div class="site-logo" role="img" aria-label="Aetherix White Papers"></div>
+
+</a>
+    <button id="menu-button" class="site-button btn-reset" aria-label="Toggle menu" aria-pressed="false">
+      <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  <nav aria-label="Main" id="site-nav" class="site-nav">
+  
+  
+    <ul class="nav-list"><li class="nav-list-item"><a href="/nl/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/nl/about/" class="nav-list-link">Over ons</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in White Papers category" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+    </button><a href="/nl/papers/" class="nav-list-link">White Papers</a><ul class="nav-list"><li class="nav-list-item"><a href="/nl/papers/local-llm-guide/" class="nav-list-link">Handleiding voor lokaal LLM-gebruik</a></li><li class="nav-list-item"><a href="/nl/papers/conditional-memory-offloading/" class="nav-list-link">Engram-offloading bij LLM-inferentie</a></li><li class="nav-list-item"><a href="/nl/papers/b300-gb300-cluster-architecture/" class="nav-list-link">NVIDIA DGX B300 vs GB300 NVL72: vergelijking van clusterarchitecturen</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-2node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 2 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-3node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 3 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-4node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 4 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-8node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 8 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/qwen3.6-27b-dgx-spark-benchmark/" class="nav-list-link">Qwen3.6-27B DGX Spark-benchmark</a></li><li class="nav-list-item"><a href="/nl/papers/qwen3.6-27b-dgx-spark-scaling/" class="nav-list-link">Schaling van Qwen3.6-27B op een DGX Spark-cluster</a></li><li class="nav-list-item"><a href="/nl/papers/jev-open-weight-alternatives/" class="nav-list-link">De eerste open-gewichtsalternatieven voor Jev</a></li><li class="nav-list-item"><a href="/nl/papers/deepseek-v4.1-flash-4spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash-deployment op 4× DGX Spark</a></li><li class="nav-list-item"><a href="/nl/papers/deepseek-v4.1-flash-8spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash-deployment op 8× DGX Spark met TP8</a></li><li class="nav-list-item"><a href="/nl/papers/kimi-k3-dgx-b300-inference-benchmark/" class="nav-list-link">Kimi K3-inferentiebenchmark op DGX-B300</a></li></ul></li><li class="nav-list-item"><a href="/nl/llm-inference-benchmarks/" class="nav-list-link">LLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/nl/cv-inference-benchmarks/" class="nav-list-link">CV Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/nl/vlm-inference-benchmarks/" class="nav-list-link">VLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/nl/changelog/" class="nav-list-link">Wijzigingslogboek</a></li></ul>
+
+  
+</nav>
+
+
+  
+  
+    <div class="lang-switcher">
+  
+    
+    
+      <a class="lang-switcher-item" href="/papers/jev-open-weight-alternatives/">EN</a>
+    
+  
+    
+    
+      <span class="lang-switcher-item active">NL</span>
+    
+  
+</div>
+<script src="/assets/js/lang-switch.js"></script>
+
+  
+</div>
+
+  
+  <div class="main" id="top">
+    <div id="main-header" class="main-header">
+  
+    
+
+<div class="search" role="search">
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Zoeken" aria-label="Zoeken" autocomplete="off">
+    <label for="search-input" class="search-label"><svg viewBox="0 0 24 24" class="search-icon"><use xlink:href="#svg-search"></use></svg></label>
+  </div>
+  <div id="search-results" class="search-results"></div>
+</div>
+
+  
+  
+  
+    <nav aria-label="Auxiliary" class="aux-nav">
+  <ul class="aux-nav-list">
+    
+      <li class="aux-nav-list-item">
+        <a href="https://aetherix.com" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          aetherix.com
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://github.com/aetherix-bv" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          GitHub
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+  
+</div>
+
+    <div class="main-content-wrap">
+      <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+  <ol class="breadcrumb-nav-list">
+    <li class="breadcrumb-nav-list-item"><a href="/nl/papers/">White Papers</a></li>
+    <li class="breadcrumb-nav-list-item"><span>De eerste open-gewichtsalternatieven voor Jev</span></li>
+  </ol>
+</nav>
+      <div id="main-content" class="main-content">
+        <main>
+          
+            <p><em>Opgesteld door: <strong>Aetherix B.V.</strong> — Trusted Jetson Hardware Provider for Edge AI</em></p>
+
+<blockquote>
+  <p><strong>Publicatiedatum:</strong> oktober 2026 (het concept waar dit uit voortkomt is gedateerd 5 oktober 2026)
+<strong>Reikwijdte:</strong> Wat een typed-decision-model doet, welke open-weight modellen de aanpak vandaag volgen, hoe zes daarvan zich verhouden op één NVIDIA DGX Spark via één gedeelde interface en één set van 25 vragen, en hoe u er een kiest.
+<strong>Opmerking:</strong> Modelnamen, licenties en gemeten waarden gelden per oktober 2026. De set is bewust klein: het is een smoketest die de vorm van het veld toont, geen wetenschappelijke benchmark.</p>
+</blockquote><hr />
+<h2 class="no_toc" id="inhoudsopgave">
+  
+  
+    <a href="#inhoudsopgave" class="anchor-heading" aria-labelledby="inhoudsopgave"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Inhoudsopgave
+  
+  
+</h2>
+    
+
+<ul id="markdown-toc">
+  <li><a href="#managementsamenvatting" id="markdown-toc-managementsamenvatting">Managementsamenvatting</a></li>
+  <li><a href="#1-wat-is-een-typed-decision--system-1" id="markdown-toc-1-wat-is-een-typed-decision--system-1">1. Wat is een typed decision / System 1?</a></li>
+  <li><a href="#2-de-eerste-generatie-kandidaten" id="markdown-toc-2-de-eerste-generatie-kandidaten">2. De eerste generatie kandidaten</a>    <ul>
+      <li><a href="#21-het-ecosysteem-deze-zes-zijn-een-deel-van-de-golf" id="markdown-toc-21-het-ecosysteem-deze-zes-zijn-een-deel-van-de-golf">2.1. Het ecosysteem: deze zes zijn een deel van de golf</a></li>
+    </ul>
+  </li>
+  <li><a href="#3-platform-en-protocol" id="markdown-toc-3-platform-en-protocol">3. Platform en protocol</a>    <ul>
+      <li><a href="#31-platform" id="markdown-toc-31-platform">3.1. Platform</a></li>
+      <li><a href="#32-testset" id="markdown-toc-32-testset">3.2. Testset</a></li>
+      <li><a href="#33-metrieken" id="markdown-toc-33-metrieken">3.3. Metrieken</a></li>
+    </ul>
+  </li>
+  <li><a href="#4-resultaten" id="markdown-toc-4-resultaten">4. Resultaten</a></li>
+  <li><a href="#5-welk-model-wanneer" id="markdown-toc-5-welk-model-wanneer">5. Welk model, wanneer?</a></li>
+  <li><a href="#6-beperkingen" id="markdown-toc-6-beperkingen">6. Beperkingen</a></li>
+  <li><a href="#7-reproduceerbaarheid" id="markdown-toc-7-reproduceerbaarheid">7. Reproduceerbaarheid</a></li>
+  <li><a href="#bronnen" id="markdown-toc-bronnen">Bronnen</a>    <ul>
+      <li><a href="#opmerkingen" id="markdown-toc-opmerkingen">Opmerkingen</a></li>
+    </ul>
+  </li>
+</ul><hr />
+<h2 id="managementsamenvatting">
+  
+  
+    <a href="#managementsamenvatting" class="anchor-heading" aria-labelledby="managementsamenvatting"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Managementsamenvatting
+  
+  
+</h2>
+    
+
+<ul>
+  <li><strong>Wat het is.</strong> TypeSafe <strong>Jev</strong> is een gesloten SaaS die <em>typed decisions</em> levert in plaats van chat: het neemt een <code class="language-plaintext highlighter-rouge">state</code> (tekst, afbeelding, logregel …) en een set vragen, en beantwoordt die allemaal in één doorloop met <strong>gekalibreerde kansen</strong> — geen chain-of-thought, geen vrije tekst om te verwerken. Gedurende 2026 verscheen een <strong>eerste generatie open-weight modellen</strong> die dezelfde aanpak volgt.</li>
+  <li><strong>Hoe ze vergeleken zijn.</strong> Zes ervan draaien zij aan zij op één <strong>NVIDIA DGX Spark (GB10)</strong>, via één gedeelde <code class="language-plaintext highlighter-rouge">state + questions</code>-interface en één gedeelde set van 25 vragen: 10 <code class="language-plaintext highlighter-rouge">noul</code>, 10 <code class="language-plaintext highlighter-rouge">choice</code>, 5 <code class="language-plaintext highlighter-rouge">score</code>.</li>
+  <li><strong>Nauwkeurigheid:</strong> <code class="language-plaintext highlighter-rouge">openjev</code> (27B) lost de set op met 20/20 en verreweg de beste kalibratie (ECE 0.008) — tegen de prijs van 27B aan gewichten, ~190 ms en een <strong>CC BY-NC 4.0</strong>-licentie (niet-commercieel).</li>
+  <li><strong>Praktische standaardkeuze:</strong> <code class="language-plaintext highlighter-rouge">NeoHorse-Jev-4B</code> haalt diezelfde nauwkeurigheid <strong>4x sneller</strong> (44 ms) onder <strong>Apache 2.0</strong>, en levert zijn eigen Python-runtime.</li>
+  <li><strong>Multimodaal:</strong> <code class="language-plaintext highlighter-rouge">Jev-Omni</code> is de enige open-weight optie (afbeelding + audio + video).</li>
+  <li><strong>Algemeen beeld:</strong> <code class="language-plaintext highlighter-rouge">noul</code> / <code class="language-plaintext highlighter-rouge">choice</code> zijn solide, <code class="language-plaintext highlighter-rouge">score</code> is overal het zwakste primitief, en bij echt dubbelzinnige zinnen komen de onafhankelijke modellen uit op <strong>dezelfde bias</strong>.</li>
+</ul><hr />
+<h2 id="1-wat-is-een-typed-decision--system-1">
+  
+  
+    <a href="#1-wat-is-een-typed-decision--system-1" class="anchor-heading" aria-labelledby="1-wat-is-een-typed-decision--system-1"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1. Wat is een typed decision / System 1?
+  
+  
+</h2>
+    
+
+<p>Een typed-decision-model chat niet. Het doet precies dit:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[state]      customer message · log line · screenshot · JSON row …
+[questions]  {"department": {"type": "choice", "criteria": {billing: …, technical: …}}}
+[answers]    {"department": {"label": "billing",
+                             "probabilities": {"billing": 0.94, "technical": 0.04, …}}}
+</code></pre></div></div>
+
+<p>Er zijn drie vraagtypes, en die worden allemaal in <strong>één forward pass</strong> beantwoord —
+geen chain-of-thought, geen vrije tekst om te verwerken. Vandaar ~10–200 ms per beslissing
+en kansen die van nature <strong>gekalibreerd</strong> zijn:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Primitief</th>
+      <th>Vraag</th>
+      <th>Uitvoer</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">noul</code></td>
+      <td>“Vraagt de klant om een terugbetaling?”</td>
+      <td><code class="language-plaintext highlighter-rouge">true</code> / <code class="language-plaintext highlighter-rouge">false</code> plus kansen</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">choice</code></td>
+      <td>“Welke afdeling moet dit verzoek afhandelen?”</td>
+      <td>label plus kans per optie</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">score</code></td>
+      <td>“Hoe dringend is dit verzoek?”</td>
+      <td>ordinale niveauscore (bijv. 0–3)</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Wat de vergelijking eerlijk maakt, is dat elk model via <strong>dezelfde invoer-/uitvoervorm</strong>
+wordt aangestuurd: elk zit achter één adapter (<code class="language-plaintext highlighter-rouge">scripts/jevclient.py</code>), zodat de aanroep
+altijd <code class="language-plaintext highlighter-rouge">predict(state, questions)</code> is.</p>
+
+<blockquote>
+  <p><strong>Referentie:</strong> TypeSafe <strong>Jev</strong> (<code class="language-plaintext highlighter-rouge">jev-1.13.0</code>) is een gesloten SaaS: het
+<code class="language-plaintext highlighter-rouge">POST /v1/systemone</code>-eindpunt, <strong>$0.042</strong> per miljoen invoertokens (uitvoer gratis),
+64k-context, <strong>alleen tekst</strong> als invoer. Het is met RLCD getraind op gekalibreerde
+beslissingen en serveert dezelfde gewichten aan elk account — geen fine-tuning per
+klant. Dit artikel probeert het niet te vervangen; het meet waar de eerste open-weight
+alternatieven vandaag staan. Elk open model hier imiteert Jev’s wire format
+(<code class="language-plaintext highlighter-rouge">state + questions</code>); documentatie: <a href="https://docs.typesafe.ai/models">docs.typesafe.ai</a>.</p>
+</blockquote><hr />
+<h2 id="2-de-eerste-generatie-kandidaten">
+  
+  
+    <a href="#2-de-eerste-generatie-kandidaten" class="anchor-heading" aria-labelledby="2-de-eerste-generatie-kandidaten"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2. De eerste generatie kandidaten
+  
+  
+</h2>
+    
+
+<p>Vijf van de zes zijn Apache 2.0 — <code class="language-plaintext highlighter-rouge">openjev</code> is CC BY-NC 4.0, en <code class="language-plaintext highlighter-rouge">bekko-17m</code> heeft op zijn
+modelkaart geen licentie toegewezen gekregen. Alle zes ondersteunen dezelfde drie
+primitieven, maar ze draaien heel verschillend:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Model</th>
+      <th>Omvang</th>
+      <th>Basisarchitectuur</th>
+      <th>Multimodaal</th>
+      <th>Uitvoerwijze</th>
+      <th>Licentie</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td><code class="language-plaintext highlighter-rouge">hotchpotch/bekko-system-one-v0-17m</code></td>
+      <td><strong>17M</strong></td>
+      <td>ModernBERT / Ettin reranker</td>
+      <td>–</td>
+      <td>transformers (in-process)</td>
+      <td>niet toegewezen</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td><code class="language-plaintext highlighter-rouge">convaiinnovations/laya</code></td>
+      <td><strong>421M</strong></td>
+      <td>ModernBERT-large, non-AR</td>
+      <td>–</td>
+      <td>pip + <code class="language-plaintext highlighter-rouge">laya-serve</code></td>
+      <td>Apache 2.0</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td><code class="language-plaintext highlighter-rouge">TokenRhythm/NeoHorse-Jev-4B</code></td>
+      <td><strong>4B</strong></td>
+      <td>Qwen3.5-4B plus besliskop</td>
+      <td>1 afbeelding</td>
+      <td>native wheel (<code class="language-plaintext highlighter-rouge">DecisionEngine</code>)</td>
+      <td>Apache 2.0</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td><code class="language-plaintext highlighter-rouge">autotrust/JEV-9B</code></td>
+      <td><strong>9B</strong> (+40M LoRA)</td>
+      <td>Qwen3.5-9B bevroren backbone</td>
+      <td>–</td>
+      <td>vLLM + LoRA <code class="language-plaintext highlighter-rouge">jev-decision</code></td>
+      <td>Apache 2.0</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td><code class="language-plaintext highlighter-rouge">openjev/openjev</code></td>
+      <td><strong>27B</strong></td>
+      <td>op Qwen3.5 gebaseerd, fp8</td>
+      <td>afbeelding/DOM</td>
+      <td>vLLM + <code class="language-plaintext highlighter-rouge">helper/shim.py</code></td>
+      <td><strong>CC BY-NC 4.0</strong></td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td><code class="language-plaintext highlighter-rouge">akhilaaa3/Jev-Omni</code></td>
+      <td><strong>12B</strong></td>
+      <td>Gemma 4 12B IT</td>
+      <td><strong>afbeelding + audio + video</strong></td>
+      <td>transformers</td>
+      <td>Apache 2.0</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>In het kort:</p>
+
+<ul>
+  <li><strong>bekko-17m</strong> — sub-milliseconde, gericht op CPU / browser / edge. Verreweg het
+kleinste lid.</li>
+  <li><strong>laya</strong> — 100+ talen, spotgoedkoop; <code class="language-plaintext highlighter-rouge">Router()</code> herkent de taal of de aanwijzing en
+kiest binnen een milliseconde het juiste checkpoint. <code class="language-plaintext highlighter-rouge">laya-serve</code> spreekt Jev’s
+<code class="language-plaintext highlighter-rouge">/v1/systemone</code>-contract.</li>
+  <li><strong>NeoHorse-Jev-4B</strong> — levert zijn eigen Python-runtime (geen vLLM nodig), accepteert
+tekst plus één afbeelding. Het eenvoudigst te installeren “echte model”.</li>
+  <li><strong>JEV-9B</strong> — System 1-beslissingsblok en System 2-tekstgeneratie op <strong>één set
+gewichten</strong>; interessant voor agentopstellingen.</li>
+  <li><strong>openjev</strong> — de volledigste beslissingsengine (tot 52 opties in één doorloop, DOM /
+schermafbeeldingen), maar hij wordt geserveerd als vLLM plus een aparte
+<em>kalibratieshim</em>.</li>
+  <li><strong>Jev-Omni</strong> — de enige echte multimodale optie; geladen via <code class="language-plaintext highlighter-rouge">trust_remote_code</code>.</li>
+</ul>
+<h3 id="21-het-ecosysteem-deze-zes-zijn-een-deel-van-de-golf">
+  
+  
+    <a href="#21-het-ecosysteem-deze-zes-zijn-een-deel-van-de-golf" class="anchor-heading" aria-labelledby="21-het-ecosysteem-deze-zes-zijn-een-deel-van-de-golf"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.1. Het ecosysteem: deze zes zijn een deel van de golf
+  
+  
+</h3>
+    
+
+<p>De eerste generatie beperkt zich niet tot deze zes modellen. Onafhankelijke
+ranglijsten laten een veel drukkere tabel zien:</p>
+
+<ul>
+  <li><strong><a href="https://github.com/fstandhartinger/jevbench">JevBench</a></strong> — een bord met 95
+systemen (Imajev-4B, Plumb-4B, decider-4b, kev, djev, SemIf, reflex …). Jev zelf
+staat daar 4e (63.29); het scoret 534 bevroren beslissingen langs de assen
+nauwkeurigheid, kalibratie, snelheid en kosten.</li>
+  <li><strong><a href="https://github.com/hotchpotch/S1MB">S1MB</a></strong> — een mozaïek van 137 benchmarks; de
+drie primitieven heten er <strong>exact hetzelfde</strong>: <em>Choice / Noul / Score</em>. De TypeSafe
+Jev- en Bekko-adapters staan al in de adapterlijst — <code class="language-plaintext highlighter-rouge">bekko-17m</code> is hier de kleine
+vertegenwoordiger van dat ecosysteem.</li>
+  <li><strong><a href="https://huggingface.co/spaces/multimodalart/jev-decision-index">Jev Decision Index</a></strong> —
+een door de community bijgehouden ranglijst.</li>
+</ul>
+
+<p>Twee interessante observaties: (1) Jev zelf aanvaardt vandaag <strong>alleen tekst</strong> —
+beslissingen op afbeelding / audio / video (<code class="language-plaintext highlighter-rouge">Jev-Omni</code>, NeoHorse hier) zijn een
+uitbreiding <em>voorbij</em> de referentie; (2) deze borden melden gevoeligheid voor de
+optievolgorde als een systematisch probleem (zie Sectie 4).</p><hr />
+<h2 id="3-platform-en-protocol">
+  
+  
+    <a href="#3-platform-en-protocol" class="anchor-heading" aria-labelledby="3-platform-en-protocol"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. Platform en protocol
+  
+  
+</h2>
+    
+<h3 id="31-platform">
+  
+  
+    <a href="#31-platform" class="anchor-heading" aria-labelledby="31-platform"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.1. Platform
+  
+  
+</h3>
+    
+
+<p>NVIDIA <strong>DGX Spark (GB10)</strong>: aarch64, 48 SM, compute capability 12.1, <strong>130 GB unified
+LPDDR5x</strong>, Ubuntu 24.04, driver 580.173.02 / CUDA 13.0, ~3.7 TB NVMe. Het is een
+desktopkast, dus de stack is Nvidia’s standaard Linux-image en niet JetPack/L4T.</p>
+
+<p><strong>Installatieval (kort):</strong> de aarch64-<code class="language-plaintext highlighter-rouge">torch&lt;2.13</code>-wheels op PyPI zijn
+<strong>alleen voor CPU</strong>. Voor GPU-torch op GB10 moet u <code class="language-plaintext highlighter-rouge">torch==2.10.0+cu130</code> installeren via
+<code class="language-plaintext highlighter-rouge">uv pip install --torch-backend cu130</code>; modelkaarten die <code class="language-plaintext highlighter-rouge">torch&gt;=2.10,&lt;2.11</code> vragen,
+lopen hier meteen tegenaan. Elk model krijgt bovendien zijn eigen gepinde <strong>venv</strong>.</p>
+<h3 id="32-testset">
+  
+  
+    <a href="#32-testset" class="anchor-heading" aria-labelledby="32-testset"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.2. Testset
+  
+  
+</h3>
+    
+
+<p><code class="language-plaintext highlighter-rouge">scripts/bench-set.json</code> — 25 vragen met handmatig geschreven verwachte labels:</p>
+
+<ul>
+  <li><strong>10 <code class="language-plaintext highlighter-rouge">noul</code></strong> (true/false) — terugbetalingen, phishing, prestatie-incidenten, enz.</li>
+  <li><strong>10 <code class="language-plaintext highlighter-rouge">choice</code></strong> (4 opties, met beschrijvingscriteria) — c1..c4 delen het sjabloon
+“welke afdeling”; c5..c10 dekken andere taken.</li>
+  <li><strong>5 <code class="language-plaintext highlighter-rouge">score</code></strong> — <strong>4 ordinale niveaus</strong> (<code class="language-plaintext highlighter-rouge">can wait / this week / today / right now</code>,
+0..3). Ontwerpnotitie: eerst is een rubric met 6 niveaus geprobeerd; het <code class="language-plaintext highlighter-rouge">score</code>-primitief
+van <code class="language-plaintext highlighter-rouge">laya</code> kon dat onderscheid niet leren, terwijl de rubric met 4 niveaus in elk model
+netjes scheidt.</li>
+</ul>
+
+<p><code class="language-plaintext highlighter-rouge">c4</code> is bewust lastig: <em>“I am applying for the backend engineering role. Where should
+I send my CV?”</em> → verwacht <code class="language-plaintext highlighter-rouge">other</code>.</p>
+<h3 id="33-metrieken">
+  
+  
+    <a href="#33-metrieken" class="anchor-heading" aria-labelledby="33-metrieken"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.3. Metrieken
+  
+  
+</h3>
+    
+
+<p><code class="language-plaintext highlighter-rouge">scripts/bench.py &lt;model&gt; --shuffle 2</code> haalt elk model door dezelfde set en schrijft
+één JSON-bestand.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Metriek</th>
+      <th>Definitie</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>accuracy</strong> (noul / choice)</td>
+      <td>exacte overeenkomst met het menselijke label</td>
+    </tr>
+    <tr>
+      <td><strong>score MAE</strong></td>
+      <td>absolute fout tussen verwachte en voorspelde niveauscore (0–3)</td>
+    </tr>
+    <tr>
+      <td><strong>ECE (10 bins)</strong></td>
+      <td>Expected Calibration Error — “0.9 zeker” moet 9 van de 10 keer kloppen (lager is beter)</td>
+    </tr>
+    <tr>
+      <td><strong>flip</strong></td>
+      <td>het percentage antwoorden dat verandert wanneer de optievolgorde wordt geschud</td>
+    </tr>
+    <tr>
+      <td><strong>p50 / p95</strong></td>
+      <td>latentie van begin tot eind (cliëntzijde; HTTP inbegrepen, laden van het model niet)</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><code class="language-plaintext highlighter-rouge">--shuffle 2</code> doet 2 extra bevragingen per vraag (50 extra in totaal) om de
+gevoeligheid voor de optievolgorde te meten. <strong>Meetnotitie:</strong> een eerdere versie van de
+<code class="language-plaintext highlighter-rouge">flip</code>-metriek vergeleek scorelabels in niet-overeenkomende formaten (<code class="language-plaintext highlighter-rouge">"2"</code> versus
+<code class="language-plaintext highlighter-rouge">"2.000"</code>), wat het percentage opblies; de labels zijn nu genormaliseerd en de meting is
+opnieuw uitgevoerd.</p><hr />
+<h2 id="4-resultaten">
+  
+  
+    <a href="#4-resultaten" class="anchor-heading" aria-labelledby="4-resultaten"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. Resultaten
+  
+  
+</h2>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>noul (10)</th>
+      <th>choice (10)</th>
+      <th>score MAE</th>
+      <th>ECE</th>
+      <th>flip</th>
+      <th>p50</th>
+      <th>p95</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>openjev</strong> (27B)</td>
+      <td><strong>1.00</strong></td>
+      <td><strong>1.00</strong></td>
+      <td><strong>0.4</strong></td>
+      <td><strong>0.008</strong></td>
+      <td>0.20</td>
+      <td>189.7 ms</td>
+      <td>214.4 ms</td>
+    </tr>
+    <tr>
+      <td><strong>NeoHorse-Jev-4B</strong> (4B)</td>
+      <td><strong>1.00</strong></td>
+      <td><strong>1.00</strong></td>
+      <td>0.8</td>
+      <td>0.035</td>
+      <td>0.20</td>
+      <td><strong>44.3 ms</strong></td>
+      <td>57.6 ms</td>
+    </tr>
+    <tr>
+      <td><strong>Jev-Omni</strong> (12B)</td>
+      <td><strong>1.00</strong></td>
+      <td>0.90</td>
+      <td><strong>0.4</strong></td>
+      <td>0.045</td>
+      <td>0.22</td>
+      <td>143.7 ms</td>
+      <td>162.6 ms</td>
+    </tr>
+    <tr>
+      <td><strong>JEV-9B</strong> (9B + LoRA)</td>
+      <td><strong>1.00</strong></td>
+      <td>0.90</td>
+      <td>0.6</td>
+      <td>0.022</td>
+      <td>0.20</td>
+      <td>99.6 ms</td>
+      <td>109.7 ms</td>
+    </tr>
+    <tr>
+      <td><strong>laya</strong> (421M)</td>
+      <td>0.90</td>
+      <td>0.90</td>
+      <td>1.2</td>
+      <td>0.089</td>
+      <td>0.20</td>
+      <td><strong>16.5 ms</strong></td>
+      <td>18.0 ms</td>
+    </tr>
+    <tr>
+      <td><strong>bekko-17m</strong> (17M)</td>
+      <td>0.40</td>
+      <td><strong>1.00</strong></td>
+      <td>1.2</td>
+      <td>0.247</td>
+      <td>0.20</td>
+      <td><strong>7.7 ms</strong></td>
+      <td>10.1 ms</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><em>De getallen gelden voor deze 25 vragen — een smoketest, geen wetenschappelijke benchmark
+(zie Sectie 6).</em></p>
+
+<p><strong>Lezing:</strong></p>
+
+<ul>
+  <li><strong>openjev</strong> maakt de set af (20/20, tekst) met de beste kalibratie met een ruime
+marge (ECE 0.008). p50 190 ms; de modelkaart meldt <strong>~80 ms voor korte
+tekstbeslissingen</strong> en ~210 ms voor een webstap (~1,460 tokens, 23 opties) op H100
+fp8. Het hier gerapporteerde getal is end-to-end (cliënt + shim + HTTP op GB10) en
+ligt in die band — de workloads zijn niet identiek, maar GB10 presteert in dezelfde
+klasse als H100. Kosten: 27B aan gewichten, CC-BY-NC.</li>
+  <li><strong>NeoHorse-Jev-4B</strong> haalt die nauwkeurigheid met een kant-en-klare runtime <strong>~4x
+sneller</strong> (44 ms) onder Apache 2.0 → de kandidaat “installeer het en gebruik het ook
+echt”.</li>
+  <li><strong>Jev-Omni</strong> haalt 19/20 in één modaliteit en is het enige adres voor multimodale
+behoeften. De score MAE van 0.4 is de beste waarde (geldt alleen voor de rubric met 4
+niveaus).</li>
+  <li><strong>JEV-9B</strong> haalt 19/20 met de op één na beste kalibratie (ECE 0.022); System 1 +
+System 2 op één set gewichten is waardevol voor agentwerk.</li>
+  <li><strong>laya</strong> haalt 18/20 en is het snelst geserveerde model (16 ms); de zwakte bij <code class="language-plaintext highlighter-rouge">score</code>
+staat op de modelkaart. Nog steeds het juiste adres voor meertalig werk.</li>
+  <li><strong>bekko-17m</strong> scoort <strong>10/10 bij <code class="language-plaintext highlighter-rouge">choice</code></strong> — opmerkelijk voor 17M — maar 4/10 bij
+<code class="language-plaintext highlighter-rouge">noul</code> (capaciteitsgrens). 7.7 ms maakt het tot een startpunt voor edge.</li>
+</ul>
+
+<p><strong>Overstijgende patronen:</strong></p>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">c4</code> bracht drie modellen precies dezelfde fout in</strong> (allemaal <code class="language-plaintext highlighter-rouge">technical</code>, verwacht
+was <code class="language-plaintext highlighter-rouge">other</code>). Onafhankelijke modellen delen dezelfde bias bij dubbelzinnige zinnen —
+productiepijplijnen hebben nabij die grens een tweede controle of een mens in de lus
+nodig.</li>
+  <li><strong>Gevoeligheid voor de optievolgorde is een systematisch probleem.</strong> De <code class="language-plaintext highlighter-rouge">openjev</code>-
+modelkaart meldt een flippercentage van 2.3% na afstemming op 2,000 voorbeelden;
+JevBench meldt dat een klein open model op dezelfde taak van 72% naar 21% daalt
+wanneer de optievolgorde wordt omgedraaid. De hier gebruikte set heeft maar 2–4 opties
+per vraag, dus hogere percentages zijn te verwachten; gebruik in productie
+betrouwbaarheidsdrempels en leid antwoorden met lage zekerheid naar een tweede controle.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">score</code> is overal het zwakste primitief</strong> (MAE 0.4–1.2). Bouw de productielogica op
+<code class="language-plaintext highlighter-rouge">noul</code> / <code class="language-plaintext highlighter-rouge">choice</code>; gebruik <code class="language-plaintext highlighter-rouge">score</code> alleen via drempels.</li>
+  <li><strong>Kleine modellen leunen op de beschrijvingen van de opties.</strong> De 10/10 van Bekko bij
+<code class="language-plaintext highlighter-rouge">choice</code> komt van zorgvuldig geschreven <code class="language-plaintext highlighter-rouge">criteria</code>-beschrijvingen — laat ze niet leeg.</li>
+</ul><hr />
+<h2 id="5-welk-model-wanneer">
+  
+  
+    <a href="#5-welk-model-wanneer" class="anchor-heading" aria-labelledby="5-welk-model-wanneer"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5. Welk model, wanneer?
+  
+  
+</h2>
+    
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Need image / audio / video in the decision?
+├── Text + 1 image, 44 ms   →  NeoHorse-Jev-4B      (Apache 2.0)
+└── Audio + video           →  Jev-Omni             (12B, the only open multimodal)
+└── No ↓
+
+Runs on device / browser / CPU?
+├── Yes →  bekko-17m        (17M; prefer `choice` over `noul`)
+└── No ↓
+
+10–100+ languages?
+├── Yes →  laya             (Router, 16 ms; fine-tune on your data)
+└── No ↓
+
+Long documents / DOM / 50+ options, and best calibration?
+├── Yes →  openjev          (27B, 190 ms, **CC-BY-NC**)
+└── No ↓
+
+Code generation + decision on one weight set?
+├── Yes →  JEV-9B           (System 1 + 2, 100 ms)
+└── Default →  NeoHorse-Jev-4B (44 ms, Apache 2.0)
+</code></pre></div></div>
+
+<p><strong>Licentiewaarschuwing:</strong> <code class="language-plaintext highlighter-rouge">openjev</code> is gesloten voor commercieel gebruik (CC BY-NC 4.0 —
+een commerciële licentie wordt apart verkocht); <code class="language-plaintext highlighter-rouge">bekko-17m</code> heeft op zijn modelkaart geen
+licentie toegewezen gekregen, dus controleer de licenties van de onderdelen vóór
+productie. De overige vier zijn Apache 2.0.</p><hr />
+<h2 id="6-beperkingen">
+  
+  
+    <a href="#6-beperkingen" class="anchor-heading" aria-labelledby="6-beperkingen"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6. Beperkingen
+  
+  
+</h2>
+    
+
+<ol>
+  <li><strong>25 vragen = smoketest.</strong> Statistische kracht is laag; <code class="language-plaintext highlighter-rouge">score</code> is met maar 5
+voorbeelden gepolst. Voor serieuze claims vergroot u de set (zie Sectie 7) en
+kruist u de uitkomst met onafhankelijke benchmarks:
+<a href="https://huggingface.co/spaces/multimodalart/jev-decision-index">Jev Decision Index</a>,
+<a href="https://github.com/hotchpotch/S1MB">S1MB</a>,
+<a href="https://github.com/fstandhartinger/jevbench">JevBench</a>,
+<a href="https://github.com/gazelle93/decision-models-under-pressure">decision-models-under-pressure</a>.</li>
+  <li><strong>Eén apparaat, één sessie.</strong> GB10 is één meetpunt; latentie wordt aan de cliëntzijde
+gemeten (HTTP inbegrepen, laden van het model niet).</li>
+  <li><strong>Eén taal (Engelse invoer).</strong> De meertalige claim van <code class="language-plaintext highlighter-rouge">laya</code> wordt door deze set niet
+op de proef gesteld.</li>
+  <li><strong>Multimodaal is niet geverifieerd.</strong> <code class="language-plaintext highlighter-rouge">Jev-Omni</code> deed mee aan de test in één
+modaliteit; het pad via afbeelding / audio / video is bewust buiten beschouwing
+gelaten.</li>
+  <li><strong>flip is gevoelig voor het aantal opties.</strong> Bij 2–4 opties heeft schudden een groot
+effect; de percentages van 2–7% op de modelkaarten komen uit tests met 20+ opties.
+Bovendien is de meting opnieuw uitgevoerd nadat de labelopmaakfout uit Sectie 3.3 was
+hersteld.</li>
+</ol><hr />
+<h2 id="7-reproduceerbaarheid">
+  
+  
+    <a href="#7-reproduceerbaarheid" class="anchor-heading" aria-labelledby="7-reproduceerbaarheid"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7. Reproduceerbaarheid
+  
+  
+</h2>
+    
+
+<p>De run houdt alles onder één hoofdmap — één map met de gedownloade gewichten, één
+gepinde virtuele omgeving per model — en wordt aangestuurd door een kleine set shell- en
+Python-bestanden die de zes modellen achter één adapter plaatsen. De tabel hieronder
+laat zien hoe die set eruitziet, zodat de run opnieuw opgebouwd kan worden:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># setup + download (once)</span>
+bash scripts/00-setup.sh
+bash scripts/01-download.sh all
+
+<span class="c"># bench all six models in one command (starts and stops servers itself)</span>
+<span class="nb">nohup </span>bash scripts/rerun-bench.sh <span class="o">&gt;</span> out/rerun-bench.log 2&gt;&amp;1 &amp;
+python3 scripts/summary.py        <span class="c"># summary table</span>
+</code></pre></div></div>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Script</th>
+      <th>Doel</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">00-setup.sh</code></td>
+      <td>5 gepinde <code class="language-plaintext highlighter-rouge">uv</code>-venvs (<code class="language-plaintext highlighter-rouge">--torch-backend cu130</code>, installatie in serie)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">01-download.sh</code></td>
+      <td>downloadt alle zes modellen naar <code class="language-plaintext highlighter-rouge">models/</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">02..07</code></td>
+      <td>serveer- en smoketestscripts per model (laya :8102, jev9b :8104, openjev :8105+:8106)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">jevclient.py</code></td>
+      <td>gedeelde adapterlaag <code class="language-plaintext highlighter-rouge">predict(state, questions)</code> (6 modellen)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">bench-set.json</code></td>
+      <td>de gedeelde 25 vragen plus verwachte labels</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">bench.py</code></td>
+      <td>test voor één model (accuracy, MAE, ECE, flip, p50/p95)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">rerun-bench.sh</code></td>
+      <td>draait alle zes modellen achter elkaar</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">summary.py</code></td>
+      <td><code class="language-plaintext highlighter-rouge">out/bench-*.json</code> → samenvatting in één regel</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Om de set te vergroten:</strong> voeg <code class="language-plaintext highlighter-rouge">items</code> toe aan <code class="language-plaintext highlighter-rouge">bench-set.json</code> met hetzelfde schema
+(<code class="language-plaintext highlighter-rouge">id</code>, <code class="language-plaintext highlighter-rouge">kind</code>, <code class="language-plaintext highlighter-rouge">state</code>, <code class="language-plaintext highlighter-rouge">question</code>, <code class="language-plaintext highlighter-rouge">criteria</code>, <code class="language-plaintext highlighter-rouge">expect</code>); <code class="language-plaintext highlighter-rouge">bench.py</code> vraagt geen
+wijzigingen. Aanbevolen wordt de <code class="language-plaintext highlighter-rouge">score</code>-rubric op 4 niveaus te houden (zie Sectie 3.2).</p><hr />
+<h2 id="bronnen">
+  
+  
+    <a href="#bronnen" class="anchor-heading" aria-labelledby="bronnen"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Bronnen
+  
+  
+</h2>
+    
+
+<p><strong>Typed decisions en het referentiemodel:</strong></p>
+
+<ul>
+  <li>TypeSafe Jev-modeldocumentatie — <a href="https://docs.typesafe.ai/models">https://docs.typesafe.ai/models</a></li>
+</ul>
+
+<p><strong>Onafhankelijke ranglijsten:</strong></p>
+
+<ul>
+  <li>JevBench — <a href="https://github.com/fstandhartinger/jevbench">https://github.com/fstandhartinger/jevbench</a></li>
+  <li>S1MB — <a href="https://github.com/hotchpotch/S1MB">https://github.com/hotchpotch/S1MB</a></li>
+  <li>Jev Decision Index — <a href="https://huggingface.co/spaces/multimodalart/jev-decision-index">https://huggingface.co/spaces/multimodalart/jev-decision-index</a></li>
+  <li>decision-models-under-pressure — <a href="https://github.com/gazelle93/decision-models-under-pressure">https://github.com/gazelle93/decision-models-under-pressure</a></li>
+</ul>
+
+<p><strong>Hardware:</strong></p>
+
+<ul>
+  <li>NVIDIA DGX Spark — <a href="https://www.nvidia.com/en-us/products/workstations/dgx-spark/">https://www.nvidia.com/en-us/products/workstations/dgx-spark/</a></li>
+</ul>
+
+<p><strong>Verwante artikelen en gereedschap:</strong></p>
+
+<ul>
+  <li><a href="/nl/papers/local-llm-guide/">Local LLM Usage Guide</a></li>
+  <li><a href="/nl/llm-inference-benchmarks/">LLM Inference Benchmark Explorer</a></li>
+</ul><hr />
+<h3 id="opmerkingen">
+  
+  
+    <a href="#opmerkingen" class="anchor-heading" aria-labelledby="opmerkingen"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Opmerkingen
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>Metingen:</strong> accuracy, MAE, ECE, flip en latentie komen uit één run van de gedeelde
+set van 25 vragen op het platform uit Sectie 3.1, via één adapter per model. Latentie
+wordt aan de cliëntzijde en end-to-end gemeten: HTTP inbegrepen, laden van het model
+niet.</li>
+  <li><strong>Reikwijdte van de set:</strong> 25 vragen is een smoketest. De getallen beschrijven deze zes
+modellen op deze set; het is geen rangorde van het bredere veld — daarvoor zijn de
+onafhankelijke ranglijsten hierboven er.</li>
+  <li><strong>Licenties:</strong> open gewichten zijn niet hetzelfde als vrij gebruik. <code class="language-plaintext highlighter-rouge">openjev</code> is CC
+BY-NC 4.0 en gesloten voor commercieel gebruik; <code class="language-plaintext highlighter-rouge">bekko-17m</code> heeft op zijn modelkaart
+geen licentie toegewezen. Controleer de licenties van de onderdelen vóór productie.</li>
+  <li><strong>Actualiteit:</strong> modelversies, licenties en kalibratiewaarden gelden per oktober 2026.</li>
+</ul><hr />
+
+<p><img src="/assets/images/aetherix-logo.png" alt="Aetherix" width="220" /></p>
+
+<p><strong>Laten we uw infrastructuur voor beslissingsmodellen samen plannen.</strong> Voor hulp bij het
+kiezen, dimensioneren en uitrollen van een typed-decision-model op DGX Spark of Jetson,
+neem contact op met Aetherix: <a href="mailto:info@aetherix.com">info@aetherix.com</a> · <a href="https://aetherix.com">aetherix.com</a></p>
+
+          
+
+          
+        </main>
+        
+
+
+      </div>
+    </div>
+    
+      
+
+<div class="search-overlay"></div>
+
+    
+  </div>
+
+  
+
+  <script>
+    window.JTD_I18N = {
+      search_no_results: "Geen resultaten gevonden",
+      copy_code: "Code naar klembord kopiëren"
+    };
+  </script>
+
+  
+
+
+<div id="cookie-consent-banner" class="cookie-consent" role="dialog"
+     aria-modal="false" aria-label="Cookie consent"
+     data-consent-state="pending" hidden>
+  <div class="cookie-consent__body">
+    <div class="cookie-consent__text">
+      <span class="cookie-consent__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+          <path d="M21 12a9 9 0 1 1-9-9 4.5 4.5 0 0 0 4.5 4.5A4.5 4.5 0 0 0 21 12zm-9-3.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-1.5 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm6-1.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-3 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0z"/>
+        </svg>
+      </span>
+      <p>Wij gebruiken cookies om het websiteverkeer te analyseren en uw ervaring te verbeteren. Door op 'Accepteren' te klikken, stemt u in met het gebruik van analytische cookies zoals beschreven in ons privacybeleid.
+        <a href="https://aetherix.com/privacy-policy/" target="_blank" rel="noopener noreferrer"
+           class="cookie-consent__link">Privacybeleid</a>
+      </p>
+    </div>
+    <div class="cookie-consent__actions">
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--reject"
+              data-consent-action="rejected">Weigeren</button>
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--accept"
+              data-consent-action="accepted">Accepteren</button>
+    </div>
+  </div>
+</div>
+<script>
+  // Eski karar önbellekte varsa bannerı gösterme
+  (function() {
+    try {
+      var v = localStorage.getItem('cookieConsent');
+      if (v === 'accepted' || v === 'rejected') {
+        document.documentElement.dataset.cookieConsent = v;
+      }
+    } catch (e) {}
+  })();
+</script>
+<script src="/assets/js/cookie-banner.js" defer></script>
+
+</body>
+</html>
+

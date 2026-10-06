@@ -163,6 +163,18 @@
     <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/papers/"/>
   </url>
   <url>
+    <loc>https://whitepapers.aetherix.com/papers/jev-open-weight-alternatives/</loc>
+    <lastmod>2026-10-06</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/papers/jev-open-weight-alternatives/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/papers/jev-open-weight-alternatives/"/>
+  </url>
+  <url>
+    <loc>https://whitepapers.aetherix.com/nl/papers/jev-open-weight-alternatives/</loc>
+    <lastmod>2026-10-06</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/papers/jev-open-weight-alternatives/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/papers/jev-open-weight-alternatives/"/>
+  </url>
+  <url>
     <loc>https://whitepapers.aetherix.com/papers/kimi-k3-dgx-b300-inference-benchmark/</loc>
     <lastmod>2026-09-30</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/papers/kimi-k3-dgx-b300-inference-benchmark/"/>
