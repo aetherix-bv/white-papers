@@ -895,6 +895,26 @@
     <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/qwen3-8-27b/rtx-pro-6000/fp8-vllm-tp1-spec3/"/>
   </url>
   <url>
+    <loc>https://whitepapers.aetherix.com/llm-inference-benchmarks/qwen3-8-27b/rtx-pro-6000/nvfp4-vllm-tp1-spec3/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/qwen3-8-27b/rtx-pro-6000/nvfp4-vllm-tp1-spec3/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/qwen3-8-27b/rtx-pro-6000/nvfp4-vllm-tp1-spec3/"/>
+  </url>
+  <url>
+    <loc>https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/qwen3-8-27b/rtx-pro-6000/nvfp4-vllm-tp1-spec3/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/qwen3-8-27b/rtx-pro-6000/nvfp4-vllm-tp1-spec3/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/qwen3-8-27b/rtx-pro-6000/nvfp4-vllm-tp1-spec3/"/>
+  </url>
+  <url>
+    <loc>https://whitepapers.aetherix.com/llm-inference-benchmarks/qwen3-8-27b/rtx-pro-6000/bf16-vllm-tp1-spec3/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/qwen3-8-27b/rtx-pro-6000/bf16-vllm-tp1-spec3/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/qwen3-8-27b/rtx-pro-6000/bf16-vllm-tp1-spec3/"/>
+  </url>
+  <url>
+    <loc>https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/qwen3-8-27b/rtx-pro-6000/bf16-vllm-tp1-spec3/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/qwen3-8-27b/rtx-pro-6000/bf16-vllm-tp1-spec3/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/qwen3-8-27b/rtx-pro-6000/bf16-vllm-tp1-spec3/"/>
+  </url>
+  <url>
     <loc>https://whitepapers.aetherix.com/llm-inference-benchmarks/qwen3-6-27b/dgx-b300/bf16-vllm-tp1/</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/qwen3-6-27b/dgx-b300/bf16-vllm-tp1/"/>
     <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/qwen3-6-27b/dgx-b300/bf16-vllm-tp1/"/>
@@ -1425,194 +1445,194 @@
     <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/cv-inference-benchmarks/rtx-3090/yolo11-n/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason1-7b/jetson-orin-nx/q4-k-m-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason1-7b/jetson-orin-nx/q4-k-m-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason1-7b/jetson-orin-nx/q4-k-m-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason1-7b/jetson-orin-nx-16gb/q4-k-m-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason1-7b/jetson-orin-nx-16gb/q4-k-m-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason1-7b/jetson-orin-nx-16gb/q4-k-m-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason1-7b/jetson-orin-nx/q4-k-m-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason1-7b/jetson-orin-nx/q4-k-m-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason1-7b/jetson-orin-nx/q4-k-m-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason1-7b/jetson-orin-nx-16gb/q4-k-m-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason1-7b/jetson-orin-nx-16gb/q4-k-m-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason1-7b/jetson-orin-nx-16gb/q4-k-m-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason2-2b/jetson-orin-nx/q8-0-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason2-2b/jetson-orin-nx/q8-0-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason2-2b/jetson-orin-nx/q8-0-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason2-2b/jetson-orin-nx-16gb/q8-0-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason2-2b/jetson-orin-nx-16gb/q8-0-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason2-2b/jetson-orin-nx-16gb/q8-0-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason2-2b/jetson-orin-nx/q8-0-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason2-2b/jetson-orin-nx/q8-0-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason2-2b/jetson-orin-nx/q8-0-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason2-2b/jetson-orin-nx-16gb/q8-0-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason2-2b/jetson-orin-nx-16gb/q8-0-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason2-2b/jetson-orin-nx-16gb/q8-0-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason2-8b/jetson-orin-nx/q4-k-m-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason2-8b/jetson-orin-nx/q4-k-m-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason2-8b/jetson-orin-nx/q4-k-m-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason2-8b/jetson-orin-nx-16gb/q4-k-m-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason2-8b/jetson-orin-nx-16gb/q4-k-m-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason2-8b/jetson-orin-nx-16gb/q4-k-m-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason2-8b/jetson-orin-nx/q4-k-m-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason2-8b/jetson-orin-nx/q4-k-m-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason2-8b/jetson-orin-nx/q4-k-m-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason2-8b/jetson-orin-nx-16gb/q4-k-m-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason2-8b/jetson-orin-nx-16gb/q4-k-m-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason2-8b/jetson-orin-nx-16gb/q4-k-m-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/gemma-4-e2b-it/jetson-orin-nx/q4-0-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/gemma-4-e2b-it/jetson-orin-nx/q4-0-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/gemma-4-e2b-it/jetson-orin-nx/q4-0-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/gemma-4-e2b-it/jetson-orin-nx-16gb/q4-0-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/gemma-4-e2b-it/jetson-orin-nx-16gb/q4-0-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/gemma-4-e2b-it/jetson-orin-nx-16gb/q4-0-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/gemma-4-e2b-it/jetson-orin-nx/q4-0-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/gemma-4-e2b-it/jetson-orin-nx/q4-0-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/gemma-4-e2b-it/jetson-orin-nx/q4-0-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/gemma-4-e2b-it/jetson-orin-nx-16gb/q4-0-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/gemma-4-e2b-it/jetson-orin-nx-16gb/q4-0-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/gemma-4-e2b-it/jetson-orin-nx-16gb/q4-0-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/gemma-4-e4b-it/jetson-orin-nx/q4-0-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/gemma-4-e4b-it/jetson-orin-nx/q4-0-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/gemma-4-e4b-it/jetson-orin-nx/q4-0-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/gemma-4-e4b-it/jetson-orin-nx-16gb/q4-0-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/gemma-4-e4b-it/jetson-orin-nx-16gb/q4-0-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/gemma-4-e4b-it/jetson-orin-nx-16gb/q4-0-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/gemma-4-e4b-it/jetson-orin-nx/q4-0-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/gemma-4-e4b-it/jetson-orin-nx/q4-0-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/gemma-4-e4b-it/jetson-orin-nx/q4-0-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/gemma-4-e4b-it/jetson-orin-nx-16gb/q4-0-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/gemma-4-e4b-it/jetson-orin-nx-16gb/q4-0-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/gemma-4-e4b-it/jetson-orin-nx-16gb/q4-0-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-orin-nx/fp8-vllm/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-orin-nx/fp8-vllm/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-orin-nx/fp8-vllm/"/>
+    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-orin-nx-16gb/fp8-vllm/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-orin-nx-16gb/fp8-vllm/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-orin-nx-16gb/fp8-vllm/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-orin-nx/fp8-vllm/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-orin-nx/fp8-vllm/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-orin-nx/fp8-vllm/"/>
+    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-orin-nx-16gb/fp8-vllm/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-orin-nx-16gb/fp8-vllm/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-orin-nx-16gb/fp8-vllm/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-orin-nx/q8-0-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-orin-nx/q8-0-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-orin-nx/q8-0-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-orin-nx-16gb/q8-0-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-orin-nx-16gb/q8-0-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-orin-nx-16gb/q8-0-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-orin-nx/q8-0-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-orin-nx/q8-0-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-orin-nx/q8-0-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-orin-nx-16gb/q8-0-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-orin-nx-16gb/q8-0-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-orin-nx-16gb/q8-0-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-orin-nx/q4-k-m-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-orin-nx/q4-k-m-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-orin-nx/q4-k-m-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-orin-nx-16gb/q4-k-m-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-orin-nx-16gb/q4-k-m-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-orin-nx-16gb/q4-k-m-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-orin-nx/q4-k-m-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-orin-nx/q4-k-m-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-orin-nx/q4-k-m-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-orin-nx-16gb/q4-k-m-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-orin-nx-16gb/q4-k-m-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-orin-nx-16gb/q4-k-m-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-5-4b/jetson-orin-nx/q4-k-m-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-5-4b/jetson-orin-nx/q4-k-m-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-5-4b/jetson-orin-nx/q4-k-m-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-5-4b/jetson-orin-nx-16gb/q4-k-m-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-5-4b/jetson-orin-nx-16gb/q4-k-m-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-5-4b/jetson-orin-nx-16gb/q4-k-m-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-5-4b/jetson-orin-nx/q4-k-m-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-5-4b/jetson-orin-nx/q4-k-m-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-5-4b/jetson-orin-nx/q4-k-m-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-5-4b/jetson-orin-nx-16gb/q4-k-m-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-5-4b/jetson-orin-nx-16gb/q4-k-m-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-5-4b/jetson-orin-nx-16gb/q4-k-m-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason1-7b/jetson-agx-orin/q4-k-m-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason1-7b/jetson-agx-orin/q4-k-m-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason1-7b/jetson-agx-orin/q4-k-m-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason1-7b/jetson-agx-orin-32gb/q4-k-m-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason1-7b/jetson-agx-orin-32gb/q4-k-m-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason1-7b/jetson-agx-orin-32gb/q4-k-m-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason1-7b/jetson-agx-orin/q4-k-m-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason1-7b/jetson-agx-orin/q4-k-m-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason1-7b/jetson-agx-orin/q4-k-m-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason1-7b/jetson-agx-orin-32gb/q4-k-m-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason1-7b/jetson-agx-orin-32gb/q4-k-m-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason1-7b/jetson-agx-orin-32gb/q4-k-m-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason2-2b/jetson-agx-orin/q8-0-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason2-2b/jetson-agx-orin/q8-0-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason2-2b/jetson-agx-orin/q8-0-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason2-2b/jetson-agx-orin-32gb/q8-0-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason2-2b/jetson-agx-orin-32gb/q8-0-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason2-2b/jetson-agx-orin-32gb/q8-0-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason2-2b/jetson-agx-orin/q8-0-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason2-2b/jetson-agx-orin/q8-0-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason2-2b/jetson-agx-orin/q8-0-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason2-2b/jetson-agx-orin-32gb/q8-0-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason2-2b/jetson-agx-orin-32gb/q8-0-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason2-2b/jetson-agx-orin-32gb/q8-0-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason2-8b/jetson-agx-orin/q4-k-m-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason2-8b/jetson-agx-orin/q4-k-m-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason2-8b/jetson-agx-orin/q4-k-m-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason2-8b/jetson-agx-orin-32gb/q4-k-m-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason2-8b/jetson-agx-orin-32gb/q4-k-m-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason2-8b/jetson-agx-orin-32gb/q4-k-m-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason2-8b/jetson-agx-orin/q4-k-m-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason2-8b/jetson-agx-orin/q4-k-m-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason2-8b/jetson-agx-orin/q4-k-m-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason2-8b/jetson-agx-orin-32gb/q4-k-m-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos-reason2-8b/jetson-agx-orin-32gb/q4-k-m-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos-reason2-8b/jetson-agx-orin-32gb/q4-k-m-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos3-edge/jetson-agx-orin/bf16-vllm/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos3-edge/jetson-agx-orin/bf16-vllm/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos3-edge/jetson-agx-orin/bf16-vllm/"/>
+    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos3-edge/jetson-agx-orin-32gb/bf16-vllm/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos3-edge/jetson-agx-orin-32gb/bf16-vllm/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos3-edge/jetson-agx-orin-32gb/bf16-vllm/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos3-edge/jetson-agx-orin/bf16-vllm/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos3-edge/jetson-agx-orin/bf16-vllm/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos3-edge/jetson-agx-orin/bf16-vllm/"/>
+    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos3-edge/jetson-agx-orin-32gb/bf16-vllm/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos3-edge/jetson-agx-orin-32gb/bf16-vllm/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos3-edge/jetson-agx-orin-32gb/bf16-vllm/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/gemma-4-26b-a4b-it/jetson-agx-orin/q4-0-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/gemma-4-26b-a4b-it/jetson-agx-orin/q4-0-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/gemma-4-26b-a4b-it/jetson-agx-orin/q4-0-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/gemma-4-26b-a4b-it/jetson-agx-orin-32gb/q4-0-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/gemma-4-26b-a4b-it/jetson-agx-orin-32gb/q4-0-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/gemma-4-26b-a4b-it/jetson-agx-orin-32gb/q4-0-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/gemma-4-26b-a4b-it/jetson-agx-orin/q4-0-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/gemma-4-26b-a4b-it/jetson-agx-orin/q4-0-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/gemma-4-26b-a4b-it/jetson-agx-orin/q4-0-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/gemma-4-26b-a4b-it/jetson-agx-orin-32gb/q4-0-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/gemma-4-26b-a4b-it/jetson-agx-orin-32gb/q4-0-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/gemma-4-26b-a4b-it/jetson-agx-orin-32gb/q4-0-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/gemma-4-e4b-it/jetson-agx-orin/q4-0-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/gemma-4-e4b-it/jetson-agx-orin/q4-0-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/gemma-4-e4b-it/jetson-agx-orin/q4-0-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/gemma-4-e4b-it/jetson-agx-orin-32gb/q4-0-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/gemma-4-e4b-it/jetson-agx-orin-32gb/q4-0-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/gemma-4-e4b-it/jetson-agx-orin-32gb/q4-0-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/gemma-4-e4b-it/jetson-agx-orin/q4-0-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/gemma-4-e4b-it/jetson-agx-orin/q4-0-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/gemma-4-e4b-it/jetson-agx-orin/q4-0-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/gemma-4-e4b-it/jetson-agx-orin-32gb/q4-0-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/gemma-4-e4b-it/jetson-agx-orin-32gb/q4-0-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/gemma-4-e4b-it/jetson-agx-orin-32gb/q4-0-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-agx-orin/q8-0-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-agx-orin/q8-0-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-agx-orin/q8-0-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-agx-orin-32gb/q8-0-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-agx-orin-32gb/q8-0-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-agx-orin-32gb/q8-0-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-agx-orin/q8-0-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-agx-orin/q8-0-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-agx-orin/q8-0-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-agx-orin-32gb/q8-0-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-agx-orin-32gb/q8-0-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-agx-orin-32gb/q8-0-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-agx-orin/q4-k-m-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-agx-orin/q4-k-m-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-agx-orin/q4-k-m-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-agx-orin-32gb/q4-k-m-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-agx-orin-32gb/q4-k-m-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-agx-orin-32gb/q4-k-m-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-agx-orin/q4-k-m-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-agx-orin/q4-k-m-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-agx-orin/q4-k-m-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-agx-orin-32gb/q4-k-m-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-agx-orin-32gb/q4-k-m-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-agx-orin-32gb/q4-k-m-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-agx-orin/q8-0-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-agx-orin/q8-0-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-agx-orin/q8-0-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-agx-orin-32gb/q8-0-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-agx-orin-32gb/q8-0-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-agx-orin-32gb/q8-0-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-agx-orin/q8-0-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-agx-orin/q8-0-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-agx-orin/q8-0-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-agx-orin-32gb/q8-0-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-agx-orin-32gb/q8-0-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-agx-orin-32gb/q8-0-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-5-4b/jetson-agx-orin/q4-k-m-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-5-4b/jetson-agx-orin/q4-k-m-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-5-4b/jetson-agx-orin/q4-k-m-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-5-4b/jetson-agx-orin-32gb/q4-k-m-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-5-4b/jetson-agx-orin-32gb/q4-k-m-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-5-4b/jetson-agx-orin-32gb/q4-k-m-llama-cpp/"/>
   </url>
   <url>
-    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-5-4b/jetson-agx-orin/q4-k-m-llama-cpp/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-5-4b/jetson-agx-orin/q4-k-m-llama-cpp/"/>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-5-4b/jetson-agx-orin/q4-k-m-llama-cpp/"/>
+    <loc>https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-5-4b/jetson-agx-orin-32gb/q4-k-m-llama-cpp/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-5-4b/jetson-agx-orin-32gb/q4-k-m-llama-cpp/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/qwen3-5-4b/jetson-agx-orin-32gb/q4-k-m-llama-cpp/"/>
   </url>
   <url>
     <loc>https://whitepapers.aetherix.com/vlm-inference-benchmarks/cosmos3-edge/rtx-pro-6000-max-q/bf16-vllm/</loc>

@@ -10,7 +10,7 @@ to them wherever they are shown.
 
 ## Benchmark explorers
 
-- [LLM Inference Benchmark Explorer](https://whitepapers.aetherix.com/llm-inference-benchmarks/): 109 runs — time to first token and per-request tokens/s at concurrency 1–64, with Max C (concurrent requests meeting TTFT ≤ 1 s and ≥ 20 tok/s by default) and estimated chat / agentic user capacity per model × device — how many people a model on a given device can serve. Each run's plain-language explanation is in the page HTML and in llms-full.txt. Dutch: https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/
+- [LLM Inference Benchmark Explorer](https://whitepapers.aetherix.com/llm-inference-benchmarks/): 111 runs — time to first token and per-request tokens/s at concurrency 1–64, with Max C (concurrent requests meeting TTFT ≤ 1 s and ≥ 20 tok/s by default) and estimated chat / agentic user capacity per model × device — how many people a model on a given device can serve. Each run's plain-language explanation is in the page HTML and in llms-full.txt. Dutch: https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/
 - [CV Inference Benchmark Explorer](https://whitepapers.aetherix.com/cv-inference-benchmarks/): 10 device × model results — FPS per camera and frame drop by camera count. Dutch: https://whitepapers.aetherix.com/nl/cv-inference-benchmarks/
 - [VLM Inference Benchmark Explorer](https://whitepapers.aetherix.com/vlm-inference-benchmarks/): 38 vision-language model runs — response time (time to first token) and per-request tokens/s by image size, images per camera and number of cameras, and Max Cameras: the highest measured number of cameras (one request in flight per camera) whose answer starts within the target (3 s by default). Dutch: https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/
 
@@ -30,7 +30,7 @@ LLM devices: 1× DGX Spark, 2× DGX Spark, 3× DGX Spark, 4× DGX Spark, 8× DGX
 
 VLM models benchmarked: Cosmos-Reason1-7B, Cosmos-Reason2-2B, Cosmos-Reason2-8B, Cosmos3-Edge, Cosmos3-Nano, Eagle2.5-8B, Gemma-4-26B-A4B-it, Gemma-4-31B-it, Gemma-4-E2B-it, Gemma-4-E4B-it, Llama-3.1-Nemotron-Nano-VL-8B, MedGemma-1.5-4B-it, Nemotron-Nano-12B-v2-VL, Qwen3-VL-30B-A3B-Instruct, Qwen3-VL-4B-Instruct, Qwen3-VL-8B-Instruct, Qwen3.5-4B, Qwen3.6-35B-A3B, Qwen3.8-27B
 
-VLM devices: Jetson AGX Orin, Jetson Orin NX, RTX PRO 6000, RTX PRO 6000 Max-Q
+VLM devices: Jetson AGX Orin 32GB, Jetson Orin NX 16GB, RTX PRO 6000, RTX PRO 6000 Max-Q
 
 CV models benchmarked: PeopleNet, YOLO11-N, YOLO11L, YOLO11M, YOLO11S
 

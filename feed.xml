@@ -5,7 +5,7 @@
   <link href="https://whitepapers.aetherix.com/feed.xml" rel="self" type="application/atom+xml"/>
   <link href="https://whitepapers.aetherix.com/" rel="alternate" type="text/html"/>
   <id>https://whitepapers.aetherix.com/feed.xml</id>
-  <updated>2026-10-06T12:17:44+00:00</updated>
+  <updated>2026-10-06T18:56:34+00:00</updated>
   <author><name>Aetherix B.V.</name></author>
   <entry>
     <title>VLM Inference Benchmark Explorer</title>
@@ -13,7 +13,7 @@
     <id>https://whitepapers.aetherix.com/vlm-inference-benchmarks/</id>
     <published>2026-10-06T09:00:00+00:00</published>
     <updated>2026-10-06T00:00:00+00:00</updated>
-    <summary>Explore vision-language model inference benchmarks on RTX PRO 6000 Blackwell, Jetson AGX Orin and Jetson Orin NX. Pick the image size, set how long a camera may wait for its answer, and see how many cameras each configuration keeps up with.</summary>
+    <summary>Explore vision-language model inference benchmarks on RTX PRO 6000 Blackwell, Jetson AGX Orin 32GB and Jetson Orin NX 16GB. Pick the image size, set how long a camera may wait for its answer, and see how many cameras each configuration keeps up with.</summary>
   </entry>
   <entry>
     <title>The First Open-Weight Alternatives to Jev</title>
