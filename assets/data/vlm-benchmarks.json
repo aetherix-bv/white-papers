@@ -1,0 +1,7853 @@
+{
+  "source": {
+    "tool": "VLM Benchmark Tool",
+    "exported": "2026-10-01T15:50:17"
+  },
+  "config": {
+    "response_target_s": 3,
+    "images": 1
+  },
+  "workload": {
+    "prompt": "Describe the scene.",
+    "max_tokens": 128,
+    "photos": 16,
+    "sizes": {
+      "480p": "854×480",
+      "720p": "1280×720",
+      "1080p": "1920×1080",
+      "2K": "2560×1440"
+    }
+  },
+  "devices": {
+    "Jetson Orin NX": {
+      "name": "Jetson Orin NX 16GB",
+      "memory_gb": 16,
+      "unified": true
+    },
+    "Jetson AGX Orin": {
+      "name": "Jetson AGX Orin Developer Kit",
+      "memory_gb": 32,
+      "unified": true
+    },
+    "RTX PRO 6000 Max-Q": {
+      "name": "RTX PRO 6000 Blackwell Max-Q Workstation Edition",
+      "memory_gb": 96,
+      "unified": false
+    },
+    "RTX PRO 6000": {
+      "name": "RTX PRO 6000 Blackwell Workstation Edition",
+      "memory_gb": 96,
+      "unified": false
+    }
+  },
+  "models": {
+    "Cosmos-Reason1-7B": {
+      "repo": "nvidia/Cosmos-Reason1-7B",
+      "params": "8.3B"
+    },
+    "Cosmos-Reason2-2B": {
+      "repo": "nvidia/Cosmos-Reason2-2B",
+      "params": "2.4B"
+    },
+    "Cosmos-Reason2-8B": {
+      "repo": "nvidia/Cosmos-Reason2-8B",
+      "params": "8.8B"
+    },
+    "Cosmos3-Edge": {
+      "repo": "nvidia/Cosmos3-Edge",
+      "params": "3.9B"
+    },
+    "Cosmos3-Nano": {
+      "repo": "nvidia/Cosmos3-Nano",
+      "params": "16B"
+    },
+    "Eagle2.5-8B": {
+      "repo": "nvidia/Eagle2.5-8B",
+      "params": "8.1B"
+    },
+    "Gemma-4-26B-A4B-it": {
+      "repo": "google/gemma-4-26B-A4B-it",
+      "params": "26B"
+    },
+    "Gemma-4-31B-it": {
+      "repo": "google/gemma-4-31B-it",
+      "params": "31B"
+    },
+    "Gemma-4-E2B-it": {
+      "repo": "google/gemma-4-E2B-it",
+      "params": "5.1B"
+    },
+    "Gemma-4-E4B-it": {
+      "repo": "google/gemma-4-E4B-it",
+      "params": "8.0B"
+    },
+    "Llama-3.1-Nemotron-Nano-VL-8B": {
+      "repo": "nvidia/Llama-3.1-Nemotron-Nano-VL-8B-V1",
+      "params": "8.7B"
+    },
+    "MedGemma-1.5-4B-it": {
+      "repo": "google/medgemma-1.5-4b-it",
+      "params": "4.3B"
+    },
+    "Nemotron-Nano-12B-v2-VL": {
+      "repo": "nvidia/NVIDIA-Nemotron-Nano-12B-v2-VL-BF16",
+      "params": "13B"
+    },
+    "Qwen3-VL-30B-A3B-Instruct": {
+      "repo": "Qwen/Qwen3-VL-30B-A3B-Instruct",
+      "params": "30B"
+    },
+    "Qwen3-VL-4B-Instruct": {
+      "repo": "Qwen/Qwen3-VL-4B-Instruct",
+      "params": "4.4B"
+    },
+    "Qwen3-VL-8B-Instruct": {
+      "repo": "Qwen/Qwen3-VL-8B-Instruct",
+      "params": "8.8B"
+    },
+    "Qwen3.5-4B": {
+      "repo": "Qwen/Qwen3.5-4B",
+      "params": "4.7B"
+    },
+    "Qwen3.6-35B-A3B": {
+      "repo": "Qwen/Qwen3.6-35B-A3B",
+      "params": "35B"
+    },
+    "Qwen3.8-27B": {
+      "repo": "Qwen/Qwen3.8-27B",
+      "params": "27B"
+    }
+  },
+  "benchmarks": [
+    {
+      "id": "cosmos-reason1-7b_orinnx_q4km_llamacpp",
+      "model": "Cosmos-Reason1-7B",
+      "device": "Jetson Orin NX",
+      "quantization": "Q4_K_M",
+      "engine": "llama.cpp",
+      "engine_version": "6d78fb0",
+      "platform": "L4T R36.5",
+      "served_repo": null,
+      "notes": "GGUF weights; prompt cache off",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 2.951,
+          "tps": 12.15,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 3.514,
+          "tps": 7.4,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 8.177,
+          "tps": 9.29,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 8.536,
+          "tps": 12.25,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 14.176,
+          "tps": 12.12,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 7.681,
+          "tps": 12.04,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 11.374,
+          "tps": 9.31,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 24.339,
+          "tps": 9.24,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 22.73,
+          "tps": 12.08,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 37.755,
+          "tps": 11.71,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 23.305,
+          "tps": 11.91,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 34.891,
+          "tps": 7.6,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 69.307,
+          "tps": 6.77,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 71.056,
+          "tps": 11.53,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 120.211,
+          "tps": 11.15,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "cosmos-reason2-2b_orinnx_q80_llamacpp",
+      "model": "Cosmos-Reason2-2B",
+      "device": "Jetson Orin NX",
+      "quantization": "Q8_0",
+      "engine": "llama.cpp",
+      "engine_version": "6d78fb0",
+      "platform": "L4T R36.5",
+      "served_repo": null,
+      "notes": "GGUF weights; prompt cache off",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.885,
+          "tps": 31.25,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 1.239,
+          "tps": 21.74,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 1.87,
+          "tps": 19.75,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 2.493,
+          "tps": 30.0,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 4.115,
+          "tps": 29.13,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 2.02,
+          "tps": 30.45,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 2.343,
+          "tps": 19.4,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 4.738,
+          "tps": 14.8,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 5.951,
+          "tps": 28.51,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 9.935,
+          "tps": 26.86,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 5.448,
+          "tps": 29.22,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 6.05,
+          "tps": 10.12,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 15.66,
+          "tps": 15.98,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 16.087,
+          "tps": 25.62,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 27.493,
+          "tps": 22.56,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "cosmos-reason2-8b_orinnx_q4km_llamacpp",
+      "model": "Cosmos-Reason2-8B",
+      "device": "Jetson Orin NX",
+      "quantization": "Q4_K_M",
+      "engine": "llama.cpp",
+      "engine_version": "6d78fb0",
+      "platform": "L4T R36.5",
+      "served_repo": null,
+      "notes": "GGUF weights; prompt cache off; parallel slots = cameras",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 2.548,
+          "tps": 11.64,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 3.608,
+          "tps": 8.18,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 5.593,
+          "tps": 5.44,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 7.648,
+          "tps": 11.33,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 12.364,
+          "tps": 11.23,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 6.872,
+          "tps": 11.63,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 7.977,
+          "tps": 6.12,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 15.528,
+          "tps": 5.37,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 20.421,
+          "tps": 11.07,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 34.194,
+          "tps": 10.73,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 21.752,
+          "tps": 11.23,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 27.38,
+          "tps": 4.85,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 40.86,
+          "tps": 2.41,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 65.784,
+          "tps": 10.53,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 110.739,
+          "tps": 9.73,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "gemma-4-e2b-it_orinnx_q40_llamacpp",
+      "model": "Gemma-4-E2B-it",
+      "device": "Jetson Orin NX",
+      "quantization": "Q4_0",
+      "engine": "llama.cpp",
+      "engine_version": "6d78fb0",
+      "platform": "L4T R36.5",
+      "served_repo": null,
+      "notes": "GGUF weights; prompt cache off; thinking off; parallel slots = cameras",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.707,
+          "tps": 29.86,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 1.069,
+          "tps": 21.3,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 2.107,
+          "tps": 21.31,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 1.712,
+          "tps": 29.85,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 2.733,
+          "tps": 29.65,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 1.379,
+          "tps": 29.75,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 2.249,
+          "tps": 28.37,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 4.173,
+          "tps": 20.85,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 3.852,
+          "tps": 29.18,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 6.306,
+          "tps": 29.09,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 3.43,
+          "tps": 29.58,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 5.066,
+          "tps": 11.86,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 10.392,
+          "tps": 19.99,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 10.266,
+          "tps": 28.34,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 16.799,
+          "tps": 28.05,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "gemma-4-e4b-it_orinnx_q40_llamacpp",
+      "model": "Gemma-4-E4B-it",
+      "device": "Jetson Orin NX",
+      "quantization": "Q4_0",
+      "engine": "llama.cpp",
+      "engine_version": "6d78fb0",
+      "platform": "L4T R36.5",
+      "served_repo": null,
+      "notes": "GGUF weights; prompt cache off; thinking off; parallel slots = cameras",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.957,
+          "tps": 17.25,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 1.527,
+          "tps": 12.72,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 2.831,
+          "tps": 13.05,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 2.347,
+          "tps": 17.18,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 3.713,
+          "tps": 17.03,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 1.856,
+          "tps": 17.2,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 3.06,
+          "tps": 12.32,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 6.032,
+          "tps": 12.79,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 5.075,
+          "tps": 16.94,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 8.315,
+          "tps": 16.85,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 4.451,
+          "tps": 17.04,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 6.39,
+          "tps": 15.34,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 13.216,
+          "tps": 11.79,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 12.488,
+          "tps": 16.08,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 20.845,
+          "tps": 16.19,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "qwen3-vl-4b-instruct_orinnx_fp8_vllm",
+      "model": "Qwen3-VL-4B-Instruct",
+      "device": "Jetson Orin NX",
+      "quantization": "FP8",
+      "engine": "vLLM",
+      "engine_version": null,
+      "platform": "L4T R36.5",
+      "served_repo": null,
+      "notes": "max-num-seqs 4; NVIDIA Jetson vLLM container",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.766,
+          "tps": 14.19,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.88,
+          "tps": 13.52,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 1.935,
+          "tps": 13.35,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 1.669,
+          "tps": 14.17,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 2.891,
+          "tps": 14.22,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 1.668,
+          "tps": 14.21,
+          "requests": 8,
+          "failed": 1
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 2.59,
+          "tps": 13.1,
+          "requests": 8,
+          "failed": 2
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 4.744,
+          "tps": 13.07,
+          "requests": 8,
+          "failed": 2
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 4.004,
+          "tps": 14.22,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 4.345,
+          "tps": 14.16,
+          "requests": 8,
+          "failed": 3
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 7.158,
+          "tps": 12.33,
+          "requests": 8,
+          "failed": 4
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 13.757,
+          "tps": 11.36,
+          "requests": 8,
+          "failed": 4
+        }
+      ]
+    },
+    {
+      "id": "qwen3-vl-4b-instruct_orinnx_q80_llamacpp",
+      "model": "Qwen3-VL-4B-Instruct",
+      "device": "Jetson Orin NX",
+      "quantization": "Q8_0",
+      "engine": "llama.cpp",
+      "engine_version": "6d78fb0",
+      "platform": "L4T R36.5",
+      "served_repo": null,
+      "notes": "GGUF weights; prompt cache off; 8 parallel slots",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 1.461,
+          "tps": 14.48,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 2.073,
+          "tps": 13.25,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 4.136,
+          "tps": 9.37,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 7.379,
+          "tps": 7.73,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 3.848,
+          "tps": 14.13,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 6.337,
+          "tps": 13.94,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 3.037,
+          "tps": 14.31,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 4.452,
+          "tps": 14.12,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 9.247,
+          "tps": 9.37,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 17.979,
+          "tps": 7.19,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 8.696,
+          "tps": 13.74,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 14.623,
+          "tps": 13.23,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 7.293,
+          "tps": 13.97,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 10.835,
+          "tps": 11.98,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 23.037,
+          "tps": 8.22,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 49.679,
+          "tps": 6.76,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 22.304,
+          "tps": 12.83,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 38.37,
+          "tps": 11.88,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 18.387,
+          "tps": 13.48,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 57.461,
+          "tps": 11.79,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 99.863,
+          "tps": 10.46,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "qwen3-vl-8b-instruct_orinnx_q4km_llamacpp",
+      "model": "Qwen3-VL-8B-Instruct",
+      "device": "Jetson Orin NX",
+      "quantization": "Q4_K_M",
+      "engine": "llama.cpp",
+      "engine_version": "6d78fb0",
+      "platform": "L4T R36.5",
+      "served_repo": null,
+      "notes": "GGUF weights; prompt cache off; parallel slots = cameras",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 2.605,
+          "tps": 11.51,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 3.897,
+          "tps": 7.67,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 7.099,
+          "tps": 8.85,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 7.479,
+          "tps": 11.29,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 12.412,
+          "tps": 11.09,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 6.916,
+          "tps": 11.37,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 10.327,
+          "tps": 4.89,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 22.224,
+          "tps": 8.57,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 20.612,
+          "tps": 10.99,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 34.431,
+          "tps": 10.66,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 21.785,
+          "tps": 11.12,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 32.579,
+          "tps": 7.13,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 64.969,
+          "tps": 6.12,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 65.754,
+          "tps": 10.4,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 110.85,
+          "tps": 9.78,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "qwen3.5-4b_orinnx_q4km_llamacpp",
+      "model": "Qwen3.5-4B",
+      "device": "Jetson Orin NX",
+      "quantization": "Q4_K_M",
+      "engine": "llama.cpp",
+      "engine_version": "6d78fb0",
+      "platform": "L4T R36.5",
+      "served_repo": null,
+      "notes": "GGUF weights; prompt cache off; thinking off; parallel slots = cameras",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 1.652,
+          "tps": 15.65,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 2.733,
+          "tps": 11.14,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 5.773,
+          "tps": 12.82,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 4.635,
+          "tps": 15.54,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 7.601,
+          "tps": 15.46,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 3.715,
+          "tps": 15.58,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 5.448,
+          "tps": 10.35,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 12.618,
+          "tps": 12.52,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 10.402,
+          "tps": 15.39,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 17.25,
+          "tps": 15.33,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 8.48,
+          "tps": 15.54,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 12.764,
+          "tps": 12.06,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 29.332,
+          "tps": 11.16,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 25.301,
+          "tps": 15.2,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 42.287,
+          "tps": 14.92,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "cosmos-reason1-7b_agxorin_q4km_llamacpp",
+      "model": "Cosmos-Reason1-7B",
+      "device": "Jetson AGX Orin",
+      "quantization": "Q4_K_M",
+      "engine": "llama.cpp",
+      "engine_version": "6d78fb0",
+      "platform": "L4T R36.4.7",
+      "served_repo": null,
+      "notes": "GGUF weights; prompt cache off",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 1.268,
+          "tps": 26.94,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 1.879,
+          "tps": 20.8,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 3.861,
+          "tps": 16.82,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 7.524,
+          "tps": 18.84,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 3.584,
+          "tps": 26.7,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 6.011,
+          "tps": 26.85,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 3.211,
+          "tps": 26.72,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 4.758,
+          "tps": 16.05,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 9.393,
+          "tps": 8.67,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 17.323,
+          "tps": 13.85,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 9.488,
+          "tps": 26.21,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 15.842,
+          "tps": 26.01,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 9.807,
+          "tps": 26.35,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 14.639,
+          "tps": 15.09,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 31.244,
+          "tps": 9.51,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 67.789,
+          "tps": 17.26,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 29.701,
+          "tps": 25.08,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 50.158,
+          "tps": 24.19,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 18.623,
+          "tps": 25.98,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 56.934,
+          "tps": 24.27,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 96.291,
+          "tps": 22.93,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "cosmos-reason2-2b_agxorin_q80_llamacpp",
+      "model": "Cosmos-Reason2-2B",
+      "device": "Jetson AGX Orin",
+      "quantization": "Q8_0",
+      "engine": "llama.cpp",
+      "engine_version": "6d78fb0",
+      "platform": "L4T R36.4.7",
+      "served_repo": null,
+      "notes": "GGUF weights; prompt cache off",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.444,
+          "tps": 59.08,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.526,
+          "tps": 45.59,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.884,
+          "tps": 27.05,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 2.062,
+          "tps": 29.66,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 1.187,
+          "tps": 57.11,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 1.955,
+          "tps": 55.46,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.952,
+          "tps": 57.84,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 1.091,
+          "tps": 30.25,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 2.131,
+          "tps": 16.53,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 4.953,
+          "tps": 23.33,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 2.703,
+          "tps": 53.47,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 4.449,
+          "tps": 50.36,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 2.555,
+          "tps": 54.85,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 2.911,
+          "tps": 20.24,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 6.746,
+          "tps": 16.35,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 16.806,
+          "tps": 21.87,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 7.644,
+          "tps": 47.56,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 12.755,
+          "tps": 42.21,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 7.073,
+          "tps": 51.68,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 21.249,
+          "tps": 41.66,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 35.927,
+          "tps": 34.9,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "cosmos-reason2-8b_agxorin_q4km_llamacpp",
+      "model": "Cosmos-Reason2-8B",
+      "device": "Jetson AGX Orin",
+      "quantization": "Q4_K_M",
+      "engine": "llama.cpp",
+      "engine_version": "6d78fb0",
+      "platform": "L4T R36.4.7",
+      "served_repo": null,
+      "notes": "GGUF weights; prompt cache off; parallel slots = cameras",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 1.091,
+          "tps": 25.84,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 1.3,
+          "tps": 17.73,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 2.342,
+          "tps": 8.22,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 7.093,
+          "tps": 16.05,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 3.053,
+          "tps": 25.02,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 5.035,
+          "tps": 24.65,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 2.71,
+          "tps": 25.37,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 3.168,
+          "tps": 10.55,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 5.127,
+          "tps": 9.97,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 15.53,
+          "tps": 12.04,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 7.926,
+          "tps": 24.32,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 13.211,
+          "tps": 23.5,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 8.253,
+          "tps": 24.69,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 11.257,
+          "tps": 10.21,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 15.418,
+          "tps": 3.73,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 57.204,
+          "tps": 12.74,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 24.652,
+          "tps": 22.65,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 41.458,
+          "tps": 21.22,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 20.513,
+          "tps": 24.11,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 62.116,
+          "tps": 20.98,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 105.425,
+          "tps": 18.61,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "cosmos3-edge_agxorin_bf16_vllm",
+      "model": "Cosmos3-Edge",
+      "device": "Jetson AGX Orin",
+      "quantization": "BF16",
+      "engine": "vLLM",
+      "engine_version": "0.30.0",
+      "platform": "L4T R36.4.7",
+      "served_repo": null,
+      "notes": "thinking off; max-num-seqs 8; vLLM-Omni image; CUDA 13.2 compatibility driver on JetPack 6.2",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.249,
+          "tps": 46.31,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.337,
+          "tps": 44.25,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.499,
+          "tps": 40.8,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.926,
+          "tps": 37.44,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.589,
+          "tps": 45.48,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.921,
+          "tps": 44.25,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.51,
+          "tps": 45.63,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.661,
+          "tps": 41.2,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 1.003,
+          "tps": 35.03,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 2.083,
+          "tps": 30.61,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 1.271,
+          "tps": 43.32,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 2.106,
+          "tps": 41.3,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 1.267,
+          "tps": 44.0,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 2.173,
+          "tps": 40.02,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 3.459,
+          "tps": 31.06,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 5.722,
+          "tps": 20.42,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 3.706,
+          "tps": 39.42,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 6.255,
+          "tps": 35.73,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 2.713,
+          "tps": 42.15,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 8.245,
+          "tps": 35.23,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 14.211,
+          "tps": 33.9,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "gemma-4-26b-a4b-it_agxorin_q40_llamacpp",
+      "model": "Gemma-4-26B-A4B-it",
+      "device": "Jetson AGX Orin",
+      "quantization": "Q4_0",
+      "engine": "llama.cpp",
+      "engine_version": "6d78fb0",
+      "platform": "L4T R36.4.7",
+      "served_repo": null,
+      "notes": "GGUF weights; prompt cache off; thinking off; parallel slots = cameras",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 1.007,
+          "tps": 31.48,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 1.359,
+          "tps": 21.94,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 2.793,
+          "tps": 15.15,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 6.892,
+          "tps": 14.31,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 2.576,
+          "tps": 31.08,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 4.22,
+          "tps": 30.73,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 2.341,
+          "tps": 32.74,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 2.806,
+          "tps": 14.65,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 6.069,
+          "tps": 9.37,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 15.57,
+          "tps": 10.19,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 6.599,
+          "tps": 30.2,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 10.783,
+          "tps": 30.72,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 7.482,
+          "tps": 31.93,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 9.485,
+          "tps": 11.73,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 23.897,
+          "tps": 7.57,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 52.661,
+          "tps": 11.51,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 21.827,
+          "tps": 29.64,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 36.282,
+          "tps": 27.86,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 9.941,
+          "tps": 31.91,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 29.25,
+          "tps": 28.98,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 48.73,
+          "tps": 27.35,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "gemma-4-e4b-it_agxorin_q40_llamacpp",
+      "model": "Gemma-4-E4B-it",
+      "device": "Jetson AGX Orin",
+      "quantization": "Q4_0",
+      "engine": "llama.cpp",
+      "engine_version": "6d78fb0",
+      "platform": "L4T R36.4.7",
+      "served_repo": null,
+      "notes": "GGUF weights; prompt cache off; thinking off; parallel slots = cameras",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.472,
+          "tps": 34.29,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.775,
+          "tps": 28.83,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 1.365,
+          "tps": 20.16,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 2.574,
+          "tps": 18.15,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 1.095,
+          "tps": 34.16,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 1.702,
+          "tps": 33.71,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.864,
+          "tps": 34.21,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 1.358,
+          "tps": 32.42,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 2.688,
+          "tps": 19.2,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 4.908,
+          "tps": 16.87,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 2.227,
+          "tps": 33.74,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 3.582,
+          "tps": 33.15,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 1.911,
+          "tps": 33.68,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 2.802,
+          "tps": 28.58,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 5.682,
+          "tps": 18.14,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 11.861,
+          "tps": 16.4,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 5.411,
+          "tps": 32.49,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 8.932,
+          "tps": 31.82,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 2.551,
+          "tps": 33.86,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 7.358,
+          "tps": 32.11,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 12.152,
+          "tps": 31.3,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "qwen3-vl-4b-instruct_agxorin_q80_llamacpp",
+      "model": "Qwen3-VL-4B-Instruct",
+      "device": "Jetson AGX Orin",
+      "quantization": "Q8_0",
+      "engine": "llama.cpp",
+      "engine_version": "6d78fb0",
+      "platform": "L4T R36.4.7",
+      "served_repo": null,
+      "notes": "GGUF weights; prompt cache off; parallel slots = cameras",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.659,
+          "tps": 28.75,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.931,
+          "tps": 25.47,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 1.81,
+          "tps": 19.09,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 3.18,
+          "tps": 16.88,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 1.731,
+          "tps": 28.33,
+          "requests": 3,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 2.834,
+          "tps": 27.84,
+          "requests": 3,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 1.313,
+          "tps": 28.36,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 1.963,
+          "tps": 19.72,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 3.984,
+          "tps": 10.25,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 6.612,
+          "tps": 14.27,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 3.807,
+          "tps": 27.24,
+          "requests": 3,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 6.4,
+          "tps": 26.32,
+          "requests": 3,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 3.38,
+          "tps": 27.6,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 4.939,
+          "tps": 22.92,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 8.887,
+          "tps": 13.23,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 22.176,
+          "tps": 14.58,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 9.578,
+          "tps": 25.36,
+          "requests": 3,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 16.277,
+          "tps": 23.32,
+          "requests": 3,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 8.315,
+          "tps": 26.88,
+          "requests": 3,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 25.479,
+          "tps": 23.12,
+          "requests": 3,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 44.023,
+          "tps": 20.33,
+          "requests": 3,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "qwen3-vl-8b-instruct_agxorin_q4km_llamacpp",
+      "model": "Qwen3-VL-8B-Instruct",
+      "device": "Jetson AGX Orin",
+      "quantization": "Q4_K_M",
+      "engine": "llama.cpp",
+      "engine_version": "6d78fb0",
+      "platform": "L4T R36.4.7",
+      "served_repo": null,
+      "notes": "GGUF weights; prompt cache off; parallel slots = cameras",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 1.099,
+          "tps": 25.53,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 1.633,
+          "tps": 20.26,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 3.344,
+          "tps": 16.16,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 7.041,
+          "tps": 19.1,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 3.103,
+          "tps": 24.96,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 5.104,
+          "tps": 24.6,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 2.746,
+          "tps": 25.22,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 4.056,
+          "tps": 20.65,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 8.564,
+          "tps": 14.54,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 16.614,
+          "tps": 16.04,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 7.982,
+          "tps": 24.22,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 13.242,
+          "tps": 23.43,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 8.248,
+          "tps": 24.67,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 12.297,
+          "tps": 16.61,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 26.279,
+          "tps": 12.79,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 45.183,
+          "tps": 8.65,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 24.777,
+          "tps": 22.64,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 41.562,
+          "tps": 20.99,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 20.613,
+          "tps": 23.89,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 62.507,
+          "tps": 20.94,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 105.418,
+          "tps": 18.56,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "qwen3-vl-8b-instruct_agxorin_q80_llamacpp",
+      "model": "Qwen3-VL-8B-Instruct",
+      "device": "Jetson AGX Orin",
+      "quantization": "Q8_0",
+      "engine": "llama.cpp",
+      "engine_version": "6d78fb0",
+      "platform": "L4T R36.4.7",
+      "served_repo": null,
+      "notes": "GGUF weights; prompt cache off; 8 parallel slots",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 1.156,
+          "tps": 19.28,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 1.695,
+          "tps": 15.41,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 3.297,
+          "tps": 12.2,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 6.98,
+          "tps": 12.0,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 3.138,
+          "tps": 19.03,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 5.096,
+          "tps": 18.83,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 2.636,
+          "tps": 19.12,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 3.909,
+          "tps": 16.07,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 7.1,
+          "tps": 9.95,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 16.292,
+          "tps": 10.45,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 8.028,
+          "tps": 18.59,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 13.189,
+          "tps": 18.11,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 7.978,
+          "tps": 18.76,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 11.905,
+          "tps": 10.25,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 25.49,
+          "tps": 10.03,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 49.635,
+          "tps": 8.93,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 24.622,
+          "tps": 17.63,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 41.406,
+          "tps": 16.57,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 20.481,
+          "tps": 18.36,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 61.944,
+          "tps": 16.53,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 105.224,
+          "tps": 15.06,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "qwen3.5-4b_agxorin_q4km_llamacpp",
+      "model": "Qwen3.5-4B",
+      "device": "Jetson AGX Orin",
+      "quantization": "Q4_K_M",
+      "engine": "llama.cpp",
+      "engine_version": "6d78fb0",
+      "platform": "L4T R36.4.7",
+      "served_repo": null,
+      "notes": "GGUF weights; prompt cache off; thinking off; parallel slots = cameras",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.782,
+          "tps": 33.86,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 1.166,
+          "tps": 26.23,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 2.591,
+          "tps": 19.01,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 4.873,
+          "tps": 17.28,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 2.001,
+          "tps": 33.58,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 3.213,
+          "tps": 33.52,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 1.568,
+          "tps": 33.62,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 2.497,
+          "tps": 18.21,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 5.156,
+          "tps": 10.97,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 10.122,
+          "tps": 15.99,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 4.341,
+          "tps": 33.21,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 7.143,
+          "tps": 32.98,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 3.76,
+          "tps": 33.51,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 6.435,
+          "tps": 25.26,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 12.907,
+          "tps": 17.16,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 24.983,
+          "tps": 16.04,
+          "requests": 8,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 10.918,
+          "tps": 32.51,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 18.101,
+          "tps": 31.77,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 9.038,
+          "tps": 33.12,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 26.948,
+          "tps": 31.66,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 45.085,
+          "tps": 30.29,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "cosmos3-edge_rtxpro6000maxq_bf16_vllm",
+      "model": "Cosmos3-Edge",
+      "device": "RTX PRO 6000 Max-Q",
+      "quantization": "BF16",
+      "engine": "vLLM",
+      "engine_version": "0.30.0",
+      "platform": null,
+      "served_repo": null,
+      "notes": "prompt cache off; thinking off; max-num-seqs 16; vLLM-Omni image",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.05,
+          "tps": 311.4,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.059,
+          "tps": 291.45,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.069,
+          "tps": 270.88,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.114,
+          "tps": 245.82,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.173,
+          "tps": 218.68,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.101,
+          "tps": 316.66,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.156,
+          "tps": 305.62,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.088,
+          "tps": 310.28,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.105,
+          "tps": 276.4,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.132,
+          "tps": 238.46,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.24,
+          "tps": 205.8,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.379,
+          "tps": 168.63,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.208,
+          "tps": 300.9,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.343,
+          "tps": 289.73,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.196,
+          "tps": 301.57,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.219,
+          "tps": 228.84,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.344,
+          "tps": 185.09,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.677,
+          "tps": 159.41,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.992,
+          "tps": 111.11,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.601,
+          "tps": 274.02,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.997,
+          "tps": 250.72,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.432,
+          "tps": 292.23,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 1.357,
+          "tps": 246.74,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 2.349,
+          "tps": 216.94,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "cosmos3-nano_rtxpro6000maxq_bf16_vllm",
+      "model": "Cosmos3-Nano",
+      "device": "RTX PRO 6000 Max-Q",
+      "quantization": "BF16",
+      "engine": "vLLM",
+      "engine_version": "0.30.0",
+      "platform": null,
+      "served_repo": null,
+      "notes": "prompt cache off; thinking off; max-num-seqs 16; vLLM-Omni image",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.083,
+          "tps": 88.58,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.099,
+          "tps": 85.08,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.116,
+          "tps": 81.14,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.163,
+          "tps": 75.4,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.33,
+          "tps": 64.84,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.176,
+          "tps": 92.73,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.315,
+          "tps": 90.0,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.136,
+          "tps": 87.99,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.163,
+          "tps": 82.02,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.194,
+          "tps": 73.84,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.337,
+          "tps": 64.98,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.686,
+          "tps": 52.75,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.435,
+          "tps": 88.32,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.739,
+          "tps": 87.08,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.376,
+          "tps": 87.24,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.416,
+          "tps": 75.0,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.524,
+          "tps": 60.83,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.77,
+          "tps": 45.81,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 1.687,
+          "tps": 36.6,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 1.186,
+          "tps": 83.33,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 2.02,
+          "tps": 80.29,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.746,
+          "tps": 85.3,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 2.343,
+          "tps": 79.38,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 4.045,
+          "tps": 75.26,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "cosmos-reason1-7b_rtxpro6000_bf16_vllm",
+      "model": "Cosmos-Reason1-7B",
+      "device": "RTX PRO 6000",
+      "quantization": "BF16",
+      "engine": "vLLM",
+      "engine_version": "0.28.0",
+      "platform": null,
+      "served_repo": null,
+      "notes": "prompt cache off; thinking off; max-num-seqs 16",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.114,
+          "tps": 97.07,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.173,
+          "tps": 97.92,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.174,
+          "tps": 97.61,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.296,
+          "tps": 89.97,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.425,
+          "tps": 86.46,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.204,
+          "tps": 98.96,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.327,
+          "tps": 98.46,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.252,
+          "tps": 98.24,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.226,
+          "tps": 94.29,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.314,
+          "tps": 92.86,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.533,
+          "tps": 84.36,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.898,
+          "tps": 76.27,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.683,
+          "tps": 88.98,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.708,
+          "tps": 97.69,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.381,
+          "tps": 98.04,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.473,
+          "tps": 91.24,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.781,
+          "tps": 85.7,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 1.251,
+          "tps": 70.23,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 1.944,
+          "tps": 58.84,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 1.054,
+          "tps": 96.52,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 1.75,
+          "tps": 94.17,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.613,
+          "tps": 94.91,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 1.916,
+          "tps": 94.07,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 3.318,
+          "tps": 91.17,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "cosmos-reason2-2b_rtxpro6000_bf16_vllm",
+      "model": "Cosmos-Reason2-2B",
+      "device": "RTX PRO 6000",
+      "quantization": "BF16",
+      "engine": "vLLM",
+      "engine_version": "0.28.0",
+      "platform": null,
+      "served_repo": null,
+      "notes": "prompt cache off; thinking off; max-num-seqs 16",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.124,
+          "tps": 324.05,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.21,
+          "tps": 306.56,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.141,
+          "tps": 277.12,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.132,
+          "tps": 250.97,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.28,
+          "tps": 214.3,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.163,
+          "tps": 319.38,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.248,
+          "tps": 319.55,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.109,
+          "tps": 318.27,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.161,
+          "tps": 291.44,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.148,
+          "tps": 265.46,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.207,
+          "tps": 231.77,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.353,
+          "tps": 193.91,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.329,
+          "tps": 310.04,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.562,
+          "tps": 296.82,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.278,
+          "tps": 312.18,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.293,
+          "tps": 263.31,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.33,
+          "tps": 217.66,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.48,
+          "tps": 166.06,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.827,
+          "tps": 123.66,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.864,
+          "tps": 278.4,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 1.546,
+          "tps": 238.53,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.495,
+          "tps": 300.43,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 1.954,
+          "tps": 254.04,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 2.586,
+          "tps": 223.8,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "cosmos-reason2-8b_rtxpro6000_bf16_vllm",
+      "model": "Cosmos-Reason2-8B",
+      "device": "RTX PRO 6000",
+      "quantization": "BF16",
+      "engine": "vLLM",
+      "engine_version": "0.28.0",
+      "platform": null,
+      "served_repo": null,
+      "notes": "prompt cache off; thinking off; max-num-seqs 16",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.223,
+          "tps": 94.08,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.106,
+          "tps": 90.62,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.163,
+          "tps": 89.06,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.172,
+          "tps": 79.85,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.279,
+          "tps": 66.34,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.204,
+          "tps": 93.67,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.324,
+          "tps": 93.57,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.148,
+          "tps": 92.46,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.203,
+          "tps": 89.23,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.258,
+          "tps": 80.12,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.294,
+          "tps": 67.64,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.545,
+          "tps": 54.8,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.446,
+          "tps": 92.34,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.75,
+          "tps": 92.42,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.378,
+          "tps": 93.43,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.365,
+          "tps": 79.91,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.495,
+          "tps": 71.65,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.702,
+          "tps": 49.96,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 1.522,
+          "tps": 92.92,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 1.13,
+          "tps": 89.04,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 1.87,
+          "tps": 86.03,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.68,
+          "tps": 84.09,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 2.174,
+          "tps": 85.32,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 3.951,
+          "tps": 80.72,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "eagle2.5-8b_rtxpro6000_bf16_vllm",
+      "model": "Eagle2.5-8B",
+      "device": "RTX PRO 6000",
+      "quantization": "BF16",
+      "engine": "vLLM",
+      "engine_version": "0.28.0",
+      "platform": null,
+      "served_repo": null,
+      "notes": "prompt cache off; thinking off; max-num-seqs 16",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.17,
+          "tps": 139.96,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.173,
+          "tps": 105.35,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.205,
+          "tps": 92.65,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.206,
+          "tps": 78.7,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.491,
+          "tps": 64.37,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.273,
+          "tps": 115.02,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.436,
+          "tps": 148.42,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.258,
+          "tps": 104.98,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.296,
+          "tps": 154.29,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.426,
+          "tps": 81.23,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.599,
+          "tps": 53.93,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 1.321,
+          "tps": 29.5,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.778,
+          "tps": 124.52,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 1.352,
+          "tps": 105.89,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.406,
+          "tps": 109.21,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.41,
+          "tps": 92.39,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.45,
+          "tps": 70.7,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.614,
+          "tps": 46.68,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 1.296,
+          "tps": 38.75,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.967,
+          "tps": 99.29,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 1.64,
+          "tps": 98.55,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.418,
+          "tps": 98.03,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 1.213,
+          "tps": 98.69,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 2.187,
+          "tps": 97.93,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "gemma-4-31b-it_rtxpro6000_bf16_vllm",
+      "model": "Gemma-4-31B-it",
+      "device": "RTX PRO 6000",
+      "quantization": "BF16",
+      "engine": "vLLM",
+      "engine_version": "0.28.0",
+      "platform": null,
+      "served_repo": null,
+      "notes": "prompt cache off; thinking off; max-num-seqs 16",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.172,
+          "tps": 24.71,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.324,
+          "tps": 24.31,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.361,
+          "tps": 23.5,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.431,
+          "tps": 22.22,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.981,
+          "tps": 21.39,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.408,
+          "tps": 24.45,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.607,
+          "tps": 23.99,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.235,
+          "tps": 24.66,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.253,
+          "tps": 24.4,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.373,
+          "tps": 23.47,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.414,
+          "tps": 22.17,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.946,
+          "tps": 21.3,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.44,
+          "tps": 24.2,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.702,
+          "tps": 24.36,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.363,
+          "tps": 24.68,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.289,
+          "tps": 24.34,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.328,
+          "tps": 23.53,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.464,
+          "tps": 22.17,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 1.072,
+          "tps": 20.97,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.574,
+          "tps": 24.44,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.901,
+          "tps": 24.36,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.316,
+          "tps": 24.65,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.737,
+          "tps": 24.39,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 1.354,
+          "tps": 24.36,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "gemma-4-31b-it_rtxpro6000_nvfp4_vllm",
+      "model": "Gemma-4-31B-it",
+      "device": "RTX PRO 6000",
+      "quantization": "NVFP4",
+      "engine": "vLLM",
+      "engine_version": "0.28.0",
+      "platform": null,
+      "served_repo": "nvidia/Gemma-4-31B-IT-NVFP4",
+      "notes": "prompt cache off; thinking off; max-num-seqs 16",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.198,
+          "tps": 44.87,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.192,
+          "tps": 43.34,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.228,
+          "tps": 41.05,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.347,
+          "tps": 38.22,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.726,
+          "tps": 37.4,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.304,
+          "tps": 44.56,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.482,
+          "tps": 44.39,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.271,
+          "tps": 45.11,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.218,
+          "tps": 43.2,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.28,
+          "tps": 40.47,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.4,
+          "tps": 38.25,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.67,
+          "tps": 35.65,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.349,
+          "tps": 44.52,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.579,
+          "tps": 44.36,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.213,
+          "tps": 44.85,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.259,
+          "tps": 43.29,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.312,
+          "tps": 41.29,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.398,
+          "tps": 38.57,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.81,
+          "tps": 35.94,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.469,
+          "tps": 44.53,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.765,
+          "tps": 44.35,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.305,
+          "tps": 44.96,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.65,
+          "tps": 44.47,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 1.018,
+          "tps": 44.04,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "llama-3.1-nemotron-nano-vl-8b_rtxpro6000_bf16_vllm",
+      "model": "Llama-3.1-Nemotron-Nano-VL-8B",
+      "device": "RTX PRO 6000",
+      "quantization": "BF16",
+      "engine": "vLLM",
+      "engine_version": "0.28.0",
+      "platform": null,
+      "served_repo": null,
+      "notes": "prompt cache off; thinking off; max-num-seqs 16",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.13,
+          "tps": 95.58,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.142,
+          "tps": 92.17,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.164,
+          "tps": 87.05,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.282,
+          "tps": 77.49,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.466,
+          "tps": 69.17,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.322,
+          "tps": 95.5,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.505,
+          "tps": 94.52,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.292,
+          "tps": 94.89,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.325,
+          "tps": 84.64,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.431,
+          "tps": 73.24,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.735,
+          "tps": 59.44,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 1.273,
+          "tps": 46.5,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.937,
+          "tps": 87.83,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 1.786,
+          "tps": 89.13,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.344,
+          "tps": 94.53,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.414,
+          "tps": 87.07,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.475,
+          "tps": 71.39,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.722,
+          "tps": 58.13,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 1.367,
+          "tps": 49.86,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 1.104,
+          "tps": 91.61,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 1.86,
+          "tps": 87.55,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.486,
+          "tps": 94.89,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 1.368,
+          "tps": 91.41,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 2.277,
+          "tps": 88.44,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "medgemma-1.5-4b-it_rtxpro6000_bf16_vllm",
+      "model": "MedGemma-1.5-4B-it",
+      "device": "RTX PRO 6000",
+      "quantization": "BF16",
+      "engine": "vLLM",
+      "engine_version": "0.28.0",
+      "platform": null,
+      "served_repo": null,
+      "notes": "prompt cache off; thinking off; max-num-seqs 16",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.095,
+          "tps": 170.53,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.123,
+          "tps": 166.23,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.176,
+          "tps": 153.72,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.454,
+          "tps": 154.26,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.3,
+          "tps": 136.04,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.212,
+          "tps": 171.22,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.355,
+          "tps": 163.15,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.199,
+          "tps": 171.49,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.159,
+          "tps": 165.1,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.16,
+          "tps": 153.99,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.224,
+          "tps": 143.17,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.399,
+          "tps": 134.06,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.264,
+          "tps": 171.47,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.447,
+          "tps": 170.05,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.284,
+          "tps": 172.94,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.178,
+          "tps": 163.51,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.328,
+          "tps": 159.1,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.326,
+          "tps": 143.29,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.553,
+          "tps": 128.91,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.65,
+          "tps": 164.46,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.649,
+          "tps": 171.42,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.249,
+          "tps": 173.7,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.672,
+          "tps": 187.85,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.964,
+          "tps": 167.59,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "nemotron-nano-12b-v2-vl_rtxpro6000_bf16_vllm",
+      "model": "Nemotron-Nano-12B-v2-VL",
+      "device": "RTX PRO 6000",
+      "quantization": "BF16",
+      "engine": "vLLM",
+      "engine_version": "0.28.0",
+      "platform": null,
+      "served_repo": null,
+      "notes": "prompt cache off; thinking off; max-num-seqs 16",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.161,
+          "tps": 62.42,
+          "requests": 24,
+          "failed": 1
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.184,
+          "tps": 62.56,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.222,
+          "tps": 58.08,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.396,
+          "tps": 50.9,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.708,
+          "tps": 41.95,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.392,
+          "tps": 60.35,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.644,
+          "tps": 61.61,
+          "requests": 5,
+          "failed": 1
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.197,
+          "tps": 68.5,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.256,
+          "tps": 61.92,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.251,
+          "tps": 56.08,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.457,
+          "tps": 50.64,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.764,
+          "tps": 44.42,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.497,
+          "tps": 62.35,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.777,
+          "tps": 64.1,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.486,
+          "tps": 65.49,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.492,
+          "tps": 57.38,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.661,
+          "tps": 49.4,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 1.01,
+          "tps": 38.7,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 2.059,
+          "tps": 27.51,
+          "requests": 24,
+          "failed": 1
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 1.355,
+          "tps": 63.17,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 2.285,
+          "tps": 62.78,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.612,
+          "tps": 63.64,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 1.747,
+          "tps": 62.19,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 2.895,
+          "tps": 60.0,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "qwen3-vl-30b-a3b-instruct_rtxpro6000_fp8_vllm",
+      "model": "Qwen3-VL-30B-A3B-Instruct",
+      "device": "RTX PRO 6000",
+      "quantization": "FP8",
+      "engine": "vLLM",
+      "engine_version": "0.28.0",
+      "platform": null,
+      "served_repo": null,
+      "notes": "prompt cache off; thinking off; max-num-seqs 16",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.131,
+          "tps": 193.97,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.199,
+          "tps": 157.93,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.197,
+          "tps": 124.65,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.299,
+          "tps": 109.67,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.376,
+          "tps": 91.83,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.205,
+          "tps": 197.56,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.69,
+          "tps": 192.04,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.161,
+          "tps": 194.37,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.257,
+          "tps": 153.3,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.324,
+          "tps": 127.38,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.425,
+          "tps": 100.58,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.55,
+          "tps": 82.28,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.373,
+          "tps": 186.07,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 1.041,
+          "tps": 182.71,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.31,
+          "tps": 195.12,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.439,
+          "tps": 150.5,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.575,
+          "tps": 112.85,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.764,
+          "tps": 80.52,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 1.246,
+          "tps": 61.79,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 1.018,
+          "tps": 201.24,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 1.621,
+          "tps": 178.22,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.581,
+          "tps": 182.39,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 1.855,
+          "tps": 176.14,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 3.22,
+          "tps": 162.14,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "qwen3-vl-4b-instruct_rtxpro6000_bf16_vllm",
+      "model": "Qwen3-VL-4B-Instruct",
+      "device": "RTX PRO 6000",
+      "quantization": "BF16",
+      "engine": "vLLM",
+      "engine_version": "0.28.0",
+      "platform": null,
+      "served_repo": null,
+      "notes": "prompt cache off; thinking off; max-num-seqs 16",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.085,
+          "tps": 157.78,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.141,
+          "tps": 150.49,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.176,
+          "tps": 152.32,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.214,
+          "tps": 145.5,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.282,
+          "tps": 131.36,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.181,
+          "tps": 156.46,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.279,
+          "tps": 154.5,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.164,
+          "tps": 156.57,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.19,
+          "tps": 149.48,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.2,
+          "tps": 142.52,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.263,
+          "tps": 126.79,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.461,
+          "tps": 111.12,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.381,
+          "tps": 153.29,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.64,
+          "tps": 149.06,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.268,
+          "tps": 153.11,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.365,
+          "tps": 139.71,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.435,
+          "tps": 122.08,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.677,
+          "tps": 98.5,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 1.022,
+          "tps": 78.64,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 1.185,
+          "tps": 143.43,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 1.574,
+          "tps": 130.77,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.559,
+          "tps": 151.14,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 1.8,
+          "tps": 135.5,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 3.09,
+          "tps": 120.12,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "qwen3-vl-4b-instruct_rtxpro6000_q80_llamacpp",
+      "model": "Qwen3-VL-4B-Instruct",
+      "device": "RTX PRO 6000",
+      "quantization": "Q8_0",
+      "engine": "llama.cpp",
+      "engine_version": "b9859",
+      "platform": null,
+      "served_repo": null,
+      "notes": "GGUF weights; prompt cache off; parallel slots = cameras",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.117,
+          "tps": 241.67,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.141,
+          "tps": 200.16,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.243,
+          "tps": 160.6,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.388,
+          "tps": 116.62,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.509,
+          "tps": 90.25,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.444,
+          "tps": 238.97,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.353,
+          "tps": 234.1,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.247,
+          "tps": 231.38,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.266,
+          "tps": 161.14,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.441,
+          "tps": 139.95,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.695,
+          "tps": 99.79,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 1.094,
+          "tps": 73.33,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.541,
+          "tps": 233.4,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.761,
+          "tps": 223.53,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.468,
+          "tps": 222.25,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.632,
+          "tps": 134.58,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 1.106,
+          "tps": 73.86,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 1.908,
+          "tps": 87.42,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 2.648,
+          "tps": 57.65,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 1.393,
+          "tps": 221.35,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 1.669,
+          "tps": 210.67,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.944,
+          "tps": 222.96,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 2.173,
+          "tps": 207.22,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 3.345,
+          "tps": 193.37,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "qwen3-vl-8b-instruct_rtxpro6000_bf16_vllm",
+      "model": "Qwen3-VL-8B-Instruct",
+      "device": "RTX PRO 6000",
+      "quantization": "BF16",
+      "engine": "vLLM",
+      "engine_version": "0.28.0",
+      "platform": null,
+      "served_repo": null,
+      "notes": "prompt cache off; thinking off; max-num-seqs 16",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.096,
+          "tps": 93.07,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.125,
+          "tps": 91.45,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.184,
+          "tps": 90.89,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.258,
+          "tps": 88.04,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.293,
+          "tps": 81.27,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.253,
+          "tps": 96.65,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.323,
+          "tps": 92.53,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.23,
+          "tps": 92.45,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.208,
+          "tps": 88.31,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.271,
+          "tps": 86.83,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.392,
+          "tps": 79.2,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.583,
+          "tps": 71.41,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.444,
+          "tps": 92.1,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.761,
+          "tps": 90.51,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.46,
+          "tps": 92.31,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.451,
+          "tps": 83.64,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.622,
+          "tps": 77.68,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.995,
+          "tps": 65.8,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 1.457,
+          "tps": 49.87,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 1.166,
+          "tps": 88.56,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 1.887,
+          "tps": 85.36,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.684,
+          "tps": 90.92,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 2.189,
+          "tps": 85.46,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 3.739,
+          "tps": 80.82,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "qwen3-vl-8b-instruct_rtxpro6000_q80_llamacpp",
+      "model": "Qwen3-VL-8B-Instruct",
+      "device": "RTX PRO 6000",
+      "quantization": "Q8_0",
+      "engine": "llama.cpp",
+      "engine_version": "b9859",
+      "platform": null,
+      "served_repo": null,
+      "notes": "GGUF weights; prompt cache off; parallel slots = cameras",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.192,
+          "tps": 155.08,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.193,
+          "tps": 132.68,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.32,
+          "tps": 114.8,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.553,
+          "tps": 79.69,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.848,
+          "tps": 62.93,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.34,
+          "tps": 153.57,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.504,
+          "tps": 152.57,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.329,
+          "tps": 153.79,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.391,
+          "tps": 101.79,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.611,
+          "tps": 61.96,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 1.294,
+          "tps": 75.16,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 2.032,
+          "tps": 56.26,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.725,
+          "tps": 151.5,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 1.037,
+          "tps": 146.12,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.778,
+          "tps": 148.67,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 1.095,
+          "tps": 87.13,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 2.06,
+          "tps": 54.05,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 4.136,
+          "tps": 69.24,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 5.719,
+          "tps": 44.78,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 2.032,
+          "tps": 146.62,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 2.548,
+          "tps": 138.14,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 1.788,
+          "tps": 148.39,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 3.867,
+          "tps": 140.02,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 5.873,
+          "tps": 134.28,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "qwen3.6-35b-a3b_rtxpro6000_fp8_vllm",
+      "model": "Qwen3.6-35B-A3B",
+      "device": "RTX PRO 6000",
+      "quantization": "FP8",
+      "engine": "vLLM",
+      "engine_version": "0.28.0",
+      "platform": null,
+      "served_repo": null,
+      "notes": "prompt cache off; thinking off; max-num-seqs 16",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.222,
+          "tps": 223.93,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.206,
+          "tps": 154.64,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.351,
+          "tps": 145.47,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.335,
+          "tps": 119.75,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.403,
+          "tps": 100.62,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.249,
+          "tps": 223.89,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.333,
+          "tps": 211.52,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.212,
+          "tps": 220.84,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.307,
+          "tps": 167.03,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.363,
+          "tps": 125.83,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.499,
+          "tps": 116.86,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.716,
+          "tps": 98.43,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.389,
+          "tps": 211.46,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.844,
+          "tps": 220.13,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.304,
+          "tps": 208.91,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.505,
+          "tps": 176.51,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.507,
+          "tps": 117.57,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.87,
+          "tps": 102.96,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 1.316,
+          "tps": 78.98,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.961,
+          "tps": 218.55,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 1.753,
+          "tps": 215.29,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.586,
+          "tps": 221.26,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 1.82,
+          "tps": 203.13,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 3.038,
+          "tps": 209.6,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "qwen3.6-35b-a3b_rtxpro6000_nvfp4_vllm",
+      "model": "Qwen3.6-35B-A3B",
+      "device": "RTX PRO 6000",
+      "quantization": "NVFP4",
+      "engine": "vLLM",
+      "engine_version": "0.28.0",
+      "platform": null,
+      "served_repo": "nvidia/Qwen3.6-35B-A3B-NVFP4",
+      "notes": "prompt cache off; thinking off; max-num-seqs 16",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.197,
+          "tps": 275.85,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.313,
+          "tps": 209.07,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.391,
+          "tps": 211.48,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.586,
+          "tps": 140.01,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.663,
+          "tps": 134.32,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.264,
+          "tps": 282.52,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.342,
+          "tps": 266.12,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.221,
+          "tps": 282.94,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.363,
+          "tps": 218.75,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.47,
+          "tps": 204.55,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.688,
+          "tps": 150.14,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.849,
+          "tps": 139.76,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.405,
+          "tps": 282.59,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.841,
+          "tps": 278.32,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.404,
+          "tps": 279.76,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.508,
+          "tps": 218.49,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.697,
+          "tps": 190.07,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 1.082,
+          "tps": 126.71,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 1.592,
+          "tps": 112.1,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.961,
+          "tps": 274.25,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 1.739,
+          "tps": 268.25,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.798,
+          "tps": 279.29,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 1.806,
+          "tps": 269.05,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 3.014,
+          "tps": 260.83,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    },
+    {
+      "id": "qwen3.8-27b_rtxpro6000_fp8_vllm",
+      "model": "Qwen3.8-27B",
+      "device": "RTX PRO 6000",
+      "quantization": "FP8",
+      "engine": "vLLM",
+      "engine_version": "0.28.0",
+      "platform": null,
+      "served_repo": null,
+      "notes": "prompt cache off; thinking off; max-num-seqs 16",
+      "data_points": [
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.237,
+          "tps": 50.37,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.257,
+          "tps": 46.89,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.275,
+          "tps": 45.8,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.544,
+          "tps": 45.87,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 0.73,
+          "tps": 43.94,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.277,
+          "tps": 50.3,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "480p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 0.455,
+          "tps": 50.24,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.293,
+          "tps": 49.95,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.372,
+          "tps": 46.08,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 0.514,
+          "tps": 45.21,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 0.866,
+          "tps": 44.14,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 1.378,
+          "tps": 41.59,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 0.787,
+          "tps": 49.38,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "720p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 1.014,
+          "tps": 49.88,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.458,
+          "tps": 50.05,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 2,
+          "ttft_s": 0.671,
+          "tps": 45.58,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 4,
+          "ttft_s": 1.138,
+          "tps": 43.08,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 8,
+          "ttft_s": 2.038,
+          "tps": 40.31,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 1,
+          "c": 16,
+          "ttft_s": 3.186,
+          "tps": 35.13,
+          "requests": 24,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 1.494,
+          "tps": 49.61,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "1080p",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 2.683,
+          "tps": 49.19,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 1,
+          "c": 1,
+          "ttft_s": 0.906,
+          "tps": 50.0,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 3,
+          "c": 1,
+          "ttft_s": 2.797,
+          "tps": 49.06,
+          "requests": 5,
+          "failed": 0
+        },
+        {
+          "res": "2K",
+          "images": 5,
+          "c": 1,
+          "ttft_s": 4.687,
+          "tps": 47.71,
+          "requests": 5,
+          "failed": 0
+        }
+      ]
+    }
+  ]
+}

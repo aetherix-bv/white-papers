@@ -1,0 +1,715 @@
+
+
+<!DOCTYPE html>
+
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-default.css">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet">
+
+  <style id="jtd-nav-activation">
+  
+
+.site-nav > ul.nav-list:first-child > li:not(:nth-child(6)) > a,
+.site-nav > ul.nav-list:first-child > li > ul > li > a,
+.site-nav > ul.nav-list:first-child > li > ul > li > ul > li > a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:not(:first-child) a,
+.site-nav li.external a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:first-child > li:nth-child(6) > a {
+  font-weight: 600;
+  text-decoration: none;
+}.site-nav > ul.nav-list:first-child > li:nth-child(6) > button svg {
+  transform: rotate(-90deg);
+}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(6) > ul.nav-list {
+  display: block;
+}
+  </style>
+
+  
+
+  
+    <script src="/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="icon" href="/nl/favicon.ico" type="image/x-icon">
+
+
+
+  <!-- Begin Jekyll SEO tag v2.9.1 -->
+<title>VLM Inference Benchmark Explorer | Aetherix White Papers</title>
+<meta name="generator" content="Jekyll v4.3.4" />
+<meta property="og:title" content="VLM Inference Benchmark Explorer" />
+<meta property="og:locale" content="nl" />
+<meta name="description" content="Verken inferentiebenchmarks van vision-languagemodellen op RTX PRO 6000 Blackwell, Jetson AGX Orin en Jetson Orin NX. Kies het beeldformaat, stel in hoe lang een camera op zijn antwoord mag wachten, en zie hoeveel camera’s elke configuratie bijhoudt." />
+<meta name="twitter:description" property="og:description" content="Verken inferentiebenchmarks van vision-languagemodellen op RTX PRO 6000 Blackwell, Jetson AGX Orin en Jetson Orin NX. Kies het beeldformaat, stel in hoe lang een camera op zijn antwoord mag wachten, en zie hoeveel camera’s elke configuratie bijhoudt." />
+<link rel="canonical" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/" />
+<meta property="og:url" content="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/" />
+<meta property="og:site_name" content="Aetherix White Papers" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-10-06T09:00:00+00:00" />
+<meta property="article:modified_time" content="2026-10-06T09:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="VLM Inference Benchmark Explorer" />
+<meta name="twitter:site" content="@Aetherixnl" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2026-10-06T09:00:00+00:00","datePublished":"2026-10-06T09:00:00+00:00","description":"Verken inferentiebenchmarks van vision-languagemodellen op RTX PRO 6000 Blackwell, Jetson AGX Orin en Jetson Orin NX. Kies het beeldformaat, stel in hoe lang een camera op zijn antwoord mag wachten, en zie hoeveel camera’s elke configuratie bijhoudt.","headline":"VLM Inference Benchmark Explorer","mainEntityOfPage":{"@type":"WebPage","@id":"https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://whitepapers.aetherix.com/assets/images/aetherix-logo.png"}},"url":"https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  
+<!-- Google tag (gtag.js) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JWLN33085T"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+
+  // Consent Mode v2 — default DENIED. Banner onayı ile GRANTED olur.
+  // KVKK/GDPR uyumu: ziyaretçi onay vermeden çerez set edilmez.
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    functionality_storage: 'granted',
+    security_storage: 'granted',
+    wait_for_update: 500
+  });
+
+  gtag('js', new Date());
+  gtag('config', 'G-JWLN33085T', {
+    anonymize_ip: true
+  });
+</script>
+
+<link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/">
+<link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/">
+<link rel="alternate" hreflang="x-default" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/images/favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+<script>
+(function () {
+  var open = XMLHttpRequest.prototype.open;
+  var own = "/nl/search-data.json";
+  XMLHttpRequest.prototype.open = function (method, url) {
+    if (typeof url === "string" && /assets\/js\/search-data\.json$/.test(url)) arguments[1] = own;
+    return open.apply(this, arguments);
+  };
+})();
+</script>
+
+
+</head>
+
+<body>
+  <a class="skip-to-main" href="#main-content">Naar de hoofdinhoud</a>
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="svg-link" viewBox="0 0 24 24">
+  <title>Link</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+</symbol>
+
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+  <title>Menu</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+    <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</symbol>
+
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+  <title>Expand</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</symbol>
+
+  <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
+<symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+  <title id="svg-external-link-title">(external link)</title>
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+</symbol>
+
+  
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+  <title>Document</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+</symbol>
+
+    <symbol id="svg-search" viewBox="0 0 24 24">
+  <title>Search</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</symbol>
+
+  
+  
+    <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+<symbol id="svg-copy" viewBox="0 0 16 16">
+  <title>Copy</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+</symbol>
+<symbol id="svg-copied" viewBox="0 0 16 16">
+  <title>Copied</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"/>
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"/>
+  </svg>
+</symbol>
+
+  
+</svg>
+
+  
+    <div class="side-bar">
+  <div class="site-header" role="banner">
+    <a href="/nl/" class="site-title lh-tight">
+  <div class="site-logo" role="img" aria-label="Aetherix White Papers"></div>
+
+</a>
+    <button id="menu-button" class="site-button btn-reset" aria-label="Toggle menu" aria-pressed="false">
+      <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  <nav aria-label="Main" id="site-nav" class="site-nav">
+  
+  
+    <ul class="nav-list"><li class="nav-list-item"><a href="/nl/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/nl/about/" class="nav-list-link">Over ons</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in White Papers category" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+    </button><a href="/nl/papers/" class="nav-list-link">White Papers</a><ul class="nav-list"><li class="nav-list-item"><a href="/nl/papers/local-llm-guide/" class="nav-list-link">Handleiding voor lokaal LLM-gebruik</a></li><li class="nav-list-item"><a href="/nl/papers/conditional-memory-offloading/" class="nav-list-link">Engram-offloading bij LLM-inferentie</a></li><li class="nav-list-item"><a href="/nl/papers/b300-gb300-cluster-architecture/" class="nav-list-link">NVIDIA DGX B300 vs GB300 NVL72: vergelijking van clusterarchitecturen</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-2node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 2 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-3node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 3 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-4node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 4 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-8node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 8 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/qwen3.6-27b-dgx-spark-benchmark/" class="nav-list-link">Qwen3.6-27B DGX Spark-benchmark</a></li><li class="nav-list-item"><a href="/nl/papers/qwen3.6-27b-dgx-spark-scaling/" class="nav-list-link">Schaling van Qwen3.6-27B op een DGX Spark-cluster</a></li><li class="nav-list-item"><a href="/nl/papers/deepseek-v4.1-flash-4spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash-deployment op 4× DGX Spark</a></li><li class="nav-list-item"><a href="/nl/papers/deepseek-v4.1-flash-8spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash-deployment op 8× DGX Spark met TP8</a></li><li class="nav-list-item"><a href="/nl/papers/kimi-k3-dgx-b300-inference-benchmark/" class="nav-list-link">Kimi K3-inferentiebenchmark op DGX-B300</a></li></ul></li><li class="nav-list-item"><a href="/nl/llm-inference-benchmarks/" class="nav-list-link">LLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/nl/cv-inference-benchmarks/" class="nav-list-link">CV Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/nl/vlm-inference-benchmarks/" class="nav-list-link">VLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/nl/changelog/" class="nav-list-link">Wijzigingslogboek</a></li></ul>
+
+  
+</nav>
+
+
+  
+  
+    <div class="lang-switcher">
+  
+    
+    
+      <a class="lang-switcher-item" href="/vlm-inference-benchmarks/">EN</a>
+    
+  
+    
+    
+      <span class="lang-switcher-item active">NL</span>
+    
+  
+</div>
+<script src="/assets/js/lang-switch.js"></script>
+
+  
+</div>
+
+  
+  <div class="main" id="top">
+    <div id="main-header" class="main-header">
+  
+    
+
+<div class="search" role="search">
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Zoeken" aria-label="Zoeken" autocomplete="off">
+    <label for="search-input" class="search-label"><svg viewBox="0 0 24 24" class="search-icon"><use xlink:href="#svg-search"></use></svg></label>
+  </div>
+  <div id="search-results" class="search-results"></div>
+</div>
+
+  
+  
+  
+    <nav aria-label="Auxiliary" class="aux-nav">
+  <ul class="aux-nav-list">
+    
+      <li class="aux-nav-list-item">
+        <a href="https://aetherix.com" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          aetherix.com
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://github.com/aetherix-bv" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          GitHub
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+  
+</div>
+
+    <div class="main-content-wrap">
+      
+      <div id="main-content" class="main-content">
+        <main>
+          
+            <h1 id="vlm-inference-benchmark-explorer">
+  
+  
+    <a href="#vlm-inference-benchmark-explorer" class="anchor-heading" aria-labelledby="vlm-inference-benchmark-explorer"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> VLM Inference Benchmark Explorer
+  
+  
+</h1>
+    
+
+<p>Hoeveel camera’s kan dit apparaat met dit vision-languagemodel volgen? Kies het
+beeldformaat dat uw camera’s sturen en stel in hoe lang een camera op zijn
+antwoord mag wachten; de tabel wordt bijgewerkt voor elke configuratie die we
+hebben gemeten. Open een rij om de metingen voor elk aantal camera’s, de
+toelichting op de resultaten en een grafiek te zien.</p>
+
+<details class="bt-howto">
+<summary>Hoe u de benchmark-explorer gebruikt</summary>
+<div class="bt-howto-body">
+<h3 id="wat-een-rij-is">
+  
+  
+    <a href="#wat-een-rij-is" class="anchor-heading" aria-labelledby="wat-een-rij-is"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Wat een rij is
+  
+  
+</h3>
+    
+
+    <p>Een rij is één <strong>deploymentconfiguratie</strong>: een vision-languagemodel, op
+specifieke hardware, in een specifiek getalformaat, geserveerd door een
+specifieke engine, van begin tot eind gemeten. Hetzelfde model staat daarom in
+meerdere rijen, en twee rijen zijn pas direct vergelijkbaar als u weet welke van
+die instellingen tussen hen verschillen.</p>
+<h3 id="filters-en-het-doel-hebben-een-andere-taak">
+  
+  
+    <a href="#filters-en-het-doel-hebben-een-andere-taak" class="anchor-heading" aria-labelledby="filters-en-het-doel-hebben-een-andere-taak"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Filters en het doel hebben een andere taak
+  
+  
+</h3>
+    
+
+    <p><strong>Filters bepalen welke rijen u ziet.</strong> De filters voor apparaat, model, aantal
+parameters, kwantisatie en engine, en de schuifregelaars voor responstijd en
+camera’s, tonen of verbergen alleen rijen.</p>
+
+    <p><strong>Het doel en de aanname bepalen wat de getallen zeggen.</strong> Ze staan onder
+<em>Prestatiedoel en aannames</em>. Als u er een wijzigt, blijven de rijen staan, maar
+worden de responstijd, Max. camera’s en de groene en rode kleuring van elke rij
+opnieuw berekend.</p>
+<h3 id="beschrijf-uw-cameras">
+  
+  
+    <a href="#beschrijf-uw-cameras" class="anchor-heading" aria-labelledby="beschrijf-uw-cameras"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1. Beschrijf uw camera’s
+  
+  
+</h3>
+    
+
+    <p>Twee keuzeknoppen beschrijven de workload, en elk getal in de tabel wordt bij
+die keuzes afgelezen:</p>
+
+    <ul>
+      <li><strong>Beeldformaat</strong> — het formaat van elk beeld dat een camera stuurt: 480p,
+720p, 1080p of 2K.</li>
+      <li><strong>Camera’s</strong> — hoeveel camera’s op hetzelfde moment verzoeken sturen. Dit is
+de gelijktijdigheid (concurrency) waarbij het systeem is gemeten.</li>
+    </ul>
+
+    <p>Rijen die bij de gekozen combinatie niet zijn gemeten, worden verborgen, en
+gedimde knoppen markeren combinaties zonder meting. Meerdere camera’s zijn
+gemeten bij 480p, 720p en 1080p; 2K alleen met één camera.</p>
+<h3 id="verfijnen-en-sorteren">
+  
+  
+    <a href="#verfijnen-en-sorteren" class="anchor-heading" aria-labelledby="verfijnen-en-sorteren"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2. Verfijnen en sorteren
+  
+  
+</h3>
+    
+
+    <p>Filters werken samen en elke kolom is sorteerbaar. De leerzaamste vergelijkingen
+veranderen één instelling: één model in twee kwantisaties op één apparaat,
+hetzelfde model onder llama.cpp en vLLM, of één model op twee apparaten.</p>
+<h3 id="stel-uw-doel-in">
+  
+  
+    <a href="#stel-uw-doel-in" class="anchor-heading" aria-labelledby="stel-uw-doel-in"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. Stel uw doel in
+  
+  
+</h3>
+    
+
+    <p>Het doel is <strong>hoe lang een camera maximaal mag wachten tot zijn antwoord
+begint</strong> — standaard 3 seconden. Een responstijd die precies op het doel ligt,
+slaagt.</p>
+
+    <p>Ernaast bepaalt <strong>Beelden per camera</strong> hoeveel beelden elk verzoek meestuurt:
+standaard één momentopname, of meerdere frames van dezelfde camera samen, zoals
+video vaak naar een vision-languagemodel wordt gestuurd. Meerdere beelden per
+verzoek zijn alleen met één camera gemeten, dus met drie of vijf beelden kan
+Max. camera’s niet hoger zijn dan 1.</p>
+<h3 id="lees-max-cameras-af">
+  
+  
+    <a href="#lees-max-cameras-af" class="anchor-heading" aria-labelledby="lees-max-cameras-af"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. Lees Max. camera’s af
+  
+  
+</h3>
+    
+
+    <p><strong>Max. camera’s</strong> is het hoogste gemeten aantal camera’s waarbij het antwoord van
+elke camera binnen uw doel begint. Een plus —
+<strong>16+</strong> — betekent dat de configuratie het doel haalde, zelfs bij het hoogste
+aantal waarmee ze is getest, dus het werkelijke maximum is niet bereikt. 0
+betekent dat zelfs één camera niet op tijd antwoord krijgt.</p>
+<h3 id="open-een-rij">
+  
+  
+    <a href="#open-een-rij" class="anchor-heading" aria-labelledby="open-een-rij"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5. Open een rij
+  
+  
+</h3>
+    
+
+    <p>Klik op een rij om het volgende te zien:</p>
+
+    <ul>
+      <li>links, de metingen bij uw beeldformaat en aantal beelden voor elk getest
+aantal camera’s, gemarkeerd als PASS of FAIL ten opzichte van uw doel;</li>
+      <li>rechts, de resultaten in gewone taal toegelicht, bij de standaardinstellingen;</li>
+      <li>daaronder, een grafiek van de responstijd naarmate er camera’s bijkomen, één
+lijn per beeldformaat, met uw doel als stippellijn. Die verschijnt waar
+meerdere camera’s zijn gemeten, dus met één beeld per camera.</li>
+    </ul>
+
+    <p>De grafiek kan als PNG worden gedownload voor rapporten en presentaties.</p>
+<h3 id="waar-te-beginnen">
+  
+  
+    <a href="#waar-te-beginnen" class="anchor-heading" aria-labelledby="waar-te-beginnen"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Waar te beginnen
+  
+  
+</h3>
+    
+
+    <p><strong>“Hoeveel camera’s kan één Jetson AGX Orin volgen?”</strong> Kies het apparaat, stel
+het beeldformaat in dat uw camera’s sturen en lees Max. camera’s af. Zet de
+schuifregelaar voor het minimum aantal camera’s op het aantal dat u nodig hebt
+om alleen de configuraties te zien die het bijhouden.</p>
+
+    <p><strong>“Is 1080p de moeite waard?”</strong> Wissel van beeldformaat en kijk naar Max.
+camera’s, of open een rij: de grafiek heeft één lijn per beeldformaat.</p>
+
+    <p><strong>“Wat veranderen kwantisatie en de engine?”</strong> Houd model en apparaat vast en
+vergelijk de rijen die in die ene instelling verschillen: Qwen3-VL-8B-Instruct in
+Q8_0 en Q4_K_M op Jetson AGX Orin, of Qwen3-VL-4B-Instruct onder llama.cpp en
+vLLM op RTX PRO 6000. Door het aantal camera’s te wijzigen, ziet u hoe het
+verschil zich onder belasting ontwikkelt.</p>
+
+    <p><strong>“We hebben deze hardware al; wat kunnen we erop draaien?”</strong> Begin met het
+apparaatfilter, sorteer de overgebleven modellen op grootte of op Max. camera’s,
+en verfijn met de responstijd of het aantal camera’s dat u nodig hebt.</p>
+
+  </div>
+</details>
+
+<details class="bt-howto">
+<summary>Wat de getallen betekenen en hoe ze worden berekend</summary>
+<div class="bt-howto-body">
+<h3 id="hoe-de-getallen-zijn-gemeten">
+  
+  
+    <a href="#hoe-de-getallen-zijn-gemeten" class="anchor-heading" aria-labelledby="hoe-de-getallen-zijn-gemeten"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Hoe de getallen zijn gemeten
+  
+  
+</h3>
+    
+
+    <p>Elk verzoek bevat één of meer foto’s en de prompt <em>Describe the scene.</em>, en
+vraagt om maximaal 128 tokens. De foto’s zijn zestien vaste afbeeldingen, die
+om beurten over de verzoeken worden verdeeld en geschaald naar 854×480 (480p),
+1280×720 (720p), 1920×1080 (1080p) en 2560×1440 (2K), en als base64-beelden via
+de OpenAI-compatibele chat-API worden verstuurd. Hugging Face-checkpoints werden
+geserveerd met vLLM en GGUF-bestanden met llama.cpp.</p>
+
+    <p>Elke combinatie van beeldformaat, beelden per verzoek en aantal camera’s wordt
+afzonderlijk gemeten, na een opwarmronde die wordt weggegooid. De waarden zijn
+gemiddelden van de voltooide verzoeken; een verzoek dat tijdens de benchmark
+mislukte, telt niet mee in het gemiddelde en niet tegen een configuratie.</p>
+
+    <ul>
+      <li><strong>Meerdere camera’s</strong> zijn gemeten met één beeld per verzoek bij 480p, 720p
+en 1080p: 1, 2 en 4 camera’s op Jetson Orin NX (tot 8 voor één configuratie),
+tot 8 op Jetson AGX Orin en tot 16 op RTX PRO 6000, met 8 verzoeken per niveau
+op een Jetson en 24 op RTX PRO 6000, en nooit meer camera’s tegelijk in
+behandeling dan het niveau.</li>
+      <li><strong>Eén camera</strong> is gemeten bij alle vier formaten met één, drie en vijf beelden
+per verzoek, telkens 5 verzoeken (3 voor één configuratie). 2K en meerdere
+beelden per verzoek zijn alleen zo gemeten.</li>
+    </ul>
+
+    <p>Een <strong>token</strong> is de eenheid die een model leest en schrijft, ongeveer driekwart
+van een Engels woord. Ook een beeld wordt als tokens gelezen, en een groter beeld
+wordt er meer.</p>
+<h3 id="responstijd">
+  
+  
+    <a href="#responstijd" class="anchor-heading" aria-labelledby="responstijd"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Responstijd
+  
+  
+</h3>
+    
+
+    <p><strong>Responstijd</strong> is hoe lang een camera wacht tot zijn antwoord begint — de time
+to first token (TTFT), in seconden. Bij een vision-languagemodel is dat vooral
+het lezen van de beelden, dus het groeit met hun formaat en aantal, en met het
+aantal camera’s dat het apparaat deelt. Hoeveel het met het formaat groeit,
+hangt af van het model: sommige zetten elk beeld om in een vast aantal tokens,
+andere in meer tokens naarmate er meer pixels zijn. Lager is beter.</p>
+
+    <p><strong>TPS (tokens per seconde)</strong> is hoe snel het antwoord daarna per camera wordt
+geschreven. Het hangt nauwelijks van het beeld af en wordt ter informatie
+getoond: Max. camera’s wordt bepaald door de responstijd. Een lang antwoord
+voegt zijn schrijftijd daar nog aan toe — 128 tokens bij 25 tokens per seconde
+duren ongeveer vijf seconden langer.</p>
+<h3 id="max-cameras-het-aantal-cameras-is-de-gelijktijdigheid">
+  
+  
+    <a href="#max-cameras-het-aantal-cameras-is-de-gelijktijdigheid" class="anchor-heading" aria-labelledby="max-cameras-het-aantal-cameras-is-de-gelijktijdigheid"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Max. camera’s: het aantal camera’s is de gelijktijdigheid
+  
+  
+</h3>
+    
+
+    <p>Een camera stuurt zijn volgende verzoek zodra het vorige is beantwoord, dus hij
+heeft altijd precies één verzoek in behandeling. Het aantal gelijktijdige
+verzoeken is daarom het aantal camera’s.</p>
+
+    <p>Max. camera’s is het hoogste <strong>gemeten</strong> aantal camera’s waarbij de responstijd
+uw doel haalt. Alleen gemeten aantallen tellen, er
+wordt niets geïnterpoleerd, en als geen enkel aantal slaagt, is de waarde 0.
+Ze hangt af van uw doel en beweegt mee: bij 720p met één beeld per camera houdt
+Cosmos3-Edge op Jetson AGX Orin 2 camera’s bij bij 1 seconde en 8 — het hoogste
+gemeten aantal, dus 8+ — bij 3 seconden.</p>
+<h3 id="de-kolommen-die-de-opzet-beschrijven">
+  
+  
+    <a href="#de-kolommen-die-de-opzet-beschrijven" class="anchor-heading" aria-labelledby="de-kolommen-die-de-opzet-beschrijven"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> De kolommen die de opzet beschrijven
+  
+  
+</h3>
+    
+
+    <p><strong>Parameters</strong> — het gepubliceerde totale aantal gewichten van het model,
+inclusief de beeldencoder. Bij een mixture-of-expertsmodel is dit het totaal,
+niet het deel dat per token actief is, omdat alles in het geheugen wordt
+gehouden.</p>
+
+    <p><strong>Kwantisatie</strong> — het getalformaat waarin de gewichten zijn opgeslagen. BF16 is
+volledige precisie, FP8 gebruikt 8 bits en NVFP4 4 bits. Q8_0, Q4_K_M en Q4_0
+zijn GGUF-formaten voor llama.cpp met ongeveer 8 en 4 bits per gewicht. Minder
+bits betekent minder geheugen en meestal meer snelheid, met enig risico voor de
+kwaliteit.</p>
+
+    <p><strong>Engine</strong> — de serversoftware die het model laadt en verzoeken inplant. Ze
+beïnvloedt de snelheid net zoveel als de hardware. Qwen3-VL-4B-Instruct op RTX
+PRO 6000 begint bij 720p een enkele camera te antwoorden na 0.25 s onder
+llama.cpp (Q8_0) en na 0.16 s onder vLLM (BF16); bij 16 camera’s is het
+verschil 1.09 s tegen 0.46 s.</p>
+
+    <p><strong>Apparaat</strong> — Jetson Orin NX (16 GB) en Jetson AGX Orin (32 GB) zijn embedded
+modules waarvan CPU en GPU één geheugen delen; RTX PRO 6000 Blackwell is een
+werkstation-GPU met 96 GB, gemeten in de Workstation-editie van 600 W en de
+Max-Q-editie van 300 W.</p>
+<h3 id="wat-de-getallen-u-niet-vertellen">
+  
+  
+    <a href="#wat-de-getallen-u-niet-vertellen" class="anchor-heading" aria-labelledby="wat-de-getallen-u-niet-vertellen"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Wat de getallen u niet vertellen
+  
+  
+</h3>
+    
+
+    <p>De tabel gebruikt één vaste workload — voorbeeldfoto’s, een korte prompt,
+antwoorden van maximaal 128 tokens — en gemiddelde waarden, zodat configuraties
+zonder locatieonderzoek kunnen worden vergeleken. Ze is <strong>geen vervanging voor
+een test met uw eigen camera’s en prompts</strong>: andere beeldinhoud, langere prompts
+of antwoorden, andere engine-instellingen en de traagste verzoeken in plaats van
+het gemiddelde veranderen allemaal de werkelijke capaciteit. De responstijd is
+de wachttijd tot het antwoord begint; een toepassing die het hele antwoord nodig
+heeft, wacht ook op de schrijftijd, en een rij die alleen met één camera is
+gemeten, zegt niets over hoe die zich met meerdere gedraagt.</p>
+
+  </div>
+</details>
+
+<link rel="stylesheet" href="/assets/css/benchmark-table.css" />
+
+<link rel="stylesheet" href="/assets/css/vlm-benchmark-table.css" />
+
+<div data-vlmbt-src="/assets/data/vlm-benchmarks.json" data-vlmbt-logo="/assets/images/benchmark-logo.png"></div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "name": "VLM Inference Benchmark Explorer",
+  "description": "Verken inferentiebenchmarks van vision-languagemodellen op RTX PRO 6000 Blackwell, Jetson AGX Orin en Jetson Orin NX. Kies het beeldformaat, stel in hoe lang een camera op zijn antwoord mag wachten, en zie hoeveel camera's elke configuratie bijhoudt.",
+  "url": "https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/",
+  "inLanguage": "nl",
+  "dateModified": "2026-10-06",
+  "creator": { "@type": "Organization", "name": "Aetherix B.V.", "url": "https://aetherix.com" },
+  "isAccessibleForFree": true,
+  "keywords": ["Cosmos-Reason1-7B","Cosmos-Reason2-2B","Cosmos-Reason2-8B","Cosmos3-Edge","Cosmos3-Nano","Eagle2.5-8B","Gemma-4-26B-A4B-it","Gemma-4-31B-it","Gemma-4-E2B-it","Gemma-4-E4B-it","Llama-3.1-Nemotron-Nano-VL-8B","MedGemma-1.5-4B-it","Nemotron-Nano-12B-v2-VL","Qwen3-VL-30B-A3B-Instruct","Qwen3-VL-4B-Instruct","Qwen3-VL-8B-Instruct","Qwen3.5-4B","Qwen3.6-35B-A3B","Qwen3.8-27B","Jetson AGX Orin","Jetson Orin NX","RTX PRO 6000","RTX PRO 6000 Max-Q"],
+  "measurementTechnique": "One or more photos per request (480p to 2K), prompt \"Describe the scene.\", up to 128 output tokens, one request in flight per camera, up to 4, 8 or 16 cameras depending on the device, mean values",
+  "variableMeasured": ["Response time: time to first token (s)", "Per-request output tokens per second", "Concurrent cameras", "Max cameras meeting the response time target"],
+  "distribution": [{ "@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": "https://whitepapers.aetherix.com/assets/data/vlm-benchmarks.json" }, { "@type": "DataDownload", "encodingFormat": "text/plain", "contentUrl": "https://whitepapers.aetherix.com/llms-full.txt" }]
+}
+</script>
+
+<div class="bt-explained-src" hidden="">
+<div data-vlmbt-explained="cosmos-reason1-7b_orinnx_q4km_llamacpp"><p>Cosmos-Reason1-7B (8.3B parameters), geserveerd in Q4_K_M-formaat met llama.cpp op Jetson Orin NX, begint één camera die één 720p-beeld stuurt na 7.68 s te antwoorden en schrijft daarna 12 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 37.76 s. Met één beeld op 1080p na 23.3 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) krijgt zelfs één camera niet op tijd antwoord.</p><p><a href="/nl/vlm-inference-benchmarks/cosmos-reason1-7b/jetson-orin-nx/q4-k-m-llama-cpp/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="cosmos-reason2-2b_orinnx_q80_llamacpp"><p>Cosmos-Reason2-2B (2.4B parameters), geserveerd in Q8_0-formaat met llama.cpp op Jetson Orin NX, begint één camera die één 720p-beeld stuurt na 2.02 s te antwoorden en schrijft daarna 30.4 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 9.94 s. Met één beeld op 1080p na 5.45 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het 2 camera's tegelijk bij.</p><p><a href="/nl/vlm-inference-benchmarks/cosmos-reason2-2b/jetson-orin-nx/q8-0-llama-cpp/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="cosmos-reason2-8b_orinnx_q4km_llamacpp"><p>Cosmos-Reason2-8B (8.8B parameters), geserveerd in Q4_K_M-formaat met llama.cpp op Jetson Orin NX, begint één camera die één 720p-beeld stuurt na 6.87 s te antwoorden en schrijft daarna 11.6 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 34.19 s. Met één beeld op 1080p na 21.75 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) krijgt zelfs één camera niet op tijd antwoord.</p><p><a href="/nl/vlm-inference-benchmarks/cosmos-reason2-8b/jetson-orin-nx/q4-k-m-llama-cpp/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="gemma-4-e2b-it_orinnx_q40_llamacpp"><p>Gemma-4-E2B-it (5.1B parameters), geserveerd in Q4_0-formaat met llama.cpp op Jetson Orin NX, begint één camera die één 720p-beeld stuurt na 1.38 s te antwoorden en schrijft daarna 29.8 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 6.31 s. Met één beeld op 1080p na 3.43 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het 2 camera's tegelijk bij.</p><p><a href="/nl/vlm-inference-benchmarks/gemma-4-e2b-it/jetson-orin-nx/q4-0-llama-cpp/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="gemma-4-e4b-it_orinnx_q40_llamacpp"><p>Gemma-4-E4B-it (8.0B parameters), geserveerd in Q4_0-formaat met llama.cpp op Jetson Orin NX, begint één camera die één 720p-beeld stuurt na 1.86 s te antwoorden en schrijft daarna 17.2 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 8.32 s. Met één beeld op 1080p na 4.45 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het één camera tegelijk bij.</p><p><a href="/nl/vlm-inference-benchmarks/gemma-4-e4b-it/jetson-orin-nx/q4-0-llama-cpp/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="qwen3-vl-4b-instruct_orinnx_fp8_vllm"><p>Qwen3-VL-4B-Instruct (4.4B parameters), geserveerd in FP8-formaat met vLLM op Jetson Orin NX, begint één camera die één 720p-beeld stuurt na 1.67 s te antwoorden en schrijft daarna 14.2 tok/s.</p><p>Met 3 beelden per camera op 720p begint het antwoord na 4 s. Met één beeld op 1080p na 4.34 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het 2 camera's tegelijk bij.</p><p><a href="/nl/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-orin-nx/fp8-vllm/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="qwen3-vl-4b-instruct_orinnx_q80_llamacpp"><p>Qwen3-VL-4B-Instruct (4.4B parameters), geserveerd in Q8_0-formaat met llama.cpp op Jetson Orin NX, begint één camera die één 720p-beeld stuurt na 3.04 s te antwoorden en schrijft daarna 14.3 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 14.62 s. Met één beeld op 2K na 18.39 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) krijgt zelfs één camera niet op tijd antwoord.</p><p><a href="/nl/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-orin-nx/q8-0-llama-cpp/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="qwen3-vl-8b-instruct_orinnx_q4km_llamacpp"><p>Qwen3-VL-8B-Instruct (8.8B parameters), geserveerd in Q4_K_M-formaat met llama.cpp op Jetson Orin NX, begint één camera die één 720p-beeld stuurt na 6.92 s te antwoorden en schrijft daarna 11.4 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 34.43 s. Met één beeld op 1080p na 21.78 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) krijgt zelfs één camera niet op tijd antwoord.</p><p><a href="/nl/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-orin-nx/q4-k-m-llama-cpp/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="qwen3.5-4b_orinnx_q4km_llamacpp"><p>Qwen3.5-4B (4.7B parameters), geserveerd in Q4_K_M-formaat met llama.cpp op Jetson Orin NX, begint één camera die één 720p-beeld stuurt na 3.72 s te antwoorden en schrijft daarna 15.6 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 17.25 s. Met één beeld op 1080p na 8.48 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) krijgt zelfs één camera niet op tijd antwoord.</p><p><a href="/nl/vlm-inference-benchmarks/qwen3-5-4b/jetson-orin-nx/q4-k-m-llama-cpp/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="cosmos-reason1-7b_agxorin_q4km_llamacpp"><p>Cosmos-Reason1-7B (8.3B parameters), geserveerd in Q4_K_M-formaat met llama.cpp op Jetson AGX Orin, begint één camera die één 720p-beeld stuurt na 3.21 s te antwoorden en schrijft daarna 26.7 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 15.84 s. Met één beeld op 2K na 18.62 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) krijgt zelfs één camera niet op tijd antwoord.</p><p><a href="/nl/vlm-inference-benchmarks/cosmos-reason1-7b/jetson-agx-orin/q4-k-m-llama-cpp/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="cosmos-reason2-2b_agxorin_q80_llamacpp"><p>Cosmos-Reason2-2B (2.4B parameters), geserveerd in Q8_0-formaat met llama.cpp op Jetson AGX Orin, begint één camera die één 720p-beeld stuurt na 0.95 s te antwoorden en schrijft daarna 57.8 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 4.45 s. Met één beeld op 2K na 7.07 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het 4 camera's tegelijk bij.</p><p><a href="/nl/vlm-inference-benchmarks/cosmos-reason2-2b/jetson-agx-orin/q8-0-llama-cpp/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="cosmos-reason2-8b_agxorin_q4km_llamacpp"><p>Cosmos-Reason2-8B (8.8B parameters), geserveerd in Q4_K_M-formaat met llama.cpp op Jetson AGX Orin, begint één camera die één 720p-beeld stuurt na 2.71 s te antwoorden en schrijft daarna 25.4 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 13.21 s. Met één beeld op 2K na 20.51 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het één camera tegelijk bij.</p><p><a href="/nl/vlm-inference-benchmarks/cosmos-reason2-8b/jetson-agx-orin/q4-k-m-llama-cpp/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="cosmos3-edge_agxorin_bf16_vllm"><p>Cosmos3-Edge (3.9B parameters), geserveerd in BF16-formaat met vLLM op Jetson AGX Orin, begint één camera die één 720p-beeld stuurt na 0.51 s te antwoorden en schrijft daarna 45.6 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 2.11 s. Met één beeld op 2K na 2.71 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het minstens 8 camera's tegelijk bij: ook bij het hoogste gemeten aantal haalde het het doel, dus de werkelijke grens ligt hoger.</p><p><a href="/nl/vlm-inference-benchmarks/cosmos3-edge/jetson-agx-orin/bf16-vllm/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="gemma-4-26b-a4b-it_agxorin_q40_llamacpp"><p>Gemma-4-26B-A4B-it (26B parameters), geserveerd in Q4_0-formaat met llama.cpp op Jetson AGX Orin, begint één camera die één 720p-beeld stuurt na 2.34 s te antwoorden en schrijft daarna 32.7 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 10.78 s. Met één beeld op 2K na 9.94 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het 2 camera's tegelijk bij.</p><p><a href="/nl/vlm-inference-benchmarks/gemma-4-26b-a4b-it/jetson-agx-orin/q4-0-llama-cpp/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="gemma-4-e4b-it_agxorin_q40_llamacpp"><p>Gemma-4-E4B-it (8.0B parameters), geserveerd in Q4_0-formaat met llama.cpp op Jetson AGX Orin, begint één camera die één 720p-beeld stuurt na 0.86 s te antwoorden en schrijft daarna 34.2 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 3.58 s. Met één beeld op 2K na 2.55 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het 4 camera's tegelijk bij.</p><p><a href="/nl/vlm-inference-benchmarks/gemma-4-e4b-it/jetson-agx-orin/q4-0-llama-cpp/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="qwen3-vl-4b-instruct_agxorin_q80_llamacpp"><p>Qwen3-VL-4B-Instruct (4.4B parameters), geserveerd in Q8_0-formaat met llama.cpp op Jetson AGX Orin, begint één camera die één 720p-beeld stuurt na 1.31 s te antwoorden en schrijft daarna 28.4 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 6.4 s. Met één beeld op 2K na 8.32 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het 2 camera's tegelijk bij.</p><p><a href="/nl/vlm-inference-benchmarks/qwen3-vl-4b-instruct/jetson-agx-orin/q8-0-llama-cpp/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="qwen3-vl-8b-instruct_agxorin_q4km_llamacpp"><p>Qwen3-VL-8B-Instruct (8.8B parameters), geserveerd in Q4_K_M-formaat met llama.cpp op Jetson AGX Orin, begint één camera die één 720p-beeld stuurt na 2.75 s te antwoorden en schrijft daarna 25.2 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 13.24 s. Met één beeld op 2K na 20.61 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het één camera tegelijk bij.</p><p><a href="/nl/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-agx-orin/q4-k-m-llama-cpp/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="qwen3-vl-8b-instruct_agxorin_q80_llamacpp"><p>Qwen3-VL-8B-Instruct (8.8B parameters), geserveerd in Q8_0-formaat met llama.cpp op Jetson AGX Orin, begint één camera die één 720p-beeld stuurt na 2.64 s te antwoorden en schrijft daarna 19.1 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 13.19 s. Met één beeld op 2K na 20.48 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het één camera tegelijk bij.</p><p><a href="/nl/vlm-inference-benchmarks/qwen3-vl-8b-instruct/jetson-agx-orin/q8-0-llama-cpp/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="qwen3.5-4b_agxorin_q4km_llamacpp"><p>Qwen3.5-4B (4.7B parameters), geserveerd in Q4_K_M-formaat met llama.cpp op Jetson AGX Orin, begint één camera die één 720p-beeld stuurt na 1.57 s te antwoorden en schrijft daarna 33.6 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 7.14 s. Met één beeld op 2K na 9.04 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het 2 camera's tegelijk bij.</p><p><a href="/nl/vlm-inference-benchmarks/qwen3-5-4b/jetson-agx-orin/q4-k-m-llama-cpp/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="cosmos3-edge_rtxpro6000maxq_bf16_vllm"><p>Cosmos3-Edge (3.9B parameters), geserveerd in BF16-formaat met vLLM op RTX PRO 6000 Max-Q, begint één camera die één 720p-beeld stuurt na 0.09 s te antwoorden en schrijft daarna 310.3 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 0.34 s. Met één beeld op 2K na 0.43 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het minstens 16 camera's tegelijk bij: ook bij het hoogste gemeten aantal haalde het het doel, dus de werkelijke grens ligt hoger.</p><p><a href="/nl/vlm-inference-benchmarks/cosmos3-edge/rtx-pro-6000-max-q/bf16-vllm/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="cosmos3-nano_rtxpro6000maxq_bf16_vllm"><p>Cosmos3-Nano (16B parameters), geserveerd in BF16-formaat met vLLM op RTX PRO 6000 Max-Q, begint één camera die één 720p-beeld stuurt na 0.14 s te antwoorden en schrijft daarna 88 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 0.74 s. Met één beeld op 2K na 0.75 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het minstens 16 camera's tegelijk bij: ook bij het hoogste gemeten aantal haalde het het doel, dus de werkelijke grens ligt hoger.</p><p><a href="/nl/vlm-inference-benchmarks/cosmos3-nano/rtx-pro-6000-max-q/bf16-vllm/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="cosmos-reason1-7b_rtxpro6000_bf16_vllm"><p>Cosmos-Reason1-7B (8.3B parameters), geserveerd in BF16-formaat met vLLM op RTX PRO 6000, begint één camera die één 720p-beeld stuurt na 0.25 s te antwoorden en schrijft daarna 98.2 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 0.71 s. Met één beeld op 2K na 0.61 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het minstens 16 camera's tegelijk bij: ook bij het hoogste gemeten aantal haalde het het doel, dus de werkelijke grens ligt hoger.</p><p><a href="/nl/vlm-inference-benchmarks/cosmos-reason1-7b/rtx-pro-6000/bf16-vllm/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="cosmos-reason2-2b_rtxpro6000_bf16_vllm"><p>Cosmos-Reason2-2B (2.4B parameters), geserveerd in BF16-formaat met vLLM op RTX PRO 6000, begint één camera die één 720p-beeld stuurt na 0.11 s te antwoorden en schrijft daarna 318.3 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 0.56 s. Met één beeld op 2K na 0.5 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het minstens 16 camera's tegelijk bij: ook bij het hoogste gemeten aantal haalde het het doel, dus de werkelijke grens ligt hoger.</p><p><a href="/nl/vlm-inference-benchmarks/cosmos-reason2-2b/rtx-pro-6000/bf16-vllm/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="cosmos-reason2-8b_rtxpro6000_bf16_vllm"><p>Cosmos-Reason2-8B (8.8B parameters), geserveerd in BF16-formaat met vLLM op RTX PRO 6000, begint één camera die één 720p-beeld stuurt na 0.15 s te antwoorden en schrijft daarna 92.5 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 0.75 s. Met één beeld op 2K na 0.68 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het minstens 16 camera's tegelijk bij: ook bij het hoogste gemeten aantal haalde het het doel, dus de werkelijke grens ligt hoger.</p><p><a href="/nl/vlm-inference-benchmarks/cosmos-reason2-8b/rtx-pro-6000/bf16-vllm/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="eagle2.5-8b_rtxpro6000_bf16_vllm"><p>Eagle2.5-8B (8.1B parameters), geserveerd in BF16-formaat met vLLM op RTX PRO 6000, begint één camera die één 720p-beeld stuurt na 0.26 s te antwoorden en schrijft daarna 105 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 1.35 s. Met één beeld op 2K na 0.42 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het minstens 16 camera's tegelijk bij: ook bij het hoogste gemeten aantal haalde het het doel, dus de werkelijke grens ligt hoger.</p><p><a href="/nl/vlm-inference-benchmarks/eagle2-5-8b/rtx-pro-6000/bf16-vllm/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="gemma-4-31b-it_rtxpro6000_bf16_vllm"><p>Gemma-4-31B-it (31B parameters), geserveerd in BF16-formaat met vLLM op RTX PRO 6000, begint één camera die één 720p-beeld stuurt na 0.24 s te antwoorden en schrijft daarna 24.7 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 0.7 s. Met één beeld op 2K na 0.32 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het minstens 16 camera's tegelijk bij: ook bij het hoogste gemeten aantal haalde het het doel, dus de werkelijke grens ligt hoger.</p><p><a href="/nl/vlm-inference-benchmarks/gemma-4-31b-it/rtx-pro-6000/bf16-vllm/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="gemma-4-31b-it_rtxpro6000_nvfp4_vllm"><p>Gemma-4-31B-it (31B parameters), geserveerd in NVFP4-formaat met vLLM op RTX PRO 6000, begint één camera die één 720p-beeld stuurt na 0.27 s te antwoorden en schrijft daarna 45.1 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 0.58 s. Met één beeld op 2K na 0.3 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het minstens 16 camera's tegelijk bij: ook bij het hoogste gemeten aantal haalde het het doel, dus de werkelijke grens ligt hoger.</p><p><a href="/nl/vlm-inference-benchmarks/gemma-4-31b-it/rtx-pro-6000/nvfp4-vllm/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="llama-3.1-nemotron-nano-vl-8b_rtxpro6000_bf16_vllm"><p>Llama-3.1-Nemotron-Nano-VL-8B (8.7B parameters), geserveerd in BF16-formaat met vLLM op RTX PRO 6000, begint één camera die één 720p-beeld stuurt na 0.29 s te antwoorden en schrijft daarna 94.9 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 1.79 s. Met één beeld op 2K na 0.49 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het minstens 16 camera's tegelijk bij: ook bij het hoogste gemeten aantal haalde het het doel, dus de werkelijke grens ligt hoger.</p><p><a href="/nl/vlm-inference-benchmarks/llama-3-1-nemotron-nano-vl-8b/rtx-pro-6000/bf16-vllm/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="medgemma-1.5-4b-it_rtxpro6000_bf16_vllm"><p>MedGemma-1.5-4B-it (4.3B parameters), geserveerd in BF16-formaat met vLLM op RTX PRO 6000, begint één camera die één 720p-beeld stuurt na 0.2 s te antwoorden en schrijft daarna 171.5 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 0.45 s. Met één beeld op 2K na 0.25 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het minstens 16 camera's tegelijk bij: ook bij het hoogste gemeten aantal haalde het het doel, dus de werkelijke grens ligt hoger.</p><p><a href="/nl/vlm-inference-benchmarks/medgemma-1-5-4b-it/rtx-pro-6000/bf16-vllm/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="nemotron-nano-12b-v2-vl_rtxpro6000_bf16_vllm"><p>Nemotron-Nano-12B-v2-VL (13B parameters), geserveerd in BF16-formaat met vLLM op RTX PRO 6000, begint één camera die één 720p-beeld stuurt na 0.2 s te antwoorden en schrijft daarna 68.5 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 0.78 s. Met één beeld op 2K na 0.61 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het minstens 16 camera's tegelijk bij: ook bij het hoogste gemeten aantal haalde het het doel, dus de werkelijke grens ligt hoger.</p><p><a href="/nl/vlm-inference-benchmarks/nemotron-nano-12b-v2-vl/rtx-pro-6000/bf16-vllm/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="qwen3-vl-30b-a3b-instruct_rtxpro6000_fp8_vllm"><p>Qwen3-VL-30B-A3B-Instruct (30B parameters), geserveerd in FP8-formaat met vLLM op RTX PRO 6000, begint één camera die één 720p-beeld stuurt na 0.16 s te antwoorden en schrijft daarna 194.4 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 1.04 s. Met één beeld op 2K na 0.58 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het minstens 16 camera's tegelijk bij: ook bij het hoogste gemeten aantal haalde het het doel, dus de werkelijke grens ligt hoger.</p><p><a href="/nl/vlm-inference-benchmarks/qwen3-vl-30b-a3b-instruct/rtx-pro-6000/fp8-vllm/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="qwen3-vl-4b-instruct_rtxpro6000_bf16_vllm"><p>Qwen3-VL-4B-Instruct (4.4B parameters), geserveerd in BF16-formaat met vLLM op RTX PRO 6000, begint één camera die één 720p-beeld stuurt na 0.16 s te antwoorden en schrijft daarna 156.6 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 0.64 s. Met één beeld op 2K na 0.56 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het minstens 16 camera's tegelijk bij: ook bij het hoogste gemeten aantal haalde het het doel, dus de werkelijke grens ligt hoger.</p><p><a href="/nl/vlm-inference-benchmarks/qwen3-vl-4b-instruct/rtx-pro-6000/bf16-vllm/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="qwen3-vl-4b-instruct_rtxpro6000_q80_llamacpp"><p>Qwen3-VL-4B-Instruct (4.4B parameters), geserveerd in Q8_0-formaat met llama.cpp op RTX PRO 6000, begint één camera die één 720p-beeld stuurt na 0.25 s te antwoorden en schrijft daarna 231.4 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 0.76 s. Met één beeld op 2K na 0.94 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het minstens 16 camera's tegelijk bij: ook bij het hoogste gemeten aantal haalde het het doel, dus de werkelijke grens ligt hoger.</p><p><a href="/nl/vlm-inference-benchmarks/qwen3-vl-4b-instruct/rtx-pro-6000/q8-0-llama-cpp/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="qwen3-vl-8b-instruct_rtxpro6000_bf16_vllm"><p>Qwen3-VL-8B-Instruct (8.8B parameters), geserveerd in BF16-formaat met vLLM op RTX PRO 6000, begint één camera die één 720p-beeld stuurt na 0.23 s te antwoorden en schrijft daarna 92.4 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 0.76 s. Met één beeld op 2K na 0.68 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het minstens 16 camera's tegelijk bij: ook bij het hoogste gemeten aantal haalde het het doel, dus de werkelijke grens ligt hoger.</p><p><a href="/nl/vlm-inference-benchmarks/qwen3-vl-8b-instruct/rtx-pro-6000/bf16-vllm/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="qwen3-vl-8b-instruct_rtxpro6000_q80_llamacpp"><p>Qwen3-VL-8B-Instruct (8.8B parameters), geserveerd in Q8_0-formaat met llama.cpp op RTX PRO 6000, begint één camera die één 720p-beeld stuurt na 0.33 s te antwoorden en schrijft daarna 153.8 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 1.04 s. Met één beeld op 2K na 1.79 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het minstens 16 camera's tegelijk bij: ook bij het hoogste gemeten aantal haalde het het doel, dus de werkelijke grens ligt hoger.</p><p><a href="/nl/vlm-inference-benchmarks/qwen3-vl-8b-instruct/rtx-pro-6000/q8-0-llama-cpp/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="qwen3.6-35b-a3b_rtxpro6000_fp8_vllm"><p>Qwen3.6-35B-A3B (35B parameters), geserveerd in FP8-formaat met vLLM op RTX PRO 6000, begint één camera die één 720p-beeld stuurt na 0.21 s te antwoorden en schrijft daarna 220.8 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 0.84 s. Met één beeld op 2K na 0.59 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het minstens 16 camera's tegelijk bij: ook bij het hoogste gemeten aantal haalde het het doel, dus de werkelijke grens ligt hoger.</p><p><a href="/nl/vlm-inference-benchmarks/qwen3-6-35b-a3b/rtx-pro-6000/fp8-vllm/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="qwen3.6-35b-a3b_rtxpro6000_nvfp4_vllm"><p>Qwen3.6-35B-A3B (35B parameters), geserveerd in NVFP4-formaat met vLLM op RTX PRO 6000, begint één camera die één 720p-beeld stuurt na 0.22 s te antwoorden en schrijft daarna 282.9 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 0.84 s. Met één beeld op 2K na 0.8 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het minstens 16 camera's tegelijk bij: ook bij het hoogste gemeten aantal haalde het het doel, dus de werkelijke grens ligt hoger.</p><p><a href="/nl/vlm-inference-benchmarks/qwen3-6-35b-a3b/rtx-pro-6000/nvfp4-vllm/">Permanente pagina van deze configuratie</a></p></div>
+<div data-vlmbt-explained="qwen3.8-27b_rtxpro6000_fp8_vllm"><p>Qwen3.8-27B (27B parameters), geserveerd in FP8-formaat met vLLM op RTX PRO 6000, begint één camera die één 720p-beeld stuurt na 0.29 s te antwoorden en schrijft daarna 50 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 1.01 s. Met één beeld op 2K na 0.91 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het minstens 16 camera's tegelijk bij: ook bij het hoogste gemeten aantal haalde het het doel, dus de werkelijke grens ligt hoger.</p><p><a href="/nl/vlm-inference-benchmarks/qwen3-8-27b/rtx-pro-6000/fp8-vllm/">Permanente pagina van deze configuratie</a></p></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1"></script>
+
+<script src="/assets/js/vlm-benchmark-table.nl.js"></script>
+
+          
+
+          
+        </main>
+        
+
+
+      </div>
+    </div>
+    
+      
+
+<div class="search-overlay"></div>
+
+    
+  </div>
+
+  
+
+  <script>
+    window.JTD_I18N = {
+      search_no_results: "Geen resultaten gevonden",
+      copy_code: "Code naar klembord kopiëren"
+    };
+  </script>
+
+  
+
+
+<div id="cookie-consent-banner" class="cookie-consent" role="dialog"
+     aria-modal="false" aria-label="Cookie consent"
+     data-consent-state="pending" hidden>
+  <div class="cookie-consent__body">
+    <div class="cookie-consent__text">
+      <span class="cookie-consent__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+          <path d="M21 12a9 9 0 1 1-9-9 4.5 4.5 0 0 0 4.5 4.5A4.5 4.5 0 0 0 21 12zm-9-3.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-1.5 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm6-1.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-3 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0z"/>
+        </svg>
+      </span>
+      <p>Wij gebruiken cookies om het websiteverkeer te analyseren en uw ervaring te verbeteren. Door op 'Accepteren' te klikken, stemt u in met het gebruik van analytische cookies zoals beschreven in ons privacybeleid.
+        <a href="https://aetherix.com/privacy-policy/" target="_blank" rel="noopener noreferrer"
+           class="cookie-consent__link">Privacybeleid</a>
+      </p>
+    </div>
+    <div class="cookie-consent__actions">
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--reject"
+              data-consent-action="rejected">Weigeren</button>
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--accept"
+              data-consent-action="accepted">Accepteren</button>
+    </div>
+  </div>
+</div>
+<script>
+  // Eski karar önbellekte varsa bannerı gösterme
+  (function() {
+    try {
+      var v = localStorage.getItem('cookieConsent');
+      if (v === 'accepted' || v === 'rejected') {
+        document.documentElement.dataset.cookieConsent = v;
+      }
+    } catch (e) {}
+  })();
+</script>
+<script src="/assets/js/cookie-banner.js" defer></script>
+
+</body>
+</html>
+

@@ -8249,6 +8249,11 @@ a.bt-inline-help {
   background: rgba(120, 60, 200, 0.12);
 }
 
+.oz-cl-tag--vlm {
+  color: #8a4b00;
+  background: rgba(230, 140, 20, 0.14);
+}
+
 .oz-cl-body {
   line-height: 1.5;
 }

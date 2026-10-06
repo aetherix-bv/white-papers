@@ -2,8 +2,8 @@
 
 > Aetherix B.V. technical white papers — NVIDIA DGX Spark, Jetson edge AI and RTX PRO systems: deployment guides, cluster setups and measured LLM and computer-vision inference benchmarks. English at the root, Dutch under /nl/.
 
-Every benchmark figure was measured with the CordatusAI LLM Benchmark Tool
-(LLM) or the cordatus-benchmark tool (CV). The
+LLM figures were measured with the CordatusAI LLM Benchmark Tool and CV
+figures with the cordatus-benchmark tool. The
 Intelligence Index and Agentic Index fields in benchmarks.json are republished
 from Artificial Analysis (https://artificialanalysis.ai) and must be attributed
 to them wherever they are shown.
@@ -12,19 +12,25 @@ to them wherever they are shown.
 
 - [LLM Inference Benchmark Explorer](https://whitepapers.aetherix.com/llm-inference-benchmarks/): 109 runs — time to first token and per-request tokens/s at concurrency 1–64, with Max C (concurrent requests meeting TTFT ≤ 1 s and ≥ 20 tok/s by default) and estimated chat / agentic user capacity per model × device — how many people a model on a given device can serve. Each run's plain-language explanation is in the page HTML and in llms-full.txt. Dutch: https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/
 - [CV Inference Benchmark Explorer](https://whitepapers.aetherix.com/cv-inference-benchmarks/): 10 device × model results — FPS per camera and frame drop by camera count. Dutch: https://whitepapers.aetherix.com/nl/cv-inference-benchmarks/
+- [VLM Inference Benchmark Explorer](https://whitepapers.aetherix.com/vlm-inference-benchmarks/): 38 vision-language model runs — response time (time to first token) and per-request tokens/s by image size, images per camera and number of cameras, and Max Cameras: the highest measured number of cameras (one request in flight per camera) whose answer starts within the target (3 s by default). Dutch: https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/
 
 ## Results as sentences
 
-- [All results, explained (English and Dutch)](https://whitepapers.aetherix.com/llms-full.txt): one paragraph per benchmark run — measured speed, Max C, estimated chat and agentic user capacity and what limits it; for CV, FPS per camera and max cameras. Dutch pages are under /nl/.
+- [All results, explained (English and Dutch)](https://whitepapers.aetherix.com/llms-full.txt): one paragraph per benchmark run — measured speed, Max C, estimated chat and agentic user capacity and what limits it; for VLM, response time and Max Cameras; for CV, FPS per camera and max cameras. Dutch pages are under /nl/.
 
 ## Raw data
 
 - [LLM benchmarks (JSON)](https://whitepapers.aetherix.com/assets/data/benchmarks.json): one entry per run; `data_points` holds `c` (concurrent requests), `ttft_ms` and `tps` (per-request output tokens/s). 128 input / 128 output tokens, ten rounds per level, mean values.
 - [CV benchmarks index (JSON)](https://whitepapers.aetherix.com/assets/data/cv-benchmarks/index.json): devices and models; each model's measurements are in the file named by its `path`.
+- [VLM benchmarks (JSON)](https://whitepapers.aetherix.com/assets/data/vlm-benchmarks.json): one entry per run; `data_points` holds one entry per measured cell — `res` (image size), `images` (per request), `c` (concurrent requests = cameras), `ttft_s` (the response time), `tps` (per-request output tokens/s), `requests` and `failed`; `models` holds each model's publisher repository and parameters.
 
 LLM models benchmarked: DeepSeek V4 Flash 0731, DeepSeek-V3.1, DeepSeek-V4-Flash-Vision-Exp, DeepSeek-V4-Pro, DeepSeek-V4-Pro-0813, DeepSeek-V4.1-Flash, GLM-4.5-Air, GLM-4.6, GLM-4.7, GLM-5, GLM-5.1, GLM-5.2, GLM-5.3, GLM-5.3-Flash, GPT-OSS 120B, Gemma-4-26B-A4B-it, Gemma-4-31B-it, Inkling, Kimi K3, Kimi-K2-Thinking, Kimi-K2.5, Kimi-K2.6, Laguna-S-2.1, MiMo-V2.5-Pro, MiMo-V2.6-Flash-RL, MiMo-V2.6-Pro-MOPD, MiMo-V2.6-Pro-RL, MiniMax-M2, MiniMax-M2.5, MiniMax-M2.7, MiniMax-M3, Muse-Glimmer-30B, Nemotron-3-Ultra, Qwen3-235B-A22B, Qwen3-4B-Instruct-2507, Qwen3-Coder-30B-A3B-Instruct, Qwen3-VL-30B-A3B-Instruct, Qwen3.5-27B, Qwen3.5-35B-A3B, Qwen3.5-397B-A17B, Qwen3.6-27B, Qwen3.6-35B-A3B, Qwen3.8-2.4T-A95B, Qwen3.8-27B, Qwen3.8-Flash-Next, Tencent-Hy3, Tencent-Hy4-preview
 
 LLM devices: 1× DGX Spark, 2× DGX Spark, 3× DGX Spark, 4× DGX Spark, 8× DGX Spark, DGX B300, RTX PRO 6000, Thor
+
+VLM models benchmarked: Cosmos-Reason1-7B, Cosmos-Reason2-2B, Cosmos-Reason2-8B, Cosmos3-Edge, Cosmos3-Nano, Eagle2.5-8B, Gemma-4-26B-A4B-it, Gemma-4-31B-it, Gemma-4-E2B-it, Gemma-4-E4B-it, Llama-3.1-Nemotron-Nano-VL-8B, MedGemma-1.5-4B-it, Nemotron-Nano-12B-v2-VL, Qwen3-VL-30B-A3B-Instruct, Qwen3-VL-4B-Instruct, Qwen3-VL-8B-Instruct, Qwen3.5-4B, Qwen3.6-35B-A3B, Qwen3.8-27B
+
+VLM devices: Jetson AGX Orin, Jetson Orin NX, RTX PRO 6000, RTX PRO 6000 Max-Q
 
 CV models benchmarked: PeopleNet, YOLO11-N, YOLO11L, YOLO11M, YOLO11S
 
@@ -48,6 +54,6 @@ CV devices: GB10, Jetson AGX Thor, Jetson Orin Nano, RTX 3060, RTX 3090
 ## Other pages
 
 - [About](https://whitepapers.aetherix.com/about/): Aetherix B.V. — Netherlands-based provider of NVIDIA Jetson hardware for edge AI.
-- [Changelog](https://whitepapers.aetherix.com/changelog/): What is new on the site: new white papers and new LLM and CV benchmark results.
+- [Changelog](https://whitepapers.aetherix.com/changelog/): What is new on the site: new white papers and new LLM, VLM and CV benchmark results.
 - [Home](https://whitepapers.aetherix.com/): Aetherix B.V. technical white papers — NVIDIA DGX Spark, Jetson edge AI and RTX PRO systems: deployment guides, cluster setups and measured inference benchmarks.
 - [White Papers](https://whitepapers.aetherix.com/papers/): Aetherix technical white paper list.
