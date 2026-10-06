@@ -11,6 +11,18 @@
     <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/about/"/>
   </url>
   <url>
+    <loc>https://whitepapers.aetherix.com/changelog/</loc>
+    <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/changelog/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/changelog/"/>
+  </url>
+  <url>
+    <loc>https://whitepapers.aetherix.com/nl/changelog/</loc>
+    <lastmod>2026-10-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/changelog/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/changelog/"/>
+  </url>
+  <url>
     <loc>https://whitepapers.aetherix.com/cv-inference-benchmarks/</loc>
     <lastmod>2026-09-24</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/cv-inference-benchmarks/"/>

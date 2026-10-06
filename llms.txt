@@ -48,5 +48,6 @@ CV devices: GB10, Jetson AGX Thor, Jetson Orin Nano, RTX 3060, RTX 3090
 ## Other pages
 
 - [About](https://whitepapers.aetherix.com/about/): Aetherix B.V. — Netherlands-based provider of NVIDIA Jetson hardware for edge AI.
+- [Changelog](https://whitepapers.aetherix.com/changelog/): What is new on the site: new white papers and new LLM and CV benchmark results.
 - [Home](https://whitepapers.aetherix.com/): Aetherix B.V. technical white papers — NVIDIA DGX Spark, Jetson edge AI and RTX PRO systems: deployment guides, cluster setups and measured inference benchmarks.
 - [White Papers](https://whitepapers.aetherix.com/papers/): Aetherix technical white paper list.
