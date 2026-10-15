@@ -1,0 +1,2459 @@
+
+
+<!DOCTYPE html>
+
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-default.css">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet">
+
+  <style id="jtd-nav-activation">
+  
+
+.site-nav > ul.nav-list:first-child > li > a,
+.site-nav > ul.nav-list:first-child > li > ul > li:not(:nth-child(2)) > a,
+.site-nav > ul.nav-list:first-child > li > ul > li > ul > li > a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:not(:first-child) a,
+.site-nav li.external a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(2) > a {
+  font-weight: 600;
+  text-decoration: none;
+}.site-nav > ul.nav-list:first-child > li:nth-child(3) > button svg,
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(2) > button svg {
+  transform: rotate(-90deg);
+}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list,
+.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list > li.nav-list-item:nth-child(2) > ul.nav-list {
+  display: block;
+}
+  </style>
+
+  
+
+  
+    <script src="/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="icon" href="/nl/favicon.ico" type="image/x-icon">
+
+
+
+  <!-- Begin Jekyll SEO tag v2.9.1 -->
+<title>Keuzegids voor LLM-kwantisatie | Aetherix White Papers</title>
+<meta name="generator" content="Jekyll v4.3.4" />
+<meta property="og:title" content="Keuzegids voor LLM-kwantisatie" />
+<meta property="og:locale" content="nl" />
+<meta name="description" content="Beslisgids voor LLM-kwantisatie: hoe workload, kwantisatieformaat, GPU-architectuur en betrouwbaarheid van checkpoints de keuze bepalen — met de keuzestroom, veelgemaakte fouten, voorbeelden en een snelle opdrachtenreferentie." />
+<meta name="twitter:description" property="og:description" content="Beslisgids voor LLM-kwantisatie: hoe workload, kwantisatieformaat, GPU-architectuur en betrouwbaarheid van checkpoints de keuze bepalen — met de keuzestroom, veelgemaakte fouten, voorbeelden en een snelle opdrachtenreferentie." />
+<link rel="canonical" href="https://whitepapers.aetherix.com/nl/papers/llm-quantization-selection/" />
+<meta property="og:url" content="https://whitepapers.aetherix.com/nl/papers/llm-quantization-selection/" />
+<meta property="og:site_name" content="Aetherix White Papers" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-10-12T00:00:00+00:00" />
+<meta property="article:modified_time" content="2026-10-12T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Keuzegids voor LLM-kwantisatie" />
+<meta name="twitter:site" content="@Aetherixnl" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2026-10-12T00:00:00+00:00","datePublished":"2026-10-12T00:00:00+00:00","description":"Beslisgids voor LLM-kwantisatie: hoe workload, kwantisatieformaat, GPU-architectuur en betrouwbaarheid van checkpoints de keuze bepalen — met de keuzestroom, veelgemaakte fouten, voorbeelden en een snelle opdrachtenreferentie.","headline":"Keuzegids voor LLM-kwantisatie","mainEntityOfPage":{"@type":"WebPage","@id":"https://whitepapers.aetherix.com/nl/papers/llm-quantization-selection/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://whitepapers.aetherix.com/assets/images/aetherix-logo.png"}},"url":"https://whitepapers.aetherix.com/nl/papers/llm-quantization-selection/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  
+<!-- Google tag (gtag.js) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JWLN33085T"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+
+  // Consent Mode v2 — default DENIED. Banner onayı ile GRANTED olur.
+  // KVKK/GDPR uyumu: ziyaretçi onay vermeden çerez set edilmez.
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    functionality_storage: 'granted',
+    security_storage: 'granted',
+    wait_for_update: 500
+  });
+
+  gtag('js', new Date());
+  gtag('config', 'G-JWLN33085T', {
+    anonymize_ip: true
+  });
+</script>
+
+<link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/papers/llm-quantization-selection/">
+<link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/papers/llm-quantization-selection/">
+<link rel="alternate" hreflang="x-default" href="https://whitepapers.aetherix.com/papers/llm-quantization-selection/">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/images/favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+<script>
+(function () {
+  var open = XMLHttpRequest.prototype.open;
+  var own = "/nl/search-data.json";
+  XMLHttpRequest.prototype.open = function (method, url) {
+    if (typeof url === "string" && /assets\/js\/search-data\.json$/.test(url)) arguments[1] = own;
+    return open.apply(this, arguments);
+  };
+})();
+</script>
+
+
+</head>
+
+<body>
+  <a class="skip-to-main" href="#main-content">Naar de hoofdinhoud</a>
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="svg-link" viewBox="0 0 24 24">
+  <title>Link</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+</symbol>
+
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+  <title>Menu</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+    <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</symbol>
+
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+  <title>Expand</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</symbol>
+
+  <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
+<symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+  <title id="svg-external-link-title">(external link)</title>
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+</symbol>
+
+  
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+  <title>Document</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+</symbol>
+
+    <symbol id="svg-search" viewBox="0 0 24 24">
+  <title>Search</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</symbol>
+
+  
+  
+    <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+<symbol id="svg-copy" viewBox="0 0 16 16">
+  <title>Copy</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+</symbol>
+<symbol id="svg-copied" viewBox="0 0 16 16">
+  <title>Copied</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"/>
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"/>
+  </svg>
+</symbol>
+
+  
+</svg>
+
+  
+    <div class="side-bar">
+  <div class="site-header" role="banner">
+    <a href="/nl/" class="site-title lh-tight">
+  <div class="site-logo" role="img" aria-label="Aetherix White Papers"></div>
+
+</a>
+    <button id="menu-button" class="site-button btn-reset" aria-label="Toggle menu" aria-pressed="false">
+      <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  <nav aria-label="Main" id="site-nav" class="site-nav">
+  
+  
+    <ul class="nav-list"><li class="nav-list-item"><a href="/nl/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/nl/about/" class="nav-list-link">Over ons</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in White Papers category" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+    </button><a href="/nl/papers/" class="nav-list-link">White Papers</a><ul class="nav-list"><li class="nav-list-item"><a href="/nl/papers/local-llm-guide/" class="nav-list-link">Handleiding voor lokaal LLM-gebruik</a></li><li class="nav-list-item"><a href="/nl/papers/llm-quantization-selection/" class="nav-list-link">Keuzegids voor LLM-kwantisatie</a></li><li class="nav-list-item"><a href="/nl/papers/conditional-memory-offloading/" class="nav-list-link">Engram-offloading bij LLM-inferentie</a></li><li class="nav-list-item"><a href="/nl/papers/b300-gb300-cluster-architecture/" class="nav-list-link">NVIDIA DGX B300 vs GB300 NVL72: vergelijking van clusterarchitecturen</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-2node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 2 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-3node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 3 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-4node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 4 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-8node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 8 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/qwen3.6-27b-dgx-spark-benchmark/" class="nav-list-link">Qwen3.6-27B DGX Spark-benchmark</a></li><li class="nav-list-item"><a href="/nl/papers/qwen3.6-27b-dgx-spark-scaling/" class="nav-list-link">Schaling van Qwen3.6-27B op een DGX Spark-cluster</a></li><li class="nav-list-item"><a href="/nl/papers/jev-open-weight-alternatives/" class="nav-list-link">De eerste open-gewichtsalternatieven voor Jev</a></li><li class="nav-list-item"><a href="/nl/papers/deepseek-v4.1-flash-4spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash-deployment op 4× DGX Spark</a></li><li class="nav-list-item"><a href="/nl/papers/deepseek-v4.1-flash-8spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash-deployment op 8× DGX Spark met TP8</a></li><li class="nav-list-item"><a href="/nl/papers/kimi-k3-dgx-b300-inference-benchmark/" class="nav-list-link">Kimi K3-inferentiebenchmark op DGX-B300</a></li></ul></li><li class="nav-list-item"><a href="/nl/llm-inference-benchmarks/" class="nav-list-link">LLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/nl/cv-inference-benchmarks/" class="nav-list-link">CV Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/nl/vlm-inference-benchmarks/" class="nav-list-link">VLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/nl/device-advisor/" class="nav-list-link">Apparaatadvies</a></li><li class="nav-list-item"><a href="/nl/changelog/" class="nav-list-link">Wijzigingslogboek</a></li></ul>
+
+  
+</nav>
+
+
+  
+  
+    <div class="lang-switcher">
+  
+    
+    
+      <a class="lang-switcher-item" href="/papers/llm-quantization-selection/">EN</a>
+    
+  
+    
+    
+      <span class="lang-switcher-item active">NL</span>
+    
+  
+</div>
+<script src="/assets/js/lang-switch.js"></script>
+
+  
+</div>
+
+  
+  <div class="main" id="top">
+    <div id="main-header" class="main-header">
+  
+    
+
+<div class="search" role="search">
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Zoeken" aria-label="Zoeken" autocomplete="off">
+    <label for="search-input" class="search-label"><svg viewBox="0 0 24 24" class="search-icon"><use xlink:href="#svg-search"></use></svg></label>
+  </div>
+  <div id="search-results" class="search-results"></div>
+</div>
+
+  
+  
+  
+    <nav aria-label="Auxiliary" class="aux-nav">
+  <ul class="aux-nav-list">
+    
+      <li class="aux-nav-list-item">
+        <a href="https://aetherix.com" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          aetherix.com
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://github.com/aetherix-bv" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          GitHub
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+  
+</div>
+
+    <div class="main-content-wrap">
+      <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+  <ol class="breadcrumb-nav-list">
+    <li class="breadcrumb-nav-list-item"><a href="/nl/papers/">White Papers</a></li>
+    <li class="breadcrumb-nav-list-item"><span>Keuzegids voor LLM-kwantisatie</span></li>
+  </ol>
+</nav>
+      <div id="main-content" class="main-content">
+        <main>
+          
+            <p><em>Opgesteld door: <strong>Aetherix B.V.</strong> — Trusted Jetson Hardware Provider for Edge AI</em></p>
+
+<p><strong>Een technische gids over hardwarearchitectuur, formaat en betrouwbaarheid</strong></p>
+
+<blockquote>
+  <p><strong>Doelgroep:</strong> ontwikkelaars die LLM’s serveren, MLOps-teams en praktijkdeskundigen
+<strong>Gepubliceerd:</strong> oktober 2026</p>
+</blockquote><hr />
+<h2 class="no_toc" id="inhoudsopgave">
+  
+  
+    <a href="#inhoudsopgave" class="anchor-heading" aria-labelledby="inhoudsopgave"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Inhoudsopgave
+  
+  
+</h2>
+    
+
+<ul id="markdown-toc">
+  <li><a href="#1-kort-overzicht" id="markdown-toc-1-kort-overzicht">1. Kort overzicht</a>    <ul>
+      <li><a href="#drie-kernregels" id="markdown-toc-drie-kernregels">Drie kernregels</a></li>
+    </ul>
+  </li>
+  <li><a href="#2-wat-levert-kwantisatie-op" id="markdown-toc-2-wat-levert-kwantisatie-op">2. Wat levert kwantisatie op?</a>    <ul>
+      <li><a href="#21-geheugenverbruik" id="markdown-toc-21-geheugenverbruik">2.1 Geheugenverbruik</a></li>
+      <li><a href="#22-kv-cachekwantisatie-is-een-aparte-beslissing" id="markdown-toc-22-kv-cachekwantisatie-is-een-aparte-beslissing">2.2 KV-cachekwantisatie is een aparte beslissing</a></li>
+    </ul>
+  </li>
+  <li><a href="#3-waarom-verbetert-kwantisatie-de-prestaties" id="markdown-toc-3-waarom-verbetert-kwantisatie-de-prestaties">3. Waarom verbetert kwantisatie de prestaties?</a>    <ul>
+      <li><a href="#31-voordeel-van-geheugenbandbreedte" id="markdown-toc-31-voordeel-van-geheugenbandbreedte">3.1 Voordeel van geheugenbandbreedte</a></li>
+      <li><a href="#32-voordeel-van-rekendoorvoer" id="markdown-toc-32-voordeel-van-rekendoorvoer">3.2 Voordeel van rekendoorvoer</a></li>
+      <li><a href="#33-effect-van-gelijktijdigheid-en-batchgrootte" id="markdown-toc-33-effect-van-gelijktijdigheid-en-batchgrootte">3.3 Effect van gelijktijdigheid en batchgrootte</a></li>
+    </ul>
+  </li>
+  <li><a href="#4-gpu-architectuur-en-kwantisatieformaat" id="markdown-toc-4-gpu-architectuur-en-kwantisatieformaat">4. GPU-architectuur en kwantisatieformaat</a>    <ul>
+      <li><a href="#41-waarom-is-hardwaresupport-belangrijk" id="markdown-toc-41-waarom-is-hardwaresupport-belangrijk">4.1 Waarom is hardwaresupport belangrijk?</a></li>
+      <li><a href="#42-algemene-aanpak-per-gpu-generatie" id="markdown-toc-42-algemene-aanpak-per-gpu-generatie">4.2 Algemene aanpak per GPU-generatie</a></li>
+      <li><a href="#43-fp8-de-gebalanceerde-keuze-tussen-geheugen-en-rekenwerk" id="markdown-toc-43-fp8-de-gebalanceerde-keuze-tussen-geheugen-en-rekenwerk">4.3 FP8: de gebalanceerde keuze tussen geheugen en rekenwerk</a></li>
+      <li><a href="#44-fp4--nvfp4-het-hardwarevoordeel-op-blackwell" id="markdown-toc-44-fp4--nvfp4-het-hardwarevoordeel-op-blackwell">4.4 FP4 / NVFP4: het hardwarevoordeel op Blackwell</a></li>
+      <li><a href="#45-de-basisregel-bij-kwantisatiekeuze" id="markdown-toc-45-de-basisregel-bij-kwantisatiekeuze">4.5 De basisregel bij kwantisatiekeuze</a></li>
+    </ul>
+  </li>
+  <li><a href="#5-kwantisatieformaten" id="markdown-toc-5-kwantisatieformaten">5. Kwantisatieformaten</a></li>
+  <li><a href="#6-4-bit--4-bit-is-niet-waar" id="markdown-toc-6-4-bit--4-bit-is-niet-waar">6. “4-bit = 4-bit” is niet waar</a></li>
+  <li><a href="#7-waarom-is-nvfp4-anders" id="markdown-toc-7-waarom-is-nvfp4-anders">7. Waarom is NVFP4 anders?</a></li>
+  <li><a href="#8-gpu-architectuur--formaat-de-juiste-koppeling" id="markdown-toc-8-gpu-architectuur--formaat-de-juiste-koppeling">8. GPU-architectuur × formaat: de juiste koppeling</a></li>
+  <li><a href="#9-ampere-verwar-int4-niet-met-fp8" id="markdown-toc-9-ampere-verwar-int4-niet-met-fp8">9. Ampere: verwar INT4 niet met FP8</a></li>
+  <li><a href="#10-ada-en-hopper-de-sterke-positie-van-fp8" id="markdown-toc-10-ada-en-hopper-de-sterke-positie-van-fp8">10. Ada en Hopper: de sterke positie van FP8</a></li>
+  <li><a href="#11-blackwell-fp8-of-nvfp4" id="markdown-toc-11-blackwell-fp8-of-nvfp4">11. Blackwell: FP8 of NVFP4?</a>    <ul>
+      <li><a href="#fp8" id="markdown-toc-fp8">FP8</a></li>
+      <li><a href="#nvfp4" id="markdown-toc-nvfp4">NVFP4</a></li>
+      <li><a href="#praktische-aanpak" id="markdown-toc-praktische-aanpak">Praktische aanpak</a></li>
+    </ul>
+  </li>
+  <li><a href="#12-mixed-precision-kwantisatie" id="markdown-toc-12-mixed-precision-kwantisatie">12. Mixed-precision kwantisatie</a></li>
+  <li><a href="#13-waarom-is-kalibratie-belangrijk" id="markdown-toc-13-waarom-is-kalibratie-belangrijk">13. Waarom is kalibratie belangrijk?</a></li>
+  <li><a href="#14-hoe-kiest-u-een-betrouwbaar-gequantiseerd-checkpoint" id="markdown-toc-14-hoe-kiest-u-een-betrouwbaar-gequantiseerd-checkpoint">14. Hoe kiest u een betrouwbaar gequantiseerd checkpoint?</a>    <ul>
+      <li><a href="#voorkeursvolgorde" id="markdown-toc-voorkeursvolgorde">Voorkeursvolgorde</a></li>
+      <li><a href="#4-kwantisatie-uit-de-gemeenschap" id="markdown-toc-4-kwantisatie-uit-de-gemeenschap">4. Kwantisatie uit de gemeenschap</a></li>
+      <li><a href="#bekende-uitgevers--een-startlijst" id="markdown-toc-bekende-uitgevers--een-startlijst">Bekende uitgevers — een startlijst</a></li>
+    </ul>
+  </li>
+  <li><a href="#15-wat-moet-een-goede-modelkaart-vermelden" id="markdown-toc-15-wat-moet-een-goede-modelkaart-vermelden">15. Wat moet een goede modelkaart vermelden?</a>    <ul>
+      <li><a href="#kritiek--de-basis-die-geverifieerd-moet-worden" id="markdown-toc-kritiek--de-basis-die-geverifieerd-moet-worden">Kritiek — de basis die geverifieerd moet worden</a></li>
+      <li><a href="#beslissend--hiermee-beslist-u-wat-in-twijfel-blijft" id="markdown-toc-beslissend--hiermee-beslist-u-wat-in-twijfel-blijft">Beslissend — hiermee beslist u wat in twijfel blijft</a></li>
+      <li><a href="#aanvullend--ze-bepalen-de-technische-kwaliteit-niet-maar-hun-afwezigheid-geeft-praktische-problemen" id="markdown-toc-aanvullend--ze-bepalen-de-technische-kwaliteit-niet-maar-hun-afwezigheid-geeft-praktische-problemen">Aanvullend — ze bepalen de technische kwaliteit niet, maar hun afwezigheid geeft praktische problemen</a></li>
+    </ul>
+  </li>
+  <li><a href="#16-hoe-leest-u-een-benchmark" id="markdown-toc-16-hoe-leest-u-een-benchmark">16. Hoe leest u een benchmark?</a></li>
+  <li><a href="#17-praktijkvoorbeelden" id="markdown-toc-17-praktijkvoorbeelden">17. Praktijkvoorbeelden</a>    <ul>
+      <li><a href="#171-scenario-1--origineel-bf16--officiële-fp8-qwen38-27b" id="markdown-toc-171-scenario-1--origineel-bf16--officiële-fp8-qwen38-27b">17.1 Scenario 1 — origineel BF16 + officiële FP8: Qwen3.8-27B</a></li>
+      <li><a href="#172-scenario-2--directe-fp8-uitgave-glm-53" id="markdown-toc-172-scenario-2--directe-fp8-uitgave-glm-53">17.2 Scenario 2 — directe FP8-uitgave: GLM-5.3</a></li>
+      <li><a href="#173-scenario-3--kwantisatie-door-derden-nvidia-qwen38-27b-nvfp4" id="markdown-toc-173-scenario-3--kwantisatie-door-derden-nvidia-qwen38-27b-nvfp4">17.3 Scenario 3 — kwantisatie door derden (NVIDIA): Qwen3.8-27B-NVFP4</a></li>
+      <li><a href="#174-scenario-4--4-bit-met-qat-kimi-k3" id="markdown-toc-174-scenario-4--4-bit-met-qat-kimi-k3">17.4 Scenario 4 — 4-bit met QAT: Kimi K3</a></li>
+    </ul>
+  </li>
+  <li><a href="#18-ptq-of-qat" id="markdown-toc-18-ptq-of-qat">18. PTQ of QAT?</a></li>
+  <li><a href="#19-de-kwantisatiekeuzestroom" id="markdown-toc-19-de-kwantisatiekeuzestroom">19. De kwantisatiekeuzestroom</a></li>
+  <li><a href="#20-veelgemaakte-fouten" id="markdown-toc-20-veelgemaakte-fouten">20. Veelgemaakte fouten</a>    <ul>
+      <li><a href="#1-zonder-noodzaak-naar-4-bit-terwijl-de-hardware-genoeg-is-voor-het-originele-model" id="markdown-toc-1-zonder-noodzaak-naar-4-bit-terwijl-de-hardware-genoeg-is-voor-het-originele-model">1. Zonder noodzaak naar 4-bit terwijl de hardware genoeg is voor het originele model</a></li>
+      <li><a href="#2-de-benchmark-van-het-originele-model-toekennen-aan-het-gequantiseerde-model" id="markdown-toc-2-de-benchmark-van-het-originele-model-toekennen-aan-het-gequantiseerde-model">2. De benchmark van het originele model toekennen aan het gequantiseerde model</a></li>
+      <li><a href="#3-zeggen-dat-4-bit--4-bit" id="markdown-toc-3-zeggen-dat-4-bit--4-bit">3. Zeggen dat “4-bit = 4-bit”</a></li>
+      <li><a href="#4-native-hardwareversnelling-verwarren-met-softwaresupport" id="markdown-toc-4-native-hardwareversnelling-verwarren-met-softwaresupport">4. Native hardwareversnelling verwarren met softwaresupport</a></li>
+      <li><a href="#5-alleen-tokenss-meten" id="markdown-toc-5-alleen-tokenss-meten">5. Alleen tokens/s meten</a></li>
+      <li><a href="#6-de-kv-cache-vergeten" id="markdown-toc-6-de-kv-cache-vergeten">6. De KV-cache vergeten</a></li>
+      <li><a href="#7-kalibratie-informatie-negeren" id="markdown-toc-7-kalibratie-informatie-negeren">7. Kalibratie-informatie negeren</a></li>
+      <li><a href="#8-alleen-op-de-algemene-benchmark-vertrouwen" id="markdown-toc-8-alleen-op-de-algemene-benchmark-vertrouwen">8. Alleen op de algemene benchmark vertrouwen</a></li>
+    </ul>
+  </li>
+  <li><a href="#21-samenvattende-beslistabel" id="markdown-toc-21-samenvattende-beslistabel">21. Samenvattende beslistabel</a></li>
+  <li><a href="#22-snelle-opdrachtenreferentie" id="markdown-toc-22-snelle-opdrachtenreferentie">22. Snelle opdrachtenreferentie</a>    <ul>
+      <li><a href="#fp8-1" id="markdown-toc-fp8-1">FP8</a></li>
+      <li><a href="#nvidia-nvfp4" id="markdown-toc-nvidia-nvfp4">NVIDIA NVFP4</a></li>
+      <li><a href="#awq--gptq" id="markdown-toc-awq--gptq">AWQ / GPTQ</a></li>
+      <li><a href="#gguf" id="markdown-toc-gguf">GGUF</a></li>
+      <li><a href="#kwantisaties-vergelijken" id="markdown-toc-kwantisaties-vergelijken">Kwantisaties vergelijken</a></li>
+    </ul>
+  </li>
+  <li><a href="#23-de-kwaliteit-van-kwantisatie-beoordelen" id="markdown-toc-23-de-kwaliteit-van-kwantisatie-beoordelen">23. De kwaliteit van kwantisatie beoordelen</a></li>
+  <li><a href="#24-woordenlijst" id="markdown-toc-24-woordenlijst">24. Woordenlijst</a></li>
+  <li><a href="#25-conclusie" id="markdown-toc-25-conclusie">25. Conclusie</a></li>
+  <li><a href="#26-bronnen" id="markdown-toc-26-bronnen">26. Bronnen</a></li>
+</ul><hr />
+<h2 id="1-kort-overzicht">
+  
+  
+    <a href="#1-kort-overzicht" class="anchor-heading" aria-labelledby="1-kort-overzicht"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1. Kort overzicht
+  
+  
+</h2>
+    
+
+<p>Met kwantisatie kunnen de gewichten van een LLM — en waar nodig activatie- en KV-cachegegevens — met een lagere precisie (de breedte van de numerieke voorstelling, dus het aantal bits) worden weergegeven. Dat verlaagt het <strong>geheugenverbruik</strong>, de vraag naar <strong>geheugenbandbreedte</strong> en, op geschikte hardware, de <strong>rekenkosten</strong>.</p>
+
+<p>Waar kwantisatie vroeger vooral gold als “de noodgreep wanneer het model niet in het geheugen past”, worden formaten als FP8 en FP4 inmiddels in hardware versneld op moderne GPU’s. Bovendien geven veel modelontwikkelaars <strong>officieel, vooraf gequantiseerde checkpoints</strong> direct vrij.</p>
+
+<p>Maar kwantisatie op zich betekent niet “minder bits = sneller”.</p>
+
+<p>De juiste keuze ligt op het snijvlak van vier factoren:</p>
+
+<blockquote>
+  <p><strong>Workload × Kwantisatieformaat × GPU-architectuur × Betrouwbaarheid van checkpoints</strong></p>
+</blockquote>
+<h3 id="drie-kernregels">
+  
+  
+    <a href="#drie-kernregels" class="anchor-heading" aria-labelledby="drie-kernregels"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Drie kernregels
+  
+  
+</h3>
+    
+
+<p><strong>1. Als de modeleigenaar een officieel gequantiseerd checkpoint levert, beoordeel dat dan als eerste.</strong></p>
+
+<p>Dat maakt het niet automatisch het checkpoint van de hoogste kwaliteit; maar wat betreft kwantatiemethode, formaat en beoogde runtime is het meestal het betrouwbaarste startpunt.</p>
+
+<p><strong>2. Het formaat moet bij de GPU-architectuur passen.</strong></p>
+
+<p>Bijvoorbeeld:</p>
+
+<ul>
+  <li>Ampere → op INT4/INT8 gebaseerde methoden</li>
+  <li>Ada → FP8</li>
+  <li>Hopper → FP8</li>
+  <li>Blackwell → FP8 / NVFP4 / MXFP4</li>
+</ul>
+
+<p>Dat een formaat zonder native Tensor Core-ondersteuning “alleen maar draait”, wil nog niet zeggen dat het snel draait.</p>
+
+<p><strong>3. De benchmark van het originele model is niet de benchmark van het gequantiseerde checkpoint.</strong></p>
+
+<p>De score van het BF16-model mag niet automatisch worden overgenomen voor het FP8- of FP4-checkpoint van datzelfde model.</p>
+
+<p>Voor een gequantiseerd checkpoint moeten bovendien worden gecontroleerd:</p>
+
+<ul>
+  <li>de gebruikte kwantatiemethode,</li>
+  <li>het kalibratieproces,</li>
+  <li>de benchmarkresultaten,</li>
+  <li>de runtime,</li>
+  <li>de GPU,</li>
+  <li>de generatie-instellingen</li>
+</ul><hr />
+<h2 id="2-wat-levert-kwantisatie-op">
+  
+  
+    <a href="#2-wat-levert-kwantisatie-op" class="anchor-heading" aria-labelledby="2-wat-levert-kwantisatie-op"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2. Wat levert kwantisatie op?
+  
+  
+</h2>
+    
+
+<p>Kwantisatie heeft drie fundamentele effecten:</p>
+
+<ol>
+  <li><strong>De modelgewichten worden kleiner</strong></li>
+  <li><strong>De vraag naar geheugenbandbreedte daalt</strong></li>
+  <li><strong>Rekenen met lage precisie via Tensor Cores wordt versneld op geschikte hardware</strong></li>
+</ol>
+
+<p>Hoeveel elk effect oplevert, hangt af van de workload.</p><hr />
+<h3 id="21-geheugenverbruik">
+  
+  
+    <a href="#21-geheugenverbruik" class="anchor-heading" aria-labelledby="21-geheugenverbruik"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.1 Geheugenverbruik
+  
+  
+</h3>
+    
+
+<p>In het ideale geval is het geheugen voor gewichten ongeveer:</p>
+
+<p><strong>Aantal parameters × bytes per parameter</strong></p>
+
+<p>Bijvoorbeeld:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Precisie (bitbreedte)</th>
+      <th style="text-align: right">Bits</th>
+      <th style="text-align: right">7B</th>
+      <th style="text-align: right">70B</th>
+      <th style="text-align: right">405B</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>BF16 / FP16</td>
+      <td style="text-align: right">16</td>
+      <td style="text-align: right">~14 GB</td>
+      <td style="text-align: right">~140 GB</td>
+      <td style="text-align: right">~810 GB</td>
+    </tr>
+    <tr>
+      <td>FP8 / INT8</td>
+      <td style="text-align: right">8</td>
+      <td style="text-align: right">~7 GB</td>
+      <td style="text-align: right">~70 GB</td>
+      <td style="text-align: right">~405 GB</td>
+    </tr>
+    <tr>
+      <td>4-bit</td>
+      <td style="text-align: right">4</td>
+      <td style="text-align: right">~3.5 GB</td>
+      <td style="text-align: right">~35 GB</td>
+      <td style="text-align: right">~202 GB</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Dit zijn <strong>alleen de ideale maten van de gewichten</strong>.</p>
+
+<p>Het werkelijke GPU-geheugen is de som van:</p>
+
+<blockquote>
+  <p><strong>Gewichten + KV-cache + activaties + runtime-overhead + kwantisatiemetadata</strong></p>
+</blockquote>
+
+<p>Vergeet bij MoE-modellen ook niet dat het totale aantal parameters en het aantal actieve parameters verschillen.</p><hr />
+<h3 id="22-kv-cachekwantisatie-is-een-aparte-beslissing">
+  
+  
+    <a href="#22-kv-cachekwantisatie-is-een-aparte-beslissing" class="anchor-heading" aria-labelledby="22-kv-cachekwantisatie-is-een-aparte-beslissing"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.2 KV-cachekwantisatie is een aparte beslissing
+  
+  
+</h3>
+    
+
+<p>Gewichtskwantisatie en KV-cachekwantisatie zijn niet hetzelfde.</p>
+
+<p>Bijvoorbeeld:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>BF16 weights + BF16 KV
+BF16 weights + FP8 KV
+FP8 weights + FP8 KV
+NVFP4 weights + FP8 KV
+NVFP4 weights + NVFP4 KV
+</code></pre></div></div>
+
+<p>zijn volledig verschillende deploymentprofielen.</p>
+
+<p>Bij lange context en hoge gelijktijdigheid kan de KV-cache een behoorlijke hoeveelheid GPU-geheugen verbruiken. Daarom moeten</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Weight quantization
+        +
+KV Cache quantization
+</code></pre></div></div>
+
+<p>samen worden bekeken.</p>
+
+<p>FP8 KV-cache kan met een geschikte runtime en modelarchitectuur het KV-geheugen (het KV-cachegeheugen) ongeveer halveren; maar het effect op de aandachtkwaliteit moet per model en implementatie worden geverifieerd.</p>
+
+<blockquote>
+  <p><strong>“Het is een belangrijke geheugenoptimalisatie bij lange context; het effect op de modelkwaliteit moet worden gecontroleerd.”</strong></p>
+</blockquote><hr />
+<h2 id="3-waarom-verbetert-kwantisatie-de-prestaties">
+  
+  
+    <a href="#3-waarom-verbetert-kwantisatie-de-prestaties" class="anchor-heading" aria-labelledby="3-waarom-verbetert-kwantisatie-de-prestaties"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. Waarom verbetert kwantisatie de prestaties?
+  
+  
+</h2>
+    
+
+<p>Het fundamentele doel van kwantisatie is het <strong>geheugenverbruik en de dataverplaatsing te verminderen</strong> door modelgewichten met een lagere precisie op te slaan, en — waar hardware en kernels dat ondersteunen — de <strong>reken-doorvoer te verhogen</strong>.</p>
+
+<p>De inferentieprestaties van een LLM worden grofweg begrensd door twee fundamentele bronnen:</p>
+
+<ol>
+  <li><strong>Geheugenbandbreedte:</strong> hoe snel de GPU modelgewichten en andere gegevens kan verplaatsen</li>
+  <li><strong>Rekendoorvoer:</strong> hoe snel de GPU matrixberekeningen kan uitvoeren met versnellende eenheden als Tensor Cores</li>
+</ol>
+
+<p>Kwantisatie kan op beide punten voordeel geven.</p>
+<h3 id="31-voordeel-van-geheugenbandbreedte">
+  
+  
+    <a href="#31-voordeel-van-geheugenbandbreedte" class="anchor-heading" aria-labelledby="31-voordeel-van-geheugenbandbreedte"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.1 Voordeel van geheugenbandbreedte
+  
+  
+</h3>
+    
+
+<p>Wanneer modelgewichten met een lagere precisie worden bewaard, wordt het model kleiner.</p>
+
+<p>Voor een model van ongeveer 70B parameters bijvoorbeeld:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Precisie (bitbreedte)</th>
+      <th>Geschatte omvang gewichten</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FP16 / BF16</td>
+      <td>~140 GB</td>
+    </tr>
+    <tr>
+      <td>FP8 / INT8</td>
+      <td>~70 GB</td>
+    </tr>
+    <tr>
+      <td>4-bit</td>
+      <td>~35 GB</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Deze krimp helpt niet alleen de VRAM-capaciteit. Omdat de GPU de modelgewichten tijdens inferentie door het geheugen moet verplaatsen, betekenen kleinere gewichten <strong>minder geheugenverkeer</strong>.</p>
+
+<p>Dit kan vooral tellen bij lage gelijktijdigheid en decode-zware workloads: bij het produceren van één enkele token kan het lezen van de gewichten uit het geheugen een flinke kostenpost zijn vergeleken met de berekening die ermee wordt gedaan.</p>
+
+<p>Vereenvoudigd:</p>
+
+<blockquote>
+  <p><strong>Minder bits → kleiner model → minder dataverplaatsing → meer doorvoerpotentieel bij geheugengebonden workloads</strong></p>
+</blockquote>
+
+<p>De werkelijke doorvoer hangt echter af van de kernelopbouw, batchgrootte, KV-cache, GPU-architectuur en runtime. Een theoretische berekening van de geheugenbandbreedte mag daarom niet als echte inferentiedoorvoer worden beschouwd.</p><hr />
+<h3 id="32-voordeel-van-rekendoorvoer">
+  
+  
+    <a href="#32-voordeel-van-rekendoorvoer" class="anchor-heading" aria-labelledby="32-voordeel-van-rekendoorvoer"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.2 Voordeel van rekendoorvoer
+  
+  
+</h3>
+    
+
+<p>Op moderne GPU’s is het voordeel van formaten met lage precisie niet alleen dat er minder gegevens worden verplaatst.</p>
+
+<p>De Tensor Cores van een GPU voeren razendsnelle matrixberekeningen uit in specifieke precisieformaten. Als het gebruikte kwantisatieformaat <strong>op hardwareniveau wordt versneld</strong>, kan lagere precisie dus ook hogere rekendoorvoer opleveren.</p>
+
+<p>Bijvoorbeeld:</p>
+
+<ul>
+  <li>FP16/BF16 → matrixberekeningen met hoge precisie op Tensor Cores</li>
+  <li>FP8 → lagere precisie en hoge Tensor Core-doorvoer</li>
+  <li>FP4/NVFP4 → zeer hoge Tensor Core-doorvoer met lage precisie op architecturen als Blackwell</li>
+</ul>
+
+<p>Daarom kan FP8 of FP4 een belangrijk voordeel geven, zelfs als de workload rekengebonden is.</p>
+
+<p>Kortom:</p>
+
+<blockquote>
+  <p><strong>Kwantisatie maakt het model niet alleen kleiner; waar de hardwaresupport bestaat, benut het ook de hogere rekenkracht van de GPU met lage precisie.</strong></p>
+</blockquote><hr />
+<h3 id="33-effect-van-gelijktijdigheid-en-batchgrootte">
+  
+  
+    <a href="#33-effect-van-gelijktijdigheid-en-batchgrootte" class="anchor-heading" aria-labelledby="33-effect-van-gelijktijdigheid-en-batchgrootte"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.3 Effect van gelijktijdigheid en batchgrootte
+  
+  
+</h3>
+    
+
+<p>Naarmate gelijktijdigheid en batchgrootte toenemen, worden meer tokens parallel verwerkt op hetzelfde model. De Tensor Cores van de GPU worden dan beter gevoed en <strong>het aandeel van rekendoorvoer in de totale prestatie kan groeien</strong>.</p>
+
+<p>De bron van het kwantisatievoordeel kan dus per workload verschillen:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Workload</th>
+      <th>Belangrijkste voordeel van kwantisatie</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Eén gebruiker / lage gelijktijdigheid</td>
+      <td>Minder geheugenverkeer</td>
+    </tr>
+    <tr>
+      <td>Gemiddeld-hoge gelijktijdigheid</td>
+      <td>Voordeel in geheugen én rekenkracht</td>
+    </tr>
+    <tr>
+      <td>Grote batch / hoge doorvoer</td>
+      <td>Tensor Core-doorvoer is belangrijker</td>
+    </tr>
+    <tr>
+      <td>Rekengebonden workload</td>
+      <td>Tensor Core-doorvoer met lage precisie</td>
+    </tr>
+    <tr>
+      <td>Geheugengebonden workload</td>
+      <td>Minder gegevens verplaatsen</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Kwantisatie kan met de juiste hardware- en softwaresupport zowel de vraag naar geheugenbandbreedte verlagen als de inferentiedoorvoer verhogen door de rekenkracht van de GPU met lage precisie te benutten.</strong></p>
+</blockquote><hr />
+<h2 id="4-gpu-architectuur-en-kwantisatieformaat">
+  
+  
+    <a href="#4-gpu-architectuur-en-kwantisatieformaat" class="anchor-heading" aria-labelledby="4-gpu-architectuur-en-kwantisatieformaat"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. GPU-architectuur en kwantisatieformaat
+  
+  
+</h2>
+    
+
+<p>Een kwantisatieformaat mag niet op zichzelf worden beoordeeld. De prestaties van hetzelfde precisieformaat kunnen per GPU-architectuur sterk verschillen.</p>
+
+<p>De fundamentele reden is dat GPU’s formaten met lage precisie op verschillende niveaus ondersteunen.</p>
+<h3 id="41-waarom-is-hardwaresupport-belangrijk">
+  
+  
+    <a href="#41-waarom-is-hardwaresupport-belangrijk" class="anchor-heading" aria-labelledby="41-waarom-is-hardwaresupport-belangrijk"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.1 Waarom is hardwaresupport belangrijk?
+  
+  
+</h3>
+    
+
+<p>Dat een formaat de modelgewichten kleiner maakt, op zich garandeert het nog geen hoge prestaties.</p>
+
+<p>Beschouw twee verschillende situaties:</p>
+
+<p><strong>Situatie A — rechtstreeks versneld door de hardware</strong></p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Quantized weights
+       ↓
+Native GPU Tensor Core
+       ↓
+High throughput
+</code></pre></div></div>
+
+<p><strong>Situatie B — extra conversie / speciale kernel nodig</strong></p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Quantized weights
+       ↓
+Dequantization / conversion
+       ↓
+FP16/BF16 compute
+       ↓
+Extra cost
+</code></pre></div></div>
+
+<p>In het tweede geval kan het model minder VRAM gebruiken, maar blijft het volledige rekenvoordeel mogelijk uit.</p>
+
+<p>Daarom moet men zich bij de kwantisatiekeuze niet alleen afvragen:</p>
+
+<blockquote>
+  <p>“Hoeveel bits?”</p>
+</blockquote>
+
+<p>maar ook:</p>
+
+<blockquote>
+  <p><strong>“Hoe wordt dit formaat op mijn GPU berekend?”</strong></p>
+</blockquote><hr />
+<h3 id="42-algemene-aanpak-per-gpu-generatie">
+  
+  
+    <a href="#42-algemene-aanpak-per-gpu-generatie" class="anchor-heading" aria-labelledby="42-algemene-aanpak-per-gpu-generatie"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.2 Algemene aanpak per GPU-generatie
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>GPU-architectuur</th>
+      <th>Belangrijkste precisieondersteuning</th>
+      <th>Algemene aanpak</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Ampere</strong></td>
+      <td>FP16/BF16, INT8/INT4</td>
+      <td>INT4/INT8-kwantisatie en geoptimaliseerde kernels zijn sterke keuzes</td>
+    </tr>
+    <tr>
+      <td><strong>Ada Lovelace</strong></td>
+      <td>FP16/BF16, FP8</td>
+      <td>FP8 en kwantisatie met weinig bits te overwegen</td>
+    </tr>
+    <tr>
+      <td><strong>Hopper</strong></td>
+      <td>FP16/BF16, FP8</td>
+      <td>FP8 is een sterke optie voor native versnelling</td>
+    </tr>
+    <tr>
+      <td><strong>Blackwell</strong></td>
+      <td>FP16/BF16, FP8, FP4/NVFP4</td>
+      <td>FP8 en vooral NVFP4 zijn belangrijke opties</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Het doel hier is niet te zeggen dat “een nieuw formaat niet draait op een oudere GPU”. Software- en runtimesupport kan toestaan dat verschillende formaten worden gebruikt. Maar <strong>native Tensor Core-ondersteuning</strong> kan wat betreft prestaties een doorslaggevend voordeel geven.</p><hr />
+<h3 id="43-fp8-de-gebalanceerde-keuze-tussen-geheugen-en-rekenwerk">
+  
+  
+    <a href="#43-fp8-de-gebalanceerde-keuze-tussen-geheugen-en-rekenwerk" class="anchor-heading" aria-labelledby="43-fp8-de-gebalanceerde-keuze-tussen-geheugen-en-rekenwerk"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.3 FP8: de gebalanceerde keuze tussen geheugen en rekenwerk
+  
+  
+</h3>
+    
+
+<p>Op architecturen als Hopper en Blackwell brengt FP8 twee belangrijke voordelen samen:</p>
+
+<ul>
+  <li>Minder modelgeheugen dan FP16/BF16</li>
+  <li>Door hardware versnelde, hoge Tensor Core-doorvoer</li>
+</ul>
+
+<p>FP8 is dus niet alleen een formaat om het model in de VRAM te krijgen.</p>
+
+<p>Vooral in inferentiesystemen met hoge gelijktijdigheid en een sterke focus op doorvoer:</p>
+
+<blockquote>
+  <p><strong>Kleinere geheugenvoetafdruk + hogere rekendoorvoer met lage precisie</strong></p>
+</blockquote>
+
+<p>kunnen samen worden gerealiseerd.</p>
+
+<p>Een van de belangrijke voordelen van FP8 ten opzichte van 4-bitformaten is de hogere numerieke precisie. Als het behoud van kwaliteit cruciaal is en het model goed met FP8 overweg kan, kan het een sterke voorkeur zijn.</p><hr />
+<h3 id="44-fp4--nvfp4-het-hardwarevoordeel-op-blackwell">
+  
+  
+    <a href="#44-fp4--nvfp4-het-hardwarevoordeel-op-blackwell" class="anchor-heading" aria-labelledby="44-fp4--nvfp4-het-hardwarevoordeel-op-blackwell"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.4 FP4 / NVFP4: het hardwarevoordeel op Blackwell
+  
+  
+</h3>
+    
+
+<p>Met de Blackwell-architectuur zijn formaten uit de FP4-klasse belangrijker geworden.</p>
+
+<p><strong>NVFP4</strong> in het bijzonder mag niet alleen als een “4-bitmodel” worden beoordeeld. Het doel van het formaat is het geheugenvoordeel van smalle bitbreedtes te combineren met de Tensor Core-ondersteuning van Blackwell voor lage precisie.</p>
+
+<p>NVFP4 kan dus in twee richtingen voordeel geven:</p>
+
+<p><strong>De geheugenkant</strong></p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FP16 → FP8 → FP4
+ ↓       ↓      ↓
+Less model memory
+Less data movement
+</code></pre></div></div>
+
+<p><strong>De rekenkant</strong></p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FP16/BF16
+    ↓
+FP8
+    ↓
+FP4 / NVFP4
+    ↓
+Blackwell low-precision Tensor Core throughput
+</code></pre></div></div>
+
+<p>Bij de afweging van NVFP4 op Blackwell is het dus niet genoeg te zeggen:</p>
+
+<blockquote>
+  <p>“Het model gebruikt minder VRAM omdat het 4-bit is.”</p>
+</blockquote>
+
+<p>Het punt dat telt is:</p>
+
+<blockquote>
+  <p><strong>NVFP4 kan zowel bij geheugengebonden als bij rekengebonden workloads voordeel geven door laag geheugenverbruik te combineren met de native rekenkracht van Blackwell met lage precisie.</strong></p>
+</blockquote><hr />
+<h3 id="45-de-basisregel-bij-kwantisatiekeuze">
+  
+  
+    <a href="#45-de-basisregel-bij-kwantisatiekeuze" class="anchor-heading" aria-labelledby="45-de-basisregel-bij-kwantisatiekeuze"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.5 De basisregel bij kwantisatiekeuze
+  
+  
+</h3>
+    
+
+<p>Bij het kiezen van een kwantisatieformaat moeten vier factoren samen worden gewogen:</p>
+
+<p><strong>1. Modelkwaliteit</strong></p>
+
+<p>Hoeveel van de accuracy, perplexity en taakprestaties van het model blijft er over na kwantisatie?</p>
+
+<p><strong>2. Geheugenvoetafdruk</strong></p>
+
+<p>Hoeveel belasting leggen het model en de KV-cache op het GPU-geheugen?</p>
+
+<p><strong>3. Hardwareversnelling</strong></p>
+
+<p>Ondersteunt de GPU dit precisieformaat native via Tensor Cores of een andere speciale versneller?</p>
+
+<p><strong>4. Runtime- en kernelsupport</strong></p>
+
+<p>Hoe efficiënt voeren vLLM, SGLang, TensorRT-LLM, llama.cpp of welke inferentiestack u ook draait dit formaat uit?</p>
+
+<p>Het formaat met het laagste aantal bits is dus niet automatisch het snelste.</p>
+
+<p>De juiste keuze:</p>
+
+<blockquote>
+  <p><strong>wordt gemaakt door modelkwaliteit + geheugenvoetafdruk + native hardwareversnelling + runtime- en kernelsupport samen te wegen.</strong></p>
+</blockquote><hr />
+<h2 id="5-kwantisatieformaten">
+  
+  
+    <a href="#5-kwantisatieformaten" class="anchor-heading" aria-labelledby="5-kwantisatieformaten"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5. Kwantisatieformaten
+  
+  
+</h2>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Formaat / methode</th>
+      <th>Typisch gebruik</th>
+      <th>Belangrijkste voordeel</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>GGUF</td>
+      <td>llama.cpp / CPU+GPU</td>
+      <td>Flexibiliteit, brede hardwaresupport</td>
+    </tr>
+    <tr>
+      <td>GPTQ</td>
+      <td>NVIDIA inference</td>
+      <td>Veelgebruikte weight-only kwantisatie</td>
+    </tr>
+    <tr>
+      <td>AWQ</td>
+      <td>NVIDIA inference</td>
+      <td>Activation-aware gewichtskwantisatie</td>
+    </tr>
+    <tr>
+      <td>EXL2</td>
+      <td>NVIDIA / ExLlama</td>
+      <td>Afweging kwaliteit-snelheid met variabele bpw</td>
+    </tr>
+    <tr>
+      <td>INT8 / SmoothQuant</td>
+      <td>Inference</td>
+      <td>Sterke optie bij de stap naar lage precisie</td>
+    </tr>
+    <tr>
+      <td>NF4 / bitsandbytes</td>
+      <td>QLoRA / fine-tuning</td>
+      <td>Ecosysteem voor training / fine-tuning</td>
+    </tr>
+    <tr>
+      <td>FP8</td>
+      <td>Ada / Hopper / Blackwell</td>
+      <td>Native versnelling met lage precisie</td>
+    </tr>
+    <tr>
+      <td>NVFP4</td>
+      <td>Blackwell</td>
+      <td>Zeer weinig geheugen + native FP4-versnelling</td>
+    </tr>
+    <tr>
+      <td>MXFP4</td>
+      <td>Blackwell en ondersteunende platforms</td>
+      <td>Open MX-standaard, gericht op draagbaarheid</td>
+    </tr>
+  </tbody>
+</table></div><hr />
+<h2 id="6-4-bit--4-bit-is-niet-waar">
+  
+  
+    <a href="#6-4-bit--4-bit-is-niet-waar" class="anchor-heading" aria-labelledby="6-4-bit--4-bit-is-niet-waar"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6. “4-bit = 4-bit” is niet waar
+  
+  
+</h2>
+    
+
+<p>Twee kwantatiemethoden met dezelfde nominale bitbreedte kunnen andere kwaliteit of prestaties geven.</p>
+
+<p>Bijvoorbeeld:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>INT4
+AWQ
+GPTQ
+NF4
+MXFP4
+NVFP4
+</code></pre></div></div>
+
+<p>vallen allemaal in de “4-bit”-klasse, toch kunnen ze verschillen in:</p>
+
+<ul>
+  <li>getalvoorstelling,</li>
+  <li>scaling,</li>
+  <li>blokgrootte,</li>
+  <li>kalibratie,</li>
+  <li>weight-only- of weight+activation-benadering,</li>
+  <li>kernel,</li>
+  <li>hardwareversnelling</li>
+</ul>
+
+<p>Vandaar:</p>
+
+<blockquote>
+  <p><strong>“4-bitmodel”</strong></p>
+</blockquote>
+
+<p>is op zich geen voldoende technische omschrijving.</p>
+
+<p>Een nauwkeuriger omschrijving:</p>
+
+<blockquote>
+  <p><strong>“NVFP4, een voor Blackwell geoptimaliseerd 4-bit zwevendekomaformaat met FP8-scaling over microblokken van 16 elementen”</strong></p>
+</blockquote>
+
+<p>moet ook de details van het formaat bevatten, zoals hier.</p><hr />
+<h2 id="7-waarom-is-nvfp4-anders">
+  
+  
+    <a href="#7-waarom-is-nvfp4-anders" class="anchor-heading" aria-labelledby="7-waarom-is-nvfp4-anders"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7. Waarom is NVFP4 anders?
+  
+  
+</h2>
+    
+
+<p>NVIDIA NVFP4 is het 4-bit zwevendekomaformaat dat voor Blackwell is ontworpen.</p>
+
+<p>De basisaanpak is:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FP4 values
+    +
+FP8 micro-scale
+    +
+FP32 tensor-level scale
+</code></pre></div></div>
+
+<p>In NVFP4 worden FP4-waarden geschaald met een FP8-schaal over microblokken van 16 elementen. Daarnaast wordt op tensorniveau een FP32-schaal gebruikt.</p>
+
+<p>Deze aanpak beoogt de kwantatiefout te verkleinen ten opzichte van een eenvoudige FP4-voorstelling.</p>
+
+<p>Volgens gegevens die NVIDIA heeft gepubliceerd kan NVFP4 een modelvoetafdruk opleveren die ongeveer 1,8× kleiner is dan FP8 en ongeveer 3,5× kleiner dan FP16; de werkelijke checkpointomvang hangt af van de metadata en het gebruikte mixed-precision recipe.</p>
+
+<p>Dus:</p>
+
+<blockquote>
+  <p><strong>NVFP4 = niet zomaar “4 bits”.</strong></p>
+</blockquote>
+
+<p>Het echte verschil is de combinatie:</p>
+
+<blockquote>
+  <p><strong>4-bitvoorstelling + fijnmazige scaling + hardwareversnelling</strong></p>
+</blockquote><hr />
+<h2 id="8-gpu-architectuur--formaat-de-juiste-koppeling">
+  
+  
+    <a href="#8-gpu-architectuur--formaat-de-juiste-koppeling" class="anchor-heading" aria-labelledby="8-gpu-architectuur--formaat-de-juiste-koppeling"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8. GPU-architectuur × formaat: de juiste koppeling
+  
+  
+</h2>
+    
+
+<p>Dit is een van de belangrijkste beslissingspunten.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>GPU-architectuur</th>
+      <th>Voorkeursopties</th>
+      <th>Noot</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Pascal</td>
+      <td>GGUF Q4/Q5/Q6</td>
+      <td>Geen moderne FP8/FP4 Tensor Core-functies</td>
+    </tr>
+    <tr>
+      <td>Turing</td>
+      <td>INT8 / INT4-methoden</td>
+      <td>Geen native FP8 Tensor Core-ondersteuning</td>
+    </tr>
+    <tr>
+      <td>Ampere</td>
+      <td>INT4 / INT8, AWQ/GPTQ</td>
+      <td>A100 ondersteunt native INT4/INT8 Tensor Cores</td>
+    </tr>
+    <tr>
+      <td>Ada</td>
+      <td>FP8, INT4</td>
+      <td>Native FP8 Tensor Core-ondersteuning</td>
+    </tr>
+    <tr>
+      <td>Hopper</td>
+      <td>FP8</td>
+      <td>FP8 + Transformer Engine is een sterke keuze</td>
+    </tr>
+    <tr>
+      <td>Blackwell</td>
+      <td>NVFP4 / FP8 / MXFP4</td>
+      <td>Native FP4- en FP8-versnelling</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>“Voorkeur” betekent hier niet dat het formaat voor elk model automatisch het beste is.</p>
+
+<p>Model, runtime en workload moeten afzonderlijk worden beoordeeld.</p><hr />
+<h2 id="9-ampere-verwar-int4-niet-met-fp8">
+  
+  
+    <a href="#9-ampere-verwar-int4-niet-met-fp8" class="anchor-heading" aria-labelledby="9-ampere-verwar-int4-niet-met-fp8"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 9. Ampere: verwar INT4 niet met FP8
+  
+  
+</h2>
+    
+
+<p>Ampere is vooral belangrijk om deze reden:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>A100 / RTX 30
+        ↓
+Native INT4 / INT8 Tensor Core
+        ↓
+AWQ / GPTQ / Marlin-style INT4 deployments
+</code></pre></div></div>
+
+<p>De A100 ondersteunt INT4 Tensor Cores.</p>
+
+<p>FP8 daarentegen is een precisie die haar intrede deed met Hopper en ook op Ada wordt ondersteund.</p>
+
+<p>Dus op Ampere mag men niet aannemen:</p>
+
+<blockquote>
+  <p><strong>“Er is een FP8-bestand, dus het zal sneller zijn.”</strong></p>
+</blockquote>
+
+<p>Een runtime kan een FP8-checkpoint op een bepaalde manier uitvoeren; maar native hardwareversnelling en support op softwareniveau zijn niet hetzelfde.</p>
+
+<p>Voor 4-bit deployments op Ampere:</p>
+
+<blockquote>
+  <p><strong>AWQ/GPTQ + een geschikte geoptimaliseerde kernel</strong></p>
+</blockquote>
+
+<p>is in de meeste gevallen het verstandigere startpunt.</p><hr />
+<h2 id="10-ada-en-hopper-de-sterke-positie-van-fp8">
+  
+  
+    <a href="#10-ada-en-hopper-de-sterke-positie-van-fp8" class="anchor-heading" aria-labelledby="10-ada-en-hopper-de-sterke-positie-van-fp8"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 10. Ada en Hopper: de sterke positie van FP8
+  
+  
+</h2>
+    
+
+<p>Ada Lovelace biedt FP8-versnelling via Tensor Cores.</p>
+
+<p>Hopper tilt FP8 verder met de Transformer Engine.</p>
+
+<p>Dus:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Ada
+ → FP8 is a serious option
+
+Hopper
+ → FP8 is a strong default for production inference
+</code></pre></div></div>
+
+<p>Maar niet van:</p>
+
+<blockquote>
+  <p><strong>“FP8 is altijd 2× sneller dan FP16.”</strong></p>
+</blockquote>
+
+<p>Cijfers als 2× kunnen theoretische of piekvoordelen uitdrukken onder specifieke kernel- en doorvoeromstandigheden. De werkelijke LLM-doorvoer varieert met modelarchitectuur, batch, sequentielengte en runtime.</p><hr />
+<h2 id="11-blackwell-fp8-of-nvfp4">
+  
+  
+    <a href="#11-blackwell-fp8-of-nvfp4" class="anchor-heading" aria-labelledby="11-blackwell-fp8-of-nvfp4"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 11. Blackwell: FP8 of NVFP4?
+  
+  
+</h2>
+    
+
+<p>Op Blackwell is de kernvraag niet langer alleen:</p>
+
+<blockquote>
+  <p>“Kan ik het model tot 4-bit verkleinen?”</p>
+</blockquote>
+
+<p>De betere vraag is:</p>
+
+<blockquote>
+  <p><strong>“Wat past voor dit model beter wat betreft kwaliteit, geheugen en doorvoer: FP8 of FP4?”</strong></p>
+</blockquote>
+<h3 id="fp8">
+  
+  
+    <a href="#fp8" class="anchor-heading" aria-labelledby="fp8"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> FP8
+  
+  
+</h3>
+    
+
+<p>Voordelen:</p>
+
+<ul>
+  <li>hogere numerieke precisie</li>
+  <li>doorgaans lagere kwantatiefout</li>
+  <li>native versnelling op Blackwell</li>
+  <li>een sterke optie bij workloads waarin kwaliteit cruciaal is</li>
+</ul>
+<h3 id="nvfp4">
+  
+  
+    <a href="#nvfp4" class="anchor-heading" aria-labelledby="nvfp4"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> NVFP4
+  
+  
+</h3>
+    
+
+<p>Voordelen:</p>
+
+<ul>
+  <li>kleinere voetafdruk van de gewichten</li>
+  <li>minder geheugenverkeer</li>
+  <li>native FP4-versnelling op Blackwell</li>
+  <li>het voordeel dat grotere modellen in kleinere GPU-clusters passen</li>
+</ul>
+<h3 id="praktische-aanpak">
+  
+  
+    <a href="#praktische-aanpak" class="anchor-heading" aria-labelledby="praktische-aanpak"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Praktische aanpak
+  
+  
+</h3>
+    
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FP8
+ ↓
+Benchmark
+ ↓
+NVFP4
+ ↓
+Benchmark
+ ↓
+Compare quality + latency + throughput + VRAM
+</code></pre></div></div>
+
+<p>De uitkomst:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Quality difference acceptable
+        → NVFP4
+
+Quality critical
+        → FP8
+</code></pre></div></div>
+
+<p>Deze beslissing moet per model worden genomen.</p><hr />
+<h2 id="12-mixed-precision-kwantisatie">
+  
+  
+    <a href="#12-mixed-precision-kwantisatie" class="anchor-heading" aria-labelledby="12-mixed-precision-kwantisatie"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 12. Mixed-precision kwantisatie
+  
+  
+</h2>
+    
+
+<p>Moderne gequantiseerde checkpoints bewaren niet alle gewichten in hetzelfde format.</p>
+
+<p>Er kan bijvoorbeeld een recipe als dit worden gebruikt:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>MLP                 → NVFP4
+Attention           → FP8
+lm_head             → NVFP4 / higher precision
+critical layers     → higher precision
+</code></pre></div></div>
+
+<p>De achterliggende gedachte is:</p>
+
+<blockquote>
+  <p><strong>Niet elke laag is even gevoelig voor kwantatiefouten.</strong></p>
+</blockquote>
+
+<p>Een goede kwantisatiepipeline kan er dus als volgt uitzien:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Model
+  ↓
+Calibration
+  ↓
+Layer sensitivity analysis
+  ↓
+Mixed-precision recipe
+  ↓
+Quantization
+  ↓
+Benchmark
+</code></pre></div></div>
+
+<p>Dus alleen zeggen:</p>
+
+<blockquote>
+  <p>“Het model is 4-bit.”</p>
+</blockquote>
+
+<p>is niet genoeg. Wat werkelijk telt is:</p>
+
+<ul>
+  <li>welke lagen zijn gequantiseerd?</li>
+  <li>welke precisie is gebruikt?</li>
+  <li>wat is de blokgrootte?</li>
+  <li>hoe is de scaling gedaan?</li>
+  <li>wat is de kalibratiedataset?</li>
+  <li>wat is het kalibratiealgoritme?</li>
+</ul><hr />
+<h2 id="13-waarom-is-kalibratie-belangrijk">
+  
+  
+    <a href="#13-waarom-is-kalibratie-belangrijk" class="anchor-heading" aria-labelledby="13-waarom-is-kalibratie-belangrijk"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 13. Waarom is kalibratie belangrijk?
+  
+  
+</h2>
+    
+
+<p>Bij PTQ (Post-Training Quantization, kwantisatie na de training) moet de kalibratiedataset de werkelijke gebruiksverdeling van het model representeren.</p>
+
+<p>Bijvoorbeeld, keuzes als deze hebben meer zin:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>General chat model
+    → general text calibration
+
+Coding model
+    → coding-weighted calibration
+
+Agent model
+    → tool-use / instruction / reasoning calibration
+</code></pre></div></div>
+
+<p>Het kalibratieproces kan beïnvloeden waar en hoe kwantatiefouten ontstaan.</p>
+
+<p>Vandaar:</p>
+
+<blockquote>
+  <p><strong>Zelfde model + zelfde 4-bitformaat ≠ zelfde kwaliteit</strong></p>
+</blockquote><hr />
+<h2 id="14-hoe-kiest-u-een-betrouwbaar-gequantiseerd-checkpoint">
+  
+  
+    <a href="#14-hoe-kiest-u-een-betrouwbaar-gequantiseerd-checkpoint" class="anchor-heading" aria-labelledby="14-hoe-kiest-u-een-betrouwbaar-gequantiseerd-checkpoint"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 14. Hoe kiest u een betrouwbaar gequantiseerd checkpoint?
+  
+  
+</h2>
+    
+
+<p>Bij het kiezen van een gequantiseerd model is de betrouwbaarheid van de bron cruciaal.</p>
+<h3 id="voorkeursvolgorde">
+  
+  
+    <a href="#voorkeursvolgorde" class="anchor-heading" aria-labelledby="voorkeursvolgorde"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Voorkeursvolgorde
+  
+  
+</h3>
+    
+
+<p><strong>1. Het officiële checkpoint van de modeleigenaar</strong></p>
+
+<p>Dit is het beste startpunt.</p>
+
+<p><strong>2. Het checkpoint dat is vrijgegeven door de hardware- of inferenceleverancier</strong></p>
+
+<p>Bijvoorbeeld checkpoints op basis van NVIDIA Model Optimizer, waarvan de benchmark- en kalibratiedetails openlijk worden vermeld.</p>
+
+<p><strong>3. Quants van de framework- of inferencegemeenschap</strong></p>
+
+<p>Die kunnen goed uitpakken; maar de metadata- en benchmarkkwaliteit moeten apart worden gecontroleerd.</p>
+<h3 id="4-kwantisatie-uit-de-gemeenschap">
+  
+  
+    <a href="#4-kwantisatie-uit-de-gemeenschap" class="anchor-heading" aria-labelledby="4-kwantisatie-uit-de-gemeenschap"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. Kwantisatie uit de gemeenschap
+  
+  
+</h3>
+    
+
+<p>Door de gemeenschap gemaakte kwantisatiebestanden <strong>mogen in productie niet worden gebruikt zonder verificatie van hun bron en productieproces.</strong></p>
+
+<p>Het risico hier is niet alleen een lage kwantisatiekwaliteit. Een gequantiseerd modelbestand mag niet als betrouwbaar worden beschouwd zonder verificatie van:</p>
+
+<ul>
+  <li>wie het heeft geproduceerd,</li>
+  <li>uit welk basismodel het is afgeleid,</li>
+  <li>met welke kwantatiemethode en gereedschap het is gemaakt,</li>
+  <li>welke kalibratiegegevens zijn gebruikt,</li>
+  <li>of de integriteit van het modelbestand behouden is,</li>
+  <li>of het compatibel is met de gebruikte runtime en kernels</li>
+</ul>
+
+<p>Vooral in productiesystemen <strong>vormen modellen en kwantisatieartefacten van onbekende herkomst een risico in de toeleveringsketen</strong>. Aangezien modelgewichten en de bijbehorende bestanden de fundamentele invoer zijn van de inferentiepipeline die ze uitvoert, mag een betrouwbaarheidsbesluit niet alleen op een benchmarkscore worden gebaseerd.</p>
+<h3 id="bekende-uitgevers--een-startlijst">
+  
+  
+    <a href="#bekende-uitgevers--een-startlijst" class="anchor-heading" aria-labelledby="bekende-uitgevers--een-startlijst"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Bekende uitgevers — een startlijst
+  
+  
+</h3>
+    
+
+<p>De onderstaande rekeningen zijn <strong>startpunten</strong> die opvallen door hun productieproces en de transparantie van hun modelkaart. De naam van een uitgever is geen kwaliteitsgarantie; het geeft aan waar u de zoektocht kunt beginnen:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Uitgever</th>
+      <th>Type</th>
+      <th>Typische formaten</th>
+      <th>Link(s)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>NVIDIA</strong> (Model Optimizer)</td>
+      <td>Hardware- / productieleverancier</td>
+      <td>NVFP4, FP8 (mixed recipe)</td>
+      <td><a href="https://huggingface.co/nvidia">HF <code class="language-plaintext highlighter-rouge">nvidia</code></a> · <a href="https://github.com/NVIDIA/TensorRT-Model-Optimizer">TensorRT-Model-Optimizer</a></td>
+    </tr>
+    <tr>
+      <td><strong>RadixArk</strong></td>
+      <td>SGLang-ecosysteem</td>
+      <td>NVFP4, blockwise FP8, MLX 4-bit, DSpark draft</td>
+      <td><a href="https://huggingface.co/RadixArk">HF <code class="language-plaintext highlighter-rouge">RadixArk</code></a> · <a href="https://cookbook.sglang.ai">cookbook.sglang.ai</a></td>
+    </tr>
+    <tr>
+      <td><strong>Inferact</strong></td>
+      <td>vLLM-ecosysteem</td>
+      <td>NVFP4, MXFP4, W4A4, EAGLE3 / DSpark draft</td>
+      <td><a href="https://huggingface.co/Inferact">HF <code class="language-plaintext highlighter-rouge">Inferact</code></a> · <a href="https://inferact.ai/">inferact.ai</a></td>
+    </tr>
+    <tr>
+      <td><strong>Red Hat AI</strong></td>
+      <td>Inferenceleverancier</td>
+      <td>FP8, INT4 (AWQ/GPTQ)</td>
+      <td><a href="https://huggingface.co/RedHatAI">HF <code class="language-plaintext highlighter-rouge">RedHatAI</code></a></td>
+    </tr>
+    <tr>
+      <td><strong>Intel</strong></td>
+      <td>Hardware- / runtimeleverancier</td>
+      <td>INT8 / INT4</td>
+      <td><a href="https://huggingface.co/OpenVINO">HF <code class="language-plaintext highlighter-rouge">OpenVINO</code></a> · <a href="https://huggingface.co/Intel">HF <code class="language-plaintext highlighter-rouge">Intel</code></a> · <a href="https://github.com/intel/neural-compressor">neural-compressor</a> · <a href="https://github.com/openvinotoolkit/openvino">openvino</a></td>
+    </tr>
+    <tr>
+      <td><strong>ggml-org</strong></td>
+      <td>Formaat-ecosysteem (llama.cpp)</td>
+      <td>GGUF</td>
+      <td><a href="https://huggingface.co/ggml-org">HF <code class="language-plaintext highlighter-rouge">ggml-org</code></a></td>
+    </tr>
+    <tr>
+      <td><strong>ISTA-DASLab</strong></td>
+      <td>Universitair onderzoekslab — bron van GPTQ, SparseGPT, AQLM, QuIP#</td>
+      <td>GPTQ / MatGPTQ, NVFP4 (MoESQ), GGUF (GSQ-RCO), 2-bit (AQLM / QuIP#)</td>
+      <td><a href="https://huggingface.co/ISTA-DASLab">HF <code class="language-plaintext highlighter-rouge">ISTA-DASLab</code></a> · <a href="https://github.com/IST-DASLab">github.com/IST-DASLab</a></td>
+    </tr>
+    <tr>
+      <td><strong>LM Studio</strong> (<code class="language-plaintext highlighter-rouge">lmstudio-community</code>)</td>
+      <td>Officiële modelpool van een lokale inferentieruntime</td>
+      <td>GGUF, MLX (4/6/8-bit)</td>
+      <td><a href="https://huggingface.co/lmstudio-community">HF <code class="language-plaintext highlighter-rouge">lmstudio-community</code></a> · <a href="https://lmstudio.ai">lmstudio.ai</a></td>
+    </tr>
+    <tr>
+      <td><strong>bartowski</strong></td>
+      <td>Bekende uitgever uit de gemeenschap</td>
+      <td>GGUF, EXL2</td>
+      <td><a href="https://huggingface.co/bartowski">HF <code class="language-plaintext highlighter-rouge">bartowski</code></a></td>
+    </tr>
+    <tr>
+      <td><strong>unsloth</strong></td>
+      <td>Ecosysteem voor training + quants</td>
+      <td>4-bit dynamische kwantisatie, GGUF</td>
+      <td><a href="https://huggingface.co/unsloth">HF <code class="language-plaintext highlighter-rouge">unsloth</code></a></td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Drie regels:</p>
+
+<ol>
+  <li><strong>De volgorde verandert niet:</strong> het officiële quant van de modeleigenaar → hardware-/inferenceleverancier → bekende uitgever → uw eigen quant (dezelfde voorkeursvolgorde als hierboven).</li>
+  <li><strong>De checklist staat vast:</strong> hoe bekend de uitgever ook is, zonder verificatie van de modelkaartlijst in §15 gaat er niets naar productie.</li>
+  <li><strong>De lijst veroudert:</strong> dit is een momentopname als startlijst; controleer elke keer de huidige activiteit van de uitgever en de transparantie van diens kaart.</li>
+</ol>
+
+<blockquote>
+  <p><strong>Noot:</strong> Hetzelfde model kan door verschillende uitgevers worden gepubliceerd (bijv. <code class="language-plaintext highlighter-rouge">Qwen3.8-27B-NVFP4</code> bestaat bij NVIDIA, RadixArk en Inferact). Vergelijking van uitgevers moet dan met het kwaliteitskader uit §23 gebeuren. RadixArk en Inferact publiceren niet alleen quants maar ook drafts voor speculatieve decodering (DSpark / EAGLE3).</p>
+</blockquote><hr />
+<h2 id="15-wat-moet-een-goede-modelkaart-vermelden">
+  
+  
+    <a href="#15-wat-moet-een-goede-modelkaart-vermelden" class="anchor-heading" aria-labelledby="15-wat-moet-een-goede-modelkaart-vermelden"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 15. Wat moet een goede modelkaart vermelden?
+  
+  
+</h2>
+    
+
+<p>Een goed gequantiseerd checkpoint moet de onderstaande informatie zo volledig mogelijk geven. Niet alles weegt echter even zwaar; begin de beoordeling bij deze drie niveaus.</p>
+<h3 id="kritiek--de-basis-die-geverifieerd-moet-worden">
+  
+  
+    <a href="#kritiek--de-basis-die-geverifieerd-moet-worden" class="anchor-heading" aria-labelledby="kritiek--de-basis-die-geverifieerd-moet-worden"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Kritiek — de basis die geverifieerd moet worden
+  
+  
+</h3>
+    
+
+<blockquote>
+  <p><strong>Noot:</strong> Wat twee quants van elkaar scheidt is niet het nominale aantal bits maar de methode + scaling + kalibratie + recipe (§6, §13). De <strong>gemeten samenvatting</strong> van dat verschil is “een benchmarkvergelijking met het originele model” — het waardevolste item op de lijst, en zonder de omstandigheden (§16) betekenisloos.</p>
+</blockquote>
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Basismodel</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Identiteit van producent / uitgever</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Kwantatiemethode <em>(met vermelding van de precisie van gewichten en activaties)</em></li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" /><strong>Benchmarkvergelijking met het originele model</strong> <em>(met de omstandigheden: het enige meetbare bewijs van het kwaliteitsverschil tussen twee quants — §16)</em></li>
+</ul>
+<h3 id="beslissend--hiermee-beslist-u-wat-in-twijfel-blijft">
+  
+  
+    <a href="#beslissend--hiermee-beslist-u-wat-in-twijfel-blijft" class="anchor-heading" aria-labelledby="beslissend--hiermee-beslist-u-wat-in-twijfel-blijft"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Beslissend — hiermee beslist u wat in twijfel blijft
+  
+  
+</h3>
+    
+
+<p><em>Technische details van de kwantisatie:</em></p>
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Kalibratiedataset + algoritme + aantal voorbeelden
+    <em>(bij QAT-modellen in plaats daarvan het training-/post-training recipe en de kwantatiesimulatie — zie §17.4)</em></li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Precisie van de gewichten</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Precisie van de activaties</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Precisie van de KV-cache <em>(alleen verplicht als de benchmark of het aanbevolen deployment met een specifieke KV-precisie is gedraaid — het is op zich geen checkpointeigenschap maar een deploymentbeslissing: §2.2)</em></li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Mixed-precision recipe</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Blok- / groepsgrootte</li>
+</ul>
+
+<p><em>Benchmarkomstandigheden:</em></p>
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Evaluatiedatasets</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Generatie-instellingen</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Contextlengte</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Geteste GPU + runtime</li>
+</ul>
+
+<p><em>Compatibiliteit / schaal:</em></p>
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Ondersteunde GPU-architecturen</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Tensor parallelism</li>
+</ul>
+<h3 id="aanvullend--ze-bepalen-de-technische-kwaliteit-niet-maar-hun-afwezigheid-geeft-praktische-problemen">
+  
+  
+    <a href="#aanvullend--ze-bepalen-de-technische-kwaliteit-niet-maar-hun-afwezigheid-geeft-praktische-problemen" class="anchor-heading" aria-labelledby="aanvullend--ze-bepalen-de-technische-kwaliteit-niet-maar-hun-afwezigheid-geeft-praktische-problemen"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Aanvullend — ze bepalen de technische kwaliteit niet, maar hun afwezigheid geeft praktische problemen
+  
+  
+</h3>
+    
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Kwantisatiebibliotheek + versie</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Bestandsintegriteit (commit hash / checksum) + releasedatum</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Licentie</li>
+</ul>
+
+<p>Hoe meer van deze informatie ontbreekt, hoe moeilijker het wordt om een gequantiseerd checkpoint zelfstandig te beoordelen.</p><hr />
+<h2 id="16-hoe-leest-u-een-benchmark">
+  
+  
+    <a href="#16-hoe-leest-u-een-benchmark" class="anchor-heading" aria-labelledby="16-hoe-leest-u-een-benchmark"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 16. Hoe leest u een benchmark?
+  
+  
+</h2>
+    
+
+<p>Bij de beoordeling van de benchmark van een gequantiseerd model mag niet alleen naar de score zelf worden gekeken.</p>
+
+<p>Bijvoorbeeld:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>BF16     → 88.92
+NVFP4    → 88.01
+</code></pre></div></div>
+
+<p>betekent op zichzelf weinig.</p>
+
+<p>Deze zaken moeten ook gelijk zijn:</p>
+
+<ul>
+  <li>benchmarkversion</li>
+  <li>promptopmaak</li>
+  <li>systeemprompt</li>
+  <li>temperature</li>
+  <li>top_p</li>
+  <li>max_new_tokens</li>
+  <li>contextlengte</li>
+  <li>reasoning mode</li>
+  <li>toolconfiguratie</li>
+</ul>
+
+<p>Anders kunnen twee benchmarks niet rechtstreeks worden vergeleken.</p>
+
+<p>De meest betrouwbare aanpak is:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>BF16 baseline
+      ↓
+same benchmark
+      ↓
+same generation settings
+      ↓
+same runtime
+      ↓
+quantized model
+      ↓
+same benchmark
+</code></pre></div></div><hr />
+<h2 id="17-praktijkvoorbeelden">
+  
+  
+    <a href="#17-praktijkvoorbeelden" class="anchor-heading" aria-labelledby="17-praktijkvoorbeelden"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 17. Praktijkvoorbeelden
+  
+  
+</h2>
+    
+
+<p>De voorbeelden staan voor vier basisscenario’s, naar de herkomst van de gequantiseerde vorm:</p>
+
+<ol>
+  <li><strong>Dubbele uitgave</strong> — origineel BF16; de leverancier geeft daarnaast zijn eigen officiële FP8 vrij.</li>
+  <li><strong>Directe uitgave met weinig bits</strong> — het originele model komt al gequantiseerd uit.</li>
+  <li><strong>Kwantisatie door derden</strong> — de hardware-/inferenceleverancier quantiseert een model dat als BF16 is uitgegeven.</li>
+  <li><strong>4-bit via QAT</strong> — kwantisatie treedt het trainingsstadium binnen.</li>
+</ol>
+
+<p>Deze scenario’s komen overeen met de voorkeursvolgorde in §14: 1 en 2 → het officiële checkpoint van de modeleigenaar, 3 → het checkpoint van de hardware-/inferenceleverancier, 4 → de modeleigenaar (productie met QAT).</p><hr />
+<h3 id="171-scenario-1--origineel-bf16--officiële-fp8-qwen38-27b">
+  
+  
+    <a href="#171-scenario-1--origineel-bf16--officiële-fp8-qwen38-27b" class="anchor-heading" aria-labelledby="171-scenario-1--origineel-bf16--officiële-fp8-qwen38-27b"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 17.1 Scenario 1 — origineel BF16 + officiële FP8: Qwen3.8-27B
+  
+  
+</h3>
+    
+
+<p><code class="language-plaintext highlighter-rouge">Qwen/Qwen3.8-27B</code> is een model met 27B parameters.</p>
+
+<p>Daarnaast heeft Qwen ook het</p>
+
+<p><code class="language-plaintext highlighter-rouge">Qwen/Qwen3.8-27B-FP8</code></p>
+
+<p>checkpoint vrijgegeven.</p>
+
+<p>Het FP8-checkpoint gebruikt:</p>
+
+<ul>
+  <li>fine-grained FP8</li>
+  <li>blokgrootte 128</li>
+  <li>BF16 + FP8 tensorlayout</li>
+</ul>
+
+<p>De modelkaart van Qwen vermeldt dat de prestatiecijfers dicht bij die van het originele model liggen.</p>
+
+<p><strong>Les:</strong></p>
+
+<blockquote>
+  <p>Het officiële FP8-deploymentcheckpoint vergelijken met de BF16-baseline binnen dezelfde modelfamilie is een sterke start voor de beoordeling van kwantisatie.</p>
+</blockquote><hr />
+<h3 id="172-scenario-2--directe-fp8-uitgave-glm-53">
+  
+  
+    <a href="#172-scenario-2--directe-fp8-uitgave-glm-53" class="anchor-heading" aria-labelledby="172-scenario-2--directe-fp8-uitgave-glm-53"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 17.2 Scenario 2 — directe FP8-uitgave: GLM-5.3
+  
+  
+</h3>
+    
+
+<p><code class="language-plaintext highlighter-rouge">zai-org/GLM-5.3</code> is een model in de 753B-klasse en is in zijn modelrepository als FP8 gelabeld, samen met de tensortypen BF16, F8_E4M3 en F32.</p>
+
+<p>Wat hier telt:</p>
+
+<blockquote>
+  <p>Kwantisatie is niet langer alleen iets wat de gemeenschap achteraf toepast.</p>
+</blockquote>
+
+<p>Modelleveranciers kunnen direct checkpoints met lage precisie uitgeven.</p>
+
+<p><strong>Les:</strong></p>
+
+<blockquote>
+  <p>De precisie waarin een model wordt uitgegeven, wordt onderdeel van de deploymentarchitectuur.</p>
+</blockquote><hr />
+<h3 id="173-scenario-3--kwantisatie-door-derden-nvidia-qwen38-27b-nvfp4">
+  
+  
+    <a href="#173-scenario-3--kwantisatie-door-derden-nvidia-qwen38-27b-nvfp4" class="anchor-heading" aria-labelledby="173-scenario-3--kwantisatie-door-derden-nvidia-qwen38-27b-nvfp4"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 17.3 Scenario 3 — kwantisatie door derden (NVIDIA): Qwen3.8-27B-NVFP4
+  
+  
+</h3>
+    
+
+<p><code class="language-plaintext highlighter-rouge">nvidia/Qwen3.8-27B-NVFP4</code> is een deploymentcheckpoint dat met NVIDIA Model Optimizer is gemaakt.</p>
+
+<p>Zijn modelkaart vermeldt deze details expliciet:</p>
+
+<ul>
+  <li>Model Optimizer v0.48.0</li>
+  <li>gemengde NVFP4/FP8</li>
+  <li>NVFP4 → MLP + <code class="language-plaintext highlighter-rouge">lm_head</code></li>
+  <li>FP8 → self-attention + linear-attention</li>
+  <li>2.048 kalibratievoorbeelden</li>
+  <li>Local-Hessian-kalibratie</li>
+  <li>Nemotron-Post-Training-Dataset-v3</li>
+  <li>vLLM</li>
+  <li>Grace Blackwell GB300</li>
+</ul>
+
+<p>De BF16- en NVFP4-resultaten zijn bovendien op dezelfde benchmarkset vergeleken.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Benchmark</th>
+      <th style="text-align: right">BF16</th>
+      <th style="text-align: right">NVFP4</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>GPQA Diamond</td>
+      <td style="text-align: right">88.92</td>
+      <td style="text-align: right">88.01</td>
+    </tr>
+    <tr>
+      <td>Terminal-Bench</td>
+      <td style="text-align: right">75.56</td>
+      <td style="text-align: right">74.02</td>
+    </tr>
+    <tr>
+      <td>AA-LCR</td>
+      <td style="text-align: right">72.63</td>
+      <td style="text-align: right">73.38</td>
+    </tr>
+    <tr>
+      <td>MMMU-Pro</td>
+      <td style="text-align: right">75.14</td>
+      <td style="text-align: right">74.86</td>
+    </tr>
+    <tr>
+      <td>SciCode</td>
+      <td style="text-align: right">47.93</td>
+      <td style="text-align: right">48.41</td>
+    </tr>
+    <tr>
+      <td>IFBench</td>
+      <td style="text-align: right">80.07</td>
+      <td style="text-align: right">78.93</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>De echte les is belangrijker dan de losse scores:</p>
+
+<blockquote>
+  <p><strong>Het kwantatierecipe + kalibratie + de evaluatiemethode zijn openlijk gedocumenteerd.</strong></p>
+</blockquote>
+
+<p>Daardoor kan het checkpoint zelfstandig worden onderzocht en gereproduceerd.</p><hr />
+<h3 id="174-scenario-4--4-bit-met-qat-kimi-k3">
+  
+  
+    <a href="#174-scenario-4--4-bit-met-qat-kimi-k3" class="anchor-heading" aria-labelledby="174-scenario-4--4-bit-met-qat-kimi-k3"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 17.4 Scenario 4 — 4-bit met QAT: Kimi K3
+  
+  
+</h3>
+    
+
+<p><code class="language-plaintext highlighter-rouge">moonshotai/Kimi-K3</code> gebruikt:</p>
+
+<ul>
+  <li>2.8T total parameters</li>
+  <li>104B activated parameters</li>
+  <li>1M context</li>
+  <li>MXFP4 weights</li>
+  <li>MXFP8 activations</li>
+  <li>Quantization-Aware Training (vanaf de SFT-fase)</li>
+</ul>
+
+<p>De inferentieruntimes die de kaart aanbeveelt: vLLM, SGLang en TokenSpeed.</p>
+
+<p><strong>Het punt dat telt:</strong></p>
+
+<blockquote>
+  <p><strong>De modelleverancier maakt het model met quantization-aware training vanaf de SFT-fase, in plaats van kwantisatie achteraf toe te passen, en geeft het uit als MXFP4 / MXFP8.</strong> Hier is kwantisatie geen “compressiestap” na de training; het is een ontwerpbeslissing op de weg naar uitgave.</p>
+</blockquote>
+
+<p>Dit voorbeeld verandert meerdere aannames tegelijk:</p>
+
+<p><strong>1. De aanname “origineel = BF16, gequantiseerd = afgeleide” gaat niet meer op.</strong></p>
+
+<p>De officiële uitgave van dit model <em>is al 4-bit</em>. Er is geen “terug naar BF16 om de kwaliteit te redden”; het referentiecheckpoint zelf is gequantiseerd.</p>
+
+<p><strong>2. Kwantisatie is niet langer het laatste redmiddel; bij sommige modellen is het de enige officiële vorm.</strong></p>
+
+<p>Dit is het sterkste voorbeeld van de stap “is er een officiële FP8/FP4-uitgave?” in de keuzestroom van §19: de geproduceerde gequantiseerde vorm van het model ís het model.</p>
+
+<p><strong>3. Het onderwerp is niet alleen gewichtskwantisatie.</strong></p>
+
+<p>Samen genomen zijn MXFP4 weights + MXFP8 activations kwantisatie van gewichten én activaties (full-tensor); het extreme voorbeeld van het onderscheid <em>weight-only / weight+activation</em> uit §6, anders dan de weight-only-benadering van AWQ/GPTQ.</p>
+
+<p><strong>4. MXFP4 is de open OCP-standaard.</strong></p>
+
+<p>Het is een voorbeeld van het draagbaarheidsdoel uit §5: een open familie van formaten die u niet aan één leverancier bindt. De motivatie van Moonshot AI is precies dezelfde; de kaart vermeldt dat de keuze voor MXFP4 / MXFP8 is gemaakt voor “brede hardwarecompatibiliteit”.</p>
+
+<p><strong>5. Kwaliteitsvalidatie wordt omgekeerd gelezen.</strong></p>
+
+<p>De vraag is niet “hoeveel heeft 4-bit verloren?” maar <strong>“is de trainingsconditie met 4 bits die de leverancier heeft getraind voldoende voor mijn workload?”</strong> Het antwoord komt uit de modelkaartbenchmark die u als in §16 leest, en uit uw eigen workloadtest in productie.</p>
+
+<p><strong>Les:</strong></p>
+
+<blockquote>
+  <p>PTQ en QAT zijn niet hetzelfde.</p>
+</blockquote>
+
+<p>PTQ:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>BF16 model
+   ↓
+training completed
+   ↓
+quantization
+</code></pre></div></div>
+
+<p>QAT:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Quantized operating conditions
+        ↓
+part of the training / post-training process
+        ↓
+quantized model
+</code></pre></div></div>
+
+<p>Twee lessen komen daar nog bij:</p>
+
+<blockquote>
+  <p><strong>Weinig bits is niet altijd een “compromis”.</strong> Bij QAT is 4-bit de beoogde bedrijfsconditie; de kwaliteit wordt daarvoor geoptimaliseerd. Het beeld “weinig bits = aanvaard verlies” geldt niet voor deze klasse modellen.</p>
+</blockquote>
+
+<blockquote>
+  <p><strong>De checklist voor de modelkaart (§15) leest bij QAT-modellen anders.</strong> In plaats van een “kalibratiedataset” zoekt u het training-/post-training recipe en de in de training gebruikte kwantatiesimulatie; de kalibratiestroom uit §13 is specifiek voor PTQ.</p>
+</blockquote><hr />
+<h2 id="18-ptq-of-qat">
+  
+  
+    <a href="#18-ptq-of-qat" class="anchor-heading" aria-labelledby="18-ptq-of-qat"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 18. PTQ of QAT?
+  
+  
+</h2>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Kenmerk</th>
+      <th>PTQ</th>
+      <th>QAT</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Toe te passen na de training</td>
+      <td>Ja</td>
+      <td>Nee / training nodig</td>
+    </tr>
+    <tr>
+      <td>Kosten</td>
+      <td>Lager</td>
+      <td>Hoger</td>
+    </tr>
+    <tr>
+      <td>Snel voor deployment</td>
+      <td>Ja</td>
+      <td>Langer proces</td>
+    </tr>
+    <tr>
+      <td>Kalibratie nodig</td>
+      <td>Meestal ja</td>
+      <td>Hangt van het recipe af</td>
+    </tr>
+    <tr>
+      <td>Zeer lage precisie</td>
+      <td>Moeilijker</td>
+      <td>Kan voordeliger zijn</td>
+    </tr>
+    <tr>
+      <td>Modelkwaliteit optimaliseren</td>
+      <td>Beperkt</td>
+      <td>Sterker</td>
+    </tr>
+    <tr>
+      <td>Praktisch voor bestaand model</td>
+      <td>Zeer geschikt</td>
+      <td>Duurder</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Voor deployment in productie is voor de meeste gebruikers PTQ het praktischer startpunt.</p>
+
+<p>Maar bij zeer lage precisie of de uitrol van frontiermodellen kan QAT een belangrijke optie worden.</p><hr />
+<h2 id="19-de-kwantisatiekeuzestroom">
+  
+  
+    <a href="#19-de-kwantisatiekeuzestroom" class="anchor-heading" aria-labelledby="19-de-kwantisatiekeuzestroom"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 19. De kwantisatiekeuzestroom
+  
+  
+</h2>
+    
+
+<p>Het praktische beslisproces hoort er als volgt uit te zien:</p>
+
+<p><img src="/papers/llm-quantization-selection/images/quantization-selection-flow-19.png" alt="§19 Kwantisatiekeuzestroom" /></p>
+
+<ol>
+  <li><strong>Bepaal de behoefte:</strong> benodigde snelheid (TTFT / tokens/s), gelijktijdigheid, context, kwaliteitsdrempel.</li>
+  <li><strong>Draagt mijn hardware dit model voor deze behoefte?</strong>
+    <ul>
+      <li><strong>Ja</strong> → gebruik het originele model → workloadtest in productie.</li>
+      <li><strong>Nee</strong> → ga naar stap 3.</li>
+    </ul>
+  </li>
+  <li><strong>Kies de gequantiseerde vorm:</strong>
+    <ol>
+      <li>Als het model een officiële FP8/FP4-uitgave heeft → gebruik die.</li>
+      <li>Anders het quant van een bekende uitgever (NVIDIA, bekende framework-/gemeenschapsuitgevers) gebruiken (zie §14).</li>
+      <li>Als die er niet is → uw eigen quant (PTQ) of een hardware-/modelwissel.</li>
+    </ol>
+  </li>
+  <li><strong>Levert de gekozen vorm wat de behoefte vraagt?</strong> (snelheid + gelijktijdigheid + kwaliteit)
+    <ul>
+      <li><strong>Ja</strong> → workloadtest in productie.</li>
+      <li><strong>Nee</strong> → kies een model dat bij uw hardware past en begin opnieuw bij stap 1.</li>
+    </ul>
+  </li>
+</ol>
+
+<blockquote>
+  <p><strong>Noot:</strong> “Origineel model” = de officiële vorm waarin het model is uitgegeven; bij sommige modellen is dat vanaf de geboorte 4-bit (zie §17.4).</p>
+</blockquote>
+
+<p>Het basisprincipe:</p>
+
+<blockquote>
+  <p><strong>Een tekort aan hardware betekent op zich niet “met dit model lukt het niet”.</strong> De gequantiseerde vorm van het model kan op de aanwezige hardware de benodigde snelheid en gelijktijdigheid geven; het doel is niet de laagste bits te kiezen, maar <strong>de behoefte te dekken met een precisie waarin de hardware sterk is.</strong></p>
+</blockquote>
+
+<p>Als echter hoge doorvoer of capaciteit het doel is, kan lagere precisie economisch de betere keuze zijn.</p><hr />
+<h2 id="20-veelgemaakte-fouten">
+  
+  
+    <a href="#20-veelgemaakte-fouten" class="anchor-heading" aria-labelledby="20-veelgemaakte-fouten"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 20. Veelgemaakte fouten
+  
+  
+</h2>
+    
+<h3 id="1-zonder-noodzaak-naar-4-bit-terwijl-de-hardware-genoeg-is-voor-het-originele-model">
+  
+  
+    <a href="#1-zonder-noodzaak-naar-4-bit-terwijl-de-hardware-genoeg-is-voor-het-originele-model" class="anchor-heading" aria-labelledby="1-zonder-noodzaak-naar-4-bit-terwijl-de-hardware-genoeg-is-voor-het-originele-model"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1. Zonder noodzaak naar 4-bit terwijl de hardware genoeg is voor het originele model
+  
+  
+</h3>
+    
+
+<p>Lagere precisie is niet altijd beter. Als de hardware genoeg is voor het originele model — snelheid, gelijktijdigheid enz. — hoeft u niet voor niets te kwantiseren (zie §19).</p><hr />
+<h3 id="2-de-benchmark-van-het-originele-model-toekennen-aan-het-gequantiseerde-model">
+  
+  
+    <a href="#2-de-benchmark-van-het-originele-model-toekennen-aan-het-gequantiseerde-model" class="anchor-heading" aria-labelledby="2-de-benchmark-van-het-originele-model-toekennen-aan-het-gequantiseerde-model"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2. De benchmark van het originele model toekennen aan het gequantiseerde model
+  
+  
+</h3>
+    
+
+<p>Een BF16-resultaat:</p>
+
+<blockquote>
+  <p><strong>is het resultaat van het BF16-checkpoint.</strong></p>
+</blockquote>
+
+<p>Het gequantiseerde checkpoint moet apart worden geverifieerd.</p><hr />
+<h3 id="3-zeggen-dat-4-bit--4-bit">
+  
+  
+    <a href="#3-zeggen-dat-4-bit--4-bit" class="anchor-heading" aria-labelledby="3-zeggen-dat-4-bit--4-bit"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. Zeggen dat “4-bit = 4-bit”
+  
+  
+</h3>
+    
+
+<p>AWQ, GPTQ, NF4, MXFP4 en NVFP4 zijn niet hetzelfde.</p><hr />
+<h3 id="4-native-hardwareversnelling-verwarren-met-softwaresupport">
+  
+  
+    <a href="#4-native-hardwareversnelling-verwarren-met-softwaresupport" class="anchor-heading" aria-labelledby="4-native-hardwareversnelling-verwarren-met-softwaresupport"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. Native hardwareversnelling verwarren met softwaresupport
+  
+  
+</h3>
+    
+
+<p>Dat een runtime een formaat accepteert, wil niet zeggen dat de GPU dat formaat native versnelt.</p><hr />
+<h3 id="5-alleen-tokenss-meten">
+  
+  
+    <a href="#5-alleen-tokenss-meten" class="anchor-heading" aria-labelledby="5-alleen-tokenss-meten"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5. Alleen tokens/s meten
+  
+  
+</h3>
+    
+
+<p>Hogere doorvoer betekent geen betere deployment.</p>
+
+<p>Ook TTFT, ITL, latentie en gelijktijdigheid moeten worden gemeten.</p><hr />
+<h3 id="6-de-kv-cache-vergeten">
+  
+  
+    <a href="#6-de-kv-cache-vergeten" class="anchor-heading" aria-labelledby="6-de-kv-cache-vergeten"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6. De KV-cache vergeten
+  
+  
+</h3>
+    
+
+<p>Vooral bij lange context is de precisie van de KV-cache net zo belangrijk als gewichtskwantisatie.</p><hr />
+<h3 id="7-kalibratie-informatie-negeren">
+  
+  
+    <a href="#7-kalibratie-informatie-negeren" class="anchor-heading" aria-labelledby="7-kalibratie-informatie-negeren"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7. Kalibratie-informatie negeren
+  
+  
+</h3>
+    
+
+<p>Verschillende kalibratierecipes van hetzelfde format kunnen verschillende resultaten geven.</p><hr />
+<h3 id="8-alleen-op-de-algemene-benchmark-vertrouwen">
+  
+  
+    <a href="#8-alleen-op-de-algemene-benchmark-vertrouwen" class="anchor-heading" aria-labelledby="8-alleen-op-de-algemene-benchmark-vertrouwen"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8. Alleen op de algemene benchmark vertrouwen
+  
+  
+</h3>
+    
+
+<p>Als het werkelijke gebruik van het model code is, test dan code; is het een agent, test dan agentic gebruik; is het RAG, test dan de retrievalprestaties bij lange context.</p><hr />
+<h2 id="21-samenvattende-beslistabel">
+  
+  
+    <a href="#21-samenvattende-beslistabel" class="anchor-heading" aria-labelledby="21-samenvattende-beslistabel"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 21. Samenvattende beslistabel
+  
+  
+</h2>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Scenario</th>
+      <th>Startvoorkeur</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Kwaliteit cruciaal</td>
+      <td>BF16 / FP8</td>
+    </tr>
+    <tr>
+      <td>Ada</td>
+      <td>Evalueer FP8 altijd</td>
+    </tr>
+    <tr>
+      <td>Hopper production serving</td>
+      <td>FP8 + een geschikte KV-cacheprecisie</td>
+    </tr>
+    <tr>
+      <td>Ampere 4-bit</td>
+      <td>AWQ/GPTQ + geoptimaliseerde INT4-kernel</td>
+    </tr>
+    <tr>
+      <td>Blackwell, maximale capaciteit / doorvoer</td>
+      <td>Evalueer NVFP4</td>
+    </tr>
+    <tr>
+      <td>Blackwell, kwaliteit voorop</td>
+      <td>FP8</td>
+    </tr>
+    <tr>
+      <td>Multi-vendor deployment</td>
+      <td>MXFP4 / ondersteunde gemeenschappelijke formaten</td>
+    </tr>
+    <tr>
+      <td>Lange context</td>
+      <td>Gewichtskwantisatie + KV-cacheprecisie samen</td>
+    </tr>
+    <tr>
+      <td>Fine-tuning / QLoRA</td>
+      <td>NF4 / een geschikte trainingsprecisie</td>
+    </tr>
+    <tr>
+      <td>Kritiek production deployment</td>
+      <td>Officieel checkpoint + uw eigen workloadbenchmark</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Noot:</strong> Stel eerst de vergelijking hardware × behoefte op (zie §19): als uw hardware het model voor uw behoefte draagt, gebruik dan het originele model; zo niet, bekijk dan de gequantiseerde vormen.</p>
+</blockquote><hr />
+<h2 id="22-snelle-opdrachtenreferentie">
+  
+  
+    <a href="#22-snelle-opdrachtenreferentie" class="anchor-heading" aria-labelledby="22-snelle-opdrachtenreferentie"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 22. Snelle opdrachtenreferentie
+  
+  
+</h2>
+    
+<h3 id="fp8-1">
+  
+  
+    <a href="#fp8-1" class="anchor-heading" aria-labelledby="fp8-1"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> FP8
+  
+  
+</h3>
+    
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vllm serve &lt;model&gt; <span class="se">\</span>
+  <span class="nt">--quantization</span> fp8 <span class="se">\</span>
+  <span class="nt">--kv-cache-dtype</span> fp8
+</code></pre></div></div>
+<h3 id="nvidia-nvfp4">
+  
+  
+    <a href="#nvidia-nvfp4" class="anchor-heading" aria-labelledby="nvidia-nvfp4"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> NVIDIA NVFP4
+  
+  
+</h3>
+    
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vllm serve &lt;model-nvfp4&gt; <span class="se">\</span>
+  <span class="nt">--kv-cache-dtype</span> fp8_e4m3
+</code></pre></div></div>
+<h3 id="awq--gptq">
+  
+  
+    <a href="#awq--gptq" class="anchor-heading" aria-labelledby="awq--gptq"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> AWQ / GPTQ
+  
+  
+</h3>
+    
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vllm serve &lt;model-awq-or-gptq&gt;
+</code></pre></div></div>
+<h3 id="gguf">
+  
+  
+    <a href="#gguf" class="anchor-heading" aria-labelledby="gguf"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> GGUF
+  
+  
+</h3>
+    
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>llama-server <span class="se">\</span>
+  <span class="nt">-m</span> model-Q4_K_M.gguf <span class="se">\</span>
+  <span class="nt">-ngl</span> 99
+</code></pre></div></div>
+<h3 id="kwantisaties-vergelijken">
+  
+  
+    <a href="#kwantisaties-vergelijken" class="anchor-heading" aria-labelledby="kwantisaties-vergelijken"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Kwantisaties vergelijken
+  
+  
+</h3>
+    
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>BF16 baseline
+        ↓
+FP8
+        ↓
+NVFP4 / INT4
+        ↓
+same benchmark
+        ↓
+same production workload
+</code></pre></div></div><hr />
+<h2 id="23-de-kwaliteit-van-kwantisatie-beoordelen">
+  
+  
+    <a href="#23-de-kwaliteit-van-kwantisatie-beoordelen" class="anchor-heading" aria-labelledby="23-de-kwaliteit-van-kwantisatie-beoordelen"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 23. De kwaliteit van kwantisatie beoordelen
+  
+  
+</h2>
+    
+
+<p>Er mag niet één universele drempel worden gebruikt.</p>
+
+<p>Een algemene regel als:</p>
+
+<blockquote>
+  <p><strong>“Als MMLU meer dan 1% daalt, is de kwantisatie mislukt.”</strong></p>
+</blockquote>
+
+<p>bijvoorbeeld klopt niet.</p>
+
+<p>Een verlies van 1% kan in sommige workloads aanvaardbaar zijn, terwijl in sommige kritieke code- of redeneertoepassingen zelfs een heel kleine daling ertoe doet.</p>
+
+<p>De juistere aanpak is samen wegen:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Quality loss
+      ×
+Business impact
+      ×
+Performance gain
+      ×
+Memory saving
+</code></pre></div></div>
+
+<p>Bijvoorbeeld bij een resultaat als:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FP8
+Quality = 100
+VRAM = 100
+Speed = 1.0
+
+NVFP4
+Quality = 99.2
+VRAM = 55
+Speed = 1.7
+</code></pre></div></div>
+
+<p>kan NVFP4 de verstandigere keuze zijn.</p>
+
+<p>Maar als het resultaat is:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Quality = 95
+</code></pre></div></div>
+
+<p>kan voor dezelfde deployment FP8 de voorkeur krijgen.</p>
+
+<p>De juiste drempel komt dus uit:</p>
+
+<blockquote>
+  <p><strong>de minimale kwaliteit die de workload kan accepteren + de benodigde prestaties + de beschikbare VRAM</strong></p>
+</blockquote><hr />
+<h2 id="24-woordenlijst">
+  
+  
+    <a href="#24-woordenlijst" class="anchor-heading" aria-labelledby="24-woordenlijst"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 24. Woordenlijst
+  
+  
+</h2>
+    
+
+<p><strong>BF16 / FP16</strong>
+Doorgaans de referentieformaten met hoge precisie.</p>
+
+<p><strong>FP8</strong>
+Een familie van 8-bit zwevendekomaformaten. Er zijn varianten als E4M3 en E5M2.</p>
+
+<p><strong>NVFP4</strong>
+Het 4-bit zwevendekomaformaat dat voor NVIDIA Blackwell is ontworpen. Het gebruikt fine-grained scaling.</p>
+
+<p><strong>MXFP4</strong>
+Het 4-bit zwevendekomaformaat uit de OCP Microscaling-formatfamilie.</p>
+
+<p><strong>MXFP8</strong>
+Het 8-bit zwevendekomaformaat uit de OCP Microscaling-formatfamilie. Het heeft de voorkeur voor gegevens als activaties die een hogere numerieke precisie vragen; bijvoorbeeld de combinatie MXFP4 weights + MXFP8 activations (zie §17.4).</p>
+
+<p><strong>AWQ</strong>
+Activation-aware Weight Quantization. Vooral gangbaar bij weight-only INT4-deployments.</p>
+
+<p><strong>GPTQ</strong>
+Een methode voor gewichtskwantisatie na de training.</p>
+
+<p><strong>EXL2</strong>
+De benadering met variabele bits per weight uit het ExLlama-ecosysteem.</p>
+
+<p><strong>GGUF</strong>
+Het modelbestandsformaat uit het llama.cpp-ecosysteem.</p>
+
+<p><strong>KV-cache</strong>
+De cache die tijdens attention de Key/Value-representatie van eerdere tokens bewaart.</p>
+
+<p><strong>PTQ</strong>
+Post-Training Quantization. Kwantisatie toepassen nadat de training is voltooid.</p>
+
+<p><strong>QAT</strong>
+Quantization-Aware Training. De effecten van kwantisatie tijdens de training in het model opnemen.</p>
+
+<p><strong>Kalibratie</strong>
+Het meetproces op representatieve gegevens om de kwantisatieparameters vast te stellen.</p>
+
+<p><strong>Blokgrootte / groepsgrootte</strong>
+Bepaalt op welke granulariteit kwantatiescaling of parametergroepering wordt toegepast.</p>
+
+<p><strong>Perplexity</strong>
+Een van de basismetingen van de voorspellingsprestaties van een taalmodel.</p>
+
+<p><strong>Precisie</strong>
+De vorm die aangeeft met hoeveel bits numerieke waarden (gewichten, activaties, KV-cache) worden weergegeven: “hogere precisie” = meer bits. In het Turks heet dit ook <em>hassasiyet</em>; maar het mag niet worden verward met de accuracy van het model. Lagere precisie gebruikt minder bits; dat betekent niet automatisch een slechter model.</p>
+
+<p><strong>MMLU / GSM8K / GPQA</strong>
+Benchmarks waarmee verschillende vaardigheidsgebieden worden gemeten.</p><hr />
+<h2 id="25-conclusie">
+  
+  
+    <a href="#25-conclusie" class="anchor-heading" aria-labelledby="25-conclusie"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 25. Conclusie
+  
+  
+</h2>
+    
+
+<p>Kwantisatie moet men noch bagatelliseren, noch beoordelen als “altijd sneller”.</p>
+
+<p>In moderne LLM-deployment is kwantisatie:</p>
+
+<blockquote>
+  <p><strong>een fundamenteel technisch instrument dat optimaliseert tussen geheugencapaciteit, geheugenbandbreedte, Tensor Core-doorvoer en deploymentkosten.</strong></p>
+</blockquote>
+
+<p>De juiste keuze kan niet alleen op het aantal bits worden gebaseerd.</p>
+
+<p>Deze vier vragen moeten samen worden gesteld:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1. At which precision was the model released?
+
+2. Which precision does the GPU accelerate natively?
+
+3. How was the quantization produced, with which calibration recipe?
+
+4. What do quality and performance look like in my real workload?
+</code></pre></div></div>
+
+<p>Hun uitkomst kiest de ideale deployment:</p>
+
+<blockquote>
+  <p><strong>de precisie met de laagste kosten die aan de behoefte voldoet, efficiënt door de GPU wordt versneld en waarvan het kwaliteitsverlies is gemeten.</strong></p>
+</blockquote>
+
+<p>Dus de juiste aanpak van kwantisatie is:</p>
+
+<blockquote>
+  <p><strong>“Kies het laagste aantal bits.”</strong></p>
+</blockquote>
+
+<p>Nee — het moet zijn:</p>
+
+<blockquote>
+  <p><strong>“Behoud de kwaliteit die mijn workload nodig heeft, kies de precisie waarin de hardware sterk is en verifieer die op een echte deployment.”</strong></p>
+</blockquote><hr />
+<h2 id="26-bronnen">
+  
+  
+    <a href="#26-bronnen" class="anchor-heading" aria-labelledby="26-bronnen"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 26. Bronnen
+  
+  
+</h2>
+    
+
+<ol>
+  <li>Z.ai — GLM-5.3 Model Card</li>
+  <li>Qwen — Qwen3.8-27B Model Card</li>
+  <li>Qwen — Qwen3.8-27B-FP8 Model Card</li>
+  <li>NVIDIA — Qwen3.8-27B-NVFP4 Model Card</li>
+  <li>NVIDIA Model Optimizer — Local-Hessian Quantization</li>
+  <li>NVIDIA — Introducing NVFP4 for Efficient and Accurate Low-Precision Inference</li>
+  <li>NVIDIA — Hopper Architecture</li>
+  <li>NVIDIA — Ada Lovelace Architecture</li>
+  <li>NVIDIA — A100 Architecture / Specifications</li>
+  <li>NVIDIA TensorRT-LLM — Quantization Hardware Support</li>
+  <li>Moonshot AI — Kimi K3 Model Card</li>
+  <li>OCP Microscaling Formats — MXFP4 / MXFP8</li>
+</ol>
+
+          
+
+          
+        </main>
+        
+
+
+      </div>
+    </div>
+    
+      
+
+<div class="search-overlay"></div>
+
+    
+  </div>
+
+  
+
+  <script>
+    window.JTD_I18N = {
+      search_no_results: "Geen resultaten gevonden",
+      copy_code: "Code naar klembord kopiëren"
+    };
+  </script>
+
+  
+
+
+<div id="cookie-consent-banner" class="cookie-consent" role="dialog"
+     aria-modal="false" aria-label="Cookie consent"
+     data-consent-state="pending" hidden>
+  <div class="cookie-consent__body">
+    <div class="cookie-consent__text">
+      <span class="cookie-consent__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+          <path d="M21 12a9 9 0 1 1-9-9 4.5 4.5 0 0 0 4.5 4.5A4.5 4.5 0 0 0 21 12zm-9-3.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-1.5 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm6-1.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-3 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0z"/>
+        </svg>
+      </span>
+      <p>Wij gebruiken cookies om het websiteverkeer te analyseren en uw ervaring te verbeteren. Door op 'Accepteren' te klikken, stemt u in met het gebruik van analytische cookies zoals beschreven in ons privacybeleid.
+        <a href="https://aetherix.com/privacy-policy/" target="_blank" rel="noopener noreferrer"
+           class="cookie-consent__link">Privacybeleid</a>
+      </p>
+    </div>
+    <div class="cookie-consent__actions">
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--reject"
+              data-consent-action="rejected">Weigeren</button>
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--accept"
+              data-consent-action="accepted">Accepteren</button>
+    </div>
+  </div>
+</div>
+<script>
+  // Eski karar önbellekte varsa bannerı gösterme
+  (function() {
+    try {
+      var v = localStorage.getItem('cookieConsent');
+      if (v === 'accepted' || v === 'rejected') {
+        document.documentElement.dataset.cookieConsent = v;
+      }
+    } catch (e) {}
+  })();
+</script>
+<script src="/assets/js/cookie-banner.js" defer></script>
+
+</body>
+</html>
+

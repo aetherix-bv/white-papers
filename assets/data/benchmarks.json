@@ -2686,6 +2686,55 @@
       "weights_gb": 172.93
     },
     {
+      "id": "glm-5.3-flash_4spark_fp8_sglang",
+      "model": "GLM-5.3-Flash",
+      "params": "321B",
+      "intelligence_index": 41.8,
+      "agentic_index": 50.9,
+      "device": "4× DGX Spark",
+      "quantization": "FP8",
+      "engine": "SGLang",
+      "mtp": true,
+      "mtp_k": 7,
+      "tp": 4,
+      "notes": "DFlash speculative decoding k=7, 256K context (max_model_len 262144), SGLang. 1.3-1.4x the TPS of the vLLM run without speculative decoding at C1-C4. Model: zai-org/GLM-5.3-Flash (served locally as glm-5.3-flash)",
+      "sources": [
+
+      ],
+      "data_points": [
+        {
+          "c": 1,
+          "ttft_ms": 332.42,
+          "tps": 41.99
+        },
+        {
+          "c": 2,
+          "ttft_ms": 427.48,
+          "tps": 26.55
+        },
+        {
+          "c": 4,
+          "ttft_ms": 570.07,
+          "tps": 17.69
+        },
+        {
+          "c": 8,
+          "ttft_ms": 1215.96,
+          "tps": 12.45
+        }
+      ],
+      "dp": null,
+      "pp": null,
+      "kv_bytes_per_token": 5984,
+      "kv_window_bytes": 0,
+      "kv_heads": null,
+      "model_context_length": 1048576,
+      "kv_replicated_bytes_per_token": 0,
+      "kv_state_bytes": 295239680,
+      "served_repo": "zai-org/GLM-5.3-Flash",
+      "weights_gb": 328.34
+    },
+    {
       "id": "glm-5.2_8spark_nvfp4_vllm_mtp5_256k",
       "model": "GLM-5.2",
       "params": "753B",
@@ -3066,6 +3115,55 @@
       "kv_state_bytes": 0,
       "served_repo": "deepseek-ai/DeepSeek-V4.1-Flash",
       "weights_gb": 510.3
+    },
+    {
+      "id": "mimo-v2.6-pro-rl_8spark_fp4_sglang",
+      "model": "MiMo-V2.6-Pro-RL",
+      "params": "1.02T",
+      "intelligence_index": 46.3,
+      "agentic_index": null,
+      "device": "8× DGX Spark",
+      "quantization": "FP4",
+      "engine": "SGLang",
+      "mtp": true,
+      "mtp_k": 7,
+      "tp": 8,
+      "notes": "DFlash speculative decoding k=7, 256K context (max_model_len 262144), SGLang. Model: XiaomiMiMo/MiMo-V2.6-Pro-RL (served locally as mimo-v2.6-pro)",
+      "sources": [
+
+      ],
+      "data_points": [
+        {
+          "c": 1,
+          "ttft_ms": 372.15,
+          "tps": 38.83
+        },
+        {
+          "c": 2,
+          "ttft_ms": 461.16,
+          "tps": 26.35
+        },
+        {
+          "c": 4,
+          "ttft_ms": 660.36,
+          "tps": 17.52
+        },
+        {
+          "c": 8,
+          "ttft_ms": 5242.33,
+          "tps": 7.61
+        }
+      ],
+      "dp": null,
+      "pp": null,
+      "kv_bytes_per_token": 25600,
+      "kv_window_bytes": 19660800,
+      "kv_heads": 8,
+      "model_context_length": 1048576,
+      "kv_replicated_bytes_per_token": 0,
+      "kv_state_bytes": 0,
+      "served_repo": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "weights_gb": 566.05
     },
     {
       "id": "gpt-oss-120b_rtxpro6000_mxfp4_vllm",

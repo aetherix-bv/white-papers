@@ -1,0 +1,2449 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-default.css">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet">
+
+  <style id="jtd-nav-activation">
+  
+
+.site-nav > ul.nav-list:first-child > li > a,
+.site-nav > ul.nav-list:first-child > li > ul > li:not(:nth-child(2)) > a,
+.site-nav > ul.nav-list:first-child > li > ul > li > ul > li > a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:not(:first-child) a,
+.site-nav li.external a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(2) > a {
+  font-weight: 600;
+  text-decoration: none;
+}.site-nav > ul.nav-list:first-child > li:nth-child(3) > button svg,
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(2) > button svg {
+  transform: rotate(-90deg);
+}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list,
+.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list > li.nav-list-item:nth-child(2) > ul.nav-list {
+  display: block;
+}
+  </style>
+
+  
+
+  
+    <script src="/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+
+
+  <!-- Begin Jekyll SEO tag v2.9.1 -->
+<title>LLM Quantization Selection Guide | Aetherix White Papers</title>
+<meta name="generator" content="Jekyll v4.3.4" />
+<meta property="og:title" content="LLM Quantization Selection Guide" />
+<meta property="og:locale" content="en" />
+<meta name="description" content="Decision guide for LLM quantization: how workload, quantization format, GPU architecture and checkpoint reliability decide the choice — with the selection flow, frequent mistakes, case examples and a quick command reference." />
+<meta name="twitter:description" property="og:description" content="Decision guide for LLM quantization: how workload, quantization format, GPU architecture and checkpoint reliability decide the choice — with the selection flow, frequent mistakes, case examples and a quick command reference." />
+<link rel="canonical" href="https://whitepapers.aetherix.com/papers/llm-quantization-selection/" />
+<meta property="og:url" content="https://whitepapers.aetherix.com/papers/llm-quantization-selection/" />
+<meta property="og:site_name" content="Aetherix White Papers" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-10-12T00:00:00+00:00" />
+<meta property="article:modified_time" content="2026-10-12T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="LLM Quantization Selection Guide" />
+<meta name="twitter:site" content="@Aetherixnl" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2026-10-12T00:00:00+00:00","datePublished":"2026-10-12T00:00:00+00:00","description":"Decision guide for LLM quantization: how workload, quantization format, GPU architecture and checkpoint reliability decide the choice — with the selection flow, frequent mistakes, case examples and a quick command reference.","headline":"LLM Quantization Selection Guide","mainEntityOfPage":{"@type":"WebPage","@id":"https://whitepapers.aetherix.com/papers/llm-quantization-selection/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://whitepapers.aetherix.com/assets/images/aetherix-logo.png"}},"url":"https://whitepapers.aetherix.com/papers/llm-quantization-selection/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  
+<!-- Google tag (gtag.js) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JWLN33085T"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+
+  // Consent Mode v2 — default DENIED. Banner onayı ile GRANTED olur.
+  // KVKK/GDPR uyumu: ziyaretçi onay vermeden çerez set edilmez.
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    functionality_storage: 'granted',
+    security_storage: 'granted',
+    wait_for_update: 500
+  });
+
+  gtag('js', new Date());
+  gtag('config', 'G-JWLN33085T', {
+    anonymize_ip: true
+  });
+</script>
+
+<link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/papers/llm-quantization-selection/">
+<link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/papers/llm-quantization-selection/">
+<link rel="alternate" hreflang="x-default" href="https://whitepapers.aetherix.com/papers/llm-quantization-selection/">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/images/favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+
+
+</head>
+
+<body>
+  <a class="skip-to-main" href="#main-content">Skip to main content</a>
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="svg-link" viewBox="0 0 24 24">
+  <title>Link</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+</symbol>
+
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+  <title>Menu</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+    <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</symbol>
+
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+  <title>Expand</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</symbol>
+
+  <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
+<symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+  <title id="svg-external-link-title">(external link)</title>
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+</symbol>
+
+  
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+  <title>Document</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+</symbol>
+
+    <symbol id="svg-search" viewBox="0 0 24 24">
+  <title>Search</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</symbol>
+
+  
+  
+    <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+<symbol id="svg-copy" viewBox="0 0 16 16">
+  <title>Copy</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+</symbol>
+<symbol id="svg-copied" viewBox="0 0 16 16">
+  <title>Copied</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"/>
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"/>
+  </svg>
+</symbol>
+
+  
+</svg>
+
+  
+    <div class="side-bar">
+  <div class="site-header" role="banner">
+    <a href="/" class="site-title lh-tight">
+  <div class="site-logo" role="img" aria-label="Aetherix White Papers"></div>
+
+</a>
+    <button id="menu-button" class="site-button btn-reset" aria-label="Toggle menu" aria-pressed="false">
+      <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  <nav aria-label="Main" id="site-nav" class="site-nav">
+  
+  
+    <ul class="nav-list"><li class="nav-list-item"><a href="/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/about/" class="nav-list-link">About</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in White Papers category" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+    </button><a href="/papers/" class="nav-list-link">White Papers</a><ul class="nav-list"><li class="nav-list-item"><a href="/papers/local-llm-guide/" class="nav-list-link">Local LLM Usage Guide</a></li><li class="nav-list-item"><a href="/papers/llm-quantization-selection/" class="nav-list-link">LLM Quantization Selection Guide</a></li><li class="nav-list-item"><a href="/papers/conditional-memory-offloading/" class="nav-list-link">Engram Offloading in LLM Inference</a></li><li class="nav-list-item"><a href="/papers/b300-gb300-cluster-architecture/" class="nav-list-link">NVIDIA DGX B300 vs GB300 NVL72 Cluster Architecture Comparison</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-2node-cluster-setup/" class="nav-list-link">DGX Spark 2-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-3node-cluster-setup/" class="nav-list-link">DGX Spark 3-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-4node-cluster-setup/" class="nav-list-link">DGX Spark 4-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-8node-cluster-setup/" class="nav-list-link">DGX Spark 8-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/qwen3.6-27b-dgx-spark-benchmark/" class="nav-list-link">Qwen3.6-27B DGX Spark Benchmark</a></li><li class="nav-list-item"><a href="/papers/qwen3.6-27b-dgx-spark-scaling/" class="nav-list-link">Qwen3.6-27B DGX Spark Cluster Scaling</a></li><li class="nav-list-item"><a href="/papers/jev-open-weight-alternatives/" class="nav-list-link">The First Open-Weight Alternatives to Jev</a></li><li class="nav-list-item"><a href="/papers/deepseek-v4.1-flash-4spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash 4× DGX Spark Deployment</a></li><li class="nav-list-item"><a href="/papers/deepseek-v4.1-flash-8spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash 8× DGX Spark TP8 Deployment</a></li><li class="nav-list-item"><a href="/papers/kimi-k3-dgx-b300-inference-benchmark/" class="nav-list-link">Kimi K3 Inference Benchmark on DGX-B300</a></li></ul></li><li class="nav-list-item"><a href="/llm-inference-benchmarks/" class="nav-list-link">LLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/cv-inference-benchmarks/" class="nav-list-link">CV Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/vlm-inference-benchmarks/" class="nav-list-link">VLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/device-advisor/" class="nav-list-link">Device Advisor</a></li><li class="nav-list-item"><a href="/changelog/" class="nav-list-link">Changelog</a></li></ul>
+
+  
+</nav>
+
+
+  
+  
+    <div class="lang-switcher">
+  
+    
+    
+      <span class="lang-switcher-item active">EN</span>
+    
+  
+    
+    
+      <a class="lang-switcher-item" href="/nl/papers/llm-quantization-selection/">NL</a>
+    
+  
+</div>
+<script src="/assets/js/lang-switch.js"></script>
+
+  
+</div>
+
+  
+  <div class="main" id="top">
+    <div id="main-header" class="main-header">
+  
+    
+
+<div class="search" role="search">
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Search" aria-label="Search" autocomplete="off">
+    <label for="search-input" class="search-label"><svg viewBox="0 0 24 24" class="search-icon"><use xlink:href="#svg-search"></use></svg></label>
+  </div>
+  <div id="search-results" class="search-results"></div>
+</div>
+
+  
+  
+  
+    <nav aria-label="Auxiliary" class="aux-nav">
+  <ul class="aux-nav-list">
+    
+      <li class="aux-nav-list-item">
+        <a href="https://aetherix.com" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          aetherix.com
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://github.com/aetherix-bv" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          GitHub
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+  
+</div>
+
+    <div class="main-content-wrap">
+      <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+  <ol class="breadcrumb-nav-list">
+    <li class="breadcrumb-nav-list-item"><a href="/papers/">White Papers</a></li>
+    <li class="breadcrumb-nav-list-item"><span>LLM Quantization Selection Guide</span></li>
+  </ol>
+</nav>
+      <div id="main-content" class="main-content">
+        <main>
+          
+            <p><em>Prepared by: <strong>Aetherix B.V.</strong> — Trusted Jetson Hardware Provider for Edge AI</em></p>
+
+<p><strong>A Technical Guide on Hardware Architecture, Format and Reliability</strong></p>
+
+<blockquote>
+  <p><strong>Audience:</strong> developers serving LLMs, MLOps teams and practitioners
+<strong>Published:</strong> October 2026</p>
+</blockquote><hr />
+<h2 class="no_toc" id="table-of-contents">
+  
+  
+    <a href="#table-of-contents" class="anchor-heading" aria-labelledby="table-of-contents"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Table of contents
+  
+  
+</h2>
+    
+
+<ul id="markdown-toc">
+  <li><a href="#1-brief-summary" id="markdown-toc-1-brief-summary">1. Brief Summary</a>    <ul>
+      <li><a href="#three-core-rules" id="markdown-toc-three-core-rules">Three core rules</a></li>
+    </ul>
+  </li>
+  <li><a href="#2-what-does-quantization-buy-you" id="markdown-toc-2-what-does-quantization-buy-you">2. What Does Quantization Buy You?</a>    <ul>
+      <li><a href="#21-memory-consumption" id="markdown-toc-21-memory-consumption">2.1 Memory consumption</a></li>
+      <li><a href="#22-kv-cache-quantization-is-a-separate-decision" id="markdown-toc-22-kv-cache-quantization-is-a-separate-decision">2.2 KV Cache quantization is a separate decision</a></li>
+    </ul>
+  </li>
+  <li><a href="#3-why-does-quantization-improve-performance" id="markdown-toc-3-why-does-quantization-improve-performance">3. Why Does Quantization Improve Performance?</a>    <ul>
+      <li><a href="#31-memory-bandwidth-advantage" id="markdown-toc-31-memory-bandwidth-advantage">3.1 Memory Bandwidth Advantage</a></li>
+      <li><a href="#32-compute-throughput-advantage" id="markdown-toc-32-compute-throughput-advantage">3.2 Compute Throughput Advantage</a></li>
+      <li><a href="#33-the-effect-of-concurrency-and-batch-size" id="markdown-toc-33-the-effect-of-concurrency-and-batch-size">3.3 The Effect of Concurrency and Batch Size</a></li>
+    </ul>
+  </li>
+  <li><a href="#4-gpu-architecture-and-quantization-format" id="markdown-toc-4-gpu-architecture-and-quantization-format">4. GPU Architecture and Quantization Format</a>    <ul>
+      <li><a href="#41-why-does-hardware-support-matter" id="markdown-toc-41-why-does-hardware-support-matter">4.1 Why Does Hardware Support Matter?</a></li>
+      <li><a href="#42-general-approach-by-gpu-generation" id="markdown-toc-42-general-approach-by-gpu-generation">4.2 General Approach by GPU Generation</a></li>
+      <li><a href="#43-fp8-the-balanced-choice-between-memory-and-compute" id="markdown-toc-43-fp8-the-balanced-choice-between-memory-and-compute">4.3 FP8: The Balanced Choice Between Memory and Compute</a></li>
+      <li><a href="#44-fp4--nvfp4-the-hardware-advantage-on-blackwell" id="markdown-toc-44-fp4--nvfp4-the-hardware-advantage-on-blackwell">4.4 FP4 / NVFP4: The Hardware Advantage on Blackwell</a></li>
+      <li><a href="#45-the-basic-rule-of-quantization-selection" id="markdown-toc-45-the-basic-rule-of-quantization-selection">4.5 The Basic Rule of Quantization Selection</a></li>
+    </ul>
+  </li>
+  <li><a href="#5-quantization-formats" id="markdown-toc-5-quantization-formats">5. Quantization Formats</a></li>
+  <li><a href="#6-4-bit--4-bit-is-not-true" id="markdown-toc-6-4-bit--4-bit-is-not-true">6. “4-bit = 4-bit” Is Not True</a></li>
+  <li><a href="#7-why-is-nvfp4-different" id="markdown-toc-7-why-is-nvfp4-different">7. Why Is NVFP4 Different?</a></li>
+  <li><a href="#8-gpu-architecture--format-matching" id="markdown-toc-8-gpu-architecture--format-matching">8. GPU Architecture × Format Matching</a></li>
+  <li><a href="#9-ampere-do-not-confuse-int4-with-fp8" id="markdown-toc-9-ampere-do-not-confuse-int4-with-fp8">9. Ampere: Do Not Confuse INT4 with FP8</a></li>
+  <li><a href="#10-ada-and-hopper-fp8s-strong-position" id="markdown-toc-10-ada-and-hopper-fp8s-strong-position">10. Ada and Hopper: FP8’s Strong Position</a></li>
+  <li><a href="#11-blackwell-fp8-or-nvfp4" id="markdown-toc-11-blackwell-fp8-or-nvfp4">11. Blackwell: FP8 or NVFP4?</a>    <ul>
+      <li><a href="#fp8" id="markdown-toc-fp8">FP8</a></li>
+      <li><a href="#nvfp4" id="markdown-toc-nvfp4">NVFP4</a></li>
+      <li><a href="#practical-approach" id="markdown-toc-practical-approach">Practical approach</a></li>
+    </ul>
+  </li>
+  <li><a href="#12-mixed-precision-quantization" id="markdown-toc-12-mixed-precision-quantization">12. Mixed-Precision Quantization</a></li>
+  <li><a href="#13-why-does-calibration-matter" id="markdown-toc-13-why-does-calibration-matter">13. Why Does Calibration Matter?</a></li>
+  <li><a href="#14-how-to-choose-a-reliable-quantized-checkpoint" id="markdown-toc-14-how-to-choose-a-reliable-quantized-checkpoint">14. How to Choose a Reliable Quantized Checkpoint?</a>    <ul>
+      <li><a href="#preference-order" id="markdown-toc-preference-order">Preference order</a></li>
+      <li><a href="#4-community-produced-quantization" id="markdown-toc-4-community-produced-quantization">4. Community-produced quantization</a></li>
+      <li><a href="#known-publishers--a-starting-list" id="markdown-toc-known-publishers--a-starting-list">Known publishers — a starting list</a></li>
+    </ul>
+  </li>
+  <li><a href="#15-what-should-a-good-model-card-disclose" id="markdown-toc-15-what-should-a-good-model-card-disclose">15. What Should a Good Model Card Disclose?</a>    <ul>
+      <li><a href="#critical--the-basics-that-must-be-verified" id="markdown-toc-critical--the-basics-that-must-be-verified">Critical — the basics that must be verified</a></li>
+      <li><a href="#decisive--these-settle-what-is-left-in-doubt" id="markdown-toc-decisive--these-settle-what-is-left-in-doubt">Decisive — these settle what is left in doubt</a></li>
+      <li><a href="#supporting--they-do-not-determine-technical-quality-but-their-absence-causes-practical-trouble" id="markdown-toc-supporting--they-do-not-determine-technical-quality-but-their-absence-causes-practical-trouble">Supporting — they do not determine technical quality, but their absence causes practical trouble</a></li>
+    </ul>
+  </li>
+  <li><a href="#16-how-should-a-benchmark-be-read" id="markdown-toc-16-how-should-a-benchmark-be-read">16. How Should a Benchmark Be Read?</a></li>
+  <li><a href="#17-case-examples" id="markdown-toc-17-case-examples">17. Case Examples</a>    <ul>
+      <li><a href="#171-scenario-1--original-bf16--official-fp8-qwen38-27b" id="markdown-toc-171-scenario-1--original-bf16--official-fp8-qwen38-27b">17.1 Scenario 1 — Original BF16 + Official FP8: Qwen3.8-27B</a></li>
+      <li><a href="#172-scenario-2--direct-fp8-release-glm-53" id="markdown-toc-172-scenario-2--direct-fp8-release-glm-53">17.2 Scenario 2 — Direct FP8 Release: GLM-5.3</a></li>
+      <li><a href="#173-scenario-3--third-party-quant-nvidia-qwen38-27b-nvfp4" id="markdown-toc-173-scenario-3--third-party-quant-nvidia-qwen38-27b-nvfp4">17.3 Scenario 3 — Third-Party Quant (NVIDIA): Qwen3.8-27B-NVFP4</a></li>
+      <li><a href="#174-scenario-4--4-bit-with-qat-kimi-k3" id="markdown-toc-174-scenario-4--4-bit-with-qat-kimi-k3">17.4 Scenario 4 — 4-Bit with QAT: Kimi K3</a></li>
+    </ul>
+  </li>
+  <li><a href="#18-ptq-or-qat" id="markdown-toc-18-ptq-or-qat">18. PTQ or QAT?</a></li>
+  <li><a href="#19-quantization-selection-flow" id="markdown-toc-19-quantization-selection-flow">19. Quantization Selection Flow</a></li>
+  <li><a href="#20-common-mistakes" id="markdown-toc-20-common-mistakes">20. Common Mistakes</a>    <ul>
+      <li><a href="#1-moving-to-4-bit-needlessly-when-the-hardware-is-enough-for-the-original-model" id="markdown-toc-1-moving-to-4-bit-needlessly-when-the-hardware-is-enough-for-the-original-model">1. Moving to 4-bit needlessly when the hardware is enough for the original model</a></li>
+      <li><a href="#2-crediting-the-original-models-benchmark-to-the-quantized-model" id="markdown-toc-2-crediting-the-original-models-benchmark-to-the-quantized-model">2. Crediting the original model’s benchmark to the quantized model</a></li>
+      <li><a href="#3-saying-4-bit--4-bit" id="markdown-toc-3-saying-4-bit--4-bit">3. Saying “4-bit = 4-bit”</a></li>
+      <li><a href="#4-confusing-native-hardware-acceleration-with-software-support" id="markdown-toc-4-confusing-native-hardware-acceleration-with-software-support">4. Confusing native hardware acceleration with software support</a></li>
+      <li><a href="#5-measuring-only-tokenss" id="markdown-toc-5-measuring-only-tokenss">5. Measuring only tokens/s</a></li>
+      <li><a href="#6-forgetting-the-kv-cache" id="markdown-toc-6-forgetting-the-kv-cache">6. Forgetting the KV cache</a></li>
+      <li><a href="#7-ignoring-calibration-information" id="markdown-toc-7-ignoring-calibration-information">7. Ignoring calibration information</a></li>
+      <li><a href="#8-trusting-only-the-general-benchmark" id="markdown-toc-8-trusting-only-the-general-benchmark">8. Trusting only the general benchmark</a></li>
+    </ul>
+  </li>
+  <li><a href="#21-summary-decision-table" id="markdown-toc-21-summary-decision-table">21. Summary Decision Table</a></li>
+  <li><a href="#22-quick-command-reference" id="markdown-toc-22-quick-command-reference">22. Quick Command Reference</a>    <ul>
+      <li><a href="#fp8-1" id="markdown-toc-fp8-1">FP8</a></li>
+      <li><a href="#nvidia-nvfp4" id="markdown-toc-nvidia-nvfp4">NVIDIA NVFP4</a></li>
+      <li><a href="#awq--gptq" id="markdown-toc-awq--gptq">AWQ / GPTQ</a></li>
+      <li><a href="#gguf" id="markdown-toc-gguf">GGUF</a></li>
+      <li><a href="#comparing-quantizations" id="markdown-toc-comparing-quantizations">Comparing quantizations</a></li>
+    </ul>
+  </li>
+  <li><a href="#23-evaluating-quantization-quality" id="markdown-toc-23-evaluating-quantization-quality">23. Evaluating Quantization Quality</a></li>
+  <li><a href="#24-glossary" id="markdown-toc-24-glossary">24. Glossary</a></li>
+  <li><a href="#25-conclusion" id="markdown-toc-25-conclusion">25. Conclusion</a></li>
+  <li><a href="#26-references" id="markdown-toc-26-references">26. References</a></li>
+</ul><hr />
+<h2 id="1-brief-summary">
+  
+  
+    <a href="#1-brief-summary" class="anchor-heading" aria-labelledby="1-brief-summary"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1. Brief Summary
+  
+  
+</h2>
+    
+
+<p>Quantization lets LLM weights — and, where needed, activation/KV cache data — be represented at a lower precision (numeric representation width, i.e. bit width), reducing <strong>memory consumption</strong>, <strong>memory bandwidth demand</strong>, and, on suitable hardware, <strong>computation cost</strong>.</p>
+
+<p>Once seen mostly as “the compromise you reach for when the model does not fit in memory”, it is now the case that formats like FP8 and FP4 are accelerated in hardware on modern GPUs. Many model developers also release <strong>official, pre-quantized checkpoints</strong> directly.</p>
+
+<p>But quantization by itself does not mean “lower bits = faster”.</p>
+
+<p>The right choice sits at the intersection of four factors:</p>
+
+<blockquote>
+  <p><strong>Workload × Quantization format × GPU architecture × Checkpoint reliability</strong></p>
+</blockquote>
+<h3 id="three-core-rules">
+  
+  
+    <a href="#three-core-rules" class="anchor-heading" aria-labelledby="three-core-rules"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Three core rules
+  
+  
+</h3>
+    
+
+<p><strong>1. If the model owner ships an official quantized checkpoint, evaluate that first.</strong></p>
+
+<p>That does not automatically make it the highest-quality checkpoint; but in terms of quantization method, format and target runtime it is usually the most reliable starting point.</p>
+
+<p><strong>2. The format must match the GPU architecture.</strong></p>
+
+<p>For example:</p>
+
+<ul>
+  <li>Ampere → INT4/INT8-based methods</li>
+  <li>Ada → FP8</li>
+  <li>Hopper → FP8</li>
+  <li>Blackwell → FP8 / NVFP4 / MXFP4</li>
+</ul>
+
+<p>A format merely “running” without native Tensor Core support does not mean it runs fast.</p>
+
+<p><strong>3. The original model’s benchmark is not the quantized checkpoint’s benchmark.</strong></p>
+
+<p>The BF16 model’s score must not be assumed valid for the same model’s FP8 or FP4 checkpoint.</p>
+
+<p>For a quantized checkpoint, also check:</p>
+
+<ul>
+  <li>the quantization method used,</li>
+  <li>the calibration process,</li>
+  <li>the benchmark results,</li>
+  <li>the runtime,</li>
+  <li>the GPU,</li>
+  <li>the generation settings</li>
+</ul><hr />
+<h2 id="2-what-does-quantization-buy-you">
+  
+  
+    <a href="#2-what-does-quantization-buy-you" class="anchor-heading" aria-labelledby="2-what-does-quantization-buy-you"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2. What Does Quantization Buy You?
+  
+  
+</h2>
+    
+
+<p>Quantization has three fundamental effects:</p>
+
+<ol>
+  <li><strong>Model weights get smaller</strong></li>
+  <li><strong>Memory bandwidth demand drops</strong></li>
+  <li><strong>Low-precision Tensor Core computation is accelerated on suitable hardware</strong></li>
+</ol>
+
+<p>How much each matters depends on the workload.</p><hr />
+<h3 id="21-memory-consumption">
+  
+  
+    <a href="#21-memory-consumption" class="anchor-heading" aria-labelledby="21-memory-consumption"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.1 Memory consumption
+  
+  
+</h3>
+    
+
+<p>In the ideal case, weight memory is roughly:</p>
+
+<p><strong>Parameter count × bytes/parameter</strong></p>
+
+<p>For example:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Precision (bit width)</th>
+      <th style="text-align: right">Bits</th>
+      <th style="text-align: right">7B</th>
+      <th style="text-align: right">70B</th>
+      <th style="text-align: right">405B</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>BF16 / FP16</td>
+      <td style="text-align: right">16</td>
+      <td style="text-align: right">~14 GB</td>
+      <td style="text-align: right">~140 GB</td>
+      <td style="text-align: right">~810 GB</td>
+    </tr>
+    <tr>
+      <td>FP8 / INT8</td>
+      <td style="text-align: right">8</td>
+      <td style="text-align: right">~7 GB</td>
+      <td style="text-align: right">~70 GB</td>
+      <td style="text-align: right">~405 GB</td>
+    </tr>
+    <tr>
+      <td>4-bit</td>
+      <td style="text-align: right">4</td>
+      <td style="text-align: right">~3.5 GB</td>
+      <td style="text-align: right">~35 GB</td>
+      <td style="text-align: right">~202 GB</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>These are <strong>only ideal weight sizes</strong>.</p>
+
+<p>Actual GPU memory is the sum of:</p>
+
+<blockquote>
+  <p><strong>Weights + KV Cache + activations + runtime overhead + quantization metadata</strong></p>
+</blockquote>
+
+<p>Also remember that in MoE models the total parameter count and the active parameter count differ.</p><hr />
+<h3 id="22-kv-cache-quantization-is-a-separate-decision">
+  
+  
+    <a href="#22-kv-cache-quantization-is-a-separate-decision" class="anchor-heading" aria-labelledby="22-kv-cache-quantization-is-a-separate-decision"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.2 KV Cache quantization is a separate decision
+  
+  
+</h3>
+    
+
+<p>Weight quantization and KV cache quantization are not the same thing.</p>
+
+<p>For example:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>BF16 weights + BF16 KV
+BF16 weights + FP8 KV
+FP8 weights + FP8 KV
+NVFP4 weights + FP8 KV
+NVFP4 weights + NVFP4 KV
+</code></pre></div></div>
+
+<p>are entirely different deployment profiles.</p>
+
+<p>With long context and high concurrency, the KV cache can consume a serious amount of GPU memory. For that reason:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Weight quantization
+        +
+KV Cache quantization
+</code></pre></div></div>
+
+<p>must be considered together.</p>
+
+<p>FP8 KV cache can roughly halve KV memory on a suitable runtime and model architecture; but its effect on attention quality must be verified for the model and implementation at hand.</p>
+
+<blockquote>
+  <p><strong>“It is a significant memory optimization for long context; the effect on model quality must be checked.”</strong></p>
+</blockquote><hr />
+<h2 id="3-why-does-quantization-improve-performance">
+  
+  
+    <a href="#3-why-does-quantization-improve-performance" class="anchor-heading" aria-labelledby="3-why-does-quantization-improve-performance"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. Why Does Quantization Improve Performance?
+  
+  
+</h2>
+    
+
+<p>The fundamental purpose of quantization is to <strong>reduce memory consumption and data movement</strong> by representing model weights at a lower precision, and — where the hardware and kernel support exist — to <strong>raise computation throughput</strong>.</p>
+
+<p>An LLM’s inference performance can be bounded roughly by two fundamental resources:</p>
+
+<ol>
+  <li><strong>Memory bandwidth:</strong> how fast the GPU can move model weights and other data</li>
+  <li><strong>Compute throughput:</strong> how fast the GPU can perform matrix math with accelerator units like Tensor Cores</li>
+</ol>
+
+<p>Quantization can give an advantage at both points.</p>
+<h3 id="31-memory-bandwidth-advantage">
+  
+  
+    <a href="#31-memory-bandwidth-advantage" class="anchor-heading" aria-labelledby="31-memory-bandwidth-advantage"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.1 Memory Bandwidth Advantage
+  
+  
+</h3>
+    
+
+<p>When model weights are held at a lower precision, the model gets smaller.</p>
+
+<p>For a model of roughly 70B parameters, for example:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Precision (bit width)</th>
+      <th>Approximate weight size</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FP16 / BF16</td>
+      <td>~140 GB</td>
+    </tr>
+    <tr>
+      <td>FP8 / INT8</td>
+      <td>~70 GB</td>
+    </tr>
+    <tr>
+      <td>4-bit</td>
+      <td>~35 GB</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>This shrinkage does not only help VRAM capacity. Since inference requires the GPU to move model weights through memory, smaller weights mean <strong>less memory traffic</strong>.</p>
+
+<p>This can matter especially at low concurrency and in decode-heavy workloads, because when producing a single token, reading the weights from memory can cost a significant amount compared with the computation done on them.</p>
+
+<p>Simplified:</p>
+
+<blockquote>
+  <p><strong>Lower bits → smaller model → less data movement → higher throughput potential in memory-bound workloads</strong></p>
+</blockquote>
+
+<p>Actual throughput, however, depends on the kernel design, batch size, KV cache, GPU architecture and runtime. A theoretical memory-bandwidth calculation must therefore not be treated as real inference throughput.</p><hr />
+<h3 id="32-compute-throughput-advantage">
+  
+  
+    <a href="#32-compute-throughput-advantage" class="anchor-heading" aria-labelledby="32-compute-throughput-advantage"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.2 Compute Throughput Advantage
+  
+  
+</h3>
+    
+
+<p>On modern GPUs the advantage of low-precision formats is not only about moving less data.</p>
+
+<p>A GPU’s Tensor Cores perform high-speed matrix math in specific precision formats. If the quantization format used is <strong>accelerated at the hardware level</strong>, lower precision can also mean higher computation throughput.</p>
+
+<p>For example:</p>
+
+<ul>
+  <li>FP16/BF16 → high-precision Tensor Core math</li>
+  <li>FP8 → lower precision and high Tensor Core throughput</li>
+  <li>FP4/NVFP4 → very high low-precision Tensor Core throughput on architectures like Blackwell</li>
+</ul>
+
+<p>That is why FP8 or FP4 can bring a significant advantage even when the workload is compute-bound.</p>
+
+<p>In short:</p>
+
+<blockquote>
+  <p><strong>Quantization does not just shrink the model; where the hardware support exists, it also taps the GPU’s higher low-precision compute capacity.</strong></p>
+</blockquote><hr />
+<h3 id="33-the-effect-of-concurrency-and-batch-size">
+  
+  
+    <a href="#33-the-effect-of-concurrency-and-batch-size" class="anchor-heading" aria-labelledby="33-the-effect-of-concurrency-and-batch-size"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.3 The Effect of Concurrency and Batch Size
+  
+  
+</h3>
+    
+
+<p>As concurrency and batch size grow, more tokens are processed in parallel on the same model. The GPU’s Tensor Cores are then fed better, and <strong>the share of compute throughput in total performance can grow</strong>.</p>
+
+<p>So the source of the quantization advantage can vary by workload:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Workload</th>
+      <th>Main advantage of quantization</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Single user / low concurrency</td>
+      <td>Less memory traffic</td>
+    </tr>
+    <tr>
+      <td>Medium-high concurrency</td>
+      <td>Memory + compute advantage</td>
+    </tr>
+    <tr>
+      <td>Large batch / high throughput</td>
+      <td>Tensor Core compute throughput rules</td>
+    </tr>
+    <tr>
+      <td>Compute-bound workload</td>
+      <td>Low-precision Tensor Core throughput</td>
+    </tr>
+    <tr>
+      <td>Memory-bound workload</td>
+      <td>Moving less data</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Quantization, with the right hardware and software support, can both reduce memory bandwidth demand and raise inference throughput by using the GPU’s low-precision compute capacity.</strong></p>
+</blockquote><hr />
+<h2 id="4-gpu-architecture-and-quantization-format">
+  
+  
+    <a href="#4-gpu-architecture-and-quantization-format" class="anchor-heading" aria-labelledby="4-gpu-architecture-and-quantization-format"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. GPU Architecture and Quantization Format
+  
+  
+</h2>
+    
+
+<p>A quantization format must not be judged on its own. The performance of the same precision format can differ significantly across GPU architectures.</p>
+
+<p>The fundamental reason is that GPUs support low-precision formats at different levels.</p>
+<h3 id="41-why-does-hardware-support-matter">
+  
+  
+    <a href="#41-why-does-hardware-support-matter" class="anchor-heading" aria-labelledby="41-why-does-hardware-support-matter"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.1 Why Does Hardware Support Matter?
+  
+  
+</h3>
+    
+
+<p>A format making model weights smaller is no guarantee of high performance by itself.</p>
+
+<p>Consider two different situations:</p>
+
+<p><strong>Situation A — accelerated directly by the hardware</strong></p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Quantized weights
+       ↓
+Native GPU Tensor Core
+       ↓
+High throughput
+</code></pre></div></div>
+
+<p><strong>Situation B — extra conversion / custom kernel required</strong></p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Quantized weights
+       ↓
+Dequantization / conversion
+       ↓
+FP16/BF16 compute
+       ↓
+Extra cost
+</code></pre></div></div>
+
+<p>In the second case the model may use less VRAM, but the full compute advantage expected may not materialize.</p>
+
+<p>So quantization selection must ask not only:</p>
+
+<blockquote>
+  <p>“How many bits?”</p>
+</blockquote>
+
+<p>but also:</p>
+
+<blockquote>
+  <p><strong>“How is this format computed on my GPU?”</strong></p>
+</blockquote><hr />
+<h3 id="42-general-approach-by-gpu-generation">
+  
+  
+    <a href="#42-general-approach-by-gpu-generation" class="anchor-heading" aria-labelledby="42-general-approach-by-gpu-generation"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.2 General Approach by GPU Generation
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>GPU architecture</th>
+      <th>Notable precision support</th>
+      <th>General approach</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Ampere</strong></td>
+      <td>FP16/BF16, INT8/INT4</td>
+      <td>INT4/INT8 quantization and optimized kernels are strong choices</td>
+    </tr>
+    <tr>
+      <td><strong>Ada Lovelace</strong></td>
+      <td>FP16/BF16, FP8</td>
+      <td>FP8 and low-bit quantization can be evaluated</td>
+    </tr>
+    <tr>
+      <td><strong>Hopper</strong></td>
+      <td>FP16/BF16, FP8</td>
+      <td>FP8 is a strong native acceleration option</td>
+    </tr>
+    <tr>
+      <td><strong>Blackwell</strong></td>
+      <td>FP16/BF16, FP8, FP4/NVFP4</td>
+      <td>FP8 and especially NVFP4 are significant options</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>The point here is not to say “a new format will not run on an older GPU”. Software/runtime support may allow different formats to be used. But <strong>native Tensor Core support</strong> can make a decisive difference in performance.</p><hr />
+<h3 id="43-fp8-the-balanced-choice-between-memory-and-compute">
+  
+  
+    <a href="#43-fp8-the-balanced-choice-between-memory-and-compute" class="anchor-heading" aria-labelledby="43-fp8-the-balanced-choice-between-memory-and-compute"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.3 FP8: The Balanced Choice Between Memory and Compute
+  
+  
+</h3>
+    
+
+<p>On architectures like Hopper and Blackwell in particular, FP8 combines two important advantages:</p>
+
+<ul>
+  <li>Lower model memory than FP16/BF16</li>
+  <li>Hardware-accelerated high Tensor Core throughput</li>
+</ul>
+
+<p>FP8 is therefore not just a format for squeezing the model into VRAM.</p>
+
+<p>Especially in high-concurrency, throughput-focused inference systems:</p>
+
+<blockquote>
+  <p><strong>Lower memory footprint + higher low-precision compute throughput</strong></p>
+</blockquote>
+
+<p>can be had together.</p>
+
+<p>One of FP8’s important advantages over 4-bit formats is its higher numeric precision. When preserving quality is critical and the model suits FP8 well, it can be a strong preference.</p><hr />
+<h3 id="44-fp4--nvfp4-the-hardware-advantage-on-blackwell">
+  
+  
+    <a href="#44-fp4--nvfp4-the-hardware-advantage-on-blackwell" class="anchor-heading" aria-labelledby="44-fp4--nvfp4-the-hardware-advantage-on-blackwell"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.4 FP4 / NVFP4: The Hardware Advantage on Blackwell
+  
+  
+</h3>
+    
+
+<p>With the Blackwell architecture, FP4-class formats have become more important.</p>
+
+<p><strong>NVFP4</strong> in particular must not be judged merely as a “4-bit model”. The format’s purpose is to combine the memory advantage of narrow bit widths with Blackwell’s low-precision Tensor Core support.</p>
+
+<p>NVFP4 can therefore help in two directions:</p>
+
+<p><strong>The memory side</strong></p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FP16 → FP8 → FP4
+ ↓       ↓      ↓
+Less model memory
+Less data movement
+</code></pre></div></div>
+
+<p><strong>The compute side</strong></p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FP16/BF16
+    ↓
+FP8
+    ↓
+FP4 / NVFP4
+    ↓
+Blackwell low-precision Tensor Core throughput
+</code></pre></div></div>
+
+<p>So when NVFP4 is on the table on Blackwell, it is not enough to say:</p>
+
+<blockquote>
+  <p>“The model uses less VRAM because it is 4-bit.”</p>
+</blockquote>
+
+<p>The point that matters is:</p>
+
+<blockquote>
+  <p><strong>NVFP4 can bring an advantage in both memory-bound and compute-bound workloads by combining low memory use with Blackwell’s native low-precision compute capacity.</strong></p>
+</blockquote><hr />
+<h3 id="45-the-basic-rule-of-quantization-selection">
+  
+  
+    <a href="#45-the-basic-rule-of-quantization-selection" class="anchor-heading" aria-labelledby="45-the-basic-rule-of-quantization-selection"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.5 The Basic Rule of Quantization Selection
+  
+  
+</h3>
+    
+
+<p>When choosing a quantization format, four factors must be weighed together:</p>
+
+<p><strong>1. Model quality</strong></p>
+
+<p>How much of the model’s accuracy, perplexity and task-level performance survives quantization?</p>
+
+<p><strong>2. Memory footprint</strong></p>
+
+<p>What load do the model and the KV cache put on GPU memory?</p>
+
+<p><strong>3. Hardware acceleration</strong></p>
+
+<p>Does the GPU support this precision format natively through Tensor Cores or another dedicated accelerator?</p>
+
+<p><strong>4. Runtime / kernel support</strong></p>
+
+<p>How efficiently does vLLM, SGLang, TensorRT-LLM, llama.cpp or whatever inference stack you run execute this format?</p>
+
+<p>The format with the lowest bit count is therefore not automatically the fastest.</p>
+
+<p>The right choice:</p>
+
+<blockquote>
+  <p><strong>is made by weighing model quality + memory footprint + native hardware acceleration + runtime/kernel support together.</strong></p>
+</blockquote><hr />
+<h2 id="5-quantization-formats">
+  
+  
+    <a href="#5-quantization-formats" class="anchor-heading" aria-labelledby="5-quantization-formats"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5. Quantization Formats
+  
+  
+</h2>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Format / method</th>
+      <th>Typical use</th>
+      <th>Main advantage</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>GGUF</td>
+      <td>llama.cpp / CPU+GPU</td>
+      <td>Flexibility, broad hardware support</td>
+    </tr>
+    <tr>
+      <td>GPTQ</td>
+      <td>NVIDIA inference</td>
+      <td>Widespread weight-only quantization</td>
+    </tr>
+    <tr>
+      <td>AWQ</td>
+      <td>NVIDIA inference</td>
+      <td>Activation-aware weight quantization</td>
+    </tr>
+    <tr>
+      <td>EXL2</td>
+      <td>NVIDIA / ExLlama</td>
+      <td>Quality-speed trade-off with variable bpw</td>
+    </tr>
+    <tr>
+      <td>INT8 / SmoothQuant</td>
+      <td>Inference</td>
+      <td>Strong option when moving to low precision</td>
+    </tr>
+    <tr>
+      <td>NF4 / bitsandbytes</td>
+      <td>QLoRA / fine-tuning</td>
+      <td>Training / fine-tuning ecosystem</td>
+    </tr>
+    <tr>
+      <td>FP8</td>
+      <td>Ada / Hopper / Blackwell</td>
+      <td>Native low-precision acceleration</td>
+    </tr>
+    <tr>
+      <td>NVFP4</td>
+      <td>Blackwell</td>
+      <td>Very low memory + native FP4 acceleration</td>
+    </tr>
+    <tr>
+      <td>MXFP4</td>
+      <td>Blackwell and supporting platforms</td>
+      <td>Open MX standard, aimed at portability</td>
+    </tr>
+  </tbody>
+</table></div><hr />
+<h2 id="6-4-bit--4-bit-is-not-true">
+  
+  
+    <a href="#6-4-bit--4-bit-is-not-true" class="anchor-heading" aria-labelledby="6-4-bit--4-bit-is-not-true"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6. “4-bit = 4-bit” Is Not True
+  
+  
+</h2>
+    
+
+<p>Two quantization methods with the same nominal bit width may give different quality or performance.</p>
+
+<p>For example:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>INT4
+AWQ
+GPTQ
+NF4
+MXFP4
+NVFP4
+</code></pre></div></div>
+
+<p>all fall in the “4-bit” class, yet these can differ:</p>
+
+<ul>
+  <li>number representation,</li>
+  <li>scaling,</li>
+  <li>block size,</li>
+  <li>calibration,</li>
+  <li>weight-only / weight+activation approach,</li>
+  <li>kernel,</li>
+  <li>hardware acceleration</li>
+</ul>
+
+<p>Hence:</p>
+
+<blockquote>
+  <p><strong>“4-bit model”</strong></p>
+</blockquote>
+
+<p>is not a sufficient technical definition on its own.</p>
+
+<p>A more accurate definition:</p>
+
+<blockquote>
+  <p><strong>“NVFP4, a Blackwell-optimized 4-bit floating-point format using 16-element micro-block FP8 scaling”</strong></p>
+</blockquote>
+
+<p>should include the format’s details like this.</p><hr />
+<h2 id="7-why-is-nvfp4-different">
+  
+  
+    <a href="#7-why-is-nvfp4-different" class="anchor-heading" aria-labelledby="7-why-is-nvfp4-different"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7. Why Is NVFP4 Different?
+  
+  
+</h2>
+    
+
+<p>NVIDIA NVFP4 is the 4-bit floating-point format designed for Blackwell.</p>
+
+<p>Its basic approach is:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FP4 values
+    +
+FP8 micro-scale
+    +
+FP32 tensor-level scale
+</code></pre></div></div>
+
+<p>In NVFP4, FP4 values are scaled with an FP8 scale over 16-element micro-blocks. A tensor-level FP32 scale is used as well.</p>
+
+<p>This approach aims to reduce quantization error compared with a plain FP4 representation.</p>
+
+<p>According to data published by NVIDIA, NVFP4 can give a model footprint about 1.8× smaller than FP8 and about 3.5× smaller than FP16; the actual checkpoint size depends on the metadata and the mixed-precision recipe used.</p>
+
+<p>So:</p>
+
+<blockquote>
+  <p><strong>NVFP4 = not just “4 bits”.</strong></p>
+</blockquote>
+
+<p>The real difference is the combination:</p>
+
+<blockquote>
+  <p><strong>4-bit representation + fine-grained scaling + hardware acceleration</strong></p>
+</blockquote><hr />
+<h2 id="8-gpu-architecture--format-matching">
+  
+  
+    <a href="#8-gpu-architecture--format-matching" class="anchor-heading" aria-labelledby="8-gpu-architecture--format-matching"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8. GPU Architecture × Format Matching
+  
+  
+</h2>
+    
+
+<p>This is one of the most important decision points.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>GPU architecture</th>
+      <th>Preferred options</th>
+      <th>Note</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Pascal</td>
+      <td>GGUF Q4/Q5/Q6</td>
+      <td>No modern FP8/FP4 Tensor Core features</td>
+    </tr>
+    <tr>
+      <td>Turing</td>
+      <td>INT8 / INT4-based methods</td>
+      <td>No native FP8 Tensor Core support</td>
+    </tr>
+    <tr>
+      <td>Ampere</td>
+      <td>INT4 / INT8, AWQ/GPTQ</td>
+      <td>A100 supports native INT4/INT8 Tensor Cores</td>
+    </tr>
+    <tr>
+      <td>Ada</td>
+      <td>FP8, INT4</td>
+      <td>Native FP8 Tensor Core support</td>
+    </tr>
+    <tr>
+      <td>Hopper</td>
+      <td>FP8</td>
+      <td>FP8 + Transformer Engine is a strong choice</td>
+    </tr>
+    <tr>
+      <td>Blackwell</td>
+      <td>NVFP4 / FP8 / MXFP4</td>
+      <td>Native FP4 and FP8 acceleration</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>“Preferred” here does not mean the format is automatically best for every model.</p>
+
+<p>Model, runtime and workload must still be evaluated.</p><hr />
+<h2 id="9-ampere-do-not-confuse-int4-with-fp8">
+  
+  
+    <a href="#9-ampere-do-not-confuse-int4-with-fp8" class="anchor-heading" aria-labelledby="9-ampere-do-not-confuse-int4-with-fp8"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 9. Ampere: Do Not Confuse INT4 with FP8
+  
+  
+</h2>
+    
+
+<p>Ampere matters especially for this reason:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>A100 / RTX 30
+        ↓
+Native INT4 / INT8 Tensor Core
+        ↓
+AWQ / GPTQ / Marlin-style INT4 deployments
+</code></pre></div></div>
+
+<p>The A100 has INT4 Tensor Core support.</p>
+
+<p>FP8, by contrast, is a precision that came into its own with Hopper and is also supported on Ada.</p>
+
+<p>So on Ampere one must not assume:</p>
+
+<blockquote>
+  <p><strong>“There is an FP8 file, so it must be faster.”</strong></p>
+</blockquote>
+
+<p>A runtime may execute an FP8 checkpoint in some form; but native hardware acceleration and software-level support are not the same thing.</p>
+
+<p>For 4-bit deployments on Ampere:</p>
+
+<blockquote>
+  <p><strong>AWQ/GPTQ + a suitable optimized kernel</strong></p>
+</blockquote>
+
+<p>is the more sensible starting point in most cases.</p><hr />
+<h2 id="10-ada-and-hopper-fp8s-strong-position">
+  
+  
+    <a href="#10-ada-and-hopper-fp8s-strong-position" class="anchor-heading" aria-labelledby="10-ada-and-hopper-fp8s-strong-position"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 10. Ada and Hopper: FP8’s Strong Position
+  
+  
+</h2>
+    
+
+<p>Ada Lovelace offers FP8 Tensor Core acceleration.</p>
+
+<p>Hopper takes FP8 further with the Transformer Engine.</p>
+
+<p>So:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Ada
+ → FP8 is a serious option
+
+Hopper
+ → FP8 is a strong default for production inference
+</code></pre></div></div>
+
+<p>But one must not claim:</p>
+
+<blockquote>
+  <p><strong>“FP8 is always 2× faster than FP16.”</strong></p>
+</blockquote>
+
+<p>Numbers like 2× can express theoretical or peak advantages under specific kernel/throughput conditions. Real LLM throughput varies with model architecture, batch, sequence length and runtime.</p><hr />
+<h2 id="11-blackwell-fp8-or-nvfp4">
+  
+  
+    <a href="#11-blackwell-fp8-or-nvfp4" class="anchor-heading" aria-labelledby="11-blackwell-fp8-or-nvfp4"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 11. Blackwell: FP8 or NVFP4?
+  
+  
+</h2>
+    
+
+<p>On Blackwell the central question is no longer just:</p>
+
+<blockquote>
+  <p>“Can I reduce the model to 4-bit?”</p>
+</blockquote>
+
+<p>The better question is:</p>
+
+<blockquote>
+  <p><strong>“For this model, which suits better in quality, memory and throughput: FP8 or FP4?”</strong></p>
+</blockquote>
+<h3 id="fp8">
+  
+  
+    <a href="#fp8" class="anchor-heading" aria-labelledby="fp8"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> FP8
+  
+  
+</h3>
+    
+
+<p>Advantages:</p>
+
+<ul>
+  <li>higher numeric precision</li>
+  <li>generally lower quantization error</li>
+  <li>native Blackwell acceleration</li>
+  <li>a strong option in quality-critical workloads</li>
+</ul>
+<h3 id="nvfp4">
+  
+  
+    <a href="#nvfp4" class="anchor-heading" aria-labelledby="nvfp4"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> NVFP4
+  
+  
+</h3>
+    
+
+<p>Advantages:</p>
+
+<ul>
+  <li>lower weight footprint</li>
+  <li>lower memory traffic</li>
+  <li>native Blackwell FP4 acceleration</li>
+  <li>the advantage of fitting larger models into smaller GPU clusters</li>
+</ul>
+<h3 id="practical-approach">
+  
+  
+    <a href="#practical-approach" class="anchor-heading" aria-labelledby="practical-approach"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Practical approach
+  
+  
+</h3>
+    
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FP8
+ ↓
+Benchmark
+ ↓
+NVFP4
+ ↓
+Benchmark
+ ↓
+Compare quality + latency + throughput + VRAM
+</code></pre></div></div>
+
+<p>The outcome:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Quality difference acceptable
+        → NVFP4
+
+Quality critical
+        → FP8
+</code></pre></div></div>
+
+<p>This decision must be made model by model.</p><hr />
+<h2 id="12-mixed-precision-quantization">
+  
+  
+    <a href="#12-mixed-precision-quantization" class="anchor-heading" aria-labelledby="12-mixed-precision-quantization"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 12. Mixed-Precision Quantization
+  
+  
+</h2>
+    
+
+<p>Modern quantized checkpoints often do not store all weights in the same format.</p>
+
+<p>For example, a recipe like this may be used:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>MLP                 → NVFP4
+Attention           → FP8
+lm_head             → NVFP4 / higher precision
+critical layers     → higher precision
+</code></pre></div></div>
+
+<p>The basic rationale is:</p>
+
+<blockquote>
+  <p><strong>Not every layer is equally sensitive to quantization error.</strong></p>
+</blockquote>
+
+<p>A good quantization pipeline can therefore proceed like this:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Model
+  ↓
+Calibration
+  ↓
+Layer sensitivity analysis
+  ↓
+Mixed-precision recipe
+  ↓
+Quantization
+  ↓
+Benchmark
+</code></pre></div></div>
+
+<p>So saying only:</p>
+
+<blockquote>
+  <p>“The model is 4-bit.”</p>
+</blockquote>
+
+<p>is not enough. What really matters is:</p>
+
+<ul>
+  <li>which layers were quantized?</li>
+  <li>which precision was used?</li>
+  <li>what is the block size?</li>
+  <li>how was scaling done?</li>
+  <li>what is the calibration dataset?</li>
+  <li>what is the calibration algorithm?</li>
+</ul><hr />
+<h2 id="13-why-does-calibration-matter">
+  
+  
+    <a href="#13-why-does-calibration-matter" class="anchor-heading" aria-labelledby="13-why-does-calibration-matter"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 13. Why Does Calibration Matter?
+  
+  
+</h2>
+    
+
+<p>During PTQ (Post-Training Quantization), the calibration dataset should represent the model’s real usage distribution.</p>
+
+<p>For example, choices like these make more sense:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>General chat model
+    → general text calibration
+
+Coding model
+    → coding-weighted calibration
+
+Agent model
+    → tool-use / instruction / reasoning calibration
+</code></pre></div></div>
+
+<p>The calibration process can influence where and how quantization error arises.</p>
+
+<p>Hence:</p>
+
+<blockquote>
+  <p><strong>Same model + same 4-bit format ≠ same quality</strong></p>
+</blockquote><hr />
+<h2 id="14-how-to-choose-a-reliable-quantized-checkpoint">
+  
+  
+    <a href="#14-how-to-choose-a-reliable-quantized-checkpoint" class="anchor-heading" aria-labelledby="14-how-to-choose-a-reliable-quantized-checkpoint"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 14. How to Choose a Reliable Quantized Checkpoint?
+  
+  
+</h2>
+    
+
+<p>When choosing a quantized model, the reliability of the source is critical.</p>
+<h3 id="preference-order">
+  
+  
+    <a href="#preference-order" class="anchor-heading" aria-labelledby="preference-order"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Preference order
+  
+  
+</h3>
+    
+
+<p><strong>1. The model owner’s official checkpoint</strong></p>
+
+<p>This is the best starting point.</p>
+
+<p><strong>2. The checkpoint released by the hardware / inference vendor</strong></p>
+
+<p>For example, NVIDIA Model Optimizer-based checkpoints whose benchmark and calibration details are given openly.</p>
+
+<p><strong>3. Quants prepared by the framework / inference community</strong></p>
+
+<p>They can work well; but the metadata and benchmark quality must be checked separately.</p>
+<h3 id="4-community-produced-quantization">
+  
+  
+    <a href="#4-community-produced-quantization" class="anchor-heading" aria-labelledby="4-community-produced-quantization"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. Community-produced quantization
+  
+  
+</h3>
+    
+
+<p>Quantization files prepared by the community <strong>must not be used in production without verifying their source and production process.</strong></p>
+
+<p>The risk here is not only poor quantization quality. A quantized model file must not be considered reliable without verifying:</p>
+
+<ul>
+  <li>who produced it,</li>
+  <li>which base model it was derived from,</li>
+  <li>with which quantization method and tools it was created,</li>
+  <li>which calibration data was used,</li>
+  <li>whether the integrity of the model file is preserved,</li>
+  <li>whether it is compatible with the runtime and kernels in use</li>
+</ul>
+
+<p>Especially in production systems, <strong>models and quantization artifacts of unknown origin become a supply-chain risk</strong>. Since model weights and their related files are the fundamental inputs of the inference pipeline that runs them, a reliability decision must not be made from a benchmark score alone.</p>
+<h3 id="known-publishers--a-starting-list">
+  
+  
+    <a href="#known-publishers--a-starting-list" class="anchor-heading" aria-labelledby="known-publishers--a-starting-list"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Known publishers — a starting list
+  
+  
+</h3>
+    
+
+<p>The accounts below are <strong>starting points</strong> that stand out for their production process and model card transparency. A publisher’s name is not a quality guarantee; it indicates where to begin the search:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Publisher</th>
+      <th>Type</th>
+      <th>Typical formats</th>
+      <th>Link(s)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>NVIDIA</strong> (Model Optimizer)</td>
+      <td>Hardware / production vendor</td>
+      <td>NVFP4, FP8 (mixed recipe)</td>
+      <td><a href="https://huggingface.co/nvidia">HF <code class="language-plaintext highlighter-rouge">nvidia</code></a> · <a href="https://github.com/NVIDIA/TensorRT-Model-Optimizer">TensorRT-Model-Optimizer</a></td>
+    </tr>
+    <tr>
+      <td><strong>RadixArk</strong></td>
+      <td>SGLang ecosystem</td>
+      <td>NVFP4, blockwise FP8, MLX 4-bit, DSpark draft</td>
+      <td><a href="https://huggingface.co/RadixArk">HF <code class="language-plaintext highlighter-rouge">RadixArk</code></a> · <a href="https://cookbook.sglang.ai">cookbook.sglang.ai</a></td>
+    </tr>
+    <tr>
+      <td><strong>Inferact</strong></td>
+      <td>vLLM ecosystem</td>
+      <td>NVFP4, MXFP4, W4A4, EAGLE3 / DSpark draft</td>
+      <td><a href="https://huggingface.co/Inferact">HF <code class="language-plaintext highlighter-rouge">Inferact</code></a> · <a href="https://inferact.ai/">inferact.ai</a></td>
+    </tr>
+    <tr>
+      <td><strong>Red Hat AI</strong></td>
+      <td>Inference provider</td>
+      <td>FP8, INT4 (AWQ/GPTQ)</td>
+      <td><a href="https://huggingface.co/RedHatAI">HF <code class="language-plaintext highlighter-rouge">RedHatAI</code></a></td>
+    </tr>
+    <tr>
+      <td><strong>Intel</strong></td>
+      <td>Hardware / runtime vendor</td>
+      <td>INT8 / INT4</td>
+      <td><a href="https://huggingface.co/OpenVINO">HF <code class="language-plaintext highlighter-rouge">OpenVINO</code></a> · <a href="https://huggingface.co/Intel">HF <code class="language-plaintext highlighter-rouge">Intel</code></a> · <a href="https://github.com/intel/neural-compressor">neural-compressor</a> · <a href="https://github.com/openvinotoolkit/openvino">openvino</a></td>
+    </tr>
+    <tr>
+      <td><strong>ggml-org</strong></td>
+      <td>Format ecosystem (llama.cpp)</td>
+      <td>GGUF</td>
+      <td><a href="https://huggingface.co/ggml-org">HF <code class="language-plaintext highlighter-rouge">ggml-org</code></a></td>
+    </tr>
+    <tr>
+      <td><strong>ISTA-DASLab</strong></td>
+      <td>University research lab — source of GPTQ, SparseGPT, AQLM, QuIP#</td>
+      <td>GPTQ / MatGPTQ, NVFP4 (MoESQ), GGUF (GSQ-RCO), 2-bit (AQLM / QuIP#)</td>
+      <td><a href="https://huggingface.co/ISTA-DASLab">HF <code class="language-plaintext highlighter-rouge">ISTA-DASLab</code></a> · <a href="https://github.com/IST-DASLab">github.com/IST-DASLab</a></td>
+    </tr>
+    <tr>
+      <td><strong>LM Studio</strong> (<code class="language-plaintext highlighter-rouge">lmstudio-community</code>)</td>
+      <td>Official model pool of a local inference runtime</td>
+      <td>GGUF, MLX (4/6/8-bit)</td>
+      <td><a href="https://huggingface.co/lmstudio-community">HF <code class="language-plaintext highlighter-rouge">lmstudio-community</code></a> · <a href="https://lmstudio.ai">lmstudio.ai</a></td>
+    </tr>
+    <tr>
+      <td><strong>bartowski</strong></td>
+      <td>Well-known community publisher</td>
+      <td>GGUF, EXL2</td>
+      <td><a href="https://huggingface.co/bartowski">HF <code class="language-plaintext highlighter-rouge">bartowski</code></a></td>
+    </tr>
+    <tr>
+      <td><strong>unsloth</strong></td>
+      <td>Training + quant ecosystem</td>
+      <td>4-bit dynamic quant, GGUF</td>
+      <td><a href="https://huggingface.co/unsloth">HF <code class="language-plaintext highlighter-rouge">unsloth</code></a></td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Three rules:</p>
+
+<ol>
+  <li><strong>The order does not change:</strong> the model owner’s official quant → hardware / inference vendor → known publisher → your own quant (same as the preference order above).</li>
+  <li><strong>The checklist is fixed:</strong> however well-known the publisher, nothing enters production without verifying the §15 model card list.</li>
+  <li><strong>The list ages:</strong> this is a snapshot starting list; confirm each publisher’s current activity and card transparency every time.</li>
+</ol>
+
+<blockquote>
+  <p><strong>Note:</strong> The same model may be published by different publishers (e.g. <code class="language-plaintext highlighter-rouge">Qwen3.8-27B-NVFP4</code> exists at NVIDIA, RadixArk and Inferact alike). In that case, comparing publishers must be done with the quality framework in §23. RadixArk and Inferact publish not only quants but also speculative decoding drafts (DSpark / EAGLE3).</p>
+</blockquote><hr />
+<h2 id="15-what-should-a-good-model-card-disclose">
+  
+  
+    <a href="#15-what-should-a-good-model-card-disclose" class="anchor-heading" aria-labelledby="15-what-should-a-good-model-card-disclose"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 15. What Should a Good Model Card Disclose?
+  
+  
+</h2>
+    
+
+<p>A good quantized checkpoint should give the following information as fully as possible. Not all of these carry the same weight, though; start the review with these three tiers.</p>
+<h3 id="critical--the-basics-that-must-be-verified">
+  
+  
+    <a href="#critical--the-basics-that-must-be-verified" class="anchor-heading" aria-labelledby="critical--the-basics-that-must-be-verified"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Critical — the basics that must be verified
+  
+  
+</h3>
+    
+
+<blockquote>
+  <p><strong>Note:</strong> What separates two quants is not the nominal bit count but the method + scaling + calibration + recipe (§6, §13). The <strong>measured summary</strong> of that difference is “a benchmark comparison against the original model” — the most valuable item on the list, and meaningless unless given with its conditions (§16).</p>
+</blockquote>
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Base model</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Producer / publisher identity</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Quantization method <em>(with weight/activation precision stated)</em></li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" /><strong>Benchmark comparison against the original model</strong> <em>(with its conditions: the only measurable evidence of the quality gap between two quants — §16)</em></li>
+</ul>
+<h3 id="decisive--these-settle-what-is-left-in-doubt">
+  
+  
+    <a href="#decisive--these-settle-what-is-left-in-doubt" class="anchor-heading" aria-labelledby="decisive--these-settle-what-is-left-in-doubt"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Decisive — these settle what is left in doubt
+  
+  
+</h3>
+    
+
+<p><em>Quantization technical details:</em></p>
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Calibration dataset + algorithm + sample count
+    <em>(for QAT models, the training / post-training recipe and the quantization simulation instead — see §17.4)</em></li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Weight precision</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Activation precision</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />KV cache precision <em>(required only if the benchmark or the recommended deployment was run with a specific KV precision — it is not a checkpoint property in itself but a deployment decision: §2.2)</em></li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Mixed-precision recipe</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Block / group size</li>
+</ul>
+
+<p><em>Benchmark conditions:</em></p>
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Evaluation datasets</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Generation settings</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Context length</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />GPU + runtime tested</li>
+</ul>
+
+<p><em>Compatibility / scale:</em></p>
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Supported GPU architectures</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Tensor parallelism</li>
+</ul>
+<h3 id="supporting--they-do-not-determine-technical-quality-but-their-absence-causes-practical-trouble">
+  
+  
+    <a href="#supporting--they-do-not-determine-technical-quality-but-their-absence-causes-practical-trouble" class="anchor-heading" aria-labelledby="supporting--they-do-not-determine-technical-quality-but-their-absence-causes-practical-trouble"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Supporting — they do not determine technical quality, but their absence causes practical trouble
+  
+  
+</h3>
+    
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Quantization library + version</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />File integrity (commit hash / checksum) + release date</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />License</li>
+</ul>
+
+<p>The more of this information is missing, the harder it becomes to evaluate a quantized checkpoint independently.</p><hr />
+<h2 id="16-how-should-a-benchmark-be-read">
+  
+  
+    <a href="#16-how-should-a-benchmark-be-read" class="anchor-heading" aria-labelledby="16-how-should-a-benchmark-be-read"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 16. How Should a Benchmark Be Read?
+  
+  
+</h2>
+    
+
+<p>When judging a quantized model’s benchmark, the score alone must not be trusted.</p>
+
+<p>For example:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>BF16     → 88.92
+NVFP4    → 88.01
+</code></pre></div></div>
+
+<p>means little on its own.</p>
+
+<p>These must also be the same:</p>
+
+<ul>
+  <li>benchmark version</li>
+  <li>prompt format</li>
+  <li>system prompt</li>
+  <li>temperature</li>
+  <li>top_p</li>
+  <li>max_new_tokens</li>
+  <li>context length</li>
+  <li>reasoning mode</li>
+  <li>tool configuration</li>
+</ul>
+
+<p>Otherwise two benchmarks cannot be compared directly.</p>
+
+<p>The most reliable approach is:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>BF16 baseline
+      ↓
+same benchmark
+      ↓
+same generation settings
+      ↓
+same runtime
+      ↓
+quantized model
+      ↓
+same benchmark
+</code></pre></div></div><hr />
+<h2 id="17-case-examples">
+  
+  
+    <a href="#17-case-examples" class="anchor-heading" aria-labelledby="17-case-examples"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 17. Case Examples
+  
+  
+</h2>
+    
+
+<p>The cases represent four basic scenarios, by where the quantized form originates:</p>
+
+<ol>
+  <li><strong>Double release</strong> — original BF16; the vendor also ships its own official FP8.</li>
+  <li><strong>Direct low-bit release</strong> — the original model is released already quantized.</li>
+  <li><strong>Third-party quant</strong> — the hardware / inference vendor quantizes a model released as BF16.</li>
+  <li><strong>4-bit through QAT</strong> — quantization enters the training stage.</li>
+</ol>
+
+<p>These scenarios map to the preference order in §14: 1 and 2 → the model owner’s official checkpoint, 3 → the hardware / inference vendor’s checkpoint, 4 → the model owner (production with QAT).</p><hr />
+<h3 id="171-scenario-1--original-bf16--official-fp8-qwen38-27b">
+  
+  
+    <a href="#171-scenario-1--original-bf16--official-fp8-qwen38-27b" class="anchor-heading" aria-labelledby="171-scenario-1--original-bf16--official-fp8-qwen38-27b"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 17.1 Scenario 1 — Original BF16 + Official FP8: Qwen3.8-27B
+  
+  
+</h3>
+    
+
+<p><code class="language-plaintext highlighter-rouge">Qwen/Qwen3.8-27B</code> is a 27B-parameter model.</p>
+
+<p>Alongside it, Qwen also released the</p>
+
+<p><code class="language-plaintext highlighter-rouge">Qwen/Qwen3.8-27B-FP8</code></p>
+
+<p>checkpoint.</p>
+
+<p>The FP8 checkpoint uses:</p>
+
+<ul>
+  <li>fine-grained FP8</li>
+  <li>block size 128</li>
+  <li>BF16 + FP8 tensor layout</li>
+</ul>
+
+<p>The Qwen model card states that performance metrics are close to the original model.</p>
+
+<p><strong>Lesson:</strong></p>
+
+<blockquote>
+  <p>Comparing the official FP8 deployment checkpoint against the BF16 baseline within the same model family is a strong start for evaluating quantization.</p>
+</blockquote><hr />
+<h3 id="172-scenario-2--direct-fp8-release-glm-53">
+  
+  
+    <a href="#172-scenario-2--direct-fp8-release-glm-53" class="anchor-heading" aria-labelledby="172-scenario-2--direct-fp8-release-glm-53"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 17.2 Scenario 2 — Direct FP8 Release: GLM-5.3
+  
+  
+</h3>
+    
+
+<p><code class="language-plaintext highlighter-rouge">zai-org/GLM-5.3</code> is a model in the 753B class and is labeled FP8 in its model repository, alongside BF16, F8_E4M3 and F32 tensor types.</p>
+
+<p>What matters here:</p>
+
+<blockquote>
+  <p>Quantization is no longer only something the community applies afterward.</p>
+</blockquote>
+
+<p>Model vendors can release low-precision checkpoints directly.</p>
+
+<p><strong>Lesson:</strong></p>
+
+<blockquote>
+  <p>The precision a model is released in becomes part of the deployment architecture.</p>
+</blockquote><hr />
+<h3 id="173-scenario-3--third-party-quant-nvidia-qwen38-27b-nvfp4">
+  
+  
+    <a href="#173-scenario-3--third-party-quant-nvidia-qwen38-27b-nvfp4" class="anchor-heading" aria-labelledby="173-scenario-3--third-party-quant-nvidia-qwen38-27b-nvfp4"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 17.3 Scenario 3 — Third-Party Quant (NVIDIA): Qwen3.8-27B-NVFP4
+  
+  
+</h3>
+    
+
+<p><code class="language-plaintext highlighter-rouge">nvidia/Qwen3.8-27B-NVFP4</code> is a deployment checkpoint prepared with NVIDIA Model Optimizer.</p>
+
+<p>Its model card states these details explicitly:</p>
+
+<ul>
+  <li>Model Optimizer v0.48.0</li>
+  <li>mixed NVFP4/FP8</li>
+  <li>NVFP4 → MLP + <code class="language-plaintext highlighter-rouge">lm_head</code></li>
+  <li>FP8 → self-attention + linear-attention</li>
+  <li>2.048 calibration samples</li>
+  <li>Local-Hessian calibration</li>
+  <li>Nemotron-Post-Training-Dataset-v3</li>
+  <li>vLLM</li>
+  <li>Grace Blackwell GB300</li>
+</ul>
+
+<p>The BF16 and NVFP4 results were also compared on the same benchmark set.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Benchmark</th>
+      <th style="text-align: right">BF16</th>
+      <th style="text-align: right">NVFP4</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>GPQA Diamond</td>
+      <td style="text-align: right">88.92</td>
+      <td style="text-align: right">88.01</td>
+    </tr>
+    <tr>
+      <td>Terminal-Bench</td>
+      <td style="text-align: right">75.56</td>
+      <td style="text-align: right">74.02</td>
+    </tr>
+    <tr>
+      <td>AA-LCR</td>
+      <td style="text-align: right">72.63</td>
+      <td style="text-align: right">73.38</td>
+    </tr>
+    <tr>
+      <td>MMMU-Pro</td>
+      <td style="text-align: right">75.14</td>
+      <td style="text-align: right">74.86</td>
+    </tr>
+    <tr>
+      <td>SciCode</td>
+      <td style="text-align: right">47.93</td>
+      <td style="text-align: right">48.41</td>
+    </tr>
+    <tr>
+      <td>IFBench</td>
+      <td style="text-align: right">80.07</td>
+      <td style="text-align: right">78.93</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>The real lesson matters more than the individual scores:</p>
+
+<blockquote>
+  <p><strong>The quantization recipe + calibration + evaluation methodology are documented openly.</strong></p>
+</blockquote>
+
+<p>The checkpoint can therefore be examined and reproduced independently.</p><hr />
+<h3 id="174-scenario-4--4-bit-with-qat-kimi-k3">
+  
+  
+    <a href="#174-scenario-4--4-bit-with-qat-kimi-k3" class="anchor-heading" aria-labelledby="174-scenario-4--4-bit-with-qat-kimi-k3"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 17.4 Scenario 4 — 4-Bit with QAT: Kimi K3
+  
+  
+</h3>
+    
+
+<p><code class="language-plaintext highlighter-rouge">moonshotai/Kimi-K3</code> uses:</p>
+
+<ul>
+  <li>2.8T total parameters</li>
+  <li>104B activated parameters</li>
+  <li>1M context</li>
+  <li>MXFP4 weights</li>
+  <li>MXFP8 activations</li>
+  <li>Quantization-Aware Training (from the SFT stage on)</li>
+</ul>
+
+<p>The inference runtimes the card suggests: vLLM, SGLang and TokenSpeed.</p>
+
+<p><strong>The point that matters:</strong></p>
+
+<blockquote>
+  <p><strong>The model vendor produces the model with quantization-aware training from the SFT stage on, rather than applying quantization afterward, and releases it as MXFP4 / MXFP8.</strong> Here quantization is not a “compression step” applied after training; it is a design decision in the model’s path to release.</p>
+</blockquote>
+
+<p>This example changes several assumptions at once:</p>
+
+<p><strong>1. The assumption “original = BF16, quantized = derivative” no longer holds.</strong></p>
+
+<p>This model’s official release <em>is already 4-bit</em>. There is no “going back to BF16 to recover quality”; the reference checkpoint itself is quantized.</p>
+
+<p><strong>2. Quantization is no longer the last resort; in some models it is the only official form.</strong></p>
+
+<p>This is the strongest example of the “is there an official FP8/FP4 release?” step in the §19 selection flow: the model’s produced quantized form is the model itself.</p>
+
+<p><strong>3. The subject is not only weight quantization.</strong></p>
+
+<p>Taken together, MXFP4 weights + MXFP8 activations is weight+activation (full-tensor) quantization; the extreme example of the <em>weight-only / weight+activation</em> distinction in §6, different from AWQ/GPTQ’s weight-only approach.</p>
+
+<p><strong>4. MXFP4 is the open OCP standard.</strong></p>
+
+<p>It is an example of the portability goal mentioned in §5: an open format family that does not bind you to a single vendor. Moonshot AI’s rationale is exactly this; the card states the MXFP4 / MXFP8 choice was made for “broad hardware compatibility”.</p>
+
+<p><strong>5. Quality validation is read in reverse.</strong></p>
+
+<p>The question is not “how much did 4-bit lose?” but <strong>“is the 4-bit operating condition the vendor trained sufficient for my workload?”</strong> The answer comes from the model card benchmark read as in §16 and from your own production workload test.</p>
+
+<p><strong>Lesson:</strong></p>
+
+<blockquote>
+  <p>PTQ and QAT are not the same thing.</p>
+</blockquote>
+
+<p>PTQ:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>BF16 model
+   ↓
+training completed
+   ↓
+quantization
+</code></pre></div></div>
+
+<p>QAT:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Quantized operating conditions
+        ↓
+part of the training / post-training process
+        ↓
+quantized model
+</code></pre></div></div>
+
+<p>Two more lessons follow:</p>
+
+<blockquote>
+  <p><strong>Low bits are not always a “compromise”.</strong> In QAT, 4-bit is the target operating condition; quality is optimized for it. The “low bits = accepted loss” perception does not hold for this model class.</p>
+</blockquote>
+
+<blockquote>
+  <p><strong>The model card checklist (§15) reads differently for QAT models.</strong> Instead of a “calibration dataset”, look for the training/post-training recipe and the quantization simulation used in training; the calibration flow in §13 is specific to PTQ.</p>
+</blockquote><hr />
+<h2 id="18-ptq-or-qat">
+  
+  
+    <a href="#18-ptq-or-qat" class="anchor-heading" aria-labelledby="18-ptq-or-qat"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 18. PTQ or QAT?
+  
+  
+</h2>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>PTQ</th>
+      <th>QAT</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Can be applied after training</td>
+      <td>Yes</td>
+      <td>No / needs training</td>
+    </tr>
+    <tr>
+      <td>Cost</td>
+      <td>Lower</td>
+      <td>Higher</td>
+    </tr>
+    <tr>
+      <td>Fast for deployment</td>
+      <td>Yes</td>
+      <td>Longer process</td>
+    </tr>
+    <tr>
+      <td>Calibration needed</td>
+      <td>Usually yes</td>
+      <td>Depends on the recipe</td>
+    </tr>
+    <tr>
+      <td>Very low precision</td>
+      <td>Harder</td>
+      <td>Can be more advantageous</td>
+    </tr>
+    <tr>
+      <td>Optimizing model quality</td>
+      <td>Limited</td>
+      <td>Stronger</td>
+    </tr>
+    <tr>
+      <td>Practical for an existing model</td>
+      <td>Very suitable</td>
+      <td>More costly</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>For production deployment, PTQ is the more practical starting point for most users.</p>
+
+<p>But for very low precision or frontier model deployment, QAT can become an important option.</p><hr />
+<h2 id="19-quantization-selection-flow">
+  
+  
+    <a href="#19-quantization-selection-flow" class="anchor-heading" aria-labelledby="19-quantization-selection-flow"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 19. Quantization Selection Flow
+  
+  
+</h2>
+    
+
+<p>The practical decision process should look like this:</p>
+
+<p><img src="/papers/llm-quantization-selection/images/quantization-selection-flow-19.png" alt="§19 Quantization Selection Flow" /></p>
+
+<ol>
+  <li><strong>Define the need:</strong> required speed (TTFT / tokens/s), concurrency, context, quality threshold.</li>
+  <li><strong>Does my hardware carry this model for this need?</strong>
+    <ul>
+      <li><strong>Yes</strong> → use the original model → production workload test.</li>
+      <li><strong>No</strong> → go to step 3.</li>
+    </ul>
+  </li>
+  <li><strong>Choose the quantized form:</strong>
+    <ol>
+      <li>If the model has an official FP8/FP4 release → use it.</li>
+      <li>Otherwise use a known publisher’s quant (NVIDIA, known framework / community publishers) (see §14).</li>
+      <li>If there is none → your own quant (PTQ) or a hardware / model change.</li>
+    </ol>
+  </li>
+  <li><strong>Does the chosen form deliver what the need asks?</strong> (speed + concurrency + quality)
+    <ul>
+      <li><strong>Yes</strong> → production workload test.</li>
+      <li><strong>No</strong> → pick a model that fits your hardware and start again from step 1.</li>
+    </ul>
+  </li>
+</ol>
+
+<blockquote>
+  <p><strong>Note:</strong> “Original model” = the official form the model was released in; for some models that is 4-bit from birth (see §17.4).</p>
+</blockquote>
+
+<p>The basic principle:</p>
+
+<blockquote>
+  <p><strong>A hardware shortfall does not by itself mean “this model will not run”.</strong> The model’s quantized form may give the required speed and concurrency on the hardware you have; the goal is not to pick the lowest bits, but <strong>to meet the need at a precision the hardware is strong at.</strong></p>
+</blockquote>
+
+<p>If high throughput or capacity is the target, though, lower precision may be the better economic choice.</p><hr />
+<h2 id="20-common-mistakes">
+  
+  
+    <a href="#20-common-mistakes" class="anchor-heading" aria-labelledby="20-common-mistakes"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 20. Common Mistakes
+  
+  
+</h2>
+    
+<h3 id="1-moving-to-4-bit-needlessly-when-the-hardware-is-enough-for-the-original-model">
+  
+  
+    <a href="#1-moving-to-4-bit-needlessly-when-the-hardware-is-enough-for-the-original-model" class="anchor-heading" aria-labelledby="1-moving-to-4-bit-needlessly-when-the-hardware-is-enough-for-the-original-model"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1. Moving to 4-bit needlessly when the hardware is enough for the original model
+  
+  
+</h3>
+    
+
+<p>Lower precision is not always better. If the hardware is enough for the original model — speed, concurrency etc. — there is no reason to pay for quantization (see §19).</p><hr />
+<h3 id="2-crediting-the-original-models-benchmark-to-the-quantized-model">
+  
+  
+    <a href="#2-crediting-the-original-models-benchmark-to-the-quantized-model" class="anchor-heading" aria-labelledby="2-crediting-the-original-models-benchmark-to-the-quantized-model"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2. Crediting the original model’s benchmark to the quantized model
+  
+  
+</h3>
+    
+
+<p>A BF16 result:</p>
+
+<blockquote>
+  <p><strong>is the result of the BF16 checkpoint.</strong></p>
+</blockquote>
+
+<p>The quantized checkpoint must be verified separately.</p><hr />
+<h3 id="3-saying-4-bit--4-bit">
+  
+  
+    <a href="#3-saying-4-bit--4-bit" class="anchor-heading" aria-labelledby="3-saying-4-bit--4-bit"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. Saying “4-bit = 4-bit”
+  
+  
+</h3>
+    
+
+<p>AWQ, GPTQ, NF4, MXFP4 and NVFP4 are not the same thing.</p><hr />
+<h3 id="4-confusing-native-hardware-acceleration-with-software-support">
+  
+  
+    <a href="#4-confusing-native-hardware-acceleration-with-software-support" class="anchor-heading" aria-labelledby="4-confusing-native-hardware-acceleration-with-software-support"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. Confusing native hardware acceleration with software support
+  
+  
+</h3>
+    
+
+<p>A runtime accepting a format does not mean the GPU accelerates that format natively.</p><hr />
+<h3 id="5-measuring-only-tokenss">
+  
+  
+    <a href="#5-measuring-only-tokenss" class="anchor-heading" aria-labelledby="5-measuring-only-tokenss"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5. Measuring only tokens/s
+  
+  
+</h3>
+    
+
+<p>Higher throughput does not mean a better deployment.</p>
+
+<p>TTFT, ITL, latency and concurrency must be measured too.</p><hr />
+<h3 id="6-forgetting-the-kv-cache">
+  
+  
+    <a href="#6-forgetting-the-kv-cache" class="anchor-heading" aria-labelledby="6-forgetting-the-kv-cache"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6. Forgetting the KV cache
+  
+  
+</h3>
+    
+
+<p>Especially in long context, KV cache precision matters as much as weight quantization.</p><hr />
+<h3 id="7-ignoring-calibration-information">
+  
+  
+    <a href="#7-ignoring-calibration-information" class="anchor-heading" aria-labelledby="7-ignoring-calibration-information"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7. Ignoring calibration information
+  
+  
+</h3>
+    
+
+<p>Different calibration recipes of the same format can give different results.</p><hr />
+<h3 id="8-trusting-only-the-general-benchmark">
+  
+  
+    <a href="#8-trusting-only-the-general-benchmark" class="anchor-heading" aria-labelledby="8-trusting-only-the-general-benchmark"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8. Trusting only the general benchmark
+  
+  
+</h3>
+    
+
+<p>If the model’s real use is coding, test coding; if it is an agent, test agentic use; if it is RAG, test long-context retrieval performance.</p><hr />
+<h2 id="21-summary-decision-table">
+  
+  
+    <a href="#21-summary-decision-table" class="anchor-heading" aria-labelledby="21-summary-decision-table"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 21. Summary Decision Table
+  
+  
+</h2>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Scenario</th>
+      <th>Starting preference</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Quality critical</td>
+      <td>BF16 / FP8</td>
+    </tr>
+    <tr>
+      <td>Ada</td>
+      <td>Always evaluate FP8</td>
+    </tr>
+    <tr>
+      <td>Hopper production serving</td>
+      <td>FP8 + a suitable KV cache precision</td>
+    </tr>
+    <tr>
+      <td>Ampere 4-bit</td>
+      <td>AWQ/GPTQ + optimized INT4 kernel</td>
+    </tr>
+    <tr>
+      <td>Blackwell, maximum capacity / throughput</td>
+      <td>Evaluate NVFP4</td>
+    </tr>
+    <tr>
+      <td>Blackwell, quality first</td>
+      <td>FP8</td>
+    </tr>
+    <tr>
+      <td>Multi-vendor deployment</td>
+      <td>MXFP4 / supported common formats</td>
+    </tr>
+    <tr>
+      <td>Long context</td>
+      <td>Weight quantization + KV cache precision together</td>
+    </tr>
+    <tr>
+      <td>Fine-tuning / QLoRA</td>
+      <td>NF4 / a suitable training precision</td>
+    </tr>
+    <tr>
+      <td>Critical production deployment</td>
+      <td>Official checkpoint + your own workload benchmark</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Note:</strong> Set up the hardware × need equation first (see §19): if your hardware carries the model for your need, use the original model; if not, look at the quantized forms.</p>
+</blockquote><hr />
+<h2 id="22-quick-command-reference">
+  
+  
+    <a href="#22-quick-command-reference" class="anchor-heading" aria-labelledby="22-quick-command-reference"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 22. Quick Command Reference
+  
+  
+</h2>
+    
+<h3 id="fp8-1">
+  
+  
+    <a href="#fp8-1" class="anchor-heading" aria-labelledby="fp8-1"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> FP8
+  
+  
+</h3>
+    
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vllm serve &lt;model&gt; <span class="se">\</span>
+  <span class="nt">--quantization</span> fp8 <span class="se">\</span>
+  <span class="nt">--kv-cache-dtype</span> fp8
+</code></pre></div></div>
+<h3 id="nvidia-nvfp4">
+  
+  
+    <a href="#nvidia-nvfp4" class="anchor-heading" aria-labelledby="nvidia-nvfp4"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> NVIDIA NVFP4
+  
+  
+</h3>
+    
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vllm serve &lt;model-nvfp4&gt; <span class="se">\</span>
+  <span class="nt">--kv-cache-dtype</span> fp8_e4m3
+</code></pre></div></div>
+<h3 id="awq--gptq">
+  
+  
+    <a href="#awq--gptq" class="anchor-heading" aria-labelledby="awq--gptq"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> AWQ / GPTQ
+  
+  
+</h3>
+    
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vllm serve &lt;model-awq-or-gptq&gt;
+</code></pre></div></div>
+<h3 id="gguf">
+  
+  
+    <a href="#gguf" class="anchor-heading" aria-labelledby="gguf"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> GGUF
+  
+  
+</h3>
+    
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>llama-server <span class="se">\</span>
+  <span class="nt">-m</span> model-Q4_K_M.gguf <span class="se">\</span>
+  <span class="nt">-ngl</span> 99
+</code></pre></div></div>
+<h3 id="comparing-quantizations">
+  
+  
+    <a href="#comparing-quantizations" class="anchor-heading" aria-labelledby="comparing-quantizations"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Comparing quantizations
+  
+  
+</h3>
+    
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>BF16 baseline
+        ↓
+FP8
+        ↓
+NVFP4 / INT4
+        ↓
+same benchmark
+        ↓
+same production workload
+</code></pre></div></div><hr />
+<h2 id="23-evaluating-quantization-quality">
+  
+  
+    <a href="#23-evaluating-quantization-quality" class="anchor-heading" aria-labelledby="23-evaluating-quantization-quality"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 23. Evaluating Quantization Quality
+  
+  
+</h2>
+    
+
+<p>No single universal threshold should be used.</p>
+
+<p>For example, a general rule like:</p>
+
+<blockquote>
+  <p><strong>“If MMLU drops more than 1%, the quantization has failed.”</strong></p>
+</blockquote>
+
+<p>is not true.</p>
+
+<p>A 1% loss can be acceptable in some workloads, while in some critical coding or reasoning applications even a very small drop can matter.</p>
+
+<p>The more accurate approach is to weigh these together:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Quality loss
+      ×
+Business impact
+      ×
+Performance gain
+      ×
+Memory saving
+</code></pre></div></div>
+
+<p>For example, with a result like:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FP8
+Quality = 100
+VRAM = 100
+Speed = 1.0
+
+NVFP4
+Quality = 99.2
+VRAM = 55
+Speed = 1.7
+</code></pre></div></div>
+
+<p>NVFP4 may be the more sensible choice.</p>
+
+<p>But if the result is:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Quality = 95
+</code></pre></div></div>
+
+<p>FP8 may be preferred for the same deployment.</p>
+
+<p>The right threshold therefore comes from:</p>
+
+<blockquote>
+  <p><strong>the minimum quality the workload can accept + the performance required + the VRAM available</strong></p>
+</blockquote><hr />
+<h2 id="24-glossary">
+  
+  
+    <a href="#24-glossary" class="anchor-heading" aria-labelledby="24-glossary"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 24. Glossary
+  
+  
+</h2>
+    
+
+<p><strong>BF16 / FP16</strong>
+Generally the high-precision reference operating formats.</p>
+
+<p><strong>FP8</strong>
+An 8-bit floating-point format family. It has variants such as E4M3 and E5M2.</p>
+
+<p><strong>NVFP4</strong>
+The 4-bit floating-point format designed for NVIDIA Blackwell. It uses fine-grained scaling.</p>
+
+<p><strong>MXFP4</strong>
+The 4-bit floating-point format of the OCP Microscaling format family.</p>
+
+<p><strong>MXFP8</strong>
+The 8-bit floating-point format of the OCP Microscaling format family. It is preferred for data like activations that need higher numeric precision; for example the MXFP4 weights + MXFP8 activations combination (see §17.4).</p>
+
+<p><strong>AWQ</strong>
+Activation-aware Weight Quantization. Common especially in weight-only INT4 deployments.</p>
+
+<p><strong>GPTQ</strong>
+A post-training weight quantization method.</p>
+
+<p><strong>EXL2</strong>
+The variable bits-per-weight approach used in the ExLlama ecosystem.</p>
+
+<p><strong>GGUF</strong>
+The model file format used in the llama.cpp ecosystem.</p>
+
+<p><strong>KV cache</strong>
+The cache that stores the Key/Value representation of previous tokens during attention.</p>
+
+<p><strong>PTQ</strong>
+Post-Training Quantization. Applying quantization after training is complete.</p>
+
+<p><strong>QAT</strong>
+Quantization-Aware Training. Incorporating the effects of quantization into the model during training.</p>
+
+<p><strong>Calibration</strong>
+The measurement process on representative data to determine the quantization parameters.</p>
+
+<p><strong>Block size / group size</strong>
+Determines the granularity at which quantization scaling or parameter grouping is applied.</p>
+
+<p><strong>Perplexity</strong>
+One of the fundamental metrics measuring a language model’s prediction performance.</p>
+
+<p><strong>Precision</strong>
+The representation form that states how many bits numeric values (weights, activations, KV cache) are expressed in: “higher precision” = more bits. It is also called <em>hassasiyet</em> in Turkish; but it must not be confused with the model’s accuracy. Lower precision uses fewer bits; it does not automatically mean a more wrong model.</p>
+
+<p><strong>MMLU / GSM8K / GPQA</strong>
+Benchmarks used to measure different capability areas.</p><hr />
+<h2 id="25-conclusion">
+  
+  
+    <a href="#25-conclusion" class="anchor-heading" aria-labelledby="25-conclusion"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 25. Conclusion
+  
+  
+</h2>
+    
+
+<p>Quantization must neither be dismissed nor judged as “always faster”.</p>
+
+<p>In modern LLM deployment, quantization is:</p>
+
+<blockquote>
+  <p><strong>a fundamental engineering tool that optimizes between memory capacity, memory bandwidth, Tensor Core throughput and deployment cost.</strong></p>
+</blockquote>
+
+<p>The right choice cannot be made by looking at the bit count alone.</p>
+
+<p>These four questions must be asked together:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1. At which precision was the model released?
+
+2. Which precision does the GPU accelerate natively?
+
+3. How was the quantization produced, with which calibration recipe?
+
+4. What do quality and performance look like in my real workload?
+</code></pre></div></div>
+
+<p>Their result selects the ideal deployment:</p>
+
+<blockquote>
+  <p><strong>the lowest-cost precision that meets the need, is efficiently accelerated by the GPU, and whose quality loss has been measured.</strong></p>
+</blockquote>
+
+<p>So the most correct approach to quantization is:</p>
+
+<blockquote>
+  <p><strong>“Pick the lowest bit count.”</strong></p>
+</blockquote>
+
+<p>No — it must be:</p>
+
+<blockquote>
+  <p><strong>“Keeping the quality my workload requires, pick the precision the hardware is strong at and verify it on a real deployment.”</strong></p>
+</blockquote><hr />
+<h2 id="26-references">
+  
+  
+    <a href="#26-references" class="anchor-heading" aria-labelledby="26-references"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 26. References
+  
+  
+</h2>
+    
+
+<ol>
+  <li>Z.ai — GLM-5.3 Model Card</li>
+  <li>Qwen — Qwen3.8-27B Model Card</li>
+  <li>Qwen — Qwen3.8-27B-FP8 Model Card</li>
+  <li>NVIDIA — Qwen3.8-27B-NVFP4 Model Card</li>
+  <li>NVIDIA Model Optimizer — Local-Hessian Quantization</li>
+  <li>NVIDIA — Introducing NVFP4 for Efficient and Accurate Low-Precision Inference</li>
+  <li>NVIDIA — Hopper Architecture</li>
+  <li>NVIDIA — Ada Lovelace Architecture</li>
+  <li>NVIDIA — A100 Architecture / Specifications</li>
+  <li>NVIDIA TensorRT-LLM — Quantization Hardware Support</li>
+  <li>Moonshot AI — Kimi K3 Model Card</li>
+  <li>OCP Microscaling Formats — MXFP4 / MXFP8</li>
+</ol>
+
+          
+
+          
+        </main>
+        
+
+
+      </div>
+    </div>
+    
+      
+
+<div class="search-overlay"></div>
+
+    
+  </div>
+
+  
+
+  <script>
+    window.JTD_I18N = {
+      search_no_results: "No results found",
+      copy_code: "Copy code to clipboard"
+    };
+  </script>
+
+  
+
+
+<div id="cookie-consent-banner" class="cookie-consent" role="dialog"
+     aria-modal="false" aria-label="Cookie consent"
+     data-consent-state="pending" hidden>
+  <div class="cookie-consent__body">
+    <div class="cookie-consent__text">
+      <span class="cookie-consent__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+          <path d="M21 12a9 9 0 1 1-9-9 4.5 4.5 0 0 0 4.5 4.5A4.5 4.5 0 0 0 21 12zm-9-3.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-1.5 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm6-1.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-3 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0z"/>
+        </svg>
+      </span>
+      <p>We use cookies to analyze site traffic and improve your experience. By clicking 'Accept', you consent to the use of analytics cookies as described in our Privacy Policy.
+        <a href="https://aetherix.com/privacy-policy/" target="_blank" rel="noopener noreferrer"
+           class="cookie-consent__link">Privacy Policy</a>
+      </p>
+    </div>
+    <div class="cookie-consent__actions">
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--reject"
+              data-consent-action="rejected">Reject</button>
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--accept"
+              data-consent-action="accepted">Accept</button>
+    </div>
+  </div>
+</div>
+<script>
+  // Eski karar önbellekte varsa bannerı gösterme
+  (function() {
+    try {
+      var v = localStorage.getItem('cookieConsent');
+      if (v === 'accepted' || v === 'rejected') {
+        document.documentElement.dataset.cookieConsent = v;
+      }
+    } catch (e) {}
+  })();
+</script>
+<script src="/assets/js/cookie-banner.js" defer></script>
+
+</body>
+</html>
+
