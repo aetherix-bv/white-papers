@@ -1,0 +1,1728 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-default.css">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet">
+
+  <style id="jtd-nav-activation">
+  
+
+.site-nav > ul.nav-list:first-child > li > a,
+.site-nav > ul.nav-list:first-child > li > ul > li:not(:nth-child(12)) > a,
+.site-nav > ul.nav-list:first-child > li > ul > li > ul > li > a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:not(:first-child) a,
+.site-nav li.external a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(12) > a {
+  font-weight: 600;
+  text-decoration: none;
+}.site-nav > ul.nav-list:first-child > li:nth-child(3) > button svg,
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(12) > button svg {
+  transform: rotate(-90deg);
+}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list,
+.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list > li.nav-list-item:nth-child(12) > ul.nav-list {
+  display: block;
+}
+  </style>
+
+  
+
+  
+    <script src="/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+
+
+  <!-- Begin Jekyll SEO tag v2.9.1 -->
+<title>Network Link Speed for Tensor-Parallel Inference on 8× DGX Spark (200G vs 100G) | Aetherix White Papers</title>
+<meta name="generator" content="Jekyll v4.3.4" />
+<meta property="og:title" content="Network Link Speed for Tensor-Parallel Inference on 8× DGX Spark (200G vs 100G)" />
+<meta property="og:locale" content="en" />
+<meta name="description" content="How much network bandwidth an 8-Spark tensor-parallel cluster really uses, and what running each DGX Spark at 100G instead of 200G costs: the mechanism, an estimate from the model’s architecture, and measurements with GLM-5.3 at TP8." />
+<meta name="twitter:description" property="og:description" content="How much network bandwidth an 8-Spark tensor-parallel cluster really uses, and what running each DGX Spark at 100G instead of 200G costs: the mechanism, an estimate from the model’s architecture, and measurements with GLM-5.3 at TP8." />
+<link rel="canonical" href="https://whitepapers.aetherix.com/papers/dgx-spark-link-speed-tensor-parallel/" />
+<meta property="og:url" content="https://whitepapers.aetherix.com/papers/dgx-spark-link-speed-tensor-parallel/" />
+<meta property="og:site_name" content="Aetherix White Papers" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-10-15T00:00:00+00:00" />
+<meta property="article:modified_time" content="2026-10-15T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Network Link Speed for Tensor-Parallel Inference on 8× DGX Spark (200G vs 100G)" />
+<meta name="twitter:site" content="@Aetherixnl" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2026-10-15T00:00:00+00:00","datePublished":"2026-10-15T00:00:00+00:00","description":"How much network bandwidth an 8-Spark tensor-parallel cluster really uses, and what running each DGX Spark at 100G instead of 200G costs: the mechanism, an estimate from the model’s architecture, and measurements with GLM-5.3 at TP8.","headline":"Network Link Speed for Tensor-Parallel Inference on 8× DGX Spark (200G vs 100G)","mainEntityOfPage":{"@type":"WebPage","@id":"https://whitepapers.aetherix.com/papers/dgx-spark-link-speed-tensor-parallel/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://whitepapers.aetherix.com/assets/images/aetherix-logo.png"}},"url":"https://whitepapers.aetherix.com/papers/dgx-spark-link-speed-tensor-parallel/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  
+<!-- Google tag (gtag.js) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JWLN33085T"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+
+  // Consent Mode v2 — default DENIED. Banner onayı ile GRANTED olur.
+  // KVKK/GDPR uyumu: ziyaretçi onay vermeden çerez set edilmez.
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    functionality_storage: 'granted',
+    security_storage: 'granted',
+    wait_for_update: 500
+  });
+
+  gtag('js', new Date());
+  gtag('config', 'G-JWLN33085T', {
+    anonymize_ip: true
+  });
+</script>
+
+<link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/papers/dgx-spark-link-speed-tensor-parallel/">
+<link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/papers/dgx-spark-link-speed-tensor-parallel/">
+<link rel="alternate" hreflang="x-default" href="https://whitepapers.aetherix.com/papers/dgx-spark-link-speed-tensor-parallel/">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/images/favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+
+
+</head>
+
+<body>
+  <a class="skip-to-main" href="#main-content">Skip to main content</a>
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="svg-link" viewBox="0 0 24 24">
+  <title>Link</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+</symbol>
+
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+  <title>Menu</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+    <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</symbol>
+
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+  <title>Expand</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</symbol>
+
+  <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
+<symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+  <title id="svg-external-link-title">(external link)</title>
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+</symbol>
+
+  
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+  <title>Document</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+</symbol>
+
+    <symbol id="svg-search" viewBox="0 0 24 24">
+  <title>Search</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</symbol>
+
+  
+  
+    <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+<symbol id="svg-copy" viewBox="0 0 16 16">
+  <title>Copy</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+</symbol>
+<symbol id="svg-copied" viewBox="0 0 16 16">
+  <title>Copied</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"/>
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"/>
+  </svg>
+</symbol>
+
+  
+</svg>
+
+  
+    <div class="side-bar">
+  <div class="site-header" role="banner">
+    <a href="/" class="site-title lh-tight">
+  <div class="site-logo" role="img" aria-label="Aetherix White Papers"></div>
+
+</a>
+    <button id="menu-button" class="site-button btn-reset" aria-label="Toggle menu" aria-pressed="false">
+      <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  <nav aria-label="Main" id="site-nav" class="site-nav">
+  
+  
+    <ul class="nav-list"><li class="nav-list-item"><a href="/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/about/" class="nav-list-link">About</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in White Papers category" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+    </button><a href="/papers/" class="nav-list-link">White Papers</a><ul class="nav-list"><li class="nav-list-item"><a href="/papers/local-llm-guide/" class="nav-list-link">Local LLM Usage Guide</a></li><li class="nav-list-item"><a href="/papers/llm-quantization-selection/" class="nav-list-link">LLM Quantization Selection Guide</a></li><li class="nav-list-item"><a href="/papers/conditional-memory-offloading/" class="nav-list-link">Engram Offloading in LLM Inference</a></li><li class="nav-list-item"><a href="/papers/b300-gb300-cluster-architecture/" class="nav-list-link">NVIDIA DGX B300 vs GB300 NVL72 Cluster Architecture Comparison</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-2node-cluster-setup/" class="nav-list-link">DGX Spark 2-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-3node-cluster-setup/" class="nav-list-link">DGX Spark 3-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-4node-cluster-setup/" class="nav-list-link">DGX Spark 4-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-8node-cluster-setup/" class="nav-list-link">DGX Spark 8-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/qwen3.6-27b-dgx-spark-benchmark/" class="nav-list-link">Qwen3.6-27B DGX Spark Benchmark</a></li><li class="nav-list-item"><a href="/papers/qwen3.6-27b-dgx-spark-scaling/" class="nav-list-link">Qwen3.6-27B DGX Spark Cluster Scaling</a></li><li class="nav-list-item"><a href="/papers/kv-cache-offloading-lmcache/" class="nav-list-link">KV Cache Offloading with LMCache in LLM Inference</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-link-speed-tensor-parallel/" class="nav-list-link">Network Link Speed for Tensor-Parallel Inference on 8× DGX Spark (200G vs 100G)</a></li><li class="nav-list-item"><a href="/papers/jev-open-weight-alternatives/" class="nav-list-link">The First Open-Weight Alternatives to Jev</a></li><li class="nav-list-item"><a href="/papers/deepseek-v4.1-flash-4spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash 4× DGX Spark Deployment</a></li><li class="nav-list-item"><a href="/papers/deepseek-v4.1-flash-8spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash 8× DGX Spark TP8 Deployment</a></li><li class="nav-list-item"><a href="/papers/kimi-k3-dgx-b300-inference-benchmark/" class="nav-list-link">Kimi K3 Inference Benchmark on DGX-B300</a></li></ul></li><li class="nav-list-item"><a href="/llm-inference-benchmarks/" class="nav-list-link">LLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/cv-inference-benchmarks/" class="nav-list-link">CV Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/vlm-inference-benchmarks/" class="nav-list-link">VLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/device-advisor/" class="nav-list-link">Device Advisor</a></li><li class="nav-list-item"><a href="/changelog/" class="nav-list-link">Changelog</a></li></ul>
+
+  
+</nav>
+
+
+  
+  
+    <div class="lang-switcher">
+  
+    
+    
+      <span class="lang-switcher-item active">EN</span>
+    
+  
+    
+    
+      <a class="lang-switcher-item" href="/nl/papers/dgx-spark-link-speed-tensor-parallel/">NL</a>
+    
+  
+</div>
+<script src="/assets/js/lang-switch.js"></script>
+
+  
+</div>
+
+  
+  <div class="main" id="top">
+    <div id="main-header" class="main-header">
+  
+    
+
+<div class="search" role="search">
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Search" aria-label="Search" autocomplete="off">
+    <label for="search-input" class="search-label"><svg viewBox="0 0 24 24" class="search-icon"><use xlink:href="#svg-search"></use></svg></label>
+  </div>
+  <div id="search-results" class="search-results"></div>
+</div>
+
+  
+  
+  
+    <nav aria-label="Auxiliary" class="aux-nav">
+  <ul class="aux-nav-list">
+    
+      <li class="aux-nav-list-item">
+        <a href="https://aetherix.com" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          aetherix.com
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://github.com/aetherix-bv" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          GitHub
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+  
+</div>
+
+    <div class="main-content-wrap">
+      <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+  <ol class="breadcrumb-nav-list">
+    <li class="breadcrumb-nav-list-item"><a href="/papers/">White Papers</a></li>
+    <li class="breadcrumb-nav-list-item"><span>Network Link Speed for Tensor-Parallel Inference on 8× DGX Spark (200G vs 100G)</span></li>
+  </ol>
+</nav>
+      <div id="main-content" class="main-content">
+        <main>
+          
+            <blockquote>
+  <p><strong>Publication date:</strong> October 2026
+<strong>Scope:</strong> How tensor-parallel (TP) inference uses the network between DGX Spark systems, how to estimate the effect of halving the link speed from the model’s architecture and the inference engine’s settings, and a measured comparison of 200 Gb/s and emulated 100 Gb/s links on 8× DGX Spark with GLM-5.3 at TP8.
+<strong>Note:</strong> The measurements apply to the model, inference engine, versions and settings listed in Section 7. The estimation method of Sections 3–6 carries over to other models and settings; the measured numbers do not.</p>
+</blockquote>
+
+<p><em>Prepared by: <strong>Aetherix B.V.</strong> — Trusted Jetson Hardware Provider for Edge AI</em></p><hr />
+<h2 class="no_toc" id="table-of-contents">
+  
+  
+    <a href="#table-of-contents" class="anchor-heading" aria-labelledby="table-of-contents"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Table of contents
+  
+  
+</h2>
+    
+
+<ul id="markdown-toc">
+  <li><a href="#executive-summary" id="markdown-toc-executive-summary">Executive Summary</a></li>
+  <li><a href="#1-introduction" id="markdown-toc-1-introduction">1. Introduction</a></li>
+  <li><a href="#part-i-theory" id="markdown-toc-part-i-theory">Part I: Theory</a>    <ul>
+      <li><a href="#2-the-dgx-spark-network" id="markdown-toc-2-the-dgx-spark-network">2. The DGX Spark Network</a>        <ul>
+          <li><a href="#21-the-connectx-7-adapter-and-its-two-pcie-links" id="markdown-toc-21-the-connectx-7-adapter-and-its-two-pcie-links">2.1. The ConnectX-7 adapter and its two PCIe links</a></li>
+          <li><a href="#22-the-link-is-the-slowest-path-in-the-system" id="markdown-toc-22-the-link-is-the-slowest-path-in-the-system">2.2. The link is the slowest path in the system</a></li>
+          <li><a href="#23-switches-and-breakout-options" id="markdown-toc-23-switches-and-breakout-options">2.3. Switches and breakout options</a></li>
+        </ul>
+      </li>
+      <li><a href="#3-how-tensor-parallelism-uses-the-network" id="markdown-toc-3-how-tensor-parallelism-uses-the-network">3. How Tensor Parallelism Uses the Network</a>        <ul>
+          <li><a href="#31-splitting-the-model" id="markdown-toc-31-splitting-the-model">3.1. Splitting the model</a></li>
+          <li><a href="#32-partial-results-and-the-all-reduce" id="markdown-toc-32-partial-results-and-the-all-reduce">3.2. Partial results and the all-reduce</a></li>
+          <li><a href="#33-how-the-ring-all-reduce-works" id="markdown-toc-33-how-the-ring-all-reduce-works">3.3. How the ring all-reduce works</a></li>
+          <li><a href="#34-what-changes-with-the-number-of-sparks" id="markdown-toc-34-what-changes-with-the-number-of-sparks">3.4. What changes with the number of Sparks</a></li>
+        </ul>
+      </li>
+      <li><a href="#4-prefill-and-decode-two-different-loads-on-the-network" id="markdown-toc-4-prefill-and-decode-two-different-loads-on-the-network">4. Prefill and Decode: Two Different Loads on the Network</a>        <ul>
+          <li><a href="#41-prefill-large-transfers-at-full-link-speed" id="markdown-toc-41-prefill-large-transfers-at-full-link-speed">4.1. Prefill: large transfers at full link speed</a></li>
+          <li><a href="#42-decode-small-transfers-dominated-by-fixed-delays" id="markdown-toc-42-decode-small-transfers-dominated-by-fixed-delays">4.2. Decode: small transfers dominated by fixed delays</a></li>
+        </ul>
+      </li>
+      <li><a href="#5-estimating-the-effect-of-halving-the-link" id="markdown-toc-5-estimating-the-effect-of-halving-the-link">5. Estimating the Effect of Halving the Link</a>        <ul>
+          <li><a href="#51-the-upper-bound" id="markdown-toc-51-the-upper-bound">5.1. The upper bound</a></li>
+          <li><a href="#52-the-six-test-cases" id="markdown-toc-52-the-six-test-cases">5.2. The six test cases</a></li>
+          <li><a href="#53-from-seconds-to-a-percentage" id="markdown-toc-53-from-seconds-to-a-percentage">5.3. From seconds to a percentage</a></li>
+        </ul>
+      </li>
+      <li><a href="#6-what-makes-the-penalty-larger-or-smaller" id="markdown-toc-6-what-makes-the-penalty-larger-or-smaller">6. What Makes the Penalty Larger or Smaller</a>        <ul>
+          <li><a href="#61-prompt-length" id="markdown-toc-61-prompt-length">6.1. Prompt length</a></li>
+          <li><a href="#62-several-requests-at-once" id="markdown-toc-62-several-requests-at-once">6.2. Several requests at once</a></li>
+          <li><a href="#63-tp-size" id="markdown-toc-63-tp-size">6.3. TP size</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#part-ii-measurement" id="markdown-toc-part-ii-measurement">Part II: Measurement</a>    <ul>
+      <li><a href="#7-test-design" id="markdown-toc-7-test-design">7. Test Design</a>        <ul>
+          <li><a href="#71-changing-only-the-link" id="markdown-toc-71-changing-only-the-link">7.1. Changing only the link</a></li>
+          <li><a href="#72-setup" id="markdown-toc-72-setup">7.2. Setup</a></li>
+          <li><a href="#73-emulating-100-gbs" id="markdown-toc-73-emulating-100-gbs">7.3. Emulating 100 Gb/s</a></li>
+          <li><a href="#74-test-plan" id="markdown-toc-74-test-plan">7.4. Test plan</a></li>
+          <li><a href="#75-what-was-measured" id="markdown-toc-75-what-was-measured">7.5. What was measured</a></li>
+          <li><a href="#76-keeping-the-runs-comparable" id="markdown-toc-76-keeping-the-runs-comparable">7.6. Keeping the runs comparable</a></li>
+        </ul>
+      </li>
+      <li><a href="#8-results-200-gbs-vs-emulated-100-gbs-at-tp8" id="markdown-toc-8-results-200-gbs-vs-emulated-100-gbs-at-tp8">8. Results: 200 Gb/s vs Emulated 100 Gb/s at TP8</a>        <ul>
+          <li><a href="#81-how-much-of-the-200-gbs-the-cluster-uses" id="markdown-toc-81-how-much-of-the-200-gbs-the-cluster-uses">8.1. How much of the 200 Gb/s the cluster uses</a></li>
+          <li><a href="#82-the-traffic-in-each-test" id="markdown-toc-82-the-traffic-in-each-test">8.2. The traffic in each test</a></li>
+          <li><a href="#83-traffic-per-prompt-token" id="markdown-toc-83-traffic-per-prompt-token">8.3. Traffic per prompt token</a></li>
+          <li><a href="#84-ttft" id="markdown-toc-84-ttft">8.4. TTFT</a></li>
+          <li><a href="#85-decode-speed" id="markdown-toc-85-decode-speed">8.5. Decode speed</a></li>
+          <li><a href="#86-where-the-measurement-departs-from-the-estimate" id="markdown-toc-86-where-the-measurement-departs-from-the-estimate">8.6. Where the measurement departs from the estimate</a></li>
+        </ul>
+      </li>
+      <li><a href="#9-from-the-emulated-link-to-a-real-100g-cable" id="markdown-toc-9-from-the-emulated-link-to-a-real-100g-cable">9. From the Emulated Link to a Real 100G Cable</a></li>
+      <li><a href="#10-projection-how-the-penalty-changes-with-tp-size" id="markdown-toc-10-projection-how-the-penalty-changes-with-tp-size">10. Projection: How the Penalty Changes with TP Size</a></li>
+      <li><a href="#11-is-8-sparks-at-100-gbs-reasonable" id="markdown-toc-11-is-8-sparks-at-100-gbs-reasonable">11. Is 8 Sparks at 100 Gb/s Reasonable?</a></li>
+      <li><a href="#12-limits-and-points-to-consider" id="markdown-toc-12-limits-and-points-to-consider">12. Limits and Points to Consider</a>        <ul>
+          <li><a href="#common-mistakes-when-sizing-the-cluster-network" id="markdown-toc-common-mistakes-when-sizing-the-cluster-network">Common mistakes when sizing the cluster network</a></li>
+          <li><a href="#checklist-for-planning-an-8--or-16-spark-cluster-network" id="markdown-toc-checklist-for-planning-an-8--or-16-spark-cluster-network">Checklist for planning an 8- or 16-Spark cluster network</a></li>
+        </ul>
+      </li>
+      <li><a href="#13-conclusion" id="markdown-toc-13-conclusion">13. Conclusion</a></li>
+      <li><a href="#appendix-a-measuring-rdma-traffic" id="markdown-toc-appendix-a-measuring-rdma-traffic">Appendix A: Measuring RDMA Traffic</a></li>
+      <li><a href="#appendix-b-reproducibility" id="markdown-toc-appendix-b-reproducibility">Appendix B: Reproducibility</a></li>
+      <li><a href="#glossary-terms" id="markdown-toc-glossary-terms">Glossary (Terms)</a></li>
+      <li><a href="#resources" id="markdown-toc-resources">Resources</a>        <ul>
+          <li><a href="#notes" id="markdown-toc-notes">Notes</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul><hr />
+<h2 id="executive-summary">
+  
+  
+    <a href="#executive-summary" class="anchor-heading" aria-labelledby="executive-summary"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Executive Summary
+  
+  
+</h2>
+    
+
+<ul>
+  <li><strong>The question:</strong> a DGX Spark cluster that serves one model with tensor parallelism across 8 systems needs fast switch ports. At 200 Gb/s per Spark, a MikroTik CRS812 connects 4 to 6 Sparks; at 100 Gb/s, it connects 8. A CRS804 connects 8 Sparks at 200 Gb/s or 16 at 100 Gb/s. This paper asks what 100 Gb/s per Spark costs in inference speed.</li>
+  <li><strong>How tensor parallelism uses the network:</strong> each Spark holds one eighth of every weight matrix, so each computes only part of every result. Twice per layer, the Sparks add their partial results together over the network in an operation called an <em>all-reduce</em>. While the prompt is processed (<em>prefill</em>), the data summed in each all-reduce is large; while the answer is generated (<em>decode</em>), it is small.</li>
+  <li><strong>The estimate:</strong> prefill transfers are large enough to run at the full link speed, so halving the link lengthens them and delays the first token. For GLM-5.3 at TP8, the estimate from the model’s architecture is at most <strong>0.135 s of extra time to first token (TTFT) per 1,000 prompt tokens</strong> at 100 Gb/s. Decode transfers are too small for link speed to matter.</li>
+  <li><strong>Does the cluster use the full 200 Gb/s? Yes and no.</strong> Measured at millisecond resolution, prefill traffic reaches 150–200 Gb/s in bursts of a few milliseconds. Averaged over one second, the same traffic is about 40 Gb/s, and decode stays at a few Gb/s.</li>
+  <li><strong>Measured</strong> with GLM-5.3 at TP8, 200 Gb/s against an emulated 100 Gb/s link (which carries up to 109 Gb/s):
+    <ul>
+      <li><strong>decode speed does not change</strong> (−2.3% to +4.3%, within the variation between test rounds);</li>
+      <li><strong>TTFT grows by 12.6–13.9%</strong> for single prompts of 8K–64K tokens, about <strong>0.11 s per 1,000 prompt tokens</strong>, close to the estimate;</li>
+      <li>with <strong>four long prompts arriving together</strong>, each request’s TTFT grows by <strong>17.9–22.5%</strong>;</li>
+      <li><strong>short prompts are not affected</strong> (+1% at 1K tokens).</li>
+    </ul>
+  </li>
+  <li><strong>A real 100 Gb/s cable</strong> would add at most another 2.5–3.5 percentage points.</li>
+  <li><strong>Verdict:</strong> moving an 8-Spark TP8 cluster from 200 Gb/s to 100 Gb/s links, expect the first token to arrive <strong>at most about 20% later for a very long prompt</strong>, and <strong>at most about 30% later when several very long prompts arrive at the same time</strong>. Short to medium prompts see no change, and once the answer starts, <strong>it streams at the same pace</strong>. On 16 Sparks, run two TP8 clusters rather than one TP16 cluster: the penalty grows with TP size.</li>
+</ul><hr />
+<h2 id="1-introduction">
+  
+  
+    <a href="#1-introduction" class="anchor-heading" aria-labelledby="1-introduction"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1. Introduction
+  
+  
+</h2>
+    
+
+<p>A single DGX Spark holds 128 GB of unified memory. Models larger than that are served by splitting them across several Sparks connected through their ConnectX-7 network adapters and a switch. With <strong>tensor parallelism</strong>, every layer of the model is split across all the Sparks, so they exchange data many times for every token the model processes, and every step of inference waits for the network.</p>
+
+<p>That makes the switch a design decision. Running each Spark at 100 Gb/s instead of 200 Gb/s lets a smaller switch serve the same 8 Sparks, or the same switch serve twice as many. Whether that is acceptable depends on how much tensor-parallel inference slows down when the link between the Sparks is half as fast.</p>
+
+<p>Part I of this paper (Sections 2–6) describes what tensor parallelism sends over the network, why prompt processing and answer generation load the network very differently, and how to estimate the effect of halving the link speed from the model’s architecture, the inference engine’s settings and the link speed alone. Part II (Sections 7–10) measures 200 Gb/s against an emulated 100 Gb/s link on 8× DGX Spark serving GLM-5.3 at TP8, compares the results with the estimate, and converts them to a real 100 Gb/s cable. Section 11 gives the sizing answer for 8- and 16-Spark clusters.</p><hr />
+<h1 id="part-i-theory">
+  
+  
+    <a href="#part-i-theory" class="anchor-heading" aria-labelledby="part-i-theory"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Part I: Theory
+  
+  
+</h1>
+    
+<h2 id="2-the-dgx-spark-network">
+  
+  
+    <a href="#2-the-dgx-spark-network" class="anchor-heading" aria-labelledby="2-the-dgx-spark-network"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2. The DGX Spark Network
+  
+  
+</h2>
+    
+<h3 id="21-the-connectx-7-adapter-and-its-two-pcie-links">
+  
+  
+    <a href="#21-the-connectx-7-adapter-and-its-two-pcie-links" class="anchor-heading" aria-labelledby="21-the-connectx-7-adapter-and-its-two-pcie-links"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.1. The ConnectX-7 adapter and its two PCIe links
+  
+  
+</h3>
+    
+
+<p>Each DGX Spark has a ConnectX-7 network adapter with two QSFP ports. The clusters in this paper use one port per Spark, cabled to the switch at a nominal link speed of 200 Gb/s.</p>
+
+<p>The adapter is connected to the GB10 chip over PCIe Gen5, through two separate links of four lanes (×4) each. One ×4 link carries a little over 100 Gb/s of data (Section 7.3), not enough to keep a 200 Gb/s port busy on its own; two links together can. Linux sees the adapter once per PCIe link, so the single physical port appears twice: as two network interfaces (<code class="language-plaintext highlighter-rouge">enp1s0f1np1</code> and <code class="language-plaintext highlighter-rouge">enP2p1s0f1np1</code>), each with its own RDMA device. Both interfaces report a link speed of 200 Gb/s, because both belong to the same port, but each can move only what its own PCIe link carries.</p>
+
+<p>NCCL, the library the inference engine uses for communication between the Sparks, treats the two RDMA devices as two separate network paths and spreads its traffic across both; only together do they reach the port’s 200 Gb/s. The same arrangement makes the 100 Gb/s case of Part II possible without touching the hardware: restricting NCCL to one of the two interfaces limits every Spark to what one PCIe link can carry.</p>
+
+<p>The traffic between the Sparks uses RDMA (remote direct memory access): the adapter reads data from the sending application’s memory and writes it directly into the receiving application’s memory, without the data passing through the operating system’s network stack. This keeps the delay of each transfer low. It is also why the usual Linux network statistics do not show this traffic (Appendix A). Here, RDMA runs over ordinary Ethernet using RoCE v2 (RDMA over Converged Ethernet, version 2), which carries RDMA packets inside UDP/IP.</p>
+<h3 id="22-the-link-is-the-slowest-path-in-the-system">
+  
+  
+    <a href="#22-the-link-is-the-slowest-path-in-the-system" class="anchor-heading" aria-labelledby="22-the-link-is-the-slowest-path-in-the-system"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.2. The link is the slowest path in the system
+  
+  
+</h3>
+    
+
+<p>200 Gb/s is 25 GB/s. A DGX Spark reads its own memory at 273 GB/s, about 11 times faster. Anything that has to cross the network between Sparks therefore moves far more slowly than anything a Spark reads from its own memory, which is why the amount of data tensor parallelism sends over the network, and how it is timed, decides how much the link speed matters.</p>
+<h3 id="23-switches-and-breakout-options">
+  
+  
+    <a href="#23-switches-and-breakout-options" class="anchor-heading" aria-labelledby="23-switches-and-breakout-options"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.3. Switches and breakout options
+  
+  
+</h3>
+    
+
+<p>The CRS804 and CRS812 have 400 Gb/s QSFP-DD ports. A breakout cable splits each such port into several slower links, one per Spark:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Switch</th>
+      <th>400G QSFP-DD ports</th>
+      <th>Sparks at 200 Gb/s (2 × 200G per port)</th>
+      <th>Sparks at 100 Gb/s (4 × 100G per port)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>MikroTik CRS812</td>
+      <td>2 (plus 2 × 200G QSFP56)</td>
+      <td>4 (6 with the QSFP56 ports)</td>
+      <td><strong>8</strong></td>
+    </tr>
+    <tr>
+      <td>MikroTik CRS804</td>
+      <td>4</td>
+      <td><strong>8</strong></td>
+      <td><strong>16</strong></td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>At 100 Gb/s per Spark, an 8-Spark cluster fits on a CRS812, and a CRS804 can serve 16 Sparks.</p>
+
+<p><img src="/papers/dgx-spark-link-speed-tensor-parallel/images/network-topology.png" alt="CRS812 with 8 Sparks at 100 Gb/s, CRS804 with 8 Sparks at 200 Gb/s and with 16 Sparks at 100 Gb/s" width="820" /></p>
+<p><sub><i>Figure 1: Breakout options, one link per DGX Spark.</i></sub></p><hr />
+<h2 id="3-how-tensor-parallelism-uses-the-network">
+  
+  
+    <a href="#3-how-tensor-parallelism-uses-the-network" class="anchor-heading" aria-labelledby="3-how-tensor-parallelism-uses-the-network"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. How Tensor Parallelism Uses the Network
+  
+  
+</h2>
+    
+<h3 id="31-splitting-the-model">
+  
+  
+    <a href="#31-splitting-the-model" class="anchor-heading" aria-labelledby="31-splitting-the-model"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.1. Splitting the model
+  
+  
+</h3>
+    
+
+<p>In tensor parallelism with 8 Sparks (TP8), every large weight matrix of the model is cut into 8 slices, and each Spark holds one slice. In the attention blocks, the attention heads are divided among the Sparks. In the feed-forward and Mixture-of-Experts (MoE) blocks, every expert’s matrices are sliced as well, so each Spark holds a part of every expert. Each Spark reads only its own eighth of the weights from its own memory, which is what lets a model larger than one Spark fit, and run faster than it would if each Spark had to read everything.</p>
+<h3 id="32-partial-results-and-the-all-reduce">
+  
+  
+    <a href="#32-partial-results-and-the-all-reduce" class="anchor-heading" aria-labelledby="32-partial-results-and-the-all-reduce"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.2. Partial results and the all-reduce
+  
+  
+</h3>
+    
+
+<p>Splitting a weight matrix this way means that no Spark can finish a multiplication on its own. Each output value of a layer is a long sum of products of weights and inputs; with the weights divided eight ways, each Spark computes one eighth of that sum. The values involved are the model’s <em>activations</em>: the vectors that represent each token as it passes through the layers. GLM-5.3 represents each token as a vector of 6,144 values (its <em>hidden dimension</em>). For a prompt processed 4,096 tokens at a time, every Spark ends up holding 4,096 × 6,144 partial values, which is 50.3 MB at 2 bytes per value. The actual result is the sum of the eight Sparks’ blocks, and every Spark needs that full sum before the model can continue.</p>
+
+<p>Producing it is the job of an <strong>all-reduce</strong>: <em>reduce</em> because the blocks are combined (here, added), <em>all</em> because every participant receives the result. A transformer layer needs two, one after the attention block and one after the feed-forward or MoE block, and one more is needed at the input embedding. Every Spark waits at each all-reduce until all eight have contributed, so the network sits on the path of every layer.</p>
+
+<p><img src="/papers/dgx-spark-link-speed-tensor-parallel/images/tp-layer-allreduce.png" alt="One transformer layer under TP8 with its two all-reduces, and the ring of 8 Sparks" width="820" /></p>
+<p><sub><i>Figure 2: One transformer layer under tensor parallelism, and the ring all-reduce among 8 Sparks.</i></sub></p>
+<h3 id="33-how-the-ring-all-reduce-works">
+  
+  
+    <a href="#33-how-the-ring-all-reduce-works" class="anchor-heading" aria-labelledby="33-how-the-ring-all-reduce-works"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.3. How the ring all-reduce works
+  
+  
+</h3>
+    
+
+<p>The direct approach, every Spark sending its whole block to the other seven, would make each Spark send 7 × 50.3 MB, and the load would grow with every Spark added. NCCL commonly uses a <strong>ring</strong> instead. The Sparks are arranged in a circle, each sends only to the next one, and each block is cut into as many segments as there are Sparks. The work then runs in two phases, shown for four Sparks in Figure 3.</p>
+
+<p>In the first phase, <em>reduce-scatter</em>, each Spark sends one segment to the next Spark in every ring step, and the receiving Spark adds it to its own copy of that segment. Every Spark works on a different segment at the same time, so after N − 1 ring steps each Spark holds the complete sum of exactly one segment. In the second phase, <em>all-gather</em>, the finished segments travel around the ring once more, copied rather than added, until after another N − 1 ring steps every Spark has the full sum.</p>
+
+<p><img src="/papers/dgx-spark-link-speed-tensor-parallel/images/ring-allreduce-steps.png" alt="Ring all-reduce among four Sparks, step by step: reduce-scatter in three ring steps, then all-gather in three ring steps" width="820" /></p>
+<p><sub><i>Figure 3: Ring all-reduce among four Sparks. After the three reduce-scatter steps, each Spark holds one complete sum; after the three all-gather steps, every Spark holds all four.</i></sub></p>
+
+<p>In each of the 2 × (N − 1) ring steps, a Spark sends one segment, 1/N of its block. Each Spark therefore sends <strong>2 × (N − 1) / N</strong> times the block in total: 1.75× for eight Sparks, and never more than 2× however many take part. For GLM-5.3 at TP8, each Spark sends 1.75 × 50.3 MB = <strong>88.1 MB</strong> per all-reduce, in 14 ring steps of about 6.3 MB. Since every Spark sends the same amount, the traffic measured on one Spark represents all eight.</p>
+
+<p>Summed over every all-reduce in the model (78 layers × 2, plus 1), each prompt token costs each Spark</p>
+
+<blockquote>
+  <p>(2 × 78 + 1) × 6,144 values × 2 bytes × 1.75 = <strong>3.38 MB</strong> of network traffic.</p>
+</blockquote>
+
+<p>NCCL can choose other all-reduce algorithms, which send different amounts; Part II checks this figure against the measured traffic.</p>
+<h3 id="34-what-changes-with-the-number-of-sparks">
+  
+  
+    <a href="#34-what-changes-with-the-number-of-sparks" class="anchor-heading" aria-labelledby="34-what-changes-with-the-number-of-sparks"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.4. What changes with the number of Sparks
+  
+  
+</h3>
+    
+
+<p>Adding Sparks divides the computation, but not the data that has to be summed. Only the weights are split: each Spark computes a part of the sum for every output value, so its block of partial values stays 4,096 × 6,144 values (50.3 MB) whether the model runs on two Sparks or sixteen. Each doubling of the TP size halves each Spark’s computation, while the amount each Spark sends per all-reduce, 2 × (N − 1) / N times the block, grows slightly:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>TP size</th>
+      <th>Computation per Spark</th>
+      <th>Sent per Spark per all-reduce</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TP2</td>
+      <td>1/2 of the model</td>
+      <td>1.0 × 50.3 MB = 50.3 MB</td>
+    </tr>
+    <tr>
+      <td>TP4</td>
+      <td>1/4</td>
+      <td>1.5 × 50.3 MB = 75.5 MB</td>
+    </tr>
+    <tr>
+      <td>TP8</td>
+      <td>1/8</td>
+      <td>1.75 × 50.3 MB = 88.1 MB</td>
+    </tr>
+    <tr>
+      <td>TP16</td>
+      <td>1/16</td>
+      <td>1.875 × 50.3 MB = 94.3 MB</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Going from TP8 to TP16 thus halves the time each Spark spends computing but leaves the time it spends sending almost unchanged, so the network takes a larger share of every forward pass. Section 6.3 works out what this means for link speed.</p><hr />
+<h2 id="4-prefill-and-decode-two-different-loads-on-the-network">
+  
+  
+    <a href="#4-prefill-and-decode-two-different-loads-on-the-network" class="anchor-heading" aria-labelledby="4-prefill-and-decode-two-different-loads-on-the-network"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. Prefill and Decode: Two Different Loads on the Network
+  
+  
+</h2>
+    
+
+<p>Inference runs in two phases that use the network in opposite ways. How much data each all-reduce carries depends on how many tokens one forward pass through the model processes, which the inference engine’s settings decide; the values below follow the vLLM configuration used in Part II.</p>
+<h3 id="41-prefill-large-transfers-at-full-link-speed">
+  
+  
+    <a href="#41-prefill-large-transfers-at-full-link-speed" class="anchor-heading" aria-labelledby="41-prefill-large-transfers-at-full-link-speed"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.1. Prefill: large transfers at full link speed
+  
+  
+</h3>
+    
+
+<p>During prefill, vLLM processes the prompt in prefill chunks of up to 4,096 tokens per forward pass (<code class="language-plaintext highlighter-rouge">--max-num-batched-tokens 4096</code>), so each all-reduce sums the 50.3 MB block of Section 3.2 and each Spark sends 88.1 MB:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Link speed</th>
+      <th>Time to send 88.1 MB</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>200 Gb/s</td>
+      <td><strong>3.5 ms</strong></td>
+    </tr>
+    <tr>
+      <td>100 Gb/s</td>
+      <td><strong>7.0 ms</strong></td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Every transfer also carries some fixed overhead in software, synchronisation and the network hardware. Even a generous 100 µs of such overhead is small next to these times: at 200 Gb/s the link moves only 2.5 MB in 100 µs, against the 88.1 MB to be sent. The duration of a prefill all-reduce is therefore set almost entirely by how fast the link moves bytes; in other words, prefill communication is <strong>bandwidth-bound</strong>. Between all-reduces the Sparks compute the next part of the layer, so prefill traffic should appear as bursts of a few milliseconds at or near full link speed, separated by gaps of computation. Halving the link speed doubles the length of every burst and delays the first token.</p>
+<h3 id="42-decode-small-transfers-dominated-by-fixed-delays">
+  
+  
+    <a href="#42-decode-small-transfers-dominated-by-fixed-delays" class="anchor-heading" aria-labelledby="42-decode-small-transfers-dominated-by-fixed-delays"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.2. Decode: small transfers dominated by fixed delays
+  
+  
+</h3>
+    
+
+<p>During decode, each forward pass processes only the newest token of each request. With speculative decoding by multi-token prediction (MTP), as configured in Part II, the model also checks 4 draft tokens in the same pass, so it processes 5 tokens per request. Each all-reduce then sums 5 × 6,144 × 2 bytes = <strong>61 KB</strong>, of which each Spark sends about <strong>108 KB</strong>. Per forward pass, including collecting the output layer’s token scores, each Spark sends about <strong>18 MB</strong>.</p>
+
+<p>Sending 108 KB takes 4.3 µs at 200 Gb/s and 8.7 µs at 100 Gb/s. The all-reduce, however, passes through 14 ring steps in sequence, and each one carries a fixed delay of software, synchronisation and network hardware. RDMA transfers between two systems take on the order of microseconds even for tiny amounts of data, so these delays add up to more than the time spent sending bytes. Decode communication is therefore <strong>latency-bound</strong>, and its duration depends little on the link speed.</p>
+
+<p>The total amount of decode traffic is also limited. Every forward pass must at least read the model’s active weights from memory. GLM-5.3 has about 40 billion active parameters per token, most stored in NVFP4, NVIDIA’s 4-bit floating-point format, at about 4.5 bits per weight including its scaling factors. That is about 2.8 GB per Spark, which takes at least <strong>10 ms</strong> to read at 273 GB/s. Even if every forward pass ran at that limit, decode traffic would stay at or below about <strong>14 Gb/s</strong> for one request, far below 100 Gb/s, and halving the link would add at most 0.7 ms to each pass of 10 ms or more. In practice it adds much less, because the transfers are latency-bound.</p>
+
+<p>The network therefore decides how fast a prompt is read, not how fast the answer is written. Workloads with long prompts, such as retrieval-augmented generation, long documents or agents with large contexts, are where link speed matters. Short chat prompts hardly touch it, and decode speed should not change at all.</p><hr />
+<h2 id="5-estimating-the-effect-of-halving-the-link">
+  
+  
+    <a href="#5-estimating-the-effect-of-halving-the-link" class="anchor-heading" aria-labelledby="5-estimating-the-effect-of-halving-the-link"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5. Estimating the Effect of Halving the Link
+  
+  
+</h2>
+    
+<h3 id="51-the-upper-bound">
+  
+  
+    <a href="#51-the-upper-bound" class="anchor-heading" aria-labelledby="51-the-upper-bound"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.1. The upper bound
+  
+  
+</h3>
+    
+
+<p>If every prefill transfer runs at the full link speed and none overlaps with computation, then lowering the link speed from B_old to B_new adds exactly the extra time needed to send the same bytes:</p>
+
+<blockquote>
+  <p><strong>extra prefill time ≤ prefill bytes per Spark × (1 / B_new − 1 / B_old)</strong></p>
+</blockquote>
+
+<p>This is an upper bound: transfers that overlap with computation, or never reach full speed, add less. It needs only the bytes per prompt token from Section 3.3 and the prompt length, and nothing about how fast the Sparks compute.</p>
+
+<p>From 200 to 100 Gb/s, (1/100 − 1/200) = 1/200, so the extra time equals the time the prefill bytes take to send at 200 Gb/s. For GLM-5.3 at TP8:</p>
+
+<blockquote>
+  <p><strong>extra TTFT ≤ 3.38 MB × 8 bits ÷ 200 Gb/s = 0.135 s per 1,000 prompt tokens</strong></p>
+</blockquote>
+<h3 id="52-the-six-test-cases">
+  
+  
+    <a href="#52-the-six-test-cases" class="anchor-heading" aria-labelledby="52-the-six-test-cases"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.2. The six test cases
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Test</th>
+      <th>Prompt tokens</th>
+      <th>Prefill bytes per Spark</th>
+      <th>Extra prefill time, 200 → 100 Gb/s</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>P1: 1K prompt, 1 request</td>
+      <td>1,024</td>
+      <td>3.5 GB</td>
+      <td>≤ +0.14 s</td>
+    </tr>
+    <tr>
+      <td>P2: 8K prompt, 1 request</td>
+      <td>8,192</td>
+      <td>27.7 GB</td>
+      <td>≤ +1.11 s</td>
+    </tr>
+    <tr>
+      <td>P3: 32K prompt, 1 request</td>
+      <td>32,768</td>
+      <td>110.6 GB</td>
+      <td>≤ +4.43 s</td>
+    </tr>
+    <tr>
+      <td>P4: 4 × 8K prompts, arriving together</td>
+      <td>32,768</td>
+      <td>110.6 GB</td>
+      <td>≤ +4.43 s</td>
+    </tr>
+    <tr>
+      <td>P5: 64K prompt, 1 request</td>
+      <td>65,536</td>
+      <td>221.3 GB</td>
+      <td>≤ +8.85 s</td>
+    </tr>
+    <tr>
+      <td>P6: 4 × 16K prompts, arriving together</td>
+      <td>65,536</td>
+      <td>221.3 GB</td>
+      <td>≤ +8.85 s</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>For the tests with four requests, the bytes are those of all four prompts, and the time is that until the last of the four requests receives its first token.</p>
+<h3 id="53-from-seconds-to-a-percentage">
+  
+  
+    <a href="#53-from-seconds-to-a-percentage" class="anchor-heading" aria-labelledby="53-from-seconds-to-a-percentage"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.3. From seconds to a percentage
+  
+  
+</h3>
+    
+
+<p>As a share of TTFT, the bound becomes</p>
+
+<blockquote>
+  <p><strong>TTFT increase ≤ network share × (B_old / B_new − 1)</strong>, which is simply <strong>≤ network share</strong> for 200 → 100 Gb/s,</p>
+</blockquote>
+
+<p>where the <strong>network share</strong> is the time needed to send the prefill bytes at 200 Gb/s, divided by the prefill time.</p>
+
+<p>The prefill time itself cannot be derived reliably from the architecture. A calculation from the number of arithmetic operations and the GB10’s peak compute would be off by an order of magnitude, because the real speed depends on how efficiently the engine’s kernels handle the MoE experts, attention and scheduling. The percentage therefore needs one measured input, the TTFT at 200 Gb/s, which Part II provides.</p><hr />
+<h2 id="6-what-makes-the-penalty-larger-or-smaller">
+  
+  
+    <a href="#6-what-makes-the-penalty-larger-or-smaller" class="anchor-heading" aria-labelledby="6-what-makes-the-penalty-larger-or-smaller"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6. What Makes the Penalty Larger or Smaller
+  
+  
+</h2>
+    
+
+<p>Since the penalty is at most the network share of prefill time, anything that raises that share raises the penalty.</p>
+<h3 id="61-prompt-length">
+  
+  
+    <a href="#61-prompt-length" class="anchor-heading" aria-labelledby="61-prompt-length"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.1. Prompt length
+  
+  
+</h3>
+    
+
+<p>Every prompt token costs the same 3.38 MB, so the bytes grow in proportion to the prompt. The matrix computation grows in proportion as well. Attention, which compares each token with the tokens before it, grows faster than the prompt in a model where every token attends to the whole context; there, the network share, and with it the percentage penalty, slowly falls for very long prompts. GLM-5.3 uses DeepSeek Sparse Attention (DSA), in which each token attends to a selected set of about 2,048 earlier tokens, so its computation stays close to proportional to the prompt and the <strong>percentage penalty should stay roughly constant</strong> for long prompts. In seconds, the penalty keeps growing with prompt length in either case.</p>
+
+<p>Short prompts are different. A 1K-token prompt fits in one small prefill chunk, and each of its all-reduces sends only about 22 MB per Spark, under a millisecond at 200 Gb/s. Such short transfers may not reach the full link speed, and the fixed overhead of each forward pass weighs more, so the bound can overstate the effect.</p>
+<h3 id="62-several-requests-at-once">
+  
+  
+    <a href="#62-several-requests-at-once" class="anchor-heading" aria-labelledby="62-several-requests-at-once"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.2. Several requests at once
+  
+  
+</h3>
+    
+
+<p>When several prompts arrive together, their prefill chunks share the forward passes. The bytes per prompt token stay the same, but the computation per token falls, because each prompt attends over a shorter context and the work runs in fuller batches. More of the time is spent communicating, so the penalty is larger than for one prompt of the same total length. The order in which the engine processes the prompts, and when the first of them start generating, also affects each request’s own TTFT.</p>
+<h3 id="63-tp-size">
+  
+  
+    <a href="#63-tp-size" class="anchor-heading" aria-labelledby="63-tp-size"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.3. TP size
+  
+  
+</h3>
+    
+
+<p>Relative to TP8, the bytes per Spark per token and the computation per Spark change as follows:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>TP size</th>
+      <th>Bytes per Spark</th>
+      <th>Computation per Spark</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TP2</td>
+      <td>0.57×</td>
+      <td>4×</td>
+    </tr>
+    <tr>
+      <td>TP4</td>
+      <td>0.86×</td>
+      <td>2×</td>
+    </tr>
+    <tr>
+      <td>TP8</td>
+      <td>1×</td>
+      <td>1×</td>
+    </tr>
+    <tr>
+      <td>TP16</td>
+      <td>1.07×</td>
+      <td>0.5×</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>The network share, and with it the penalty, grows quickly with TP size: lower link speed is easiest to accept at low TP sizes and costs more as a model is spread across more Sparks. Section 10 puts numbers on this using the measured TP8 baseline.</p><hr />
+<h1 id="part-ii-measurement">
+  
+  
+    <a href="#part-ii-measurement" class="anchor-heading" aria-labelledby="part-ii-measurement"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Part II: Measurement
+  
+  
+</h1>
+    
+<h2 id="7-test-design">
+  
+  
+    <a href="#7-test-design" class="anchor-heading" aria-labelledby="7-test-design"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7. Test Design
+  
+  
+</h2>
+    
+<h3 id="71-changing-only-the-link">
+  
+  
+    <a href="#71-changing-only-the-link" class="anchor-heading" aria-labelledby="71-changing-only-the-link"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7.1. Changing only the link
+  
+  
+</h3>
+    
+
+<p>The comparison is useful only if the link speed is the single difference between the two configurations. The same model, engine, settings, prompts and test plan were used in both; only the network path changed.</p>
+<h3 id="72-setup">
+  
+  
+    <a href="#72-setup" class="anchor-heading" aria-labelledby="72-setup"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7.2. Setup
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Systems</td>
+      <td>8× NVIDIA DGX Spark (GB10, 128 GB unified memory), driver 580.173.02</td>
+    </tr>
+    <tr>
+      <td>Switch</td>
+      <td>MikroTik CRS804, 400G QSFP-DD ports in 2 × 200G breakout</td>
+    </tr>
+    <tr>
+      <td>Model</td>
+      <td>GLM-5.3 NVFP4 (<code class="language-plaintext highlighter-rouge">Inferact/GLM-5.3-NVFP4</code>): 753B-parameter MoE, about 40B active per token; hidden dimension 6,144; 78 layers; DeepSeek Sparse Attention</td>
+    </tr>
+    <tr>
+      <td>Engine</td>
+      <td>vLLM <code class="language-plaintext highlighter-rouge">0.1.dev20133+gb5f995e73</code> (container <code class="language-plaintext highlighter-rouge">vllm-node-b12x</code>), PyTorch 2.13, NCCL 2.28.3, Ray</td>
+    </tr>
+    <tr>
+      <td>Parallelism</td>
+      <td>TP8: one model instance across all 8 Sparks</td>
+    </tr>
+    <tr>
+      <td>Key settings</td>
+      <td>prefill chunks of up to 4,096 tokens, FP8 KV cache, speculative decoding with MTP (4 draft tokens; the draft model is not split across Sparks, so it adds no network traffic), CUDA graphs, up to 8 concurrent requests</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>GLM-5.3 is a large MoE model that needs all 8 Sparks, which is the case where the cluster network matters most.</p>
+<h3 id="73-emulating-100-gbs">
+  
+  
+    <a href="#73-emulating-100-gbs" class="anchor-heading" aria-labelledby="73-emulating-100-gbs"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7.3. Emulating 100 Gb/s
+  
+  
+</h3>
+    
+
+<p>The 100 Gb/s case was emulated rather than built with new cables: NCCL was configured to use only one of the two network interfaces on every Spark (<code class="language-plaintext highlighter-rouge">NCCL_IB_HCA</code> excluding the second RDMA device). Nothing physical changes, so the cables, switch ports and every other setting stay the same, and relaunching the model without this setting restores 200 Gb/s. In every emulated run, the benchmark confirmed from the adapter’s counters that all traffic went over the one remaining interface.</p>
+
+<p>One interface carries what its PCIe Gen5 ×4 link allows: 4 lanes × 32 GT/s, reduced by line encoding (128b/130b) to 126 Gb/s and by PCIe packet and flow-control overhead to about <strong>111 Gb/s</strong>. Measured with <code class="language-plaintext highlighter-rouge">ib_write_bw</code>, one interface carries <strong>109 Gb/s</strong>. The emulated link is therefore about 9% faster than a real 100 Gb/s link.</p>
+
+<p>With B_new = 109 Gb/s instead of 100, the bound of Section 5.1 becomes</p>
+
+<blockquote>
+  <p><strong>extra prefill time ≤ prefill bytes × (1/109 − 1/200)</strong>, about <strong>0.11 s per 1,000 prompt tokens</strong> for GLM-5.3 at TP8</p>
+</blockquote>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Test</th>
+      <th>Estimate, 200 → 100 Gb/s (Section 5.2)</th>
+      <th>Estimate, 200 → 109 Gb/s (this experiment)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>P1: 1K</td>
+      <td>≤ +0.14 s</td>
+      <td>≤ +0.12 s</td>
+    </tr>
+    <tr>
+      <td>P2: 8K</td>
+      <td>≤ +1.11 s</td>
+      <td>≤ +0.92 s</td>
+    </tr>
+    <tr>
+      <td>P3: 32K</td>
+      <td>≤ +4.43 s</td>
+      <td>≤ +3.69 s</td>
+    </tr>
+    <tr>
+      <td>P4: 4 × 8K</td>
+      <td>≤ +4.43 s</td>
+      <td>≤ +3.69 s</td>
+    </tr>
+    <tr>
+      <td>P5: 64K</td>
+      <td>≤ +8.85 s</td>
+      <td>≤ +7.39 s</td>
+    </tr>
+    <tr>
+      <td>P6: 4 × 16K</td>
+      <td>≤ +8.85 s</td>
+      <td>≤ +7.39 s</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Section 9 converts the measured results back to a real 100 Gb/s cable.</p>
+<h3 id="74-test-plan">
+  
+  
+    <a href="#74-test-plan" class="anchor-heading" aria-labelledby="74-test-plan"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7.4. Test plan
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Test</th>
+      <th>Requests</th>
+      <th>Prompt → output tokens</th>
+      <th>Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>P1</td>
+      <td>1</td>
+      <td>1,024 → 1,024</td>
+      <td>a short prompt, with small transfers</td>
+    </tr>
+    <tr>
+      <td>P2</td>
+      <td>1</td>
+      <td>8,192 → 1,024</td>
+      <td>a typical long prompt</td>
+    </tr>
+    <tr>
+      <td>P3</td>
+      <td>1</td>
+      <td>32,768 → 1,024</td>
+      <td>a long document</td>
+    </tr>
+    <tr>
+      <td>P4</td>
+      <td>4, arriving together</td>
+      <td>4 × 8,192 → 1,024</td>
+      <td>several requests, same total prompt size as P3</td>
+    </tr>
+    <tr>
+      <td>P5</td>
+      <td>1</td>
+      <td>65,536 → 1,024</td>
+      <td>a very long prompt</td>
+    </tr>
+    <tr>
+      <td>P6</td>
+      <td>4, arriving together</td>
+      <td>4 × 16,384 → 1,024</td>
+      <td>several requests, same total prompt size as P5</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Each test ran one warm-up round, which is not counted, and three measured rounds. The output was fixed at exactly 1,024 tokens, so every request did the same amount of decoding and decode speeds are directly comparable.</p>
+<h3 id="75-what-was-measured">
+  
+  
+    <a href="#75-what-was-measured" class="anchor-heading" aria-labelledby="75-what-was-measured"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7.5. What was measured
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>TTFT (time to first token):</strong> the time from sending a request to receiving its first token. For P4 and P6, the time until the last of the four requests receives its first token is also reported; it covers all four prompts’ bytes and is the quantity the estimate describes.</li>
+  <li><strong>Decode speed:</strong> how fast the answer streams, in tokens per second after the first token: (output tokens − 1) ÷ (time of the last token − time of the first token). A tokens-per-second figure that divides by the whole request time, TTFT included, is not used for decode comparisons, because it falls with long prompts even when decode speed does not change.</li>
+  <li><strong>Network traffic:</strong> bytes and rates from the RDMA counters of one Spark’s ConnectX-7 (Appendix A). Under a ring all-reduce every Spark sends the same amount, so one Spark represents all eight.</li>
+</ul>
+<h3 id="76-keeping-the-runs-comparable">
+  
+  
+    <a href="#76-keeping-the-runs-comparable" class="anchor-heading" aria-labelledby="76-keeping-the-runs-comparable"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7.6. Keeping the runs comparable
+  
+  
+</h3>
+    
+
+<p>Prompts were taken from a fixed prompt set and padded to the target length with a fixed random seed, so both configurations received identical prompts. Each request’s padding was ordered differently, so the engine could not reuse work cached from an earlier request. Services not needed for the test were stopped on all Sparks, and each run started only after the link had carried no traffic for 10 seconds. Requests and traffic samples were timestamped on the same Spark and clock, so the traffic of each request’s prefill and decode can be separated exactly.</p>
+
+<p>All measured rounds are used and reported as means, with the range across rounds. The rounds were consistent: within a test, prefill times varied by at most 0.6 s for single requests and 1.2 s for four requests.</p><hr />
+<h2 id="8-results-200-gbs-vs-emulated-100-gbs-at-tp8">
+  
+  
+    <a href="#8-results-200-gbs-vs-emulated-100-gbs-at-tp8" class="anchor-heading" aria-labelledby="8-results-200-gbs-vs-emulated-100-gbs-at-tp8"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8. Results: 200 Gb/s vs Emulated 100 Gb/s at TP8
+  
+  
+</h2>
+    
+<h3 id="81-how-much-of-the-200-gbs-the-cluster-uses">
+  
+  
+    <a href="#81-how-much-of-the-200-gbs-the-cluster-uses" class="anchor-heading" aria-labelledby="81-how-much-of-the-200-gbs-the-cluster-uses"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8.1. How much of the 200 Gb/s the cluster uses
+  
+  
+</h3>
+    
+
+<p>Figure 4 shows the traffic one Spark sends during one 8K-token request on the 200 Gb/s cluster. During prefill, bursts of a few milliseconds near full link speed alternate with gaps in which the Sparks compute, as Section 4.1 describes; in the 200 ms zoom, each burst is one prefill all-reduce. After the first token, decode traffic is low and steady.</p>
+
+<p><img src="/papers/dgx-spark-link-speed-tensor-parallel/images/glm53-tp8-200g-p2-annotated.png" alt="One 8K-token request at 200 Gb/s: prefill bursts, the first token, and the decode traffic, with a 200 ms zoom inside prefill" width="820" /></p>
+<p><sub><i>Figure 4: One 8K-token request at 200 Gb/s, traffic sent by one Spark in 1 ms intervals; below, a 200 ms window inside prefill.</i></sub></p>
+
+<p>Measured in 1 ms intervals, the bursts of single 8K–64K prompts reach about 150–180 Gb/s, and those of four prompts arriving together close to 200 Gb/s. Averaged over a whole 8K prefill, however, the traffic is 37 Gb/s, because the link carries nothing while the Sparks compute. Decode averages about <strong>3 Gb/s</strong> for one request and about <strong>6 Gb/s</strong> for four, within the limits estimated in Section 4.2. The cluster uses the full 200 Gb/s, but only for a few milliseconds at a time.</p>
+
+<p>The averaging interval decides which of these two pictures a measurement shows. The same 8K prefill gives these highest values:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Averaging interval</th>
+      <th>Highest value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1 ms</td>
+      <td>181 Gb/s</td>
+    </tr>
+    <tr>
+      <td>5 ms</td>
+      <td>96 Gb/s</td>
+    </tr>
+    <tr>
+      <td>100 ms</td>
+      <td>44 Gb/s</td>
+    </tr>
+    <tr>
+      <td>1 s</td>
+      <td>40 Gb/s</td>
+    </tr>
+    <tr>
+      <td>whole prefill (average)</td>
+      <td>37 Gb/s</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>A switch that reports one-second averages would show about 40 Gb/s and suggest a nearly idle link. The bursts that determine TTFT are only visible at millisecond resolution (Appendix A).</p>
+<h3 id="82-the-traffic-in-each-test">
+  
+  
+    <a href="#82-the-traffic-in-each-test" class="anchor-heading" aria-labelledby="82-the-traffic-in-each-test"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8.2. The traffic in each test
+  
+  
+</h3>
+    
+
+<p>Figures 5–10 show the traffic one Spark sends during the three measured rounds of each test, with 200 Gb/s on top and the emulated 100 Gb/s below, on the same time axis. The grey band is prefill, ending at the first token.</p>
+
+<p><img src="/papers/dgx-spark-link-speed-tensor-parallel/images/glm53-tp8-p1-1k-200g-vs-100g.png" alt="1K-token prompt: network traffic at 200 Gb/s and emulated 100 Gb/s" width="820" /></p>
+<p><sub><i>Figure 5: P1, 1K-token prompt, 1 request.</i></sub></p>
+
+<p>With a 1K prompt, the prefill bursts reach only about 100 Gb/s even on the 200 Gb/s cluster, below what one interface can carry, so the emulated link does not slow them down. TTFT is the same at both link speeds: 0.96 s and 0.97 s.</p>
+
+<p><img src="/papers/dgx-spark-link-speed-tensor-parallel/images/glm53-tp8-p2-8k-200g-vs-100g.png" alt="8K-token prompt: network traffic at 200 Gb/s and emulated 100 Gb/s" width="820" /></p>
+<p><sub><i>Figure 6: P2, 8K-token prompt, 1 request.</i></sub></p>
+
+<p>With an 8K prompt, prefill runs at about 150–180 Gb/s at 200 Gb/s. On the emulated link the same bursts are held at about 105–109 Gb/s and take longer, and TTFT grows from 6.36 s to 7.24 s. Decode traffic looks the same in both panels.</p>
+
+<p><img src="/papers/dgx-spark-link-speed-tensor-parallel/images/glm53-tp8-p3-32k-200g-vs-100g.png" alt="32K-token prompt: network traffic at 200 Gb/s and emulated 100 Gb/s" width="820" /></p>
+<p><sub><i>Figure 7: P3, 32K-token prompt, 1 request.</i></sub></p>
+
+<p>The 32K prompt shows the same pattern over a longer prefill, with TTFT growing from 27.0 s to 30.6 s.</p>
+
+<p><img src="/papers/dgx-spark-link-speed-tensor-parallel/images/glm53-tp8-p4-4x8k-200g-vs-100g.png" alt="Four 8K-token prompts arriving together: network traffic at 200 Gb/s and emulated 100 Gb/s" width="820" /></p>
+<p><sub><i>Figure 8: P4, four 8K-token prompts arriving together.</i></sub></p>
+
+<p>With four prompts arriving together, prefill keeps the 200 Gb/s link close to fully used, while the emulated link stays at 109 Gb/s throughout. The time until the last first token grows from 23.0 s to 26.4 s. Decode traffic is higher with four requests, but still far below either link speed.</p>
+
+<p><img src="/papers/dgx-spark-link-speed-tensor-parallel/images/glm53-tp8-p5-64k-200g-vs-100g.png" alt="64K-token prompt: network traffic at 200 Gb/s and emulated 100 Gb/s" width="820" /></p>
+<p><sub><i>Figure 9: P5, 64K-token prompt, 1 request.</i></sub></p>
+
+<p>The 64K prompt behaves like the 32K prompt over twice the length: bursts of about 150–180 Gb/s at 200 Gb/s, held at 109 Gb/s on the emulated link, and TTFT growing from 55.5 s to 62.5 s. The three rounds agree within 0.2 s.</p>
+
+<p><img src="/papers/dgx-spark-link-speed-tensor-parallel/images/glm53-tp8-p6-4x16k-200g-vs-100g.png" alt="Four 16K-token prompts arriving together: network traffic at 200 Gb/s and emulated 100 Gb/s" width="820" /></p>
+<p><sub><i>Figure 10: P6, four 16K-token prompts arriving together.</i></sub></p>
+
+<p>With four 16K prompts, prefill keeps the 200 Gb/s link close to fully used for about 46 s, against about 54 s at 109 Gb/s on the emulated link. The engine processes the four prompts in pairs: the first two receive their first tokens at about 22 s (200 Gb/s) and 27 s (emulated), the last two at about 45 s and 54 s. While the second pair is still in prefill, the first pair is already decoding.</p>
+<h3 id="83-traffic-per-prompt-token">
+  
+  
+    <a href="#83-traffic-per-prompt-token" class="anchor-heading" aria-labelledby="83-traffic-per-prompt-token"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8.3. Traffic per prompt token
+  
+  
+</h3>
+    
+
+<p>The measured prefill traffic was <strong>3.54–3.60 MB per prompt token</strong> per Spark, 5–7% more than the 3.38 MB of Section 3.3. The difference is the headers of the network packets and a small amount of traffic per request. The bytes were the same at both link speeds, which confirms that only the link speed changed.</p>
+<h3 id="84-ttft">
+  
+  
+    <a href="#84-ttft" class="anchor-heading" aria-labelledby="84-ttft"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8.4. TTFT
+  
+  
+</h3>
+    
+
+<p>Means of three rounds, with the range across rounds in brackets; for P4 and P6, the time until the last of the four requests receives its first token. The estimate for the emulated link (Section 7.3) is given for comparison.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Test</th>
+      <th>200 Gb/s</th>
+      <th>100 Gb/s (emulated, 109 Gb/s)</th>
+      <th>Increase</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>P1: 1K</td>
+      <td>0.96 s (0.91–0.99)</td>
+      <td>0.97 s (0.94–1.00)</td>
+      <td><strong>+0.01 s (+1.1%)</strong>, no measurable difference (estimate: ≤ +0.12 s)</td>
+    </tr>
+    <tr>
+      <td>P2: 8K</td>
+      <td>6.36 s (6.21–6.56)</td>
+      <td>7.24 s (7.14–7.45)</td>
+      <td><strong>+0.88 s (+13.9%)</strong> (estimate: ≤ +0.92 s)</td>
+    </tr>
+    <tr>
+      <td>P3: 32K</td>
+      <td>27.02 s (26.96–27.12)</td>
+      <td>30.57 s (30.40–30.87)</td>
+      <td><strong>+3.55 s (+13.1%)</strong> (estimate: ≤ +3.69 s)</td>
+    </tr>
+    <tr>
+      <td>P4: 4 × 8K, last first token</td>
+      <td>23.00 s (22.61–23.19)</td>
+      <td>26.44 s (26.20–26.59)</td>
+      <td><strong>+3.44 s (+15.0%)</strong> (estimate: ≤ +3.69 s)</td>
+    </tr>
+    <tr>
+      <td>P5: 64K</td>
+      <td>55.47 s (55.39–55.55)</td>
+      <td>62.47 s (62.34–62.56)</td>
+      <td><strong>+6.99 s (+12.6%)</strong> (estimate: ≤ +7.39 s)</td>
+    </tr>
+    <tr>
+      <td>P6: 4 × 16K, last first token</td>
+      <td>45.82 s (45.36–46.52)</td>
+      <td>54.26 s (54.08–54.60)</td>
+      <td><strong>+8.44 s (+18.4%)</strong> (estimate: ≤ +7.39 s)</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Averaged over the four requests of each round, TTFT grew from 16.49 s to 20.21 s in P4 (<strong>+22.5%</strong>) and from 33.96 s to 40.03 s in P6 (<strong>+17.9%</strong>). These are the largest increases measured in any test.</p>
+
+<p><img src="/papers/dgx-spark-link-speed-tensor-parallel/images/measured-vs-predicted.png" alt="Extra prefill time at 109 Gb/s: estimate against measurement, per test" width="820" /></p>
+<p><sub><i>Figure 11: Extra prefill time when the link drops from 200 to 109 Gb/s: estimate (Section 7.3) against measurement.</i></sub></p>
+
+<p>For single prompts of 8K–64K tokens and for four 8K prompts arriving together, the measured increase came within a few percent of the estimate, slightly below it, as expected of an upper bound: a small part of the transfers overlaps with computation. The estimate from the model’s architecture, the engine’s prefill chunk size and the link speed therefore predicts the effect of a slower link well, without any measurement of the computation. In seconds, the increase is about <strong>0.11 s per 1,000 prompt tokens</strong>.</p>
+
+<p><img src="/papers/dgx-spark-link-speed-tensor-parallel/images/ttft-increase-vs-prompt.png" alt="Increase in prefill time against prompt tokens per round, measured and estimated" width="820" /></p>
+<p><sub><i>Figure 12: Increase in prefill time against prompt size, measured and estimated.</i></sub></p>
+
+<p>For a single prompt, the percentage stays nearly constant from 8K to 64K tokens (13.9%, 13.1% and 12.6%), as Section 6.1 expects for a model with sparse attention; the slight decline is the part of the attention work that still grows faster than the bytes. With several prompts arriving together, the percentage is higher for the same total prompt size, 15.0% for four 8K prompts and 18.4% for four 16K prompts, as Section 6.2 expects.</p>
+<h3 id="85-decode-speed">
+  
+  
+    <a href="#85-decode-speed" class="anchor-heading" aria-labelledby="85-decode-speed"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8.5. Decode speed
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Test</th>
+      <th>200 Gb/s</th>
+      <th>100 Gb/s (emulated)</th>
+      <th>Change</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>P1: 1K</td>
+      <td>22.4 tokens/s</td>
+      <td>22.5 tokens/s</td>
+      <td>+0.5%</td>
+    </tr>
+    <tr>
+      <td>P2: 8K</td>
+      <td>21.1 tokens/s</td>
+      <td>20.6 tokens/s</td>
+      <td>−2.3%</td>
+    </tr>
+    <tr>
+      <td>P3: 32K</td>
+      <td>18.7 tokens/s</td>
+      <td>19.1 tokens/s</td>
+      <td>+2.0%</td>
+    </tr>
+    <tr>
+      <td>P4: 4 × 8K</td>
+      <td>10.8 tokens/s per request</td>
+      <td>11.2 tokens/s per request</td>
+      <td>+4.3%</td>
+    </tr>
+    <tr>
+      <td>P5: 64K</td>
+      <td>21.1 tokens/s</td>
+      <td>21.0 tokens/s</td>
+      <td>−0.4%</td>
+    </tr>
+    <tr>
+      <td>P6: 4 × 16K</td>
+      <td>10.5 tokens/s per request</td>
+      <td>10.2 tokens/s per request</td>
+      <td>−2.1%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>The changes point in both directions and stay within the variation between rounds: decode speed does not depend on the link speed, as Section 4.2 expects.</p>
+<h3 id="86-where-the-measurement-departs-from-the-estimate">
+  
+  
+    <a href="#86-where-the-measurement-departs-from-the-estimate" class="anchor-heading" aria-labelledby="86-where-the-measurement-departs-from-the-estimate"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8.6. Where the measurement departs from the estimate
+  
+  
+</h3>
+    
+
+<p><strong>The 1K prompt.</strong> The estimate allows up to +0.12 s, and the measurement shows +0.01 s. Each all-reduce of a 1K prompt sends only about 22 MB per Spark, and the bursts reach only about 100 Gb/s even at 200 Gb/s (Figure 5), below what the emulated link carries. As Section 6.1 anticipates, the bound overstates the effect for short prompts.</p>
+
+<p><strong>Four 16K prompts arriving together.</strong> Here the measured increase exceeds the estimate by about 1 s. The estimate covers the time spent sending bytes. In this test the engine processed the prompts in pairs and started decoding the first pair while the second pair was still in prefill (Section 8.2), so decode work shared the forward passes of the remaining prefill. The longer that prefill takes, the more decode work falls inside it, and the time until the last first token grows by more than the extra transfer time alone. This effect of the engine’s scheduling lies outside the estimate, and it can raise the penalty when several long prompts arrive together.</p>
+
+<p><strong>Four 8K prompts arriving together.</strong> The time until the last first token stayed within the estimate, but the order in which the engine released the four first tokens differed between the two link speeds. The TTFT of individual requests in such tests therefore depends partly on scheduling, not only on the link.</p><hr />
+<h2 id="9-from-the-emulated-link-to-a-real-100g-cable">
+  
+  
+    <a href="#9-from-the-emulated-link-to-a-real-100g-cable" class="anchor-heading" aria-labelledby="9-from-the-emulated-link-to-a-real-100g-cable"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 9. From the Emulated Link to a Real 100G Cable
+  
+  
+</h2>
+    
+
+<p>The emulated link carries up to 109 Gb/s; a real 100 Gb/s link carries at most 100. Applying the bound to this difference gives the most a real cable can add to the measured results:</p>
+
+<blockquote>
+  <p><strong>additional prefill time ≤ measured prefill bytes × (1/100 − 1/109)</strong></p>
+</blockquote>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Test</th>
+      <th>Emulated 100 Gb/s (measured)</th>
+      <th>Real 100 Gb/s cable, at most</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>P1: 1K</td>
+      <td>+1.1%</td>
+      <td>+3.6%</td>
+    </tr>
+    <tr>
+      <td>P2: 8K</td>
+      <td>+13.9%</td>
+      <td>+16.9%</td>
+    </tr>
+    <tr>
+      <td>P3: 32K</td>
+      <td>+13.1%</td>
+      <td>+16.0%</td>
+    </tr>
+    <tr>
+      <td>P4: 4 × 8K, last first token</td>
+      <td>+15.0%</td>
+      <td>+18.3%</td>
+    </tr>
+    <tr>
+      <td>P5: 64K</td>
+      <td>+12.6%</td>
+      <td>+15.4%</td>
+    </tr>
+    <tr>
+      <td>P6: 4 × 16K, last first token</td>
+      <td>+18.4%</td>
+      <td>+21.8%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>A real 100 Gb/s cable would therefore be at most 2.5–3.5 percentage points worse than the measured results, and decode speed would still be unaffected. In seconds, Section 5.1 gives at most 0.135 s per 1,000 prompt tokens. A real 100 Gb/s link carries slightly less than 100 Gb/s of data once packet overhead is counted, so the true figure may be a little higher.</p><hr />
+<h2 id="10-projection-how-the-penalty-changes-with-tp-size">
+  
+  
+    <a href="#10-projection-how-the-penalty-changes-with-tp-size" class="anchor-heading" aria-labelledby="10-projection-how-the-penalty-changes-with-tp-size"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 10. Projection: How the Penalty Changes with TP Size
+  
+  
+</h2>
+    
+
+<p>Taking the measured 8K prefill at TP8 and 200 Gb/s as the baseline, and assuming the computation splits evenly across Sparks, the bound of Section 5 projects the following for a real 100 Gb/s link:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>TP size</th>
+      <th>Projected TTFT increase at 100 Gb/s, 8K prompt</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TP2</td>
+      <td>≤ 3%</td>
+    </tr>
+    <tr>
+      <td>TP4</td>
+      <td>≤ 8%</td>
+    </tr>
+    <tr>
+      <td><strong>TP8</strong></td>
+      <td>≤ 17% (measured on the emulated link: 13.9%; real cable: ≤ 16.9%)</td>
+    </tr>
+    <tr>
+      <td>TP16</td>
+      <td>≤ 31%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><img src="/papers/dgx-spark-link-speed-tensor-parallel/images/tp-projection.png" alt="Projected 100 Gb/s TTFT penalty against TP size" width="820" /></p>
+<p><sub><i>Figure 13: Projected TTFT penalty of 100 Gb/s against TP size (illustrative).</i></sub></p>
+
+<p>This is a projection, not a measurement: GLM-5.3 does not fit on 2 or 4 Sparks, and fixed overheads are ignored. It shows the direction and the rough size of the effect: at TP16, the penalty would be about twice that at TP8. On 16 Sparks at 100 Gb/s, two TP8 clusters each keep the penalty measured in this paper, while one TP16 cluster would roughly double it.</p><hr />
+<h2 id="11-is-8-sparks-at-100-gbs-reasonable">
+  
+  
+    <a href="#11-is-8-sparks-at-100-gbs-reasonable" class="anchor-heading" aria-labelledby="11-is-8-sparks-at-100-gbs-reasonable"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 11. Is 8 Sparks at 100 Gb/s Reasonable?
+  
+  
+</h2>
+    
+
+<p>Yes. Moving an 8-Spark TP8 cluster from 200 Gb/s to 100 Gb/s links:</p>
+
+<blockquote>
+  <p><strong>The first token arrives at most about 20% later for a very long prompt, and at most about 30% later when several very long prompts arrive at the same time. Short to medium prompts see no change. Once the answer starts, it streams at the same pace.</strong></p>
+</blockquote>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Workload</th>
+      <th>Measured (emulated 100 Gb/s)</th>
+      <th>Real 100 Gb/s cable, at most</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Chat with short to medium prompts (around 1K tokens)</td>
+      <td>no measurable difference</td>
+      <td>about +4%</td>
+    </tr>
+    <tr>
+      <td>A very long prompt: RAG, long documents (8K–64K tokens)</td>
+      <td>TTFT +12.6–13.9%</td>
+      <td>TTFT +17% (at most 0.135 s per 1,000 prompt tokens)</td>
+    </tr>
+    <tr>
+      <td>Several very long prompts arriving together</td>
+      <td>TTFT per request +17.9–22.5%</td>
+      <td>TTFT per request +27%</td>
+    </tr>
+    <tr>
+      <td>Decode speed, in every case</td>
+      <td>unchanged</td>
+      <td>unchanged</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>These are upper limits for the cases measured; in a mixed workload, most requests are shorter or arrive alone, and see less.</p>
+
+<p>At 100 Gb/s, a <strong>CRS812</strong> connects 8 Sparks, enough for one TP8 cluster, at the cost of the longer wait for the first token on long prompts described above; the pace at which the answer streams does not change.</p>
+
+<p>At 100 Gb/s, a <strong>CRS804</strong> connects 16 Sparks. Run as two TP8 clusters, each sees the per-Spark link measured in this paper, so the results above apply to each, provided the switch can forward traffic on all ports at full speed at the same time (to be verified). A single TP16 cluster would roughly double the penalty (Section 10) and is not recommended at 100 Gb/s.</p>
+
+<p>200 Gb/s remains the better choice where long prompts with tight TTFT targets dominate the workload, where many users send long prompts at the same time, or where a model has to be spread over more than eight Sparks.</p><hr />
+<h2 id="12-limits-and-points-to-consider">
+  
+  
+    <a href="#12-limits-and-points-to-consider" class="anchor-heading" aria-labelledby="12-limits-and-points-to-consider"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 12. Limits and Points to Consider
+  
+  
+</h2>
+    
+
+<p>The measurements cover one model (GLM-5.3), one inference engine and version (vLLM) and one TP size (TP8). Other models, engines and settings send different amounts of data and compute at different speeds; the estimation method carries over, but the numbers have to be recalculated. The 100 Gb/s case was emulated with one network interface rather than built with 100G cables; Section 9 bounds the difference. The TP-size projection in Section 10 is a calculation, not a measurement.</p>
+
+<p>Before choosing 100 Gb/s, check that the switch supports 4 × 100G breakout on its QSFP-DD ports in the planned configuration, that the DGX Spark’s ConnectX-7 links up at 100 Gb/s with the chosen breakout cable, and, for 16 Sparks, that the switch can forward traffic on all ports at full speed at the same time.</p>
+<h3 id="common-mistakes-when-sizing-the-cluster-network">
+  
+  
+    <a href="#common-mistakes-when-sizing-the-cluster-network" class="anchor-heading" aria-labelledby="common-mistakes-when-sizing-the-cluster-network"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Common mistakes when sizing the cluster network
+  
+  
+</h3>
+    
+
+<ul>
+  <li>✗ <strong>Reading the wrong counters:</strong> standard Linux tools (<code class="language-plaintext highlighter-rouge">ip -s link</code>, <code class="language-plaintext highlighter-rouge">nload</code>, <code class="language-plaintext highlighter-rouge">sar</code>) do not see RDMA traffic, so they show an almost idle link during inference.</li>
+  <li>✗ <strong>Judging link use from averages:</strong> one-second or switch-port averages hide the millisecond bursts that decide TTFT.</li>
+  <li>✗ <strong>Assuming half the link speed means half the inference speed:</strong> only the bursts during prefill slow down; decode does not.</li>
+  <li>✗ <strong>Spreading a model over more Sparks than necessary at 100 Gb/s:</strong> the penalty grows with TP size.</li>
+</ul>
+<h3 id="checklist-for-planning-an-8--or-16-spark-cluster-network">
+  
+  
+    <a href="#checklist-for-planning-an-8--or-16-spark-cluster-network" class="anchor-heading" aria-labelledby="checklist-for-planning-an-8--or-16-spark-cluster-network"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Checklist for planning an 8- or 16-Spark cluster network
+  
+  
+</h3>
+    
+
+<ul>
+  <li>☐ Is the TP size per model instance decided (TP8, or two TP8 instances on 16 Sparks)?</li>
+  <li>☐ Is the expected prompt length known (chat, RAG, long documents)?</li>
+  <li>☐ Is there a TTFT target for long prompts?</li>
+  <li>☐ Has the 100 Gb/s penalty been estimated (bytes per prompt token × prompt tokens ÷ 200 Gb/s, Section 5)?</li>
+  <li>☐ Are breakout support and ConnectX-7 link-up at the planned speed verified?</li>
+  <li>☐ Is RDMA traffic monitored with RDMA counters at millisecond resolution?</li>
+</ul><hr />
+<h2 id="13-conclusion">
+  
+  
+    <a href="#13-conclusion" class="anchor-heading" aria-labelledby="13-conclusion"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 13. Conclusion
+  
+  
+</h2>
+    
+
+<p>Tensor-parallel inference across DGX Spark systems uses the network in two very different ways. While a prompt is processed, every all-reduce sends tens of megabytes per Spark, in bursts that fill a 200 Gb/s link for a few milliseconds at a time. While the answer is generated, the all-reduces are a few hundred kilobytes or less, and the traffic stays far below 100 Gb/s. Halving the link speed therefore leaves decode speed unchanged and adds a predictable amount to the wait for the first token.</p>
+
+<p>That amount can be estimated from the model’s architecture, the engine’s prefill chunk size and the link speed alone: for GLM-5.3 at TP8, at most 0.135 s per 1,000 prompt tokens at 100 Gb/s. Measured on 8 Sparks with an emulated 100 Gb/s link, single prompts of 8K–64K tokens reached their first token 12.6–13.9% later, close to the estimate; requests arriving together with other long prompts, 17.9–22.5% later; short prompts and decode speed were unaffected. A real 100G cable would add at most another 2.5–3.5 percentage points.</p>
+
+<p>For an 8-Spark TP8 cluster with 100 Gb/s links, <strong>expect the first token at most about 20% later for a very long prompt and at most about 30% later when several very long prompts arrive together, no change for short to medium prompts, and no change in how fast the answer streams.</strong> Because the penalty grows with TP size, 16 Sparks at 100 Gb/s are best run as two TP8 clusters.</p><hr />
+<h2 id="appendix-a-measuring-rdma-traffic">
+  
+  
+    <a href="#appendix-a-measuring-rdma-traffic" class="anchor-heading" aria-labelledby="appendix-a-measuring-rdma-traffic"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Appendix A: Measuring RDMA Traffic
+  
+  
+</h2>
+    
+
+<p>Because RDMA bypasses the operating system’s network stack, the usual interface statistics do not count it. The traffic in this study was read from the ConnectX-7’s RDMA port counters (<code class="language-plaintext highlighter-rouge">port_xmit_data</code> and <code class="language-plaintext highlighter-rouge">port_rcv_data</code> under <code class="language-plaintext highlighter-rouge">/sys/class/infiniband/</code>, in units of 4 bytes) for each of the two RDMA devices, and summed for the port. A cross-check against the adapter’s own byte counters agreed within 0.2%.</p>
+
+<p>A small sampler read the counters every 1 ms on one Spark and timestamped each read individually, on the same clock the benchmark used for its requests. Rates over 1 ms and longer intervals were computed by spreading the bytes of each sampling interval over the averaging intervals it covers. The byte counts are exact, but the time of each read is known only to about ±0.1–0.2 ms, so a single 1 ms value is uncertain by about ±15–25%; this is why some 1 ms values in the figures appear slightly above the link speed. Averages over 5 ms or longer are accurate to a few percent.</p>
+
+<p>The choice of averaging interval changes the highest value a measurement reports, as Section 8.1 shows: the same traffic peaks at 181 Gb/s in 1 ms intervals, 96 Gb/s in 5 ms intervals and 44 Gb/s in 100 ms intervals, while its average is the same in all of them. A peak value is meaningful only together with its averaging interval.</p>
+
+<p><img src="/papers/dgx-spark-link-speed-tensor-parallel/images/window-choice.png" alt="The same 8K prefill traffic averaged over 1 ms, 5 ms and 100 ms intervals" width="820" /></p>
+<p><sub><i>Figure A1: The same prefill traffic averaged over 1 ms, 5 ms and 100 ms intervals.</i></sub></p>
+
+<p>The measurement itself did not affect the network: bandwidth and latency tests (<code class="language-plaintext highlighter-rouge">ib_write_bw</code>, <code class="language-plaintext highlighter-rouge">ib_write_lat</code>) with the sampler running and stopped showed the same bandwidth (109.07, 109.08 and 109.15 Gb/s) and at most about 1% difference in latency. The sampler and the benchmark driver together used well under one of the Spark’s 20 CPU cores.</p><hr />
+<h2 id="appendix-b-reproducibility">
+  
+  
+    <a href="#appendix-b-reproducibility" class="anchor-heading" aria-labelledby="appendix-b-reproducibility"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Appendix B: Reproducibility
+  
+  
+</h2>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Test driver</td>
+      <td>sends the test requests to the engine as streaming requests, timestamps the first and every following token of each answer, and records the RDMA counters alongside on the same clock (Sections 7.4–7.6, Appendix A)</td>
+    </tr>
+    <tr>
+      <td>Model</td>
+      <td><code class="language-plaintext highlighter-rouge">Inferact/GLM-5.3-NVFP4</code></td>
+    </tr>
+    <tr>
+      <td>Engine</td>
+      <td>vLLM <code class="language-plaintext highlighter-rouge">0.1.dev20133+gb5f995e73</code>, container <code class="language-plaintext highlighter-rouge">vllm-node-b12x</code>, NCCL 2.28.3</td>
+    </tr>
+    <tr>
+      <td>Serve settings</td>
+      <td><code class="language-plaintext highlighter-rouge">--tensor-parallel-size 8</code>, <code class="language-plaintext highlighter-rouge">--max-num-batched-tokens 4096</code>, <code class="language-plaintext highlighter-rouge">--long-prefill-token-threshold 2048</code>, <code class="language-plaintext highlighter-rouge">--max-num-seqs 8</code>, <code class="language-plaintext highlighter-rouge">--max-model-len 262144</code>, <code class="language-plaintext highlighter-rouge">--kv-cache-dtype fp8</code>, <code class="language-plaintext highlighter-rouge">--gpu-memory-utilization 0.726</code>, <code class="language-plaintext highlighter-rouge">--enable-chunked-prefill</code>, <code class="language-plaintext highlighter-rouge">--enable-prefix-caching</code>; speculative decoding: MTP, 4 tokens, draft not split</td>
+    </tr>
+    <tr>
+      <td>NCCL</td>
+      <td><code class="language-plaintext highlighter-rouge">NCCL_IB_HCA</code> with both RDMA devices (200 Gb/s); second device excluded (100 Gb/s emulation); RoCE v2, GID index 3</td>
+    </tr>
+    <tr>
+      <td>Plan</td>
+      <td>tests P1–P6 (Section 7.4), 1 warm-up and 3 measured rounds, fixed seed, 1,024 output tokens</td>
+    </tr>
+  </tbody>
+</table></div><hr />
+<h2 id="glossary-terms">
+  
+  
+    <a href="#glossary-terms" class="anchor-heading" aria-labelledby="glossary-terms"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Glossary (Terms)
+  
+  
+</h2>
+    
+
+<ul>
+  <li><strong>Activations:</strong> The vectors that represent each token as it passes through the model’s layers.</li>
+  <li><strong>All-reduce:</strong> A collective operation that adds up data held in parts on every device and gives every device the full sum.</li>
+  <li><strong>Bandwidth-bound / latency-bound:</strong> A transfer is bandwidth-bound when its duration is set by how fast the link moves bytes (large transfers), and latency-bound when it is set by fixed delays (small transfers).</li>
+  <li><strong>Breakout cable:</strong> A cable that splits one fast switch port (for example 400 Gb/s) into several slower links (for example 4 × 100 Gb/s).</li>
+  <li><strong>ConnectX-7:</strong> The NVIDIA network adapter built into DGX Spark.</li>
+  <li><strong>Decode:</strong> The phase that generates the answer, one forward pass at a time.</li>
+  <li><strong>Decode speed:</strong> How fast the answer streams: output tokens per second after the first token.</li>
+  <li><strong>Emulation:</strong> Reproducing a condition (here, a 100 Gb/s link) on the real hardware, as opposed to modelling it in software.</li>
+  <li><strong>Forward pass:</strong> One run of the model’s layers over the tokens currently being processed.</li>
+  <li><strong>Hidden dimension:</strong> The length of the vector that represents each token inside the model (6,144 for GLM-5.3).</li>
+  <li><strong>MTP (multi-token prediction):</strong> A form of speculative decoding in which the model drafts several tokens that are then checked in one forward pass.</li>
+  <li><strong>NCCL:</strong> NVIDIA’s library for communication between GPUs, which the inference engine uses for all-reduce.</li>
+  <li><strong>Network interface:</strong> What the operating system sees of a network adapter’s connection; here, each ConnectX-7 port appears as two interfaces, one per PCIe link.</li>
+  <li><strong>Network share of prefill time:</strong> The time needed to send the prefill bytes at 200 Gb/s, divided by the prefill time.</li>
+  <li><strong>Nominal link speed:</strong> The rated speed of a link (here 200 Gb/s), before protocol overhead.</li>
+  <li><strong>NVFP4:</strong> NVIDIA’s 4-bit floating-point number format, with a scaling factor shared by each group of 16 values.</li>
+  <li><strong>Prefill:</strong> The phase that processes the prompt before the first output token.</li>
+  <li><strong>Prefill chunk:</strong> The part of a prompt processed in one forward pass (up to 4,096 tokens here).</li>
+  <li><strong>RDMA:</strong> Remote direct memory access: the network adapter reads and writes application memory directly, without the data passing through the operating system’s network stack.</li>
+  <li><strong>Ring all-reduce:</strong> An all-reduce in which devices pass segments of the data around a ring; each device sends 2 × (N − 1) / N times the data in total.</li>
+  <li><strong>RoCE v2:</strong> RDMA over Converged Ethernet, version 2: RDMA packets carried inside UDP/IP over standard Ethernet.</li>
+  <li><strong>Tensor parallelism (TP):</strong> Splitting every weight matrix of a model across several devices, which combine their partial results after each step.</li>
+  <li><strong>TTFT (time to first token):</strong> The time from sending a request to receiving the first token of the answer.</li>
+</ul><hr />
+<h2 id="resources">
+  
+  
+    <a href="#resources" class="anchor-heading" aria-labelledby="resources"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Resources
+  
+  
+</h2>
+    
+
+<p><strong>Hardware:</strong></p>
+
+<ul>
+  <li>NVIDIA DGX Spark — <a href="https://www.nvidia.com/en-us/products/workstations/dgx-spark/">https://www.nvidia.com/en-us/products/workstations/dgx-spark/</a></li>
+  <li>NVIDIA ConnectX-7 adapter documentation — <a href="https://docs.nvidia.com/networking/display/connectx7vpi/introduction">https://docs.nvidia.com/networking/display/connectx7vpi/introduction</a></li>
+  <li>MikroTik CRS804 DDQ — <a href="https://mikrotik.com/product/crs804_ddq">https://mikrotik.com/product/crs804_ddq</a></li>
+  <li>MikroTik CRS812 DDQ — <a href="https://mikrotik.com/product/crs812_ddq">https://mikrotik.com/product/crs812_ddq</a></li>
+</ul>
+
+<p><strong>Model and software:</strong></p>
+
+<ul>
+  <li>GLM-5.3 NVFP4 checkpoint — <a href="https://huggingface.co/Inferact/GLM-5.3-NVFP4">https://huggingface.co/Inferact/GLM-5.3-NVFP4</a></li>
+  <li>vLLM — <a href="https://github.com/vllm-project/vllm">https://github.com/vllm-project/vllm</a></li>
+  <li>NCCL — <a href="https://github.com/NVIDIA/nccl">https://github.com/NVIDIA/nccl</a></li>
+  <li>perftest (<code class="language-plaintext highlighter-rouge">ib_write_bw</code>, <code class="language-plaintext highlighter-rouge">ib_write_lat</code>) — <a href="https://github.com/linux-rdma/perftest">https://github.com/linux-rdma/perftest</a></li>
+</ul>
+
+<p><strong>Related papers:</strong></p>
+
+<ul>
+  <li><a href="/papers/dgx-spark-8node-cluster-setup/">DGX Spark 8-Node Cluster Setup</a></li>
+  <li><a href="/papers/qwen3.6-27b-dgx-spark-scaling/">Qwen3.6-27B DGX Spark Cluster Scaling</a></li>
+  <li><a href="/papers/local-llm-guide/">Local LLM Usage Guide</a></li>
+</ul><hr />
+<h3 id="notes">
+  
+  
+    <a href="#notes" class="anchor-heading" aria-labelledby="notes"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Notes
+  
+  
+</h3>
+    
+
+<ul>
+  <li><strong>Estimates:</strong> Sections 3–6 use only the model’s configuration, the engine’s settings and the link speed; the bounds are upper limits. The TP-size projection (Section 10) uses the measured TP8 baseline and is illustrative.</li>
+  <li><strong>Measurements:</strong> All performance figures were measured on 8× DGX Spark with GLM-5.3 at TP8, as described in Section 7; network traffic was read from the ConnectX-7 RDMA counters of one Spark (Appendix A).</li>
+  <li><strong>Emulation:</strong> 100 Gb/s was emulated by restricting communication to one of the two network interfaces of each ConnectX-7 port, which carries up to 109 Gb/s; Section 9 bounds the difference from a real 100G cable.</li>
+  <li><strong>Currency:</strong> Engine versions and settings change quickly; the results are valid for the versions listed, as of October 2026.</li>
+</ul><hr />
+
+<p><img src="/assets/images/aetherix-logo.png" alt="Aetherix" width="220" /></p>
+
+<p><strong>Let’s plan your DGX Spark cluster network together.</strong> For sizing that accounts for model size, tensor parallelism and link speed, contact Aetherix: <a href="mailto:info@aetherix.com">info@aetherix.com</a> · <a href="https://aetherix.com">aetherix.com</a></p>
+
+          
+
+          
+        </main>
+        
+
+
+      </div>
+    </div>
+    
+      
+
+<div class="search-overlay"></div>
+
+    
+  </div>
+
+  
+
+  <script>
+    window.JTD_I18N = {
+      search_no_results: "No results found",
+      copy_code: "Copy code to clipboard"
+    };
+  </script>
+
+  
+
+
+<div id="cookie-consent-banner" class="cookie-consent" role="dialog"
+     aria-modal="false" aria-label="Cookie consent"
+     data-consent-state="pending" hidden>
+  <div class="cookie-consent__body">
+    <div class="cookie-consent__text">
+      <span class="cookie-consent__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+          <path d="M21 12a9 9 0 1 1-9-9 4.5 4.5 0 0 0 4.5 4.5A4.5 4.5 0 0 0 21 12zm-9-3.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-1.5 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm6-1.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-3 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0z"/>
+        </svg>
+      </span>
+      <p>We use cookies to analyze site traffic and improve your experience. By clicking 'Accept', you consent to the use of analytics cookies as described in our Privacy Policy.
+        <a href="https://aetherix.com/privacy-policy/" target="_blank" rel="noopener noreferrer"
+           class="cookie-consent__link">Privacy Policy</a>
+      </p>
+    </div>
+    <div class="cookie-consent__actions">
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--reject"
+              data-consent-action="rejected">Reject</button>
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--accept"
+              data-consent-action="accepted">Accept</button>
+    </div>
+  </div>
+</div>
+<script>
+  // Eski karar önbellekte varsa bannerı gösterme
+  (function() {
+    try {
+      var v = localStorage.getItem('cookieConsent');
+      if (v === 'accepted' || v === 'rejected') {
+        document.documentElement.dataset.cookieConsent = v;
+      }
+    } catch (e) {}
+  })();
+</script>
+<script src="/assets/js/cookie-banner.js" defer></script>
+
+</body>
+</html>
+

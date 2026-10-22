@@ -1,0 +1,1254 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-default.css">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet">
+
+  <style id="jtd-nav-activation">
+  
+
+.site-nav > ul.nav-list:first-child > li > a,
+.site-nav > ul.nav-list:first-child > li > ul > li:not(:nth-child(11)) > a,
+.site-nav > ul.nav-list:first-child > li > ul > li > ul > li > a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:not(:first-child) a,
+.site-nav li.external a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(11) > a {
+  font-weight: 600;
+  text-decoration: none;
+}.site-nav > ul.nav-list:first-child > li:nth-child(3) > button svg,
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(11) > button svg {
+  transform: rotate(-90deg);
+}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list,
+.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list > li.nav-list-item:nth-child(11) > ul.nav-list {
+  display: block;
+}
+  </style>
+
+  
+
+  
+    <script src="/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+
+
+  <!-- Begin Jekyll SEO tag v2.9.1 -->
+<title>KV Cache Offloading with LMCache in LLM Inference | Aetherix White Papers</title>
+<meta name="generator" content="Jekyll v4.3.4" />
+<meta property="og:title" content="KV Cache Offloading with LMCache in LLM Inference" />
+<meta property="og:locale" content="en" />
+<meta name="description" content="What LMCache adds to vLLM when the same contexts come back: a three-tier KV cache (GPU, CPU, NVMe) on DGX Spark, measured TTFT — 1.95× on repeated access, 3.3× after a service restart — and the settings and limits that come with it." />
+<meta name="twitter:description" property="og:description" content="What LMCache adds to vLLM when the same contexts come back: a three-tier KV cache (GPU, CPU, NVMe) on DGX Spark, measured TTFT — 1.95× on repeated access, 3.3× after a service restart — and the settings and limits that come with it." />
+<link rel="canonical" href="https://whitepapers.aetherix.com/papers/kv-cache-offloading-lmcache/" />
+<meta property="og:url" content="https://whitepapers.aetherix.com/papers/kv-cache-offloading-lmcache/" />
+<meta property="og:site_name" content="Aetherix White Papers" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-10-21T00:00:00+00:00" />
+<meta property="article:modified_time" content="2026-10-21T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="KV Cache Offloading with LMCache in LLM Inference" />
+<meta name="twitter:site" content="@Aetherixnl" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2026-10-21T00:00:00+00:00","datePublished":"2026-10-21T00:00:00+00:00","description":"What LMCache adds to vLLM when the same contexts come back: a three-tier KV cache (GPU, CPU, NVMe) on DGX Spark, measured TTFT — 1.95× on repeated access, 3.3× after a service restart — and the settings and limits that come with it.","headline":"KV Cache Offloading with LMCache in LLM Inference","mainEntityOfPage":{"@type":"WebPage","@id":"https://whitepapers.aetherix.com/papers/kv-cache-offloading-lmcache/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://whitepapers.aetherix.com/assets/images/aetherix-logo.png"}},"url":"https://whitepapers.aetherix.com/papers/kv-cache-offloading-lmcache/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  
+<!-- Google tag (gtag.js) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JWLN33085T"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+
+  // Consent Mode v2 — default DENIED. Banner onayı ile GRANTED olur.
+  // KVKK/GDPR uyumu: ziyaretçi onay vermeden çerez set edilmez.
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    functionality_storage: 'granted',
+    security_storage: 'granted',
+    wait_for_update: 500
+  });
+
+  gtag('js', new Date());
+  gtag('config', 'G-JWLN33085T', {
+    anonymize_ip: true
+  });
+</script>
+
+<link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/papers/kv-cache-offloading-lmcache/">
+<link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/papers/kv-cache-offloading-lmcache/">
+<link rel="alternate" hreflang="x-default" href="https://whitepapers.aetherix.com/papers/kv-cache-offloading-lmcache/">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/images/favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+
+
+</head>
+
+<body>
+  <a class="skip-to-main" href="#main-content">Skip to main content</a>
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="svg-link" viewBox="0 0 24 24">
+  <title>Link</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+</symbol>
+
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+  <title>Menu</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+    <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</symbol>
+
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+  <title>Expand</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</symbol>
+
+  <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
+<symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+  <title id="svg-external-link-title">(external link)</title>
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+</symbol>
+
+  
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+  <title>Document</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+</symbol>
+
+    <symbol id="svg-search" viewBox="0 0 24 24">
+  <title>Search</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</symbol>
+
+  
+  
+    <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+<symbol id="svg-copy" viewBox="0 0 16 16">
+  <title>Copy</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+</symbol>
+<symbol id="svg-copied" viewBox="0 0 16 16">
+  <title>Copied</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"/>
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"/>
+  </svg>
+</symbol>
+
+  
+</svg>
+
+  
+    <div class="side-bar">
+  <div class="site-header" role="banner">
+    <a href="/" class="site-title lh-tight">
+  <div class="site-logo" role="img" aria-label="Aetherix White Papers"></div>
+
+</a>
+    <button id="menu-button" class="site-button btn-reset" aria-label="Toggle menu" aria-pressed="false">
+      <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  <nav aria-label="Main" id="site-nav" class="site-nav">
+  
+  
+    <ul class="nav-list"><li class="nav-list-item"><a href="/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/about/" class="nav-list-link">About</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in White Papers category" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+    </button><a href="/papers/" class="nav-list-link">White Papers</a><ul class="nav-list"><li class="nav-list-item"><a href="/papers/local-llm-guide/" class="nav-list-link">Local LLM Usage Guide</a></li><li class="nav-list-item"><a href="/papers/llm-quantization-selection/" class="nav-list-link">LLM Quantization Selection Guide</a></li><li class="nav-list-item"><a href="/papers/conditional-memory-offloading/" class="nav-list-link">Engram Offloading in LLM Inference</a></li><li class="nav-list-item"><a href="/papers/b300-gb300-cluster-architecture/" class="nav-list-link">NVIDIA DGX B300 vs GB300 NVL72 Cluster Architecture Comparison</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-2node-cluster-setup/" class="nav-list-link">DGX Spark 2-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-3node-cluster-setup/" class="nav-list-link">DGX Spark 3-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-4node-cluster-setup/" class="nav-list-link">DGX Spark 4-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-8node-cluster-setup/" class="nav-list-link">DGX Spark 8-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/qwen3.6-27b-dgx-spark-benchmark/" class="nav-list-link">Qwen3.6-27B DGX Spark Benchmark</a></li><li class="nav-list-item"><a href="/papers/qwen3.6-27b-dgx-spark-scaling/" class="nav-list-link">Qwen3.6-27B DGX Spark Cluster Scaling</a></li><li class="nav-list-item"><a href="/papers/kv-cache-offloading-lmcache/" class="nav-list-link">KV Cache Offloading with LMCache in LLM Inference</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-link-speed-tensor-parallel/" class="nav-list-link">Network Link Speed for Tensor-Parallel Inference on 8× DGX Spark (200G vs 100G)</a></li><li class="nav-list-item"><a href="/papers/jev-open-weight-alternatives/" class="nav-list-link">The First Open-Weight Alternatives to Jev</a></li><li class="nav-list-item"><a href="/papers/deepseek-v4.1-flash-4spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash 4× DGX Spark Deployment</a></li><li class="nav-list-item"><a href="/papers/deepseek-v4.1-flash-8spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash 8× DGX Spark TP8 Deployment</a></li><li class="nav-list-item"><a href="/papers/kimi-k3-dgx-b300-inference-benchmark/" class="nav-list-link">Kimi K3 Inference Benchmark on DGX-B300</a></li></ul></li><li class="nav-list-item"><a href="/llm-inference-benchmarks/" class="nav-list-link">LLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/cv-inference-benchmarks/" class="nav-list-link">CV Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/vlm-inference-benchmarks/" class="nav-list-link">VLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/device-advisor/" class="nav-list-link">Device Advisor</a></li><li class="nav-list-item"><a href="/changelog/" class="nav-list-link">Changelog</a></li></ul>
+
+  
+</nav>
+
+
+  
+  
+    <div class="lang-switcher">
+  
+    
+    
+      <span class="lang-switcher-item active">EN</span>
+    
+  
+    
+    
+      <a class="lang-switcher-item" href="/nl/papers/kv-cache-offloading-lmcache/">NL</a>
+    
+  
+</div>
+<script src="/assets/js/lang-switch.js"></script>
+
+  
+</div>
+
+  
+  <div class="main" id="top">
+    <div id="main-header" class="main-header">
+  
+    
+
+<div class="search" role="search">
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Search" aria-label="Search" autocomplete="off">
+    <label for="search-input" class="search-label"><svg viewBox="0 0 24 24" class="search-icon"><use xlink:href="#svg-search"></use></svg></label>
+  </div>
+  <div id="search-results" class="search-results"></div>
+</div>
+
+  
+  
+  
+    <nav aria-label="Auxiliary" class="aux-nav">
+  <ul class="aux-nav-list">
+    
+      <li class="aux-nav-list-item">
+        <a href="https://aetherix.com" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          aetherix.com
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://github.com/aetherix-bv" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          GitHub
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+  
+</div>
+
+    <div class="main-content-wrap">
+      <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+  <ol class="breadcrumb-nav-list">
+    <li class="breadcrumb-nav-list-item"><a href="/papers/">White Papers</a></li>
+    <li class="breadcrumb-nav-list-item"><span>KV Cache Offloading with LMCache in LLM Inference</span></li>
+  </ol>
+</nav>
+      <div id="main-content" class="main-content">
+        <main>
+          
+            <blockquote>
+  <p><strong>Publication date:</strong> October 2026
+<strong>Scope:</strong> What changes in time to first token (TTFT) when LMCache is added to vLLM on a workload that reprocesses the same contexts: the three cache tiers and how a lookup works, a three-repeat A/B measurement on DGX Spark with <code class="language-plaintext highlighter-rouge">nvidia/Qwen3.6-35B-A3B-NVFP4</code>, what disk records contribute after a service restart, and the settings to verify before production use.
+<strong>Note:</strong> The measured speedups apply to the model, hardware, cache settings and repeated-access workload of Sections 1–3. Workloads without repeated contexts should not expect the same ratio.</p>
+</blockquote>
+
+<p><em>Prepared by: <strong>Aetherix B.V.</strong> — Trusted Jetson Hardware Provider for Edge AI</em></p><hr />
+<h2 class="no_toc" id="table-of-contents">
+  
+  
+    <a href="#table-of-contents" class="anchor-heading" aria-labelledby="table-of-contents"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Table of contents
+  
+  
+</h2>
+    
+
+<ul id="markdown-toc">
+  <li><a href="#executive-summary" id="markdown-toc-executive-summary">Executive Summary</a></li>
+  <li><a href="#1-purpose-and-method" id="markdown-toc-1-purpose-and-method">1. Purpose and Method</a>    <ul>
+      <li><a href="#11-research-question" id="markdown-toc-11-research-question">1.1. Research question</a></li>
+      <li><a href="#12-workload" id="markdown-toc-12-workload">1.2. Workload</a></li>
+    </ul>
+  </li>
+  <li><a href="#2-setup-and-cache-architecture" id="markdown-toc-2-setup-and-cache-architecture">2. Setup and Cache Architecture</a>    <ul>
+      <li><a href="#21-cache-layers" id="markdown-toc-21-cache-layers">2.1. Cache layers</a></li>
+      <li><a href="#22-settings-held-fixed-through-the-experiment" id="markdown-toc-22-settings-held-fixed-through-the-experiment">2.2. Settings held fixed through the experiment</a></li>
+      <li><a href="#23-launch-commands" id="markdown-toc-23-launch-commands">2.3. Launch commands</a>        <ul>
+          <li><a href="#scenario-a--vllm-alone" id="markdown-toc-scenario-a--vllm-alone">Scenario A — vLLM alone</a></li>
+          <li><a href="#scenario-b--vllm--lmcache" id="markdown-toc-scenario-b--vllm--lmcache">Scenario B — vLLM + LMCache</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#3-results" id="markdown-toc-3-results">3. Results</a></li>
+  <li><a href="#4-evaluation" id="markdown-toc-4-evaluation">4. Evaluation</a>    <ul>
+      <li><a href="#41-ttft-falls-when-the-same-contexts-are-revisited" id="markdown-toc-41-ttft-falls-when-the-same-contexts-are-revisited">4.1. TTFT falls when the same contexts are revisited</a></li>
+      <li><a href="#42-the-disk-caches-contribution-after-a-service-restart" id="markdown-toc-42-the-disk-caches-contribution-after-a-service-restart">4.2. The disk cache’s contribution after a service restart</a></li>
+      <li><a href="#43-multiple-vllm-instances-sharing-one-cache" id="markdown-toc-43-multiple-vllm-instances-sharing-one-cache">4.3. Multiple vLLM instances sharing one cache</a></li>
+      <li><a href="#overall-assessment" id="markdown-toc-overall-assessment">Overall assessment</a></li>
+    </ul>
+  </li>
+  <li><a href="#5-lmcache-installation-settings-to-verify-and-production-recommendations" id="markdown-toc-5-lmcache-installation-settings-to-verify-and-production-recommendations">5. LMCache Installation: Settings to Verify and Production Recommendations</a>    <ul>
+      <li><a href="#51-multi-process-setup-and-connection-settings" id="markdown-toc-51-multi-process-setup-and-connection-settings">5.1. Multi-process setup and connection settings</a>        <ul>
+          <li><a href="#the-isolated-ipc-option" id="markdown-toc-the-isolated-ipc-option">The isolated IPC option</a></li>
+        </ul>
+      </li>
+      <li><a href="#52-what-to-watch-in-hybrid-mambagdn-models" id="markdown-toc-52-what-to-watch-in-hybrid-mambagdn-models">5.2. What to watch in hybrid Mamba/GDN models</a>        <ul>
+          <li><a href="#how-is-the-block-size-n-determined" id="markdown-toc-how-is-the-block-size-n-determined">How is the block size N determined?</a></li>
+          <li><a href="#why-does---separate-object-groups-matter" id="markdown-toc-why-does---separate-object-groups-matter">Why does <code class="language-plaintext highlighter-rouge">--separate-object-groups</code> matter?</a></li>
+          <li><a href="#the---chunk-size-and---max-num-batched-tokens-settings" id="markdown-toc-the---chunk-size-and---max-num-batched-tokens-settings">The <code class="language-plaintext highlighter-rouge">--chunk-size</code> and <code class="language-plaintext highlighter-rouge">--max-num-batched-tokens</code> settings</a></li>
+        </ul>
+      </li>
+      <li><a href="#53-l1-capacity-and-eviction-policy" id="markdown-toc-53-l1-capacity-and-eviction-policy">5.3. L1 capacity and eviction policy</a></li>
+      <li><a href="#54-transfer-mode-and-monitoring" id="markdown-toc-54-transfer-mode-and-monitoring">5.4. Transfer mode and monitoring</a>        <ul>
+          <li><a href="#health-check-and-metrics" id="markdown-toc-health-check-and-metrics">Health check and metrics</a></li>
+        </ul>
+      </li>
+      <li><a href="#55-the-lifecycle-of-kv-records-and-disk-management" id="markdown-toc-55-the-lifecycle-of-kv-records-and-disk-management">5.5. The lifecycle of KV records and disk management</a></li>
+      <li><a href="#56-acceptance-test-storing-and-retrieving-kv-data" id="markdown-toc-56-acceptance-test-storing-and-retrieving-kv-data">5.6. Acceptance test: storing and retrieving KV data</a>        <ul>
+          <li><a href="#correctness-check" id="markdown-toc-correctness-check">Correctness check</a></li>
+        </ul>
+      </li>
+      <li><a href="#57-support-status-and-limitations" id="markdown-toc-57-support-status-and-limitations">5.7. Support status and limitations</a></li>
+    </ul>
+  </li>
+  <li><a href="#6-limits-of-the-experiment-and-generalizability" id="markdown-toc-6-limits-of-the-experiment-and-generalizability">6. Limits of the Experiment and Generalizability</a></li>
+  <li><a href="#7-resources" id="markdown-toc-7-resources">7. Resources</a></li>
+</ul><hr />
+<h2 id="executive-summary">
+  
+  
+    <a href="#executive-summary" class="anchor-heading" aria-labelledby="executive-summary"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Executive Summary
+  
+  
+</h2>
+    
+
+<ul>
+  <li><strong>The question.</strong> What happens to TTFT when LMCache is added to vLLM on a workload where the same 8,000-token contexts return in later passes? LMCache keeps previously computed KV cache data in tiers beyond GPU memory and reloads it instead of recomputing it; the speedup depends on how much can be reused and what loading it back costs.</li>
+  <li><strong>The setup.</strong> NVIDIA DGX Spark (GB10, SM 12.1, 121 GB unified memory) serving <code class="language-plaintext highlighter-rouge">nvidia/Qwen3.6-35B-A3B-NVFP4</code> — 22 GB in NVFP4, a hybrid Mamba/GDN and MoE architecture, 35B total and 3B active parameters — with vLLM 0.25.1 + LMCache 0.5.1. The workload is 665 contexts of 8,000 tokens, about 5.3 million tokens, processed twice: once to fill the cache, once to measure. Requests are sent sequentially, one at a time.</li>
+  <li><strong>The measured result.</strong> Median TTFT over three runs falls from <strong>1,279.1 ms</strong> with vLLM alone to <strong>655.2 ms</strong> with vLLM + LMCache — a <strong>1.95× speedup</strong>, about 49% lower TTFT. All three runs agree: 1,276–1,289 ms against 653–656 ms.</li>
+  <li><strong>Why it applies here.</strong> The working set is about 63 GB against a 55.31 GiB GPU KV cache (<code class="language-plaintext highlighter-rouge">fp8</code>), so the GPU cache alone cannot hold it; the second pass therefore retrieves data from CPU memory and disk instead of recomputing it. Where contexts are used only once, this gain should not be expected.</li>
+  <li><strong>After a service restart.</strong> With the disk records still present and matching, the same workload completes in <strong>2.61 s</strong> instead of the <strong>8.51 s</strong> cold start — about <strong>3.3×</strong>. A record on disk only helps if it matches the request and loads back successfully.</li>
+  <li><strong>Multiple vLLM instances sharing one cache</strong> is what the multi-process (MP) architecture allows, but it is not measured here: the experiment ran a single vLLM instance. Load balancing across instances is a separate mechanism; LMCache is not one.</li>
+</ul><hr />
+<h2 id="1-purpose-and-method">
+  
+  
+    <a href="#1-purpose-and-method" class="anchor-heading" aria-labelledby="1-purpose-and-method"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1. Purpose and Method
+  
+  
+</h2>
+    
+<h3 id="11-research-question">
+  
+  
+    <a href="#11-research-question" class="anchor-heading" aria-labelledby="11-research-question"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1.1. Research question
+  
+  
+</h3>
+    
+
+<p>This experiment measures how the time to first token (TTFT) changes when LMCache is added to vLLM, on a workload that reprocesses the same contexts.</p>
+
+<p>LMCache aims to reduce the need to reprocess a context by keeping previously computed KV cache data in tiers outside GPU memory as well. The speedup it delivers, however, depends on whether the cached data can be reused and on what it costs to load that data back.</p>
+<h3 id="12-workload">
+  
+  
+    <a href="#12-workload" class="anchor-heading" aria-labelledby="12-workload"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1.2. Workload
+  
+  
+</h3>
+    
+
+<p>The test uses 665 different contexts, each 8,000 tokens long — about 5.3 million tokens in total.</p>
+
+<p>The experiment runs in two passes:</p>
+
+<ul>
+  <li><strong>Pass 1 — filling the cache:</strong> the contexts are processed and cache records are created.</li>
+  <li><strong>Pass 2 — measuring performance:</strong> the same contexts are revisited and TTFT is measured.</li>
+</ul>
+
+<p>The comparison uses two scenarios:</p>
+
+<ul>
+  <li><strong>Scenario A:</strong> vLLM alone.</li>
+  <li><strong>Scenario B:</strong> vLLM + LMCache.</li>
+</ul>
+
+<p>Requests are sent sequentially, and only one request is processed at a time. This keeps the results as separate as possible from the additional effects that concurrent requests would introduce.</p><hr />
+<h2 id="2-setup-and-cache-architecture">
+  
+  
+    <a href="#2-setup-and-cache-architecture" class="anchor-heading" aria-labelledby="2-setup-and-cache-architecture"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2. Setup and Cache Architecture
+  
+  
+</h2>
+    
+<h3 id="21-cache-layers">
+  
+  
+    <a href="#21-cache-layers" class="anchor-heading" aria-labelledby="21-cache-layers"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.1. Cache layers
+  
+  
+</h3>
+    
+
+<p>In this setup the cache is managed over three tiers.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Layer</th>
+      <th>Capacity</th>
+      <th>Role</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>L0</td>
+      <td>55.31 GiB GPU KV cache (<code class="language-plaintext highlighter-rouge">fp8</code>)</td>
+      <td>The fastest cache; vLLM keeps it in GPU memory</td>
+    </tr>
+    <tr>
+      <td>L1</td>
+      <td>20 GB CPU memory</td>
+      <td>Intermediate cache outside the GPU</td>
+    </tr>
+    <tr>
+      <td>L2</td>
+      <td>NVMe SSD; <code class="language-plaintext highlighter-rouge">fs</code> adapter with <code class="language-plaintext highlighter-rouge">use_odirect=true</code></td>
+      <td>The tier where KV data is stored on disk</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>LMCache’s basic function is to keep reusable KV data in these tiers and, when it is needed, load the same data back from the cache instead of recomputing it.</p>
+
+<p><strong>Lookup in the cache:</strong> A request’s data is searched first in the GPU cache (L0), then in CPU memory (L1), and in the disk tier (L2). Metadata and index information are used to decide whether a record exists on disk. When a record is found, the KV data itself still has to be read and transferred. A record being on disk therefore does not mean it reaches the GPU instantly and free of cost.</p>
+
+<p><strong>Storing KV data:</strong> During the experiment, the computed KV data was observed to be written to L1, while writing to L2 continued asynchronously. The share of disk writes in the TTFT measurement is therefore judged to be low. This observation does not mean that disk writing costs nothing on every workload or at every record size.</p>
+
+<p>During cold requests, the number of disk writes observed over about 25 requests was reported as about three files per request. This measurement is limited to the experimental conditions used.</p>
+
+<p><strong>Eviction from the cache:</strong> When L1 usage reaches the configured threshold, eviction starts. <code class="language-plaintext highlighter-rouge">--eviction-ratio</code> determines how much memory is emptied in each eviction cycle. The experiment used <code class="language-plaintext highlighter-rouge">0.99</code>. This is not the default recommended for production.</p>
+
+<p><strong>Records accumulating on disk:</strong> With the <code class="language-plaintext highlighter-rouge">fs</code> adapter used, neither the automatic deletion of old records nor the reclaiming of disk space by itself was observed in this experiment. In a check made on 19 October 2026, about 377 records and 32 GB of data left over from the 6–15 October period were still on disk.</p>
+
+<p>This observation shows that disk records can accumulate in the configuration used. How the lookup cost changes as the number of records grows should be measured separately.</p>
+<h3 id="22-settings-held-fixed-through-the-experiment">
+  
+  
+    <a href="#22-settings-held-fixed-through-the-experiment" class="anchor-heading" aria-labelledby="22-settings-held-fixed-through-the-experiment"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.2. Settings held fixed through the experiment
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Setting</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>KV data type and block size</td>
+      <td><code class="language-plaintext highlighter-rouge">fp8</code>, <code class="language-plaintext highlighter-rouge">block_size=2144</code>, <code class="language-plaintext highlighter-rouge">--chunk-size 2144</code></td>
+    </tr>
+    <tr>
+      <td>Batched prefill token limit</td>
+      <td><code class="language-plaintext highlighter-rouge">--max-num-batched-tokens 4287</code> (<code class="language-plaintext highlighter-rouge">2N−1</code>)</td>
+    </tr>
+    <tr>
+      <td>Hybrid model cache</td>
+      <td><code class="language-plaintext highlighter-rouge">--mamba-cache-mode align</code></td>
+    </tr>
+    <tr>
+      <td>vLLM prefix cache</td>
+      <td><code class="language-plaintext highlighter-rouge">--enable-prefix-caching</code></td>
+    </tr>
+    <tr>
+      <td>Eviction policy</td>
+      <td><code class="language-plaintext highlighter-rouge">LRU</code></td>
+    </tr>
+    <tr>
+      <td>Eviction threshold</td>
+      <td><code class="language-plaintext highlighter-rouge">--eviction-trigger-watermark 0.80</code></td>
+    </tr>
+    <tr>
+      <td>Eviction ratio</td>
+      <td><code class="language-plaintext highlighter-rouge">--eviction-ratio 0.99</code></td>
+    </tr>
+    <tr>
+      <td>Speculative decoding</td>
+      <td>MTP, 3 speculative tokens</td>
+    </tr>
+    <tr>
+      <td>Wait between passes</td>
+      <td>5 seconds</td>
+    </tr>
+    <tr>
+      <td>Wait after the container starts</td>
+      <td>10 seconds</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<blockquote>
+  <p><strong>Important:</strong> <code class="language-plaintext highlighter-rouge">--eviction-ratio 0.99</code> was used to make the cache running out of capacity explicit in the experiment. With the default <code class="language-plaintext highlighter-rouge">0.20</code> used in production, eviction behavior may differ.</p>
+</blockquote>
+<h3 id="23-launch-commands">
+  
+  
+    <a href="#23-launch-commands" class="anchor-heading" aria-labelledby="23-launch-commands"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.3. Launch commands
+  
+  
+</h3>
+    
+<h4 id="scenario-a--vllm-alone">
+  
+  
+    <a href="#scenario-a--vllm-alone" class="anchor-heading" aria-labelledby="scenario-a--vllm-alone"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Scenario A — vLLM alone
+  
+  
+</h4>
+    
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">-d</span> <span class="nt">--name</span> bench-vllm-off <span class="se">\</span>
+  <span class="nt">--gpus</span> all <span class="nt">--ipc</span><span class="o">=</span>host <span class="nt">--network</span> host <span class="nt">--shm-size</span> 32g <span class="se">\</span>
+  <span class="nt">--memory</span> 112g <span class="nt">--memory-swap</span> 112g <span class="se">\</span>
+  <span class="nt">-v</span> /home/nvidia/.cache/huggingface:/home/nvidia/.cache/huggingface <span class="se">\</span>
+  <span class="nt">-v</span> /home/nvidia/.triton:/home/nvidia/.triton <span class="se">\</span>
+  <span class="nt">-e</span> <span class="nv">HF_HOME</span><span class="o">=</span>/home/nvidia/.cache/huggingface <span class="se">\</span>
+  <span class="nt">-e</span> <span class="nv">HF_HUB_OFFLINE</span><span class="o">=</span>1 <span class="se">\</span>
+  <span class="nt">-e</span> <span class="nv">VLLM_USE_RUST_FRONTEND</span><span class="o">=</span>1 <span class="se">\</span>
+  vllm/vllm-openai:latest <span class="se">\</span>
+  nvidia/Qwen3.6-35B-A3B-NVFP4 <span class="se">\</span>
+    <span class="nt">--host</span> 0.0.0.0 <span class="nt">--port</span> 8100 <span class="se">\</span>
+    <span class="nt">--served-model-name</span> qwen3.6-35b-a3b <span class="se">\</span>
+    <span class="nt">--trust-remote-code</span> <span class="nt">--tensor-parallel-size</span> 1 <span class="se">\</span>
+    <span class="nt">--enable-auto-tool-choice</span> <span class="nt">--tool-call-parser</span> qwen3_coder <span class="nt">--reasoning-parser</span> qwen3 <span class="se">\</span>
+    <span class="nt">--mm-encoder-tp-mode</span> data <span class="nt">--language-model-only</span> <span class="se">\</span>
+    <span class="nt">--kv-cache-dtype</span> fp8 <span class="nt">--attention-backend</span> flashinfer <span class="nt">--moe-backend</span> marlin <span class="se">\</span>
+    <span class="nt">--gpu-memory-utilization</span> 0.5 <span class="nt">--max-model-len</span> 262144 <span class="se">\</span>
+    <span class="nt">--max-num-seqs</span> 16 <span class="nt">--max-num-batched-tokens</span> 4287 <span class="se">\</span>
+    <span class="nt">--enable-chunked-prefill</span> <span class="nt">--async-scheduling</span> <span class="nt">--enable-prompt-tokens-details</span> <span class="se">\</span>
+    <span class="nt">--mamba-cache-mode</span> align <span class="nt">--load-format</span> fastsafetensors <span class="se">\</span>
+    <span class="nt">--speculative-config</span> <span class="s1">'{"method":"mtp","num_speculative_tokens":3,"moe_backend":"triton"}'</span> <span class="se">\</span>
+    <span class="nt">--enable-prefix-caching</span>
+</code></pre></div></div>
+<h4 id="scenario-b--vllm--lmcache">
+  
+  
+    <a href="#scenario-b--vllm--lmcache" class="anchor-heading" aria-labelledby="scenario-b--vllm--lmcache"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Scenario B — vLLM + LMCache
+  
+  
+</h4>
+    
+
+<p>The LMCache server is started first:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">-d</span> <span class="nt">--name</span> bench-lmcache <span class="se">\</span>
+  <span class="nt">--gpus</span> all <span class="nt">--ipc</span><span class="o">=</span>host <span class="nt">--network</span> host <span class="se">\</span>
+  <span class="nt">-v</span> /home/nvidia/kv-cash-exp/lmcache-l2:/home/nvidia/kv-cash-exp/lmcache-l2 <span class="se">\</span>
+  <span class="nt">--entrypoint</span> /usr/local/bin/lmcache <span class="se">\</span>
+  vllm/vllm-openai:latest <span class="se">\</span>
+  server <span class="nt">--host</span> 127.0.0.1 <span class="nt">--port</span> 5555 <span class="nt">--http-port</span> 8080 <span class="se">\</span>
+    <span class="nt">--chunk-size</span> 2144 <span class="se">\</span>
+    <span class="nt">--l1-size-gb</span> 20 <span class="nt">--l1-init-size-gb</span> 4 <span class="se">\</span>
+    <span class="nt">--eviction-policy</span> LRU <span class="nt">--eviction-trigger-watermark</span> 0.80 <span class="nt">--eviction-ratio</span> 0.99 <span class="se">\</span>
+    <span class="nt">--supported-transfer-mode</span> lmcache_driven <span class="se">\</span>
+    <span class="nt">--l2-adapter</span> <span class="s1">'{"type":"fs","base_path":"/home/nvidia/kv-cash-exp/lmcache-l2","relative_tmp_dir":".tmp","use_odirect":true}'</span>
+</code></pre></div></div>
+
+<p>Then vLLM is started with the model and inference settings of Scenario A. The only difference is the following LMCache connection configuration:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">--kv-transfer-config</span> <span class="s1">'{"kv_connector":"LMCacheMPConnector","kv_role":"kv_both","kv_connector_extra_config":{"lmcache.mp.host":"127.0.0.1","lmcache.mp.port":5555,"lmcache.mp.mq_timeout":300}}'</span>
+</code></pre></div></div>
+
+<p>This configuration makes vLLM use LMCache’s multi-process (MP) connector.</p>
+
+<p><strong>Startup order:</strong> The LMCache server is started first and the <code class="language-plaintext highlighter-rouge">/healthcheck</code> endpoint is verified to answer healthy. Then vLLM is started, and 10 seconds pass before the measurement.</p>
+
+<p><strong>Keeping the scenarios apart:</strong> Only <code class="language-plaintext highlighter-rouge">bench-vllm-off</code> runs in Scenario A; <code class="language-plaintext highlighter-rouge">bench-lmcache</code> and <code class="language-plaintext highlighter-rouge">bench-vllm-on</code> run in Scenario B.</p>
+
+<p>After the experiment, the containers can be removed with:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker <span class="nb">rm</span> <span class="nt">-f</span> bench-vllm-off bench-vllm-on bench-lmcache
+</code></pre></div></div><hr />
+<h2 id="3-results">
+  
+  
+    <a href="#3-results" class="anchor-heading" aria-labelledby="3-results"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. Results
+  
+  
+</h2>
+    
+
+<p>The working set of about 63 GB exceeds the GPU KV cache capacity of 55 GB. Performance was measured in the second pass, when the same contexts were revisited.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Measurement</th>
+      <th style="text-align: right">A: vLLM alone</th>
+      <th style="text-align: right">B: vLLM + LMCache</th>
+      <th style="text-align: right">Speedup</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Median TTFT over three runs</strong></td>
+      <td style="text-align: right"><strong>1,279.1 ms</strong></td>
+      <td style="text-align: right"><strong>655.2 ms</strong></td>
+      <td style="text-align: right"><strong>1.95×</strong></td>
+    </tr>
+    <tr>
+      <td>TTFT of the first run</td>
+      <td style="text-align: right">1,461.6 ms</td>
+      <td style="text-align: right">743.0 ms</td>
+      <td style="text-align: right">1.97×</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>The TTFT ranges observed over the three runs are:</p>
+
+<ul>
+  <li><strong>Scenario A:</strong> 1,276–1,289 ms</li>
+  <li><strong>Scenario B:</strong> 653–656 ms</li>
+</ul>
+
+<p>In all three runs, Scenario B’s TTFT came out lower than Scenario A’s.</p>
+
+<p>The results show that LMCache reduced median TTFT by about 49% under these experimental conditions. Put another way, time to first token improved about 1.95×.</p>
+
+<p>This result is valid only for the tested model, hardware, cache settings and repeated-access workload. The same speedup ratio should not be assumed for other workloads.</p><hr />
+<h2 id="4-evaluation">
+  
+  
+    <a href="#4-evaluation" class="anchor-heading" aria-labelledby="4-evaluation"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. Evaluation
+  
+  
+</h2>
+    
+<h3 id="41-ttft-falls-when-the-same-contexts-are-revisited">
+  
+  
+    <a href="#41-ttft-falls-when-the-same-contexts-are-revisited" class="anchor-heading" aria-labelledby="41-ttft-falls-when-the-same-contexts-are-revisited"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.1. TTFT falls when the same contexts are revisited
+  
+  
+</h3>
+    
+
+<p>When the working set exceeds the GPU KV cache capacity, loading previously computed KV data back from a cache can be faster than recomputing the same context.</p>
+
+<p>In this experiment the median TTFT over three runs was measured as 1,279.1 ms in Scenario A and 655.2 ms in Scenario B: about a <strong>1.95× speedup</strong> with LMCache.</p>
+
+<p>This result matters especially for the following workloads:</p>
+
+<ul>
+  <li>Agent systems, where long contexts are used over multiple turns.</li>
+  <li>Code analysis applications, where the same code base is examined again and again.</li>
+  <li>Systems where similar contexts are reused by different users or sessions.</li>
+</ul>
+
+<p>Conversely, workloads where contexts are used only once should not expect the same gain. The real performance difference is determined by the cache hit rate, the time to load data back and the cost of recomputation.</p>
+<h3 id="42-the-disk-caches-contribution-after-a-service-restart">
+  
+  
+    <a href="#42-the-disk-caches-contribution-after-a-service-restart" class="anchor-heading" aria-labelledby="42-the-disk-caches-contribution-after-a-service-restart"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.2. The disk cache’s contribution after a service restart
+  
+  
+</h3>
+    
+
+<p>If the KV records on disk are preserved and match new requests, they can still be used after the service restarts. Data computed earlier can then be reused.</p>
+
+<p>In this experiment, the same workload took 8.51 s from a cold start, and 2.61 s after a restart when the disk records were used — about a <strong>3.3× speedup</strong>.</p>
+
+<p>This result shows that the disk cache can keep helping after a restart. The advantage, however, depends on the behavior of the storage adapter, the validity of the records and the data being loaded back successfully.</p>
+
+<p><strong>A record being on disk does not mean it can necessarily be used.</strong> The record has to match the request and load back successfully.</p>
+<h3 id="43-multiple-vllm-instances-sharing-one-cache">
+  
+  
+    <a href="#43-multiple-vllm-instances-sharing-one-cache" class="anchor-heading" aria-labelledby="43-multiple-vllm-instances-sharing-one-cache"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.3. Multiple vLLM instances sharing one cache
+  
+  
+</h3>
+    
+
+<p>The multi-process (MP) architecture lets one LMCache server serve several vLLM instances. Under suitable conditions, different vLLM instances can reuse KV records found in the shared L1 CPU memory or, if configured, in the L2 disk tier.</p>
+
+<p>This architecture has three main advantages.</p>
+
+<p><strong>1. The cache is shared between vLLM instances.</strong></p>
+
+<p>A context processed by one vLLM instance can, under suitable conditions, be used in another instance’s request as well. The need to recompute the same context in every instance can then decrease.</p>
+
+<p><strong>2. GPU memory is used more efficiently.</strong></p>
+
+<p>The need to hold the same contexts in each vLLM instance’s GPU cache separately can decrease. Where several instances of the same model run, this approach has the potential to reduce total GPU memory needs.</p>
+
+<p>LMCache does not eliminate GPU memory needs altogether, however. Loading data back from the cache still requires memory to transfer it to the GPU and use it.</p>
+
+<p><strong>3. Cache management is centralized.</strong></p>
+
+<p>L1 capacity, L2 storage and cache operations can be managed through a separate LMCache service. In systems with several inference instances, this approach can make management easier.</p>
+
+<p>Making use of these advantages requires that the vLLM instances run with compatible models, tokenizers, KV layouts and cache configurations. How requests are distributed across instances, the capacity of the LMCache server and the validity of the records also affect performance.</p>
+
+<p><strong>Important limitation:</strong> LMCache alone is not a load balancer. Distributing requests across vLLM instances must be provided by a separate mechanism. Several instances connecting to one LMCache server also increase the load on CPU, memory, network and disk. As the system grows, these resources must be monitored.</p>
+
+<p>This experiment used a single vLLM instance. The contribution of shared cache use across several instances to performance was therefore not measured directly. This capability is an additional usage option that the LMCache MP architecture can provide, not a performance result proven by the experiment.</p>
+<h3 id="overall-assessment">
+  
+  
+    <a href="#overall-assessment" class="anchor-heading" aria-labelledby="overall-assessment"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Overall assessment
+  
+  
+</h3>
+    
+
+<p>The experiment shows that LMCache can lower TTFT on workloads that exceed the GPU KV cache capacity and reuse the same contexts.</p>
+
+<p>The records on disk can still be usable after a service restart, under suitable conditions. Several vLLM instances sharing one cache may bring additional advantages in larger deployments. But to determine the performance contribution of this last usage scenario, a separate test with several instances is needed.</p><hr />
+<h2 id="5-lmcache-installation-settings-to-verify-and-production-recommendations">
+  
+  
+    <a href="#5-lmcache-installation-settings-to-verify-and-production-recommendations" class="anchor-heading" aria-labelledby="5-lmcache-installation-settings-to-verify-and-production-recommendations"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5. LMCache Installation: Settings to Verify and Production Recommendations
+  
+  
+</h2>
+    
+
+<p>This section covers the requirements from the official documentation for the multi-process LMCache setup and for Qwen hybrid models, together with the settings used in the experiment.</p>
+
+<p><strong>The settings used in the experiment are not the settings recommended for production.</strong> Eviction ratio, hybrid model support and the lifecycle of records in particular should be evaluated again before production use.</p>
+
+<p>Official sources:</p>
+
+<ul>
+  <li><a href="https://docs.lmcache.ai/mp/deployment.html">LMCache — Deployment Guide</a></li>
+  <li><a href="https://docs.lmcache.ai/mp/configuration.html">LMCache — Configuration Reference</a></li>
+  <li><a href="https://docs.lmcache.ai/recipes/qwen3_5.html">LMCache — Qwen3.5 / Qwen3.6 / Qwen3.8 model recipe</a></li>
+  <li><a href="https://docs.lmcache.ai/mp/quickstart.html">LMCache — Quick Start</a></li>
+</ul>
+<h3 id="51-multi-process-setup-and-connection-settings">
+  
+  
+    <a href="#51-multi-process-setup-and-connection-settings" class="anchor-heading" aria-labelledby="51-multi-process-setup-and-connection-settings"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.1. Multi-process setup and connection settings
+  
+  
+</h3>
+    
+
+<p>In MP mode, the LMCache cache server runs as a separate process from the vLLM inference process. vLLM connects to this server through <code class="language-plaintext highlighter-rouge">LMCacheMPConnector</code>, so cache management and storage operations run in another process.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Topic</th>
+      <th>Requirement or explanation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Connector</td>
+      <td><code class="language-plaintext highlighter-rouge">LMCacheMPConnector</code></td>
+    </tr>
+    <tr>
+      <td>KV role</td>
+      <td><code class="language-plaintext highlighter-rouge">kv_role=kv_both</code></td>
+    </tr>
+    <tr>
+      <td>Communication</td>
+      <td>ZMQ by default; default port <code class="language-plaintext highlighter-rouge">5555</code></td>
+    </tr>
+    <tr>
+      <td>HTTP health check</td>
+      <td>Default port <code class="language-plaintext highlighter-rouge">8080</code> when the HTTP server is enabled; the <code class="language-plaintext highlighter-rouge">/healthcheck</code> endpoint</td>
+    </tr>
+    <tr>
+      <td>Prometheus metrics</td>
+      <td>Default port <code class="language-plaintext highlighter-rouge">9090</code></td>
+    </tr>
+    <tr>
+      <td>Container network</td>
+      <td><code class="language-plaintext highlighter-rouge">--network host</code> can be used for connections on the same host</td>
+    </tr>
+    <tr>
+      <td>IPC</td>
+      <td>Traditional CUDA IPC transfer needs <code class="language-plaintext highlighter-rouge">--ipc=host</code>; isolated IPC is a separate setup option</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>Startup order:</strong> The LMCache server must start first, then a successful health check must be verified, and only then should vLLM run. Verifying that the health check actually succeeds is more reliable than waiting a fixed amount of time.</p>
+
+<p><code class="language-plaintext highlighter-rouge">--network host</code> and <code class="language-plaintext highlighter-rouge">--ipc=host</code> serve different purposes:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">--network host</code> lets the container use the host’s network configuration. In this experiment it makes it easy for vLLM to reach LMCache at <code class="language-plaintext highlighter-rouge">127.0.0.1:5555</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">--ipc=host</code> provides access to the shared <code class="language-plaintext highlighter-rouge">/dev/shm</code> area in the traditional IPC configuration and may be needed in the relevant CUDA IPC transfer scenarios.</li>
+</ul>
+
+<p>These two options are not interchangeable.</p>
+<h4 id="the-isolated-ipc-option">
+  
+  
+    <a href="#the-isolated-ipc-option" class="anchor-heading" aria-labelledby="the-isolated-ipc-option"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> The isolated IPC option
+  
+  
+</h4>
+    
+
+<p>LMCache’s <code class="language-plaintext highlighter-rouge">--isolated-ipc</code> option can allow two containers to work without a shared <code class="language-plaintext highlighter-rouge">/dev/shm</code> area, with the CUDA IPC mechanisms that support it.</p>
+
+<p>If this option is used:</p>
+
+<ul>
+  <li>The LMCache server must be started with <code class="language-plaintext highlighter-rouge">--isolated-ipc</code>.</li>
+  <li>On the vLLM side, <code class="language-plaintext highlighter-rouge">lmcache.mp.isolated_ipc=true</code> must be set.</li>
+  <li>Both sides must use the same IPC mode. Mismatched modes can cause transfer errors.</li>
+  <li>Compatibility with the CUDA memory allocator and features such as vLLM sleep mode must also be checked.</li>
+</ul>
+
+<p>It should not be assumed that isolated IPC is faster or more suitable in every setup. This method differs from the traditional configuration used in the experiment and must be tested separately.</p>
+<h3 id="52-what-to-watch-in-hybrid-mambagdn-models">
+  
+  
+    <a href="#52-what-to-watch-in-hybrid-mambagdn-models" class="anchor-heading" aria-labelledby="52-what-to-watch-in-hybrid-mambagdn-models"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.2. What to watch in hybrid Mamba/GDN models
+  
+  
+</h3>
+    
+
+<p>The relevant models in the Qwen3.5, Qwen3.6 and Qwen3.8 families combine full attention layers with Mamba/Gated-DeltaNet (GDN) layers.</p>
+
+<p>In these architectures, not only the classic attention KV blocks but also the recurrent state information must be cached. vLLM and LMCache settings being compatible with each other therefore matters.</p>
+
+<p>The relevant Qwen hybrid model recipe highlights three settings:</p>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">--mamba-cache-mode align</code> on the vLLM side.</li>
+  <li><code class="language-plaintext highlighter-rouge">--enable-prefix-caching</code> on the vLLM side.</li>
+  <li>A chunk size suited to the model and <code class="language-plaintext highlighter-rouge">--separate-object-groups</code> on the LMCache side.</li>
+</ol>
+<h4 id="how-is-the-block-size-n-determined">
+  
+  
+    <a href="#how-is-the-block-size-n-determined" class="anchor-heading" aria-labelledby="how-is-the-block-size-n-determined"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> How is the block size N determined?
+  
+  
+</h4>
+    
+
+<p><code class="language-plaintext highlighter-rouge">N</code> is not a constant that holds for every model. It must be determined from the model and the vLLM configuration.</p>
+
+<p>A line like the following should be looked for in the vLLM startup logs:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Setting attention block size to N tokens
+</code></pre></div></div>
+
+<p>In this experiment, <code class="language-plaintext highlighter-rouge">N = 2144</code> was used. When reproducing the experiment, this value must be verified against the startup logs.</p>
+
+<p>Values of <code class="language-plaintext highlighter-rouge">784</code> and <code class="language-plaintext highlighter-rouge">544</code> given in the official recipes for other models must not be applied to this model directly.</p>
+<h4 id="why-does---separate-object-groups-matter">
+  
+  
+    <a href="#why-does---separate-object-groups-matter" class="anchor-heading" aria-labelledby="why-does---separate-object-groups-matter"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Why does <code class="language-plaintext highlighter-rouge">--separate-object-groups</code> matter?
+  
+  
+</h4>
+    
+
+<p>In hybrid models, <code class="language-plaintext highlighter-rouge">--separate-object-groups</code> makes Mamba state data be managed in separate cache object groups. The relevant Qwen hybrid model recipe considers this option necessary.</p>
+
+<p>In the main experiment this option was kept off. The reason is that it does not appear in LMCache’s prefix-suffix-tuner benchmarking recipe, and no additional variable was wanted in the main A/B comparison.</p>
+
+<p>The option was also tested on and off. No measurable difference in TTFT was observed in this comparison; the median speedup stayed about 1.95×.</p>
+
+<p>This result does not mean the option is ineffective under all conditions. No performance difference was observed in the tested workload; possible effects on record correctness and cache hit rate must be evaluated separately.</p>
+
+<p><strong>Recommendation:</strong> For production use, the <code class="language-plaintext highlighter-rouge">--separate-object-groups</code> option should be enabled to comply with the official Qwen hybrid model recipe, and correctness and cache hit rate should be retested.</p>
+<h4 id="the---chunk-size-and---max-num-batched-tokens-settings">
+  
+  
+    <a href="#the---chunk-size-and---max-num-batched-tokens-settings" class="anchor-heading" aria-labelledby="the---chunk-size-and---max-num-batched-tokens-settings"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> The <code class="language-plaintext highlighter-rouge">--chunk-size</code> and <code class="language-plaintext highlighter-rouge">--max-num-batched-tokens</code> settings
+  
+  
+</h4>
+    
+
+<p>LMCache’s <code class="language-plaintext highlighter-rouge">--chunk-size</code> value must be compatible with the unified block size vLLM uses. The connector can raise the configured minimum chunk size to a larger value based on the model’s KV layout. The command-line value alone should therefore not be trusted; the startup logs must be examined as well.</p>
+
+<p>In hybrid models, the <code class="language-plaintext highlighter-rouge">--max-num-batched-tokens</code> setting affects prefill and decoding running together.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th><code class="language-plaintext highlighter-rouge">--max-num-batched-tokens</code> value</th>
+      <th>Expected behavior</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">N</code></td>
+      <td>Only one block of budget may remain per scheduler step. Starting the prefill of a new request while decoding continues can become difficult, and concurrency can drop seriously.</td>
+    </tr>
+    <tr>
+      <td>Between <code class="language-plaintext highlighter-rouge">N</code> and <code class="language-plaintext highlighter-rouge">2N</code>; for example <code class="language-plaintext highlighter-rouge">2N−1</code></td>
+      <td>Allows one block of progress per step while leaving extra budget for prefill and decoding to run together.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">2N</code> or more</td>
+      <td>Larger prefill steps can be used. But the boundaries where cache state is saved can become rarer, and prefix reuse can become coarser.</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>In this experiment, with <code class="language-plaintext highlighter-rouge">N = 2144</code>, <code class="language-plaintext highlighter-rouge">2N−1 = 4287</code> was used. This choice is compatible with the approach in the relevant hybrid model recipe. When a different model or block size is used, the value must be recalculated.</p>
+
+<p>The relevant Qwen hybrid model recipe reports about a 7× slowdown in a test with low cache hit rate or cold cache when <code class="language-plaintext highlighter-rouge">max-num-batched-tokens=N</code> is used. This ratio does not hold for every workload; it is one example of how much losing concurrency can affect performance under particular conditions.</p>
+
+<p><strong>Extra check:</strong> If the error <code class="language-plaintext highlighter-rouge">max_num_seqs exceeds available Mamba cache blocks</code> appears at vLLM startup, <code class="language-plaintext highlighter-rouge">--max-num-seqs</code> must be reduced or, if the memory limits allow it, <code class="language-plaintext highlighter-rouge">--gpu-memory-utilization</code> must be raised.</p>
+<h3 id="53-l1-capacity-and-eviction-policy">
+  
+  
+    <a href="#53-l1-capacity-and-eviction-policy" class="anchor-heading" aria-labelledby="53-l1-capacity-and-eviction-policy"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.3. L1 capacity and eviction policy
+  
+  
+</h3>
+    
+
+<p>When setting L1 capacity, the memory needs of the operating system, vLLM and other processes must be accounted for as well, not only those of LMCache.</p>
+
+<p>Raising L1 capacity can increase the probability that reused records remain in CPU memory and can reduce the need to reach L2. But a capacity that exceeds the system’s available memory must not be chosen.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Setting</th>
+      <th>Explanation and recommendation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--l1-size-gb</code></td>
+      <td>Should be set after leaving enough memory for the operating system and vLLM.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--l1-init-size-gb</code></td>
+      <td>Determines the L1 memory reserved at startup. Actual memory consumption must be verified along with the capacity.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--eviction-policy LRU</code></td>
+      <td>Evicts the least recently used records first.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--eviction-trigger-watermark 0.8</code></td>
+      <td>Starts eviction when L1 usage reaches the threshold. The documented default is <code class="language-plaintext highlighter-rouge">0.8</code>.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--eviction-ratio 0.2</code></td>
+      <td>Determines how much memory is emptied in each eviction cycle. The documented default is <code class="language-plaintext highlighter-rouge">0.2</code>.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--max-workers</code></td>
+      <td>Sets the thread count of the base worker pools; the default is <code class="language-plaintext highlighter-rouge">1</code>.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--max-gpu-workers</code></td>
+      <td>Adjusts the GPU-related worker pool. Should be evaluated against the workload where several vLLM instances use the same LMCache server.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--max-cpu-workers</code></td>
+      <td>Adjusts the worker pool for lookup and other CPU-heavy work.</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Eviction threshold and eviction ratio have different functions: the threshold decides when eviction starts; the ratio decides how much space is freed in each eviction cycle.</p>
+
+<p>If eviction happens often, L1 capacity, cache hit rate and memory usage trends should be examined first. The threshold or the eviction ratio can be changed when needed. But since these changes affect which records the cache keeps and how often L2 is consulted, they should be measured and chosen in the production environment.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">0.99</code> ratio used in this experiment was chosen to make cache overflow explicit. It must not be taken as the default recommended for production.</p>
+<h3 id="54-transfer-mode-and-monitoring">
+  
+  
+    <a href="#54-transfer-mode-and-monitoring" class="anchor-heading" aria-labelledby="54-transfer-mode-and-monitoring"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.4. Transfer mode and monitoring
+  
+  
+</h3>
+    
+
+<p>LMCache MP offers several methods for transferring KV data:</p>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">lmcache_driven</code>:</strong> LMCache server manages the STORE/RETRIEVE transfer. It supports CUDA IPC and shared CPU memory, and is the default in an MP setup.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">engine_driven</code>:</strong> Uses the PREPARE/COMMIT-based transfer path. It can be used in CPU or non-CUDA accelerator scenarios.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">auto</code>:</strong> Loads both transfer paths. It can be used in setups where workers from different device types connect.</li>
+</ul>
+
+<p>The transfer mode must be chosen according to the hardware and connector requirements. <code class="language-plaintext highlighter-rouge">lmcache_driven</code> was used in this experiment.</p>
+<h4 id="health-check-and-metrics">
+  
+  
+    <a href="#health-check-and-metrics" class="anchor-heading" aria-labelledby="health-check-and-metrics"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Health check and metrics
+  
+  
+</h4>
+    
+
+<p>After the LMCache server starts, the following checks should be made:</p>
+
+<ol>
+  <li>Verify that the <code class="language-plaintext highlighter-rouge">/healthcheck</code> endpoint answers healthy.</li>
+  <li>Check that vLLM connected to the LMCache server successfully.</li>
+  <li>Examine the startup logs for how the chunk size was determined and for cache store operations.</li>
+  <li>Use the Prometheus metrics to monitor storing, loading back, cache hit rate and memory usage.</li>
+  <li>Use <code class="language-plaintext highlighter-rouge">LMCACHE_LOG_LEVEL=DEBUG</code> during first installation and debugging. Return to <code class="language-plaintext highlighter-rouge">INFO</code> in production once the system works stably.</li>
+</ol>
+
+<p>The MP server’s Prometheus metrics are served on port <code class="language-plaintext highlighter-rouge">9090</code> by default. But this port being reachable alone does not prove that all metrics are collected correctly. The monitoring system’s access and the scope of the measurements must be verified as well.</p>
+<h3 id="55-the-lifecycle-of-kv-records-and-disk-management">
+  
+  
+    <a href="#55-the-lifecycle-of-kv-records-and-disk-management" class="anchor-heading" aria-labelledby="55-the-lifecycle-of-kv-records-and-disk-management"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.5. The lifecycle of KV records and disk management
+  
+  
+</h3>
+    
+
+<p>KV records being on disk does not guarantee that they stay valid or usable indefinitely. The storage adapter’s behavior for deleting records, evicting them and reclaiming disk space must be examined separately.</p>
+
+<p>With the <code class="language-plaintext highlighter-rouge">fs</code> configuration used in this experiment, old records were observed to accumulate. In production, the following checks should therefore be made:</p>
+
+<ul>
+  <li>Disk usage and free space must be monitored regularly.</li>
+  <li>The conditions under which KV records become invalid must be determined.</li>
+  <li>The deletion and space-reclaiming mechanisms the adapter supports must be verified.</li>
+  <li>It must be tested that old records can still be found after a service restart and can be loaded back successfully.</li>
+  <li>Different models, block sizes or incompatible attention backend configurations must be prevented from using the same records.</li>
+</ul>
+
+<p><strong>A record being on disk does not mean a cache hit occurred.</strong> The record must match the request, be compatible with the configuration, and load back successfully.</p>
+<h3 id="56-acceptance-test-storing-and-retrieving-kv-data">
+  
+  
+    <a href="#56-acceptance-test-storing-and-retrieving-kv-data" class="anchor-heading" aria-labelledby="56-acceptance-test-storing-and-retrieving-kv-data"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.6. Acceptance test: storing and retrieving KV data
+  
+  
+</h3>
+    
+
+<p>Before production use, measuring TTFT alone is not enough. An acceptance test must also show that the cache really creates records and uses those records in later requests.</p>
+
+<p>The recommended test steps are:</p>
+
+<ol>
+  <li>Start vLLM and LMCache with a fixed model, tokenizer, attention backend and block configuration.</li>
+  <li>Run a first pass with a fixed set of requests.</li>
+  <li>Verify from the logs and metrics that LMCache records were created.</li>
+  <li>Using the method the vLLM version supports, clear vLLM’s local prefix cache. Check separately whether the external LMCache records are preserved. The goal is to test loading the data back while keeping the LMCache records.</li>
+  <li>Send the same requests again and verify that LMCache load-back operations take place.</li>
+  <li>Record TTFT and, where possible, the cache hit rate.</li>
+  <li>Repeat the test under cold-cache, warm-cache and service-restart conditions.</li>
+</ol>
+<h4 id="correctness-check">
+  
+  
+    <a href="#correctness-check" class="anchor-heading" aria-labelledby="correctness-check"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Correctness check
+  
+  
+</h4>
+    
+
+<p>In hybrid GDN models, it must not be assumed that generation loaded back from the cache will be identical token by token to cold generation.</p>
+
+<p>The relevant LMCache recipe takes score-level equivalence rather than bit-level equality as the criterion for these models. Correctness evaluation should therefore use a test set suited to the model and predetermined tolerances.</p>
+
+<p>If an API such as <code class="language-plaintext highlighter-rouge">POST /reset_prefix_cache</code> is to be used, it must be verified that this endpoint is enabled in the relevant vLLM version and that the call affects only the intended local cache. Without checking version and configuration, it must not be assumed that this call definitely preserves the external LMCache records.</p>
+<h3 id="57-support-status-and-limitations">
+  
+  
+    <a href="#57-support-status-and-limitations" class="anchor-heading" aria-labelledby="57-support-status-and-limitations"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.7. Support status and limitations
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Topic</th>
+      <th>Assessment</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Bit-level equality</td>
+      <td>Not guaranteed for hybrid GDN models. Score-level correctness evaluation must be done.</td>
+    </tr>
+    <tr>
+      <td>Portability of KV data</td>
+      <td>Records depend on settings such as the attention backend and kernel block size. Sharing between different configurations must not be done without verification.</td>
+    </tr>
+    <tr>
+      <td>CacheGen and CacheBlend</td>
+      <td>The relevant hybrid model recipe states that they are not supported. Opaque byte-level records may not be suitable for content-based operations.</td>
+    </tr>
+    <tr>
+      <td>Mamba prefix cache in <code class="language-plaintext highlighter-rouge">align</code> mode</td>
+      <td>Marked experimental in the relevant official recipe.</td>
+    </tr>
+    <tr>
+      <td>Image and video KV data</td>
+      <td>Behavior verified for text generation does not mean image and video caching is verified too.</td>
+    </tr>
+    <tr>
+      <td>Use with SGLang</td>
+      <td>Not presented as a verified LMCache integration in the relevant Qwen hybrid model recipe.</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>These limitations do not mean LMCache does not work in general. They show which features are verified with which model and integration. Production decisions should take this support scope into account.</p><hr />
+<h2 id="6-limits-of-the-experiment-and-generalizability">
+  
+  
+    <a href="#6-limits-of-the-experiment-and-generalizability" class="anchor-heading" aria-labelledby="6-limits-of-the-experiment-and-generalizability"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6. Limits of the Experiment and Generalizability
+  
+  
+</h2>
+    
+
+<ul>
+  <li>The main performance measurement was made with synthetic requests of 8,000 tokens each. The results do not represent all properties of real chat and code content.</li>
+  <li>The test is limited to three repeats, one model and one hardware configuration. The speedup ratio obtained can change with different models, concurrency levels or cache settings.</li>
+  <li><code class="language-plaintext highlighter-rouge">--eviction-ratio 0.99</code> is an experiment setting used to make cache overflow explicit. With the default <code class="language-plaintext highlighter-rouge">0.20</code> used in production, cache behavior may differ.</li>
+  <li>Preserving the disk records and the contribution they give after a service restart depend on the storage adapter and the validity of the records.</li>
+  <li>This report measures TTFT primarily. Before making a production decision, output correctness, long-term stability, memory consumption and disk space management must also be verified.</li>
+  <li>The gain that several vLLM instances sharing one LMCache server might bring was not measured in this experiment. A separate multi-instance test is needed for this usage scenario.</li>
+</ul><hr />
+<h2 id="7-resources">
+  
+  
+    <a href="#7-resources" class="anchor-heading" aria-labelledby="7-resources"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7. Resources
+  
+  
+</h2>
+    
+
+<ol>
+  <li>LMCache — <a href="https://docs.lmcache.ai/mp/deployment.html">Deployment Guide</a></li>
+  <li>LMCache — <a href="https://docs.lmcache.ai/mp/configuration.html">Configuration Reference</a></li>
+  <li>LMCache — <a href="https://docs.lmcache.ai/recipes/qwen3_5.html">Qwen3.5 / Qwen3.6 / Qwen3.8 model recipe</a></li>
+  <li>LMCache — <a href="https://docs.lmcache.ai/mp/quickstart.html">Quick Start</a></li>
+</ol>
+
+<p>The official documentation was reviewed as of October 2026. Because LMCache MP and hybrid model support can change between versions, compatibility with the version and configuration used must be checked again when reproducing the experiment.</p><hr />
+
+<p><img src="/assets/images/aetherix-logo.png" alt="Aetherix" width="220" /></p>
+
+<p><strong>Let’s plan your LLM infrastructure together.</strong> For hardware sizing and a cache architecture that accounts for KV cache tiering and eviction, contact Aetherix: <a href="mailto:info@aetherix.com">info@aetherix.com</a> · <a href="https://aetherix.com">aetherix.com</a></p>
+
+          
+
+          
+        </main>
+        
+
+
+      </div>
+    </div>
+    
+      
+
+<div class="search-overlay"></div>
+
+    
+  </div>
+
+  
+
+  <script>
+    window.JTD_I18N = {
+      search_no_results: "No results found",
+      copy_code: "Copy code to clipboard"
+    };
+  </script>
+
+  
+
+
+<div id="cookie-consent-banner" class="cookie-consent" role="dialog"
+     aria-modal="false" aria-label="Cookie consent"
+     data-consent-state="pending" hidden>
+  <div class="cookie-consent__body">
+    <div class="cookie-consent__text">
+      <span class="cookie-consent__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+          <path d="M21 12a9 9 0 1 1-9-9 4.5 4.5 0 0 0 4.5 4.5A4.5 4.5 0 0 0 21 12zm-9-3.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-1.5 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm6-1.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-3 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0z"/>
+        </svg>
+      </span>
+      <p>We use cookies to analyze site traffic and improve your experience. By clicking 'Accept', you consent to the use of analytics cookies as described in our Privacy Policy.
+        <a href="https://aetherix.com/privacy-policy/" target="_blank" rel="noopener noreferrer"
+           class="cookie-consent__link">Privacy Policy</a>
+      </p>
+    </div>
+    <div class="cookie-consent__actions">
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--reject"
+              data-consent-action="rejected">Reject</button>
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--accept"
+              data-consent-action="accepted">Accept</button>
+    </div>
+  </div>
+</div>
+<script>
+  // Eski karar önbellekte varsa bannerı gösterme
+  (function() {
+    try {
+      var v = localStorage.getItem('cookieConsent');
+      if (v === 'accepted' || v === 'rejected') {
+        document.documentElement.dataset.cookieConsent = v;
+      }
+    } catch (e) {}
+  })();
+</script>
+<script src="/assets/js/cookie-banner.js" defer></script>
+
+</body>
+</html>
+

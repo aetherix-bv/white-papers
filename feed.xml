@@ -5,8 +5,24 @@
   <link href="https://whitepapers.aetherix.com/feed.xml" rel="self" type="application/atom+xml"/>
   <link href="https://whitepapers.aetherix.com/" rel="alternate" type="text/html"/>
   <id>https://whitepapers.aetherix.com/feed.xml</id>
-  <updated>2026-10-15T10:13:47+00:00</updated>
+  <updated>2026-10-22T12:58:53+00:00</updated>
   <author><name>Aetherix B.V.</name></author>
+  <entry>
+    <title>KV Cache Offloading with LMCache in LLM Inference</title>
+    <link href="https://whitepapers.aetherix.com/papers/kv-cache-offloading-lmcache/" rel="alternate" type="text/html"/>
+    <id>https://whitepapers.aetherix.com/papers/kv-cache-offloading-lmcache/</id>
+    <published>2026-10-21T00:00:00+00:00</published>
+    <updated>2026-10-21T00:00:00+00:00</updated>
+    <summary>What LMCache adds to vLLM when the same contexts come back: a three-tier KV cache (GPU, CPU, NVMe) on DGX Spark, measured TTFT — 1.95× on repeated access, 3.3× after a service restart — and the settings and limits that come with it.</summary>
+  </entry>
+  <entry>
+    <title>Network Link Speed for Tensor-Parallel Inference on 8× DGX Spark (200G vs 100G)</title>
+    <link href="https://whitepapers.aetherix.com/papers/dgx-spark-link-speed-tensor-parallel/" rel="alternate" type="text/html"/>
+    <id>https://whitepapers.aetherix.com/papers/dgx-spark-link-speed-tensor-parallel/</id>
+    <published>2026-10-15T00:00:00+00:00</published>
+    <updated>2026-10-15T00:00:00+00:00</updated>
+    <summary>How much network bandwidth an 8-Spark tensor-parallel cluster really uses, and what running each DGX Spark at 100G instead of 200G costs: the mechanism, an estimate from the model&apos;s architecture, and measurements with GLM-5.3 at TP8.</summary>
+  </entry>
   <entry>
     <title>LLM Quantization Selection Guide</title>
     <link href="https://whitepapers.aetherix.com/papers/llm-quantization-selection/" rel="alternate" type="text/html"/>
@@ -28,8 +44,8 @@
     <link href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/" rel="alternate" type="text/html"/>
     <id>https://whitepapers.aetherix.com/vlm-inference-benchmarks/</id>
     <published>2026-10-06T09:00:00+00:00</published>
-    <updated>2026-10-06T00:00:00+00:00</updated>
-    <summary>Explore vision-language model inference benchmarks on RTX PRO 6000 Blackwell, Jetson AGX Orin 32GB and Jetson Orin NX 16GB. Pick the image size, set how long a camera may wait for its answer, and see how many cameras each configuration keeps up with.</summary>
+    <updated>2026-10-13T00:00:00+00:00</updated>
+    <summary>Explore vision-language model inference benchmarks on Jetson AGX Thor, DGX Spark, RTX PRO 6000 Blackwell, Jetson AGX Orin 32GB and Jetson Orin NX 16GB. Pick the image size, set how long a camera may wait for its answer, and see how many cameras each configuration keeps up with.</summary>
   </entry>
   <entry>
     <title>The First Open-Weight Alternatives to Jev</title>
