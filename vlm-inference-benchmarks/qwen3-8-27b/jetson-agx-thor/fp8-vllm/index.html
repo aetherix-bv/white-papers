@@ -40,8 +40,8 @@
 <meta name="generator" content="Jekyll v4.3.4" />
 <meta property="og:title" content="Qwen3.8-27B on Jetson AGX Thor — FP8, vLLM vision-language inference benchmark" />
 <meta property="og:locale" content="en" />
-<meta name="description" content="Qwen3.8-27B (27B parameters), served in FP8 format with vLLM on Jetson AGX Thor, starts answering a single camera that sends one 720p image after 2.9 s, then writes 8.6 tok/s." />
-<meta name="twitter:description" property="og:description" content="Qwen3.8-27B (27B parameters), served in FP8 format with vLLM on Jetson AGX Thor, starts answering a single camera that sends one 720p image after 2.9 s, then writes 8.6 tok/s." />
+<meta name="description" content="Qwen3.8-27B (27B parameters), served in FP8 format with vLLM on Jetson AGX Thor, starts answering a single camera that sends one 720p image after 2,902 ms (time to first token, TTFT), then writes 8.6 tok/s." />
+<meta name="twitter:description" property="og:description" content="Qwen3.8-27B (27B parameters), served in FP8 format with vLLM on Jetson AGX Thor, starts answering a single camera that sends one 720p image after 2,902 ms (time to first token, TTFT), then writes 8.6 tok/s." />
 <link rel="canonical" href="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-8-27b/jetson-agx-thor/fp8-vllm/" />
 <meta property="og:url" content="https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-8-27b/jetson-agx-thor/fp8-vllm/" />
 <meta property="og:site_name" content="Aetherix White Papers" />
@@ -50,7 +50,7 @@
 <meta name="twitter:title" content="Qwen3.8-27B on Jetson AGX Thor — FP8, vLLM vision-language inference benchmark" />
 <meta name="twitter:site" content="@Aetherixnl" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","description":"Qwen3.8-27B (27B parameters), served in FP8 format with vLLM on Jetson AGX Thor, starts answering a single camera that sends one 720p image after 2.9 s, then writes 8.6 tok/s.","headline":"Qwen3.8-27B on Jetson AGX Thor — FP8, vLLM vision-language inference benchmark","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://whitepapers.aetherix.com/assets/images/aetherix-logo.png"}},"url":"https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-8-27b/jetson-agx-thor/fp8-vllm/"}</script>
+{"@context":"https://schema.org","@type":"WebPage","description":"Qwen3.8-27B (27B parameters), served in FP8 format with vLLM on Jetson AGX Thor, starts answering a single camera that sends one 720p image after 2,902 ms (time to first token, TTFT), then writes 8.6 tok/s.","headline":"Qwen3.8-27B on Jetson AGX Thor — FP8, vLLM vision-language inference benchmark","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://whitepapers.aetherix.com/assets/images/aetherix-logo.png"}},"url":"https://whitepapers.aetherix.com/vlm-inference-benchmarks/qwen3-8-27b/jetson-agx-thor/fp8-vllm/"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -171,7 +171,7 @@
   
     <ul class="nav-list"><li class="nav-list-item"><a href="/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/about/" class="nav-list-link">About</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in White Papers category" aria-pressed="false">
       <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
-    </button><a href="/papers/" class="nav-list-link">White Papers</a><ul class="nav-list"><li class="nav-list-item"><a href="/papers/local-llm-guide/" class="nav-list-link">Local LLM Usage Guide</a></li><li class="nav-list-item"><a href="/papers/llm-quantization-selection/" class="nav-list-link">LLM Quantization Selection Guide</a></li><li class="nav-list-item"><a href="/papers/conditional-memory-offloading/" class="nav-list-link">Engram Offloading in LLM Inference</a></li><li class="nav-list-item"><a href="/papers/b300-gb300-cluster-architecture/" class="nav-list-link">NVIDIA DGX B300 vs GB300 NVL72 Cluster Architecture Comparison</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-2node-cluster-setup/" class="nav-list-link">DGX Spark 2-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-3node-cluster-setup/" class="nav-list-link">DGX Spark 3-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-4node-cluster-setup/" class="nav-list-link">DGX Spark 4-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-8node-cluster-setup/" class="nav-list-link">DGX Spark 8-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/qwen3.6-27b-dgx-spark-benchmark/" class="nav-list-link">Qwen3.6-27B DGX Spark Benchmark</a></li><li class="nav-list-item"><a href="/papers/qwen3.6-27b-dgx-spark-scaling/" class="nav-list-link">Qwen3.6-27B DGX Spark Cluster Scaling</a></li><li class="nav-list-item"><a href="/papers/kv-cache-offloading-lmcache/" class="nav-list-link">KV Cache Offloading with LMCache in LLM Inference</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-link-speed-tensor-parallel/" class="nav-list-link">Network Link Speed for Tensor-Parallel Inference on 8× DGX Spark (200G vs 100G)</a></li><li class="nav-list-item"><a href="/papers/jev-open-weight-alternatives/" class="nav-list-link">The First Open-Weight Alternatives to Jev</a></li><li class="nav-list-item"><a href="/papers/deepseek-v4.1-flash-4spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash 4× DGX Spark Deployment</a></li><li class="nav-list-item"><a href="/papers/deepseek-v4.1-flash-8spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash 8× DGX Spark TP8 Deployment</a></li><li class="nav-list-item"><a href="/papers/kimi-k3-dgx-b300-inference-benchmark/" class="nav-list-link">Kimi K3 Inference Benchmark on DGX-B300</a></li></ul></li><li class="nav-list-item"><a href="/llm-inference-benchmarks/" class="nav-list-link">LLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/cv-inference-benchmarks/" class="nav-list-link">CV Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/vlm-inference-benchmarks/" class="nav-list-link">VLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/device-advisor/" class="nav-list-link">Device Advisor</a></li><li class="nav-list-item"><a href="/changelog/" class="nav-list-link">Changelog</a></li></ul>
+    </button><a href="/papers/" class="nav-list-link">White Papers</a><ul class="nav-list"><li class="nav-list-item"><a href="/papers/local-llm-guide/" class="nav-list-link">Local LLM Usage Guide</a></li><li class="nav-list-item"><a href="/papers/llm-quantization-selection/" class="nav-list-link">LLM Quantization Selection Guide</a></li><li class="nav-list-item"><a href="/papers/conditional-memory-offloading/" class="nav-list-link">Engram Offloading in LLM Inference</a></li><li class="nav-list-item"><a href="/papers/b300-gb300-cluster-architecture/" class="nav-list-link">NVIDIA DGX B300 vs GB300 NVL72 Cluster Architecture Comparison</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-2node-cluster-setup/" class="nav-list-link">DGX Spark 2-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-3node-cluster-setup/" class="nav-list-link">DGX Spark 3-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-4node-cluster-setup/" class="nav-list-link">DGX Spark 4-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-8node-cluster-setup/" class="nav-list-link">DGX Spark 8-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/qwen3.6-27b-dgx-spark-benchmark/" class="nav-list-link">Qwen3.6-27B DGX Spark Benchmark</a></li><li class="nav-list-item"><a href="/papers/qwen3.6-27b-dgx-spark-scaling/" class="nav-list-link">Qwen3.6-27B DGX Spark Cluster Scaling</a></li><li class="nav-list-item"><a href="/papers/kv-cache-offloading-lmcache/" class="nav-list-link">KV Cache Offloading with LMCache in LLM Inference</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-link-speed-tensor-parallel/" class="nav-list-link">Network Link Speed for Tensor-Parallel Inference on DGX Sparks (200G vs 100G)</a></li><li class="nav-list-item"><a href="/papers/jev-open-weight-alternatives/" class="nav-list-link">The First Open-Weight Alternatives to Jev</a></li><li class="nav-list-item"><a href="/papers/system-one-production-readiness/" class="nav-list-link">System One in Production: Decision Quality, Reliability and Performance on DGX Spark with vLLM and SGLang</a></li><li class="nav-list-item"><a href="/papers/deepseek-v4.1-flash-4spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash 4× DGX Spark Deployment</a></li><li class="nav-list-item"><a href="/papers/deepseek-v4.1-flash-8spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash 8× DGX Spark TP8 Deployment</a></li><li class="nav-list-item"><a href="/papers/kimi-k3-dgx-b300-inference-benchmark/" class="nav-list-link">Kimi K3 Inference Benchmark on DGX-B300</a></li></ul></li><li class="nav-list-item"><a href="/llm-inference-benchmarks/" class="nav-list-link">LLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/cv-inference-benchmarks/" class="nav-list-link">CV Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/vlm-inference-benchmarks/" class="nav-list-link">VLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/device-advisor/" class="nav-list-link">Device Advisor</a></li><li class="nav-list-item"><a href="/changelog/" class="nav-list-link">Changelog</a></li></ul>
 
   
 </nav>
@@ -270,45 +270,45 @@
 <tr><th scope="row">Quantization</th><td>FP8</td></tr>
 <tr><th scope="row">Image size</th><td>720p</td></tr>
 <tr><th scope="row">Images per camera</th><td>1</td></tr>
-<tr><th scope="row">Max Cameras (response ≤ 3 s)</th><td>1</td></tr>
+<tr><th scope="row">Max Cameras (TTFT ≤ 3000 ms)</th><td>1</td></tr>
 <tr><th scope="row">Engine</th><td>vLLM</td></tr>
 </tbody>
 </table></div>
 <div class="table-wrapper"><table>
-<thead><tr><th>Cameras</th><th>Response (s)</th><th>TPS (tok/s)</th><th>Target</th></tr></thead>
+<thead><tr><th>Cameras</th><th>TTFT (ms)</th><th>TPS (tok/s)</th><th>Target</th></tr></thead>
 <tbody>
-<tr><td>1</td><td>2.90</td><td>8.6</td><td>≤3 s</td></tr>
-<tr><td>2</td><td>4.87</td><td>8.2</td><td>&gt;3 s</td></tr>
-<tr><td>4</td><td>8.20</td><td>7.4</td><td>&gt;3 s</td></tr>
-<tr><td>8</td><td>10.6</td><td>5.8</td><td>&gt;3 s</td></tr>
-<tr><td>16</td><td>7.00</td><td>5.7</td><td>&gt;3 s</td></tr>
-<tr><td>32</td><td>10.9</td><td>3.7</td><td>&gt;3 s</td></tr>
-<tr><td>40</td><td>12.2</td><td>3.0</td><td>&gt;3 s</td></tr>
-<tr><td>44</td><td>12.8</td><td>2.9</td><td>&gt;3 s</td></tr>
+<tr><td>1</td><td>2902</td><td>8.6</td><td>≤3000 ms</td></tr>
+<tr><td>2</td><td>4868</td><td>8.2</td><td>&gt;3000 ms</td></tr>
+<tr><td>4</td><td>8202</td><td>7.4</td><td>&gt;3000 ms</td></tr>
+<tr><td>8</td><td>10578</td><td>5.8</td><td>&gt;3000 ms</td></tr>
+<tr><td>16</td><td>7002</td><td>5.7</td><td>&gt;3000 ms</td></tr>
+<tr><td>32</td><td>10919</td><td>3.7</td><td>&gt;3000 ms</td></tr>
+<tr><td>40</td><td>12242</td><td>3.0</td><td>&gt;3000 ms</td></tr>
+<tr><td>44</td><td>12801</td><td>2.9</td><td>&gt;3000 ms</td></tr>
 <tr><td>48</td><td>—</td><td>—</td><td>Failed</td></tr>
 </tbody>
 </table></div>
 <div class="table-wrapper"><table>
-<thead><tr><th>Images per request</th><th>Response (s)</th><th>TPS (tok/s)</th><th>Target</th></tr></thead>
+<thead><tr><th>Images per request</th><th>TTFT (ms)</th><th>TPS (tok/s)</th><th>Target</th></tr></thead>
 <tbody>
-<tr><td>1</td><td>2.90</td><td>8.6</td><td>≤3 s</td></tr>
-<tr><td>2</td><td>1.43</td><td>8.6</td><td>≤3 s</td></tr>
-<tr><td>4</td><td>2.74</td><td>8.6</td><td>≤3 s</td></tr>
-<tr><td>8</td><td>5.40</td><td>8.6</td><td>&gt;3 s</td></tr>
-<tr><td>16</td><td>11.3</td><td>8.4</td><td>&gt;3 s</td></tr>
-<tr><td>32</td><td>24.2</td><td>8.2</td><td>&gt;3 s</td></tr>
-<tr><td>64</td><td>55.5</td><td>7.8</td><td>&gt;3 s</td></tr>
-<tr><td>128</td><td>140.3</td><td>7.0</td><td>&gt;3 s</td></tr>
-<tr><td>256</td><td>403.6</td><td>5.8</td><td>&gt;3 s</td></tr>
+<tr><td>1</td><td>2902</td><td>8.6</td><td>≤3000 ms</td></tr>
+<tr><td>2</td><td>1433</td><td>8.6</td><td>≤3000 ms</td></tr>
+<tr><td>4</td><td>2736</td><td>8.6</td><td>≤3000 ms</td></tr>
+<tr><td>8</td><td>5395</td><td>8.6</td><td>&gt;3000 ms</td></tr>
+<tr><td>16</td><td>11334</td><td>8.4</td><td>&gt;3000 ms</td></tr>
+<tr><td>32</td><td>24224</td><td>8.2</td><td>&gt;3000 ms</td></tr>
+<tr><td>64</td><td>55465</td><td>7.8</td><td>&gt;3000 ms</td></tr>
+<tr><td>128</td><td>140298</td><td>7.0</td><td>&gt;3000 ms</td></tr>
+<tr><td>256</td><td>403624</td><td>5.8</td><td>&gt;3000 ms</td></tr>
 <tr><td>512</td><td>—</td><td>—</td><td>Failed</td></tr>
 </tbody>
 </table></div>
-<p>Qwen3.8-27B (27B parameters), served in FP8 format with vLLM on Jetson AGX Thor, starts answering a single camera that sends one 720p image after 2.9 s, then writes 8.6 tok/s.</p>
-<p>With 256 images per camera at 720p, the answer starts after 403.62 s. With one 2K image, after 7.01 s.</p>
-<p>At the default target of an answer starting within 3 s (720p, one image per camera), it keeps up with one camera at a time.</p>
+<p>Qwen3.8-27B (27B parameters), served in FP8 format with vLLM on Jetson AGX Thor, starts answering a single camera that sends one 720p image after 2,902 ms (time to first token, TTFT), then writes 8.6 tok/s.</p>
+<p>With 256 images per camera at 720p, the answer starts after 403,624 ms. With one 2K image, after 7,013 ms.</p>
+<p>At the default target of a mean TTFT within 3,000 ms (720p, one image per camera), it keeps up with one camera at a time.</p>
 </div>
 </div>
-<div class="bt-explained-src" hidden><div data-vlmbt-explained="qwen3.8-27b_agxthor_fp8_vllm"><p>Qwen3.8-27B (27B parameters), served in FP8 format with vLLM on Jetson AGX Thor, starts answering a single camera that sends one 720p image after 2.9 s, then writes 8.6 tok/s.</p><p>With 256 images per camera at 720p, the answer starts after 403.62 s. With one 2K image, after 7.01 s.</p><p>At the default target of an answer starting within 3 s (720p, one image per camera), it keeps up with one camera at a time.</p></div></div>
+<div class="bt-explained-src" hidden><div data-vlmbt-explained="qwen3.8-27b_agxthor_fp8_vllm"><p>Qwen3.8-27B (27B parameters), served in FP8 format with vLLM on Jetson AGX Thor, starts answering a single camera that sends one 720p image after 2,902 ms (time to first token, TTFT), then writes 8.6 tok/s.</p><p>With 256 images per camera at 720p, the answer starts after 403,624 ms. With one 2K image, after 7,013 ms.</p><p>At the default target of a mean TTFT within 3,000 ms (720p, one image per camera), it keeps up with one camera at a time.</p></div></div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1"></script>

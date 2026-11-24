@@ -1,0 +1,1545 @@
+
+
+<!DOCTYPE html>
+
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-default.css">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet">
+
+  <style id="jtd-nav-activation">
+  
+
+.site-nav > ul.nav-list:first-child > li > a,
+.site-nav > ul.nav-list:first-child > li > ul > li:not(:nth-child(14)) > a,
+.site-nav > ul.nav-list:first-child > li > ul > li > ul > li > a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:not(:first-child) a,
+.site-nav li.external a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(14) > a {
+  font-weight: 600;
+  text-decoration: none;
+}.site-nav > ul.nav-list:first-child > li:nth-child(3) > button svg,
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(14) > button svg {
+  transform: rotate(-90deg);
+}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list,
+.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list > li.nav-list-item:nth-child(14) > ul.nav-list {
+  display: block;
+}
+  </style>
+
+  
+
+  
+    <script src="/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="icon" href="/nl/favicon.ico" type="image/x-icon">
+
+
+
+  <!-- Begin Jekyll SEO tag v2.9.1 -->
+<title>System One in productie: besliskwaliteit, betrouwbaarheid en prestaties op DGX Spark met vLLM en SGLang | Aetherix White Papers</title>
+<meta name="generator" content="Jekyll v4.3.4" />
+<meta property="og:title" content="System One in productie: besliskwaliteit, betrouwbaarheid en prestaties op DGX Spark met vLLM en SGLang" />
+<meta property="og:locale" content="nl" />
+<meta name="description" content="Zes typed-decision-modellen van 0.6B tot 27B geëvalueerd op één NVIDIA DGX Spark met vLLM en SGLang: Turkse nauwkeurigheid, kalibratie van het vertrouwen, parafraseconsistentie, multimodale grenzen, overdraagbaarheid tussen engines en de vertrouwensdrempels die een productiebeleid nodig heeft." />
+<meta name="twitter:description" property="og:description" content="Zes typed-decision-modellen van 0.6B tot 27B geëvalueerd op één NVIDIA DGX Spark met vLLM en SGLang: Turkse nauwkeurigheid, kalibratie van het vertrouwen, parafraseconsistentie, multimodale grenzen, overdraagbaarheid tussen engines en de vertrouwensdrempels die een productiebeleid nodig heeft." />
+<link rel="canonical" href="https://whitepapers.aetherix.com/nl/papers/system-one-production-readiness/" />
+<meta property="og:url" content="https://whitepapers.aetherix.com/nl/papers/system-one-production-readiness/" />
+<meta property="og:site_name" content="Aetherix White Papers" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-11-04T00:00:00+00:00" />
+<meta property="article:modified_time" content="2026-11-04T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="System One in productie: besliskwaliteit, betrouwbaarheid en prestaties op DGX Spark met vLLM en SGLang" />
+<meta name="twitter:site" content="@Aetherixnl" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2026-11-04T00:00:00+00:00","datePublished":"2026-11-04T00:00:00+00:00","description":"Zes typed-decision-modellen van 0.6B tot 27B geëvalueerd op één NVIDIA DGX Spark met vLLM en SGLang: Turkse nauwkeurigheid, kalibratie van het vertrouwen, parafraseconsistentie, multimodale grenzen, overdraagbaarheid tussen engines en de vertrouwensdrempels die een productiebeleid nodig heeft.","headline":"System One in productie: besliskwaliteit, betrouwbaarheid en prestaties op DGX Spark met vLLM en SGLang","mainEntityOfPage":{"@type":"WebPage","@id":"https://whitepapers.aetherix.com/nl/papers/system-one-production-readiness/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://whitepapers.aetherix.com/assets/images/aetherix-logo.png"}},"url":"https://whitepapers.aetherix.com/nl/papers/system-one-production-readiness/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  
+<!-- Google tag (gtag.js) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JWLN33085T"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+
+  // Consent Mode v2 — default DENIED. Banner onayı ile GRANTED olur.
+  // KVKK/GDPR uyumu: ziyaretçi onay vermeden çerez set edilmez.
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    functionality_storage: 'granted',
+    security_storage: 'granted',
+    wait_for_update: 500
+  });
+
+  gtag('js', new Date());
+  gtag('config', 'G-JWLN33085T', {
+    anonymize_ip: true
+  });
+</script>
+
+<link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/papers/system-one-production-readiness/">
+<link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/papers/system-one-production-readiness/">
+<link rel="alternate" hreflang="x-default" href="https://whitepapers.aetherix.com/papers/system-one-production-readiness/">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/images/favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+<script>
+(function () {
+  var open = XMLHttpRequest.prototype.open;
+  var own = "/nl/search-data.json";
+  XMLHttpRequest.prototype.open = function (method, url) {
+    if (typeof url === "string" && /assets\/js\/search-data\.json$/.test(url)) arguments[1] = own;
+    return open.apply(this, arguments);
+  };
+})();
+</script>
+
+
+</head>
+
+<body>
+  <a class="skip-to-main" href="#main-content">Naar de hoofdinhoud</a>
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="svg-link" viewBox="0 0 24 24">
+  <title>Link</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+</symbol>
+
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+  <title>Menu</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+    <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</symbol>
+
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+  <title>Expand</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</symbol>
+
+  <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
+<symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+  <title id="svg-external-link-title">(external link)</title>
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+</symbol>
+
+  
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+  <title>Document</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+</symbol>
+
+    <symbol id="svg-search" viewBox="0 0 24 24">
+  <title>Search</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</symbol>
+
+  
+  
+    <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+<symbol id="svg-copy" viewBox="0 0 16 16">
+  <title>Copy</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+</symbol>
+<symbol id="svg-copied" viewBox="0 0 16 16">
+  <title>Copied</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"/>
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"/>
+  </svg>
+</symbol>
+
+  
+</svg>
+
+  
+    <div class="side-bar">
+  <div class="site-header" role="banner">
+    <a href="/nl/" class="site-title lh-tight">
+  <div class="site-logo" role="img" aria-label="Aetherix White Papers"></div>
+
+</a>
+    <button id="menu-button" class="site-button btn-reset" aria-label="Toggle menu" aria-pressed="false">
+      <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  <nav aria-label="Main" id="site-nav" class="site-nav">
+  
+  
+    <ul class="nav-list"><li class="nav-list-item"><a href="/nl/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/nl/about/" class="nav-list-link">Over ons</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in White Papers category" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+    </button><a href="/nl/papers/" class="nav-list-link">White Papers</a><ul class="nav-list"><li class="nav-list-item"><a href="/nl/papers/local-llm-guide/" class="nav-list-link">Handleiding voor lokaal LLM-gebruik</a></li><li class="nav-list-item"><a href="/nl/papers/llm-quantization-selection/" class="nav-list-link">Keuzegids voor LLM-kwantisatie</a></li><li class="nav-list-item"><a href="/nl/papers/conditional-memory-offloading/" class="nav-list-link">Engram-offloading bij LLM-inferentie</a></li><li class="nav-list-item"><a href="/nl/papers/b300-gb300-cluster-architecture/" class="nav-list-link">NVIDIA DGX B300 vs GB300 NVL72: vergelijking van clusterarchitecturen</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-2node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 2 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-3node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 3 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-4node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 4 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-8node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 8 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/qwen3.6-27b-dgx-spark-benchmark/" class="nav-list-link">Qwen3.6-27B DGX Spark-benchmark</a></li><li class="nav-list-item"><a href="/nl/papers/qwen3.6-27b-dgx-spark-scaling/" class="nav-list-link">Schaling van Qwen3.6-27B op een DGX Spark-cluster</a></li><li class="nav-list-item"><a href="/nl/papers/kv-cache-offloading-lmcache/" class="nav-list-link">Offloading van de KV-cache met LMCache bij LLM-inferentie</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-link-speed-tensor-parallel/" class="nav-list-link">Netwerklinksnelheid voor tensorparallelle inferentie op DGX Sparks (200G vs 100G)</a></li><li class="nav-list-item"><a href="/nl/papers/jev-open-weight-alternatives/" class="nav-list-link">De eerste open-gewichtsalternatieven voor Jev</a></li><li class="nav-list-item"><a href="/nl/papers/system-one-production-readiness/" class="nav-list-link">System One in productie: besliskwaliteit, betrouwbaarheid en prestaties op DGX Spark met vLLM en SGLang</a></li><li class="nav-list-item"><a href="/nl/papers/deepseek-v4.1-flash-4spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash-deployment op 4× DGX Spark</a></li><li class="nav-list-item"><a href="/nl/papers/deepseek-v4.1-flash-8spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash-deployment op 8× DGX Spark met TP8</a></li><li class="nav-list-item"><a href="/nl/papers/kimi-k3-dgx-b300-inference-benchmark/" class="nav-list-link">Kimi K3-inferentiebenchmark op DGX-B300</a></li></ul></li><li class="nav-list-item"><a href="/nl/llm-inference-benchmarks/" class="nav-list-link">LLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/nl/cv-inference-benchmarks/" class="nav-list-link">CV Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/nl/vlm-inference-benchmarks/" class="nav-list-link">VLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/nl/device-advisor/" class="nav-list-link">Apparaatadvies</a></li><li class="nav-list-item"><a href="/nl/changelog/" class="nav-list-link">Wijzigingslogboek</a></li></ul>
+
+  
+</nav>
+
+
+  
+  
+    <div class="lang-switcher">
+  
+    
+    
+      <a class="lang-switcher-item" href="/papers/system-one-production-readiness/">EN</a>
+    
+  
+    
+    
+      <span class="lang-switcher-item active">NL</span>
+    
+  
+</div>
+<script src="/assets/js/lang-switch.js"></script>
+
+  
+</div>
+
+  
+  <div class="main" id="top">
+    <div id="main-header" class="main-header">
+  
+    
+
+<div class="search" role="search">
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Zoeken" aria-label="Zoeken" autocomplete="off">
+    <label for="search-input" class="search-label"><svg viewBox="0 0 24 24" class="search-icon"><use xlink:href="#svg-search"></use></svg></label>
+  </div>
+  <div id="search-results" class="search-results"></div>
+</div>
+
+  
+  
+  
+    <nav aria-label="Auxiliary" class="aux-nav">
+  <ul class="aux-nav-list">
+    
+      <li class="aux-nav-list-item">
+        <a href="https://aetherix.com" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          aetherix.com
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://github.com/aetherix-bv" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          GitHub
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+  
+</div>
+
+    <div class="main-content-wrap">
+      <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+  <ol class="breadcrumb-nav-list">
+    <li class="breadcrumb-nav-list-item"><a href="/nl/papers/">White Papers</a></li>
+    <li class="breadcrumb-nav-list-item"><span>System One in productie: besliskwaliteit, betrouwbaarheid en prestaties op DGX Spark met vLLM en SGLang</span></li>
+  </ol>
+</nav>
+      <div id="main-content" class="main-content">
+        <main>
+          
+            <p><em>Opgesteld door: <strong>Aetherix B.V.</strong> — Trusted Jetson Hardware Provider for Edge AI</em></p>
+
+<p><em>Testplatform: NVIDIA DGX Spark (GB10) · Modellen: System One-familie · Rapportdatum: november 2026</em></p><hr />
+<h2 class="no_toc" id="inhoudsopgave">
+  
+  
+    <a href="#inhoudsopgave" class="anchor-heading" aria-labelledby="inhoudsopgave"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Inhoudsopgave
+  
+  
+</h2>
+    
+
+<ul id="markdown-toc">
+  <li><a href="#managementsamenvatting" id="markdown-toc-managementsamenvatting">Managementsamenvatting</a></li>
+  <li><a href="#1-probleem-van-vrije-tekst-naar-typed-decisions" id="markdown-toc-1-probleem-van-vrije-tekst-naar-typed-decisions">1. Probleem: van vrije tekst naar typed decisions</a>    <ul>
+      <li><a href="#11-drie-uitleesmethoden" id="markdown-toc-11-drie-uitleesmethoden">1.1. Drie uitleesmethoden</a></li>
+    </ul>
+  </li>
+  <li><a href="#2-methode-en-de-grenzen-van-het-bewijs" id="markdown-toc-2-methode-en-de-grenzen-van-het-bewijs">2. Methode en de grenzen van het bewijs</a>    <ul>
+      <li><a href="#21-grenzen-van-het-bewijs" id="markdown-toc-21-grenzen-van-het-bewijs">2.1. Grenzen van het bewijs</a></li>
+    </ul>
+  </li>
+  <li><a href="#3-besliskwaliteit-nauwkeurigheid-consistentie-taalgedrag" id="markdown-toc-3-besliskwaliteit-nauwkeurigheid-consistentie-taalgedrag">3. Besliskwaliteit: nauwkeurigheid, consistentie, taalgedrag</a>    <ul>
+      <li><a href="#31-externe-engelse-standaard" id="markdown-toc-31-externe-engelse-standaard">3.1. Externe Engelse standaard</a></li>
+      <li><a href="#32-turkse-standaard-met-harde-labels" id="markdown-toc-32-turkse-standaard-met-harde-labels">3.2. Turkse standaard met harde labels</a></li>
+      <li><a href="#33-turks-voorbeeld-met-waarschijnlijkheidslabels" id="markdown-toc-33-turks-voorbeeld-met-waarschijnlijkheidslabels">3.3. Turks voorbeeld met waarschijnlijkheidslabels</a></li>
+    </ul>
+  </li>
+  <li><a href="#4-vertrouwen-en-onzekerheid" id="markdown-toc-4-vertrouwen-en-onzekerheid">4. Vertrouwen en onzekerheid</a>    <ul>
+      <li><a href="#41-wat-confidence-niet-zegt" id="markdown-toc-41-wat-confidence-niet-zegt">4.1. Wat <code class="language-plaintext highlighter-rouge">confidence</code> niet zegt</a></li>
+      <li><a href="#42-dekking-risicoanalyse" id="markdown-toc-42-dekking-risicoanalyse">4.2. Dekking-risicoanalyse</a></li>
+    </ul>
+  </li>
+  <li><a href="#5-multimodale-invoer-grensgevallen-prestaties" id="markdown-toc-5-multimodale-invoer-grensgevallen-prestaties">5. Multimodale invoer, grensgevallen, prestaties</a>    <ul>
+      <li><a href="#51-beeld-en-video" id="markdown-toc-51-beeld-en-video">5.1. Beeld en video</a></li>
+      <li><a href="#52-prestaties-bij-gelijktijdige-verzoeken" id="markdown-toc-52-prestaties-bij-gelijktijdige-verzoeken">5.2. Prestaties bij gelijktijdige verzoeken</a></li>
+    </ul>
+  </li>
+  <li><a href="#6-overdraagbaarheid-tussen-engines-vllm-en-sglang" id="markdown-toc-6-overdraagbaarheid-tussen-engines-vllm-en-sglang">6. Overdraagbaarheid tussen engines: vLLM en SGLang</a>    <ul>
+      <li><a href="#61-verschillen-op-api-niveau" id="markdown-toc-61-verschillen-op-api-niveau">6.1. Verschillen op API-niveau</a></li>
+      <li><a href="#62-snelheid" id="markdown-toc-62-snelheid">6.2. Snelheid</a></li>
+      <li><a href="#63-conclusie" id="markdown-toc-63-conclusie">6.3. Conclusie</a></li>
+    </ul>
+  </li>
+  <li><a href="#7-beslisgids-voor-productie" id="markdown-toc-7-beslisgids-voor-productie">7. Beslisgids voor productie</a>    <ul>
+      <li><a href="#71-modelkeuze" id="markdown-toc-71-modelkeuze">7.1. Modelkeuze</a></li>
+      <li><a href="#72-aanbevolen-beslisbeleid" id="markdown-toc-72-aanbevolen-beslisbeleid">7.2. Aanbevolen beslisbeleid</a></li>
+    </ul>
+  </li>
+  <li><a href="#8-risicos-licenties-en-conclusie" id="markdown-toc-8-risicos-licenties-en-conclusie">8. Risico’s, licenties en conclusie</a>    <ul>
+      <li><a href="#81-geldigheidsgrenzen" id="markdown-toc-81-geldigheidsgrenzen">8.1. Geldigheidsgrenzen</a></li>
+      <li><a href="#82-licenties" id="markdown-toc-82-licenties">8.2. Licenties</a></li>
+      <li><a href="#83-conclusie" id="markdown-toc-83-conclusie">8.3. Conclusie</a></li>
+    </ul>
+  </li>
+</ul><hr />
+<h2 id="managementsamenvatting">
+  
+  
+    <a href="#managementsamenvatting" class="anchor-heading" aria-labelledby="managementsamenvatting"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Managementsamenvatting
+  
+  
+</h2>
+    
+
+<p>Deze studie evalueert de productiegereedheid van de System One-modelfamilie, die direct typed decisions produceert in plaats van vrije tekst. Tests over zes modellen, datasets met verschillende labelaanpakken en twee inferentie-engines leveren drie belangrijke bevindingen op.</p>
+
+<p>Ten eerste, <strong>hoewel de hoogste nauwkeurigheid over het algemeen bij de grotere modellen wordt behaald, bestaat er geen lineair verband tussen modelgrootte en nauwkeurigheid.</strong> <code class="language-plaintext highlighter-rouge">d3-27b</code> bereikt 0.963 nauwkeurigheid op de Turkse TDB-dataset, terwijl het model met 0.6B parameters, <code class="language-plaintext highlighter-rouge">d3-edge</code>, op 0.336 blijft steken. Daarentegen benadert de 4B <code class="language-plaintext highlighter-rouge">d3-mini</code> met 0.887 nauwkeurigheid het 27B-model en gaat hij het 9B-model <code class="language-plaintext highlighter-rouge">clef-flash</code> (0.853) voorbij.</p>
+
+<p>Ten tweede, <strong>hoge nauwkeurigheid alleen betekent niet dat er betrouwbaar wordt beslist.</strong> Zelfs in de 42 gevallen waarin het antwoord werkelijk dubbelzinnig is, produceren de modellen een gemiddelde maximale optiekans in het bereik 0.75–0.77. Het veld <code class="language-plaintext highlighter-rouge">confidence</code> mag daarom niet worden gelezen als een gekalibreerde schatting van de nauwkeurigheid; het moet worden behandeld als een signaal voor voorselectie (triage), gebruikt met drempels die op gelabelde gegevens zijn gevalideerd.</p>
+
+<p>Ten derde, <strong>de ondersteuning voor System One in inferentie-engines is nog volop in ontwikkeling, dus compatibiliteit moet per model afzonderlijk worden geverifieerd.</strong> Met dezelfde client, datasets en modellenlijst produceerden <code class="language-plaintext highlighter-rouge">d3-27b</code>, <code class="language-plaintext highlighter-rouge">clef</code> en <code class="language-plaintext highlighter-rouge">clef-flash</code> op beide engines vrijwel dezelfde resultaten. In de geteste SGLang-ontwikkelimage daalde de TDB-nauwkeurigheid van <code class="language-plaintext highlighter-rouge">d3-mini</code> echter van 0.887 naar 0.280, en <code class="language-plaintext highlighter-rouge">d3-edge</code> wilde niet starten.</p>
+
+<p>Dit resultaat toont niet aan dat de twee engines over het algemeen verschillende beslissingen nemen. De bevindingen wijzen erop dat de answer-code-uitlezing in de geteste SGLang-versie bij de kleine D3-modellen onjuist werkt. Het probleem moet daarom, op basis van het huidige bewijs, per model en versie worden beoordeeld. Desalniettemin moet elke combinatie van model, engine en versie vóór productie afzonderlijk worden geverifieerd, en moet deze acceptatietest bij elke versie-upgrade worden herhaald.</p>
+
+<blockquote>
+  <p><strong>Belangrijkste bevindingen</strong></p>
+
+  <ol>
+    <li>Op de Turkse TDB-set is de hoogste nauwkeurigheid <code class="language-plaintext highlighter-rouge">d3-27b</code> (0.963) en <code class="language-plaintext highlighter-rouge">clef</code> (0.944); de laagste is <code class="language-plaintext highlighter-rouge">d3-edge</code> (0.336).</li>
+    <li>De drempel <code class="language-plaintext highlighter-rouge">confidence ≥ 0.90</code> rondt voor <code class="language-plaintext highlighter-rouge">d3-27b</code> 87% van de 354 gescoorde gevallen automatisch af met een foutrisico van 1.3%.</li>
+    <li>De stabiliteit bij wijziging van de optievolgorde is bij alle modellen volledig (<code class="language-plaintext highlighter-rouge">flip = 0.0</code>), terwijl de parafraseconsistentie zelfs bij het beste model ongeveer 0.83 bedraagt.</li>
+    <li>In de beeld- en videotests beantwoordt alleen <code class="language-plaintext highlighter-rouge">d3-27b</code> alle 8 items correct; de gemeenschappelijke zwakte is het aflezen van exacte getallen uit een grafiek.</li>
+    <li>27B-modellen kunnen op GB10 93–96 °C bereiken en het proces kan stilzwijgend beëindigen; een beschermd werkprotocol is verplicht.</li>
+  </ol>
+</blockquote>
+
+<p><strong>Reikwijdte.</strong> Het rapport richt zich op de meetresultaten en de gevolgen daarvan voor productiebeslissingen. Installatiecommando’s, API-gebruik, SDK-gerelateerde aandachtspunten en aanbevelingen voor probleemoplossing vallen buiten het bereik van dit rapport. Hardware- en softwareversies zijn vastgezet op de testomgeving. Resultaten die in een andere omgeving worden verkregen, moeten afzonderlijk worden gemeten en geverifieerd.</p><hr />
+<h2 id="1-probleem-van-vrije-tekst-naar-typed-decisions">
+  
+  
+    <a href="#1-probleem-van-vrije-tekst-naar-typed-decisions" class="anchor-heading" aria-labelledby="1-probleem-van-vrije-tekst-naar-typed-decisions"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1. Probleem: van vrije tekst naar typed decisions
+  
+  
+</h2>
+    
+
+<p>Wanneer een conventioneel taalmodel wordt uitgevoerd, leest het tekst en produceert het een vrij antwoord; de toepassing parseert dat antwoord vervolgens om er een beslissing uit te halen. Deze aanpak heeft twee structurele kosten: de parseerlaag is kwetsbaar en de waarschijnlijkheidsinformatie van het model gaat verloren. Het verschil tussen “ja” en “ja, maar…” kan alleen worden geschat door de gegenereerde tekst opnieuw te interpreteren.</p>
+
+<p>System One (Jev) verwijdert deze stap. Het model krijgt een <code class="language-plaintext highlighter-rouge">state</code>-tekst en getypeerde vragen over die tekst; het produceert voor elke optie een genormaliseerde waarschijnlijkheid. Er zijn drie vraagtypen:</p>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">choice</code></strong> — een keuze uit gedefinieerde opties.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">noul</code></strong> — een ja/nee-beslissing; het resultaat wordt afgelezen uit <code class="language-plaintext highlighter-rouge">P(yes)</code>.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">score</code></strong> — een verdeling over geordende niveaus; het resultaat is de niveauexpectatie, berekend als het gewogen gemiddelde van de verdeling.</li>
+</ul>
+
+<p>Het uitvoerschema bestaat uit drie velden, die elk een andere vraag beantwoorden:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Veld</th>
+      <th>Wat het zegt</th>
+      <th>Wat het niet zegt</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">probabilities</code></td>
+      <td>De relatieve verdeling over de opties</td>
+      <td>Of die verdeling correct is</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">confidence</code></td>
+      <td>Het interne vertrouwen van het model in het gekozen antwoord</td>
+      <td>De kans dat het in de echte wereld correct is</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">diagnostics.label_mass</code></td>
+      <td>De totale waarschijnlijkheidsmassa die aan geldige labels is toegewezen</td>
+      <td>De kwaliteit van de verdeling binnen de labels</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Een <code class="language-plaintext highlighter-rouge">label_mass</code> onder 1 geeft aan dat een deel van de waarschijnlijkheidsmassa buiten de gedefinieerde opties is terechtgekomen en dat de beslissing mogelijk extra controle nodig heeft.</p>
+<h3 id="11-drie-uitleesmethoden">
+  
+  
+    <a href="#11-drie-uitleesmethoden" class="anchor-heading" aria-labelledby="11-drie-uitleesmethoden"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1.1. Drie uitleesmethoden
+  
+  
+</h3>
+    
+
+<p>Hoewel de modellen dezelfde API delen, brengen ze de beslissing via verschillende mechanismen tot stand. Dat verschil bepaalt zowel de kosten als de manier waarop de uitvoer moet worden geïnterpreteerd.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Strategie</th>
+      <th>Modelfamilie</th>
+      <th>Werkwijze</th>
+      <th><code class="language-plaintext highlighter-rouge">label_mass</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Answer-code-uitlezing</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">vllm-sr/d3</code></td>
+      <td>Een afzonderlijke forward pass per vraag; opties worden gescoord via de logits van answer-codes en met softmax genormaliseerd</td>
+      <td>Vast op 1</td>
+    </tr>
+    <tr>
+      <td><strong>Gezamenlijke schemakop</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">Cloudflare/clef</code>, <code class="language-plaintext highlighter-rouge">clef-flash</code></td>
+      <td>Meerdere vragen worden in één prefill door een specifieke transformer-kop geëvalueerd</td>
+      <td>Vast op 1</td>
+    </tr>
+    <tr>
+      <td><strong>Label-token-uitlezing</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">LiquidAI/d1-3B</code></td>
+      <td>Het eerste token van het antwoord is het uitgangspunt; de logits van de relevante labels worden met softmax naar waarschijnlijkheden omgezet</td>
+      <td>Dynamisch</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>De praktische gevolgen van het onderscheid zijn:</p>
+
+<ul>
+  <li><strong>D3</strong> doet een afzonderlijke pass per vraag, dus de verwerkingskosten stijgen naarmate het aantal vragen toeneemt.</li>
+  <li><strong>CLEF</strong> biedt een voordeel van één forward pass bij verzoeken met meerdere vragen; <code class="language-plaintext highlighter-rouge">usage.input_tokens</code> wordt over de gedeelde invoer gerapporteerd.</li>
+  <li><strong>D1-3B</strong> hoeft de waarschijnlijkheid niet alleen over geldige labels te verdelen, waardoor <code class="language-plaintext highlighter-rouge">label_mass</code> in deze familie een echt signaal is.</li>
+</ul>
+
+<p>Het veld <code class="language-plaintext highlighter-rouge">instructions</code> kan niet in D3-verzoeken worden gebruikt; wanneer het wordt meegestuurd, wordt <code class="language-plaintext highlighter-rouge">400</code> geretourneerd en werkt het model met een vaste vraagsjabloon. Bij CLEF is <code class="language-plaintext highlighter-rouge">instructions</code> niet verplicht, maar <code class="language-plaintext highlighter-rouge">chat_template_kwargs</code> zorgde in deze studie voor afwijzing van het verzoek. CLEF en CLEF-Flash gebruiken dezelfde <code class="language-plaintext highlighter-rouge">joint_schema_model.py</code>-implementatie en dezelfde kopconfiguratie; het verschil zit in de omvang van de backbone (32×4096 en 64×5120).</p><hr />
+<h2 id="2-methode-en-de-grenzen-van-het-bewijs">
+  
+  
+    <a href="#2-methode-en-de-grenzen-van-het-bewijs" class="anchor-heading" aria-labelledby="2-methode-en-de-grenzen-van-het-bewijs"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2. Methode en de grenzen van het bewijs
+  
+  
+</h2>
+    
+
+<p>De evaluatie omvat datasets met verschillende labelaanpakken, hoofdzakelijk een Turkse standaard met harde labels, een Turks voorbeeld met waarschijnlijkheidsverdelingen als labels, en een externe Engelse standaard. Deze datasets maken het mogelijk de modelprestaties aan verschillende maatstaven te toetsen.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Dataset</th>
+      <th>Inhoud</th>
+      <th>Labelregime</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>TurkishDecisionBenchmark v0.2 public</strong></td>
+      <td>396 gevallen: 354 gescoord + 42 dubbelzinnigheidscontroles</td>
+      <td>Eén juist antwoord; dubbelzinnige gevallen worden afzonderlijk gerapporteerd</td>
+    </tr>
+    <tr>
+      <td><strong>cisimcik-voorbeeld</strong></td>
+      <td>120 Turkse vragen (40 <code class="language-plaintext highlighter-rouge">noul</code>, 40 <code class="language-plaintext highlighter-rouge">choice</code>, 40 <code class="language-plaintext highlighter-rouge">score</code>), seed 42</td>
+      <td>Waarschijnlijkheidsverdeling van een beoordelaarspanel (soft label)</td>
+    </tr>
+    <tr>
+      <td><strong>JevBench-public-120</strong></td>
+      <td>72 oorspronkelijke gevallen (36 parafraseparen) + 48 eenvoudige gevallen</td>
+      <td>Hard label; in de eenvoudige laag staat het antwoord expliciet in de tekst</td>
+    </tr>
+    <tr>
+      <td><strong>bench-tr (35)</strong></td>
+      <td>25 + 10 Turkse workloadvragen</td>
+      <td>Verwachte antwoorden vóór de meting vastgelegd</td>
+    </tr>
+    <tr>
+      <td><strong>bench-images (8)</strong></td>
+      <td>Factuur, verkoopgrafiek, foutscherm, video van 4 seconden</td>
+      <td>7 beeld- + 1 video-item</td>
+    </tr>
+    <tr>
+      <td><strong>limits (11)</strong></td>
+      <td>Programmatische grens- en robuustheidsscenario’s</td>
+      <td>Gedragsobservatie</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>TDB en de cisimcik-dataset dienen verschillende meetdoelen. TDB meet of het model één juist label kan vinden, terwijl cisimcik beoordeelt hoe dicht de door het model geproduceerde waarschijnlijkheidsverdeling bij de verdeling van het beoordelaarspanel komt. De nauwkeurigheidscijfers van de twee datasets mogen daarom <strong>niet</strong> direct worden vergeleken.</p>
+
+<p>De tests zijn als een piramide opgebouwd; de onderste laag is een snelle gezondheidscontrole en de bovenste lagen zijn duurdere en uitgebreidere rondes. Deze structuur maakt het gemakkelijker om te isoleren in welke laag een probleem optreedt.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Laag</th>
+      <th>Inhoud</th>
+      <th>Gereedschap</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>L0</td>
+      <td>Basale werking controleren</td>
+      <td><code class="language-plaintext highlighter-rouge">systemone.py --example</code></td>
+    </tr>
+    <tr>
+      <td>L1-STD</td>
+      <td>JevBench-public-120</td>
+      <td><code class="language-plaintext highlighter-rouge">bench.py --set jevbench</code></td>
+    </tr>
+    <tr>
+      <td>L1-TR</td>
+      <td>TDB v0.2 public (396)</td>
+      <td><code class="language-plaintext highlighter-rouge">bench_tdb.py</code></td>
+    </tr>
+    <tr>
+      <td>L1-TR+</td>
+      <td>cisimcik-voorbeeld (120)</td>
+      <td><code class="language-plaintext highlighter-rouge">bench_cisim.py</code></td>
+    </tr>
+    <tr>
+      <td>L2</td>
+      <td>Beeld/video (8)</td>
+      <td><code class="language-plaintext highlighter-rouge">bench_images.py</code></td>
+    </tr>
+    <tr>
+      <td>L3</td>
+      <td>Grens en robuustheid (11)</td>
+      <td><code class="language-plaintext highlighter-rouge">limits.py</code></td>
+    </tr>
+    <tr>
+      <td>L4</td>
+      <td>Metrieken afleiden</td>
+      <td><code class="language-plaintext highlighter-rouge">summary.py</code></td>
+    </tr>
+    <tr>
+      <td>L5</td>
+      <td>Gelijktijdigheid 1/8/64</td>
+      <td><code class="language-plaintext highlighter-rouge">concurrency.py</code></td>
+    </tr>
+    <tr>
+      <td>L6</td>
+      <td>Overeenstemming tussen engines</td>
+      <td><code class="language-plaintext highlighter-rouge">xengine.py</code></td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Gemeten metrieken: nauwkeurigheid, groepsconsistentie (TDB-contrastvraaggroepen), fout bij hoog vertrouwen, gemiddelde waarschijnlijkheid van het juiste antwoord (mean gold p), overmatig vertrouwen bij dubbelzinnige gevallen, soft-label-Brier, Brier, genormaliseerde score-MAE, ECE(10), beslissingswijzigingspercentage (<code class="language-plaintext highlighter-rouge">flip</code>), p50/p95-latentie en <code class="language-plaintext highlighter-rouge">label_mass</code>.</p>
+
+<p>De getallen in de tabellen zijn letterlijk uit de ruwe uitvoer overgenomen; de decimale punt is behouden.</p>
+
+<p><strong>Testomgeving.</strong> De tests zijn uitgevoerd op een NVIDIA DGX Spark (GB10, 121 GiB unified memory, aarch64). Aan de vLLM-kant zijn de image <code class="language-plaintext highlighter-rouge">vllm/vllm-openai:nightly</code> en de configuratie <code class="language-plaintext highlighter-rouge">--max-model-len 32768</code> gebruikt. Het GPU-geheugengebruik was 0.88 in de standaardtests en 0.78 met <code class="language-plaintext highlighter-rouge">--enforce-eager</code> in de beschermde tests van de 27B-modellen. SGLang-tests zijn uitgevoerd met de images <code class="language-plaintext highlighter-rouge">lmsysorg/sglang:dev</code> en <code class="language-plaintext highlighter-rouge">dev-clef</code> op poort 8001, met dezelfde clientscripts en dezelfde JSON-verzoeklichamen.</p>
+
+<blockquote>
+  <p><strong>System One-ondersteuning is nieuw.</strong> Volgens de registraties kwam de ondersteuning op 14 oktober 2026 in de vLLM-hoofdlijn (vllm#61565) en is die nog niet in releaseversies opgenomen; daarom is de <code class="language-plaintext highlighter-rouge">nightly</code>-image gebruikt. De ARM64-ondersteuning van nightly en de uitvoerbaarheid op DGX Spark zijn in deze omgeving geverifieerd, maar bij elke installatie moet worden gecontroleerd of de image de relevante wijziging bevat.</p>
+</blockquote>
+<h3 id="21-grenzen-van-het-bewijs">
+  
+  
+    <a href="#21-grenzen-van-het-bewijs" class="anchor-heading" aria-labelledby="21-grenzen-van-het-bewijs"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.1. Grenzen van het bewijs
+  
+  
+</h3>
+    
+
+<p>Niet elke bevinding hieronder weegt even zwaar. Weten hoeveel vertrouwen je in elk getal kunt stellen, is deel van het correct lezen van het resultaat.</p>
+
+<ul>
+  <li><strong>Herhaalde rondes:</strong> De belangrijkste TDB-, cisimcik- en JevBench-resultaten berusten op volledige testrondes; de 27B-resultaten zijn geverifieerd met een protocol dat in batches werd uitgevoerd en met samengevoegde bestanden.</li>
+  <li><strong>Slechts op één engine gemeten:</strong> Voor <code class="language-plaintext highlighter-rouge">tr-set</code> zijn <code class="language-plaintext highlighter-rouge">clef</code>, <code class="language-plaintext highlighter-rouge">clef-flash</code> en <code class="language-plaintext highlighter-rouge">d1-3b</code> alleen op SGLang uitgevoerd; deze drie modellen hebben geen vLLM-tegenhanger.</li>
+  <li><strong>Kleine steekproef:</strong> De beeld- en video-evaluatie bestaat uit 8 items; een verschil van één item verandert de rangorde.</li>
+  <li><strong>Gedragsobservatie:</strong> De <code class="language-plaintext highlighter-rouge">limits</code>-resultaten zijn niet statistisch; het zijn scenariogebaseerde API-gedragingen.</li>
+  <li><strong>Waargenomen variatie:</strong> De TDB-nauwkeurigheid van <code class="language-plaintext highlighter-rouge">clef-flash</code> ligt over verschillende rondes tussen 85.3% en 85.9%; in batchgewijze uitvoeringen werd een afwijking van ongeveer ±0.07 in de waarschijnlijkheidswaarden gerapporteerd.</li>
+  <li><strong>Versieafhankelijkheid:</strong> De System One-ondersteuning in beide engines berust op ontwikkelimages uit dezelfde periode. De resultaten gelden voor deze versies en deze hardware.</li>
+</ul><hr />
+<h2 id="3-besliskwaliteit-nauwkeurigheid-consistentie-taalgedrag">
+  
+  
+    <a href="#3-besliskwaliteit-nauwkeurigheid-consistentie-taalgedrag" class="anchor-heading" aria-labelledby="3-besliskwaliteit-nauwkeurigheid-consistentie-taalgedrag"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. Besliskwaliteit: nauwkeurigheid, consistentie, taalgedrag
+  
+  
+</h2>
+    
+<h3 id="31-externe-engelse-standaard">
+  
+  
+    <a href="#31-externe-engelse-standaard" class="anchor-heading" aria-labelledby="31-externe-engelse-standaard"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.1. Externe Engelse standaard
+  
+  
+</h3>
+    
+
+<p>Op JevBench-public-120 scoren alle modellen volledig op alle 48 eenvoudige vragen; de verschillen komen vooral naar voren in de 72 oorspronkelijke vragen.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>acc_all (72)</th>
+      <th>noul</th>
+      <th>choice</th>
+      <th>score</th>
+      <th>easy (48)</th>
+      <th>Brier</th>
+      <th>ECE(10)</th>
+      <th>flip</th>
+      <th>paraphrase</th>
+      <th>p50/p95 ms</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-edge</code></td>
+      <td>0.819</td>
+      <td>0.708</td>
+      <td>0.917</td>
+      <td>0.750</td>
+      <td>1.000</td>
+      <td>0.271</td>
+      <td>0.083</td>
+      <td>0.0</td>
+      <td>0.667</td>
+      <td>9 / 11</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-mini</code></td>
+      <td><strong>1.000</strong></td>
+      <td>1.000</td>
+      <td>1.000</td>
+      <td>1.000</td>
+      <td>1.000</td>
+      <td>0.012</td>
+      <td>0.032</td>
+      <td>0.0</td>
+      <td>0.833</td>
+      <td>50 / 52</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-27b</code></td>
+      <td><strong>1.000</strong></td>
+      <td>1.000</td>
+      <td>1.000</td>
+      <td>1.000</td>
+      <td>1.000</td>
+      <td>0.004</td>
+      <td>0.012</td>
+      <td>0.0</td>
+      <td>0.833</td>
+      <td>289 / 299</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef-flash</code></td>
+      <td>0.972</td>
+      <td>1.000</td>
+      <td>0.944</td>
+      <td>1.000</td>
+      <td>1.000</td>
+      <td>0.044</td>
+      <td>0.058</td>
+      <td>0.0</td>
+      <td>0.833</td>
+      <td>112 / 116</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef</code></td>
+      <td><strong>1.000</strong></td>
+      <td>1.000</td>
+      <td>1.000</td>
+      <td>1.000</td>
+      <td>1.000</td>
+      <td>0.004</td>
+      <td>0.012</td>
+      <td>0.0</td>
+      <td>0.833</td>
+      <td>290 / 301</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d1-3b</code></td>
+      <td>0.931</td>
+      <td>0.792</td>
+      <td>1.000</td>
+      <td>1.000</td>
+      <td>1.000</td>
+      <td>0.126</td>
+      <td>0.033</td>
+      <td>0.0</td>
+      <td>0.806</td>
+      <td>61 / 64</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Twee observaties vallen op. Ten eerste is de <code class="language-plaintext highlighter-rouge">flip</code>-metriek bij elk model nul: wanneer de volgorde van de opties wordt gewijzigd, verandert de beslissing niet. Ten tweede is de <code class="language-plaintext highlighter-rouge">paraphrase</code>-metriek zelfs bij de beste modellen ongeveer 0.83. Dat wil zeggen: <strong>dezelfde vraag in andere woorden kan de beslissing veranderen.</strong> In toepassingen waar beslissingsconsistentie cruciaal is, moet deze test met gegevens van de eigen organisatie worden herhaald.</p>
+<h3 id="32-turkse-standaard-met-harde-labels">
+  
+  
+    <a href="#32-turkse-standaard-met-harde-labels" class="anchor-heading" aria-labelledby="32-turkse-standaard-met-harde-labels"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.2. Turkse standaard met harde labels
+  
+  
+</h3>
+    
+
+<p>In TDB wordt de hoogste nauwkeurigheid bij de 27B-modellen gezien, maar de rangorde is niet evenredig met de grootte: de 4B <code class="language-plaintext highlighter-rouge">d3-mini</code> (0.887) is beter dan de 9B <code class="language-plaintext highlighter-rouge">clef-flash</code> (0.853), terwijl het verschil tussen de 27B <code class="language-plaintext highlighter-rouge">d3-27b</code> en <code class="language-plaintext highlighter-rouge">d3-mini</code> veel kleiner is dan het verschil tussen 0.6B en 4B.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>accuracy</th>
+      <th>group-cons</th>
+      <th>high-conf err</th>
+      <th>mean gold p</th>
+      <th>amb valid</th>
+      <th>amb max-p</th>
+      <th>Brier</th>
+      <th>ECE(10)</th>
+      <th>p50/p95 ms</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-27b</code></td>
+      <td><strong>0.963</strong></td>
+      <td><strong>0.870</strong></td>
+      <td>0.011</td>
+      <td><strong>0.934</strong></td>
+      <td>0.952</td>
+      <td>0.765</td>
+      <td><strong>0.060</strong></td>
+      <td>0.016</td>
+      <td>336 / 362</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef</code></td>
+      <td>0.944</td>
+      <td>0.797</td>
+      <td><strong>0.006</strong></td>
+      <td>0.865</td>
+      <td>0.976</td>
+      <td>0.747</td>
+      <td>0.102</td>
+      <td>0.047</td>
+      <td>351 / 386</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef-flash</code></td>
+      <td>0.853</td>
+      <td>0.638</td>
+      <td>0.011</td>
+      <td>0.753</td>
+      <td>0.905</td>
+      <td>0.715</td>
+      <td>0.232</td>
+      <td>0.060</td>
+      <td>115 / 125</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-mini</code></td>
+      <td>0.887</td>
+      <td>0.710</td>
+      <td><strong>0.006</strong></td>
+      <td>0.795</td>
+      <td>0.905</td>
+      <td>0.754</td>
+      <td>0.183</td>
+      <td>0.047</td>
+      <td>59 / 64</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d1-3b</code></td>
+      <td>0.545</td>
+      <td>0.159</td>
+      <td>0.020</td>
+      <td>0.468</td>
+      <td>0.667</td>
+      <td>0.550</td>
+      <td>0.588</td>
+      <td>0.113</td>
+      <td>66 / 86</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-edge</code></td>
+      <td>0.336</td>
+      <td>0.029</td>
+      <td>0.065</td>
+      <td>0.327</td>
+      <td>0.619</td>
+      <td>0.635</td>
+      <td>0.867</td>
+      <td>0.295</td>
+      <td>10 / 14</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>De metrieken moeten met de volgende definities in gedachten worden geïnterpreteerd:</p>
+
+<ul>
+  <li><strong>Groepsconsistentie</strong> is het aandeel vraaggroepen dat over dezelfde situatie met tegengestelde formuleringen vraagt en volledig correct wordt beantwoord. Het laat zien of er consistent wordt beslist wanneer dezelfde situatie in andere of tegengestelde bewoordingen wordt aangeboden.</li>
+  <li><strong>Fout bij hoog vertrouwen</strong> is het aandeel onjuiste beslissingen dat met ten minste 0.90 vertrouwen wordt gegeven; dit moet in geautomatiseerde systemen ook worden gemonitord.</li>
+  <li><strong>Overmatig vertrouwen bij dubbelzinnige gevallen</strong> is, over de 42 controles, het percentage waarin een van de geldige antwoorden wordt gekozen en de hoogste gemiddelde waarschijnlijkheid in die gevallen.</li>
+</ul>
+
+<p><code class="language-plaintext highlighter-rouge">d3-mini</code> en <code class="language-plaintext highlighter-rouge">clef</code> hebben hetzelfde foutpercentage bij hoog vertrouwen (0.006); de groepsconsistentie van <code class="language-plaintext highlighter-rouge">clef</code> is echter duidelijk hoger (clef 0.797, <code class="language-plaintext highlighter-rouge">d3-mini</code> 0.710). Met andere woorden: vergelijkbaar “zeker zijn” betekent niet vergelijkbare consistentie.</p>
+<h3 id="33-turks-voorbeeld-met-waarschijnlijkheidslabels">
+  
+  
+    <a href="#33-turks-voorbeeld-met-waarschijnlijkheidslabels" class="anchor-heading" aria-labelledby="33-turks-voorbeeld-met-waarschijnlijkheidslabels"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.3. Turks voorbeeld met waarschijnlijkheidslabels
+  
+  
+</h3>
+    
+
+<p>In het cisimcik-voorbeeld is de referentie niet één juiste optie maar de verdeling van het beoordelaarspanel. De nauwkeurigheid hier is daarom niet vergelijkbaar met de TDB-nauwkeurigheid.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>accuracy</th>
+      <th>noul</th>
+      <th>choice</th>
+      <th>score</th>
+      <th>score-MAE (norm)</th>
+      <th>mean gold p</th>
+      <th>p50/p95 ms</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef</code></td>
+      <td><strong>0.855</strong></td>
+      <td>0.950</td>
+      <td>0.895</td>
+      <td>0.718</td>
+      <td>0.120</td>
+      <td>0.788</td>
+      <td>488 / 2221</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-27b</code></td>
+      <td>0.840</td>
+      <td>0.975</td>
+      <td>0.850</td>
+      <td>0.692</td>
+      <td>0.114</td>
+      <td>0.810</td>
+      <td>451 / 2547</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-mini</code></td>
+      <td>0.832</td>
+      <td>0.975</td>
+      <td>0.900</td>
+      <td>0.615</td>
+      <td>0.142</td>
+      <td>0.749</td>
+      <td>78 / 388</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef-flash</code></td>
+      <td>0.786</td>
+      <td>0.875</td>
+      <td>0.921</td>
+      <td>0.564</td>
+      <td>0.168</td>
+      <td>0.728</td>
+      <td>148 / 810</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d1-3b</code></td>
+      <td>0.624</td>
+      <td>0.800</td>
+      <td>0.605</td>
+      <td>0.462</td>
+      <td>0.220</td>
+      <td>0.560</td>
+      <td>88 / 201</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-edge</code></td>
+      <td>0.429</td>
+      <td>0.500</td>
+      <td>0.450</td>
+      <td>0.333</td>
+      <td>0.311</td>
+      <td>0.370</td>
+      <td>15 / 52</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><code class="language-plaintext highlighter-rouge">score</code>-vragen zijn het type waar elk model het meest mee worstelt. In lange en complexe Turkse zakelijke teksten neigt het model ertoe tussen aangrenzende niveaus te verschuiven: het onderscheid tussen “gemiddeld” en “gemiddeld-hoog” kan niet betrouwbaar worden gemaakt. Hoewel <code class="language-plaintext highlighter-rouge">clef</code> met 0.718 de hoogste nauwkeurigheid behaalt, betekent dit niet dat een geordende schaal in productie automatisch kan worden gebruikt.</p><hr />
+<h2 id="4-vertrouwen-en-onzekerheid">
+  
+  
+    <a href="#4-vertrouwen-en-onzekerheid" class="anchor-heading" aria-labelledby="4-vertrouwen-en-onzekerheid"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. Vertrouwen en onzekerheid
+  
+  
+</h2>
+    
+<h3 id="41-wat-confidence-niet-zegt">
+  
+  
+    <a href="#41-wat-confidence-niet-zegt" class="anchor-heading" aria-labelledby="41-wat-confidence-niet-zegt"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.1. Wat <code class="language-plaintext highlighter-rouge">confidence</code> niet zegt
+  
+  
+</h3>
+    
+
+<p><code class="language-plaintext highlighter-rouge">confidence</code> drukt de waarschijnlijkheid uit die het model voor zijn gekozen antwoord rapporteert; het geeft niet rechtstreeks aan hoe waarschijnlijk het is dat het antwoord daadwerkelijk correct is. Een hoge gerapporteerde zekerheid betekent daarom niet dat de beslissing noodzakelijkerwijs juist is.</p>
+
+<p>In de 42 dubbelzinnigheidscontroles in TDB kozen de 27B-modellen in 95–98% van de gevallen een van de geldige opties; de hoogste gemiddelde waarschijnlijkheid van de gekozen opties lag in het bereik 0.75–0.77. Met andere woorden: de modellen <strong>neigen ernaar één van de opties te kiezen in plaats van zich te onthouden</strong>, en doen dat met relatief hoge waarschijnlijkheid. De mate van onzekerheid wordt in de API-uitvoer niet door een afzonderlijk veld rechtstreeks weergegeven.</p>
+
+<p><code class="language-plaintext highlighter-rouge">label_mass</code> vult deze leemte gedeeltelijk, maar alleen in de D1-familie. In D3 en CLEF is de waarde vast 1.0; daarom kan <code class="language-plaintext highlighter-rouge">label_mass</code> in deze families niet op zichzelf als veiligheidsfilter worden gebruikt. De praktische consequentie: <strong>een <code class="language-plaintext highlighter-rouge">confidence</code>-drempel is noodzakelijk maar niet voldoende</strong>; die moet op gelabelde gegevens worden gekalibreerd.</p>
+<h3 id="42-dekking-risicoanalyse">
+  
+  
+    <a href="#42-dekking-risicoanalyse" class="anchor-heading" aria-labelledby="42-dekking-risicoanalyse"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.2. Dekking-risicoanalyse
+  
+  
+</h3>
+    
+
+<p>De grens tussen automatische beslissing en menselijke beoordeling wordt niet bepaald door de algehele nauwkeurigheid maar door <strong>het foutpercentage bij beslissingen met hoog vertrouwen</strong>. De onderstaande tabel is berekend over de 354 gescoorde gevallen van TDB door de <code class="language-plaintext highlighter-rouge">confidence</code>-drempel te variëren.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th><code class="language-plaintext highlighter-rouge">conf ≥ 0.8</code></th>
+      <th><code class="language-plaintext highlighter-rouge">conf ≥ 0.9</code></th>
+      <th><code class="language-plaintext highlighter-rouge">conf ≥ 0.95</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-27b</code></td>
+      <td>Dekking 0.92 · risico 0.021</td>
+      <td><strong>Dekking 0.87 · risico 0.013</strong></td>
+      <td>Dekking 0.80 · risico 0.011</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef</code></td>
+      <td>Dekking 0.85 · risico 0.023</td>
+      <td>Dekking 0.69 · risico 0.008</td>
+      <td>Dekking 0.48 · risico 0.006</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef-flash</code></td>
+      <td>Dekking 0.68 · risico 0.046</td>
+      <td>Dekking 0.49 · risico 0.023</td>
+      <td>Dekking 0.25 · risico 0.000</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-mini</code></td>
+      <td>Dekking 0.68 · risico 0.021</td>
+      <td>Dekking 0.56 · risico 0.010</td>
+      <td>Dekking 0.43 · risico 0.007</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d1-3b</code></td>
+      <td>Dekking 0.22 · risico 0.195</td>
+      <td>Dekking 0.12 · risico 0.122</td>
+      <td>Dekking 0.03 · risico 0.000</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-edge</code></td>
+      <td>Dekking 0.25 · risico 0.596</td>
+      <td>Dekking 0.12 · risico 0.523</td>
+      <td>Dekking 0.07 · risico 0.360</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><em>Dekking: het aandeel beslissingen dat de vertrouwensdrempel haalt, ten opzichte van alle beslissingen. Risico: het foutpercentage onder automatisch afgeronde beslissingen.</em></p>
+
+<p>Het belangrijkste onderscheid in de tabel is dat tussen <code class="language-plaintext highlighter-rouge">d3-27b</code> en <code class="language-plaintext highlighter-rouge">clef</code>. Bij de drempel 0.90 rondt <code class="language-plaintext highlighter-rouge">d3-27b</code> 87% van de gevallen af met 1.3% risico, terwijl <code class="language-plaintext highlighter-rouge">clef</code> 69% afrondt met 0.8% risico. Lager risico wordt verkregen ten koste van meer menselijke beoordeling; de keuze hangt af van de kosten van een onjuiste beslissing.</p>
+
+<p>Voor <code class="language-plaintext highlighter-rouge">d3-edge</code> is <code class="language-plaintext highlighter-rouge">confidence</code> geen betrouwbare indicator: zelfs wanneer het model hoog vertrouwen rapporteert, blijft het foutpercentage in het bereik 0.36–0.60. <code class="language-plaintext highlighter-rouge">d1-3b</code> vertoont op vergelijkbare wijze hoog risico bij lage dekking.</p>
+
+<p>Deze resultaten gelden alleen voor de gebruikte dataset en testomstandigheden. Als de verdeling van productiegegevens verandert, kunnen dezelfde dekkings- en risiconiveaus niet worden gegarandeerd. De drempels moeten daarom opnieuw worden gekalibreerd op de eigen gelabelde gegevens van de toepassing.</p><hr />
+<h2 id="5-multimodale-invoer-grensgevallen-prestaties">
+  
+  
+    <a href="#5-multimodale-invoer-grensgevallen-prestaties" class="anchor-heading" aria-labelledby="5-multimodale-invoer-grensgevallen-prestaties"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5. Multimodale invoer, grensgevallen, prestaties
+  
+  
+</h2>
+    
+<h3 id="51-beeld-en-video">
+  
+  
+    <a href="#51-beeld-en-video" class="anchor-heading" aria-labelledby="51-beeld-en-video"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.1. Beeld en video
+  
+  
+</h3>
+    
+
+<p>Beeld en video kunnen aan het veld <code class="language-plaintext highlighter-rouge">state</code> worden toegevoegd. In D3 en CLEF worden beelden verwerkt tot maximaal 1.6 megapixel en video’s met 2 frames per seconde en maximaal 32 frames. D1 ondersteunt alleen beeld en verkleint beelden tot 1024×1024.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>Juiste antwoorden</th>
+      <th>Opmerking</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-27b</code></td>
+      <td><strong>8/8</strong></td>
+      <td>Het enige model dat elk item correct beantwoordt</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-mini</code></td>
+      <td>7/8</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef</code></td>
+      <td>7/8</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d1-3b</code></td>
+      <td>6/7</td>
+      <td>Video niet ondersteund; g7 is niet uitgevoerd, verzoeken met <code class="language-plaintext highlighter-rouge">videos</code> gaven een fout</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef-flash</code></td>
+      <td>6/8</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-edge</code></td>
+      <td>6/8</td>
+      <td>—</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>De gemeenschappelijke zwakte is het item met code <code class="language-plaintext highlighter-rouge">g3</code>: een numerieke waarde uit een grafiek aflezen. Elk model behalve <code class="language-plaintext highlighter-rouge">d3-27b</code> beantwoordde deze vraag onjuist en produceerde verschillende waarden in het bereik 0.7–1.9. De modellen kunnen de algemene trend van de grafiek bepalen, maar hebben moeite met <strong>het aflezen van exacte numerieke waarden</strong>. In workflows waar numerieke nauwkeurigheid cruciaal is, moet de modeluitvoer daarom worden geverifieerd tegen een gegevensbron die onafhankelijk van het beeld is.</p>
+
+<p>In de D3-familie wordt media één keer verwerkt en wordt de resulterende representatie voor alle vragen gedeeld. In de tests gaven 16 vragen in één verzoek en in 16 afzonderlijke verzoeken hetzelfde resultaat; bij beeldintensieve workloads verlaagt dit de kosten doordat herhaalde verwerking wordt vermeden.</p>
+<h3 id="52-prestaties-bij-gelijktijdige-verzoeken">
+  
+  
+    <a href="#52-prestaties-bij-gelijktijdige-verzoeken" class="anchor-heading" aria-labelledby="52-prestaties-bij-gelijktijdige-verzoeken"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.2. Prestaties bij gelijktijdige verzoeken
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>1 client</th>
+      <th>8 clients</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-edge</code></td>
+      <td>118.6</td>
+      <td>335.6</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d1-3b</code></td>
+      <td>21.0</td>
+      <td>107.2</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-mini</code></td>
+      <td>19.0</td>
+      <td>39.2</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef-flash</code></td>
+      <td>8.8</td>
+      <td>16.8</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-27b</code></td>
+      <td>2.5</td>
+      <td>5.9</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef</code></td>
+      <td>3.1</td>
+      <td>4.9</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>De waarden zijn afgeronde verzoeken per seconde (req/s), gemeten met verzoeken van één vraag; voor latentie verwijzen we naar de p50/p95-kolommen in §3. Bij één verzoek hangt de latentie grotendeels af van de duur van één forward pass. Omdat D3 elke vraag in een afzonderlijke pass evalueert terwijl CLEF meerdere vragen in één forward pass kan evalueren, groeit het latentievoordeel van CLEF naarmate het aantal vragen toeneemt.</p><hr />
+<h2 id="6-overdraagbaarheid-tussen-engines-vllm-en-sglang">
+  
+  
+    <a href="#6-overdraagbaarheid-tussen-engines-vllm-en-sglang" class="anchor-heading" aria-labelledby="6-overdraagbaarheid-tussen-engines-vllm-en-sglang"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6. Overdraagbaarheid tussen engines: vLLM en SGLang
+  
+  
+</h2>
+    
+
+<p>Wil een systeem niet van één inferentie-engine afhankelijk zijn, dan moet bekend zijn of dezelfde API dezelfde beslissing produceert. Dezelfde clientscripts, dezelfde datasets en dezelfde modellenlijst zijn op beide engines uitgevoerd. Deze sectie meet de overeenstemming tussen twee engines met vastgezette versies; zij doet geen uitspraak over het algemene gedrag van de engines.</p>
+
+<p><em>V: vLLM, S: SGLang.</em></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>TDB (V→S)</th>
+      <th>cisimcik (V→S)</th>
+      <th>std72 (V→S)</th>
+      <th>tr-set (V→S)</th>
+      <th>vision-8 (V→S)</th>
+      <th>Overdraagbaarheid</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-27b</code></td>
+      <td>0.963 → 0.966</td>
+      <td>0.840 → 0.840</td>
+      <td>1.000 → 1.000</td>
+      <td>0.943 → 0.943</td>
+      <td>1.000 → 1.000</td>
+      <td>Ja (beschermde modus)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef</code></td>
+      <td>0.9435 → 0.9435</td>
+      <td>0.855 → 0.856</td>
+      <td>1.000 → 0.972</td>
+      <td>— → 0.914*</td>
+      <td>0.875 → 0.875</td>
+      <td>Ja</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef-flash</code></td>
+      <td>0.853 → 0.853</td>
+      <td>0.786 → 0.782</td>
+      <td>0.972 → 0.972</td>
+      <td>— → 0.857*</td>
+      <td>0.750 → 0.875</td>
+      <td>Ja</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d1-3b</code></td>
+      <td>0.545 → 0.568</td>
+      <td>0.624 → 0.622</td>
+      <td>0.931 → 0.931</td>
+      <td>— → 0.829*</td>
+      <td>0.857 → 0.875</td>
+      <td>Ja</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-mini</code></td>
+      <td>0.887 → <strong>0.280</strong> ⚠</td>
+      <td>0.832 → <strong>0.319</strong> ⚠</td>
+      <td>1.000 → <strong>0.292</strong> ⚠</td>
+      <td>0.886 → <strong>0.257</strong> ⚠</td>
+      <td>0.875 → <strong>0.250</strong> ⚠</td>
+      <td>Nee</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-edge</code></td>
+      <td>0.336 → ✗</td>
+      <td>— → ✗</td>
+      <td>0.819 → ✗</td>
+      <td>0.800 → ✗</td>
+      <td>0.750 → ✗</td>
+      <td>Nee</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>* <code class="language-plaintext highlighter-rouge">tr-set</code> is alleen op SGLang uitgevoerd; in deze rijen is er geen vLLM-tegenhanger. ✗: het model kon in SGLang niet worden gestart.</p>
+<h3 id="61-verschillen-op-api-niveau">
+  
+  
+    <a href="#61-verschillen-op-api-niveau" class="anchor-heading" aria-labelledby="61-verschillen-op-api-niveau"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.1. Verschillen op API-niveau
+  
+  
+</h3>
+    
+
+<p>Dat dezelfde clientcode in de D1- en CLEF-families op beide engines hetzelfde resultaat oplevert, toont aan dat de waargenomen verschillen niet van de client afkomstig zijn. Er zijn echter mismatches op schemaniveau, en de client moet elk daarvan afzonderlijk afhandelen.</p>
+
+<ol>
+  <li><strong>Het veld <code class="language-plaintext highlighter-rouge">model</code> is verplicht in SGLang.</strong> Wanneer het ontbreekt, wordt <code class="language-plaintext highlighter-rouge">422 Field required</code> geretourneerd; in vLLM is het optioneel. Een compatibele client moet de modelnaam via <code class="language-plaintext highlighter-rouge">/v1/models</code> ophalen en aan de body toevoegen.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">confidence</code> komt mogelijk niet overeen met de waarschijnlijkheid van de gekozen optie.</strong> In de SGLang-uitvoer is het voorbeeld <code class="language-plaintext highlighter-rouge">choice: "diger", confidence: 0.303, probabilities: {…, "diger": 0.536}</code> waargenomen. Volgens het schema zouden deze twee waarden gelijk moeten zijn. In SGLang mag <code class="language-plaintext highlighter-rouge">confidence</code> niet zonder verificatie in drempelberekeningen worden gebruikt.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">probabilities</code> ontbreekt in <code class="language-plaintext highlighter-rouge">noul</code>-antwoorden.</strong> Terwijl vLLM een verdeling <code class="language-plaintext highlighter-rouge">{yes, no}</code> retourneert, geeft SGLang alleen <code class="language-plaintext highlighter-rouge">{"type":"noul","noul":0.117}</code>. De ontbrekende waarschijnlijkheid kan worden afgeleid met <code class="language-plaintext highlighter-rouge">P(no) = 1 − P(yes)</code> omdat <code class="language-plaintext highlighter-rouge">noul</code> binair is.</li>
+  <li><strong>De locatie van <code class="language-plaintext highlighter-rouge">label_mass</code> verschilt.</strong> vLLM retourneert het onder <code class="language-plaintext highlighter-rouge">diagnostics[qid].{label_mass, argmax_is_label}</code>, terwijl SGLang het in het veld <code class="language-plaintext highlighter-rouge">x_label_mass</code> per antwoord retourneert; bovendien ontbreekt het veld in de uitvoer van <code class="language-plaintext highlighter-rouge">d3-mini</code>. Een ontbrekende waarde mag niet stilzwijgend als geldig worden beschouwd.</li>
+  <li><strong>Foutcodes verschillen.</strong> Een onbekend vraagveld retourneert <code class="language-plaintext highlighter-rouge">400</code> in vLLM en <code class="language-plaintext highlighter-rouge">422</code> in SGLang; <code class="language-plaintext highlighter-rouge">chat_template_kwargs</code> wordt in vLLM genegeerd met <code class="language-plaintext highlighter-rouge">200</code>, maar retourneert in SGLang <code class="language-plaintext highlighter-rouge">400</code>. Opties met dezelfde naam na afkapping worden in beide engines geaccepteerd; de grenzen voor opties, vragen en niveaus zijn gelijk.</li>
+</ol>
+<h3 id="62-snelheid">
+  
+  
+    <a href="#62-snelheid" class="anchor-heading" aria-labelledby="62-snelheid"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.2. Snelheid
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>SGLang req/s (1 / 8)</th>
+      <th>Ten opzichte van vLLM</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d1-3b</code></td>
+      <td>27 / 63</td>
+      <td>Ongeveer 1/4 van vLLM bij hoge belasting</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-mini</code></td>
+      <td>17 / 37</td>
+      <td>Vergelijkbaar; daalt bij 64 clients</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef-flash</code></td>
+      <td>8 / 15</td>
+      <td>Gelijkspel</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-27b</code></td>
+      <td>3 / 7</td>
+      <td>Iets hoger in beschermde modus</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef</code></td>
+      <td>3 / 5</td>
+      <td>Gelijk</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>De vLLM-waarden staan in §5.2.</p>
+<h3 id="63-conclusie">
+  
+  
+    <a href="#63-conclusie" class="anchor-heading" aria-labelledby="63-conclusie"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.3. Conclusie
+  
+  
+</h3>
+    
+
+<p><strong>De resultaten in deze sectie zijn compatibiliteitsobservaties die alleen voor de geteste versies zijn verkregen; ze mogen niet als een algemene overdraagbaarheidsregel worden geïnterpreteerd.</strong> In de geteste versies produceerden de label-token-methode (D1) en de gezamenlijke-schemamethode (CLEF) op beide engines vergelijkbare resultaten; het 27B D3-model is compatibel in beschermde modus. De verslechtering bij de kleine D3-modellen betekent niet dat de engine deze methode in het algemeen niet ondersteunt. Wat zij laat zien, is dat de answer-code-implementatie in die ontwikkelimage bij kleine modellen onjuiste resultaten opleverde. Omdat de fout bij één model en één versie is waargenomen, kan over de oorzaak geen hard oordeel worden gegeven; numerieke precisie, het attention-pad en de schema-afbeelding moeten afzonderlijk worden onderzocht.</p>
+
+<p>Elke combinatie van model, engine en versie moet daarom vóór productie een afzonderlijke verificatietest doorlopen, en de test moet worden herhaald wanneer de engineversie wordt opgewaardeerd. Qua prestaties kan SGLang bij één verzoek iets lagere latentie bieden, terwijl het batchvoordeel van vLLM bij hoge gelijktijdigheid op <code class="language-plaintext highlighter-rouge">d1-3B</code> duidelijk wordt.</p><hr />
+<h2 id="7-beslisgids-voor-productie">
+  
+  
+    <a href="#7-beslisgids-voor-productie" class="anchor-heading" aria-labelledby="7-beslisgids-voor-productie"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7. Beslisgids voor productie
+  
+  
+</h2>
+    
+<h3 id="71-modelkeuze">
+  
+  
+    <a href="#71-modelkeuze" class="anchor-heading" aria-labelledby="71-modelkeuze"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7.1. Modelkeuze
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Optie</th>
+      <th>Wanneer</th>
+      <th>Beperking</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong><code class="language-plaintext highlighter-rouge">d3-27b</code></strong> (27B)</td>
+      <td>Wanneer nauwkeurigheid cruciaal is; bij complexe invoer met beeld en video</td>
+      <td>~340 ms latentie bij één verzoek</td>
+    </tr>
+    <tr>
+      <td><strong><code class="language-plaintext highlighter-rouge">clef</code></strong> (27B)</td>
+      <td>Wanneer het voordeel van één forward pass nodig is bij verzoeken met meerdere vragen</td>
+      <td>~98% van de nauwkeurigheid van <code class="language-plaintext highlighter-rouge">d3-27b</code></td>
+    </tr>
+    <tr>
+      <td><strong><code class="language-plaintext highlighter-rouge">clef-flash</code></strong> (9B)</td>
+      <td>2–9 vragen per verzoek; wanneer de kosten van een onjuiste beslissing laag zijn</td>
+      <td>TDB 0.853</td>
+    </tr>
+    <tr>
+      <td><strong><code class="language-plaintext highlighter-rouge">d3-mini</code></strong> (4B)</td>
+      <td>Realtime voorfiltering; budget van ~50 ms</td>
+      <td>TDB <code class="language-plaintext highlighter-rouge">score</code> 0.615; onbruikbaar in de geteste SGLang-image</td>
+    </tr>
+    <tr>
+      <td><strong><code class="language-plaintext highlighter-rouge">d1-3b</code></strong> (3B)</td>
+      <td>Labelen met hoog volume; budget van ~60 ms</td>
+      <td>TDB 0.545; LFM 1.0-licentie</td>
+    </tr>
+    <tr>
+      <td><strong><code class="language-plaintext highlighter-rouge">d3-edge</code></strong> (0.6B)</td>
+      <td>Alleen eerste routering; wanneer de foutkosten zeer laag zijn</td>
+      <td>TDB 0.336; vertrouwensdrempel zinloos</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Het verband tussen grootte en nauwkeurigheid is niet uniform: <code class="language-plaintext highlighter-rouge">clef</code> (27B) en <code class="language-plaintext highlighter-rouge">d3-27b</code> (27B) hebben vergelijkbare nauwkeurigheid, terwijl <code class="language-plaintext highlighter-rouge">d3-mini</code> (4B) op TDB beter is dan de 9B <code class="language-plaintext highlighter-rouge">clef-flash</code>. De keuze hangt af van de uitleesmethode en de taak, niet van het aantal parameters.</p>
+<h3 id="72-aanbevolen-beslisbeleid">
+  
+  
+    <a href="#72-aanbevolen-beslisbeleid" class="anchor-heading" aria-labelledby="72-aanbevolen-beslisbeleid"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7.2. Aanbevolen beslisbeleid
+  
+  
+</h3>
+    
+
+<ol>
+  <li><strong>Drempel:</strong> Als startbeleid worden <code class="language-plaintext highlighter-rouge">confidence ≥ 0.90</code> en <code class="language-plaintext highlighter-rouge">label_mass ≥ 0.95</code> samen vereist. Voor <code class="language-plaintext highlighter-rouge">d3-27b</code> rondt dit ongeveer 87% van de 354 gevallen automatisch af met 1.3% risico. De drempels worden vóór ingebruikname met de toepassingsgegevens geverifieerd.</li>
+  <li><strong>Doorsturen naar menselijke beoordeling:</strong> Wanneer <code class="language-plaintext highlighter-rouge">label_mass &lt; 0.95</code>, gaat de beslissing naar menselijke beoordeling. In D3 en CLEF staat dit veld vast op 1.0 en is het dus op zichzelf niet voldoende; taakcategorieën met een hoog foutpercentage (<code class="language-plaintext highlighter-rouge">by_category</code>) en Turkse <code class="language-plaintext highlighter-rouge">score</code>-vragen worden ook doorgestuurd.</li>
+  <li><strong>Registratie:</strong> <code class="language-plaintext highlighter-rouge">confidence</code> en, waar mogelijk, de waarschijnlijkheidsverdeling worden bij elke beslissing opgeslagen; de drempels worden op basis van nieuwe resultaten bijgewerkt en de dekking-risicoanalyse wordt met echte gegevens herhaald.</li>
+  <li><strong>Opnieuw bevragen:</strong> Bij batchgewijze uitvoeringen en uitvoeringen die van de geheugentoestand afhangen, kunnen waarschijnlijkheden met ongeveer ±0.07 variëren. Beslissingen dicht bij de drempel worden vóór publicatie met één verzoek geverifieerd; waar mogelijk wordt een configuratie met deterministisch gedrag (<code class="language-plaintext highlighter-rouge">VLLM_BATCH_INVARIANT</code>) overwogen.</li>
+  <li><strong>Wat te vermijden:</strong> Een productiebeslissing uitsluitend op <code class="language-plaintext highlighter-rouge">d3-edge</code> baseren; <code class="language-plaintext highlighter-rouge">confidence</code> als gekalibreerde nauwkeurigheid beschouwen; d1-3B in een Apache-2.0-compatibel product opnemen zonder de licentievoorwaarden te onderzoeken.</li>
+</ol><hr />
+<h2 id="8-risicos-licenties-en-conclusie">
+  
+  
+    <a href="#8-risicos-licenties-en-conclusie" class="anchor-heading" aria-labelledby="8-risicos-licenties-en-conclusie"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8. Risico’s, licenties en conclusie
+  
+  
+</h2>
+    
+<h3 id="81-geldigheidsgrenzen">
+  
+  
+    <a href="#81-geldigheidsgrenzen" class="anchor-heading" aria-labelledby="81-geldigheidsgrenzen"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8.1. Geldigheidsgrenzen
+  
+  
+</h3>
+    
+
+<ul>
+  <li>De resultaten gelden voor één hardwareconfiguratie (DGX Spark GB10), één geheugenconfiguratie en de ontwikkelimages van twee engines.</li>
+  <li>De TDB- en cisimcik-labels zijn binnen het bereik van deze studie niet gewijzigd; de resultaten moeten opnieuw worden geproduceerd wanneer nieuwe versies verschijnen.</li>
+  <li>De 27B-resultaten zijn verkregen met het beschermde protocol (GPU-geheugengebruik 0.78, <code class="language-plaintext highlighter-rouge">--enforce-eager</code>, batchgewijze uitvoering); latentie en stabiliteit kunnen bij andere instellingen veranderen.</li>
+  <li>Voor <code class="language-plaintext highlighter-rouge">tr-set</code> zijn <code class="language-plaintext highlighter-rouge">clef</code>, <code class="language-plaintext highlighter-rouge">clef-flash</code> en <code class="language-plaintext highlighter-rouge">d1-3b</code> alleen op SGLang gemeten; voor deze drie modellen kan geen vergelijking tussen engines worden gemaakt.</li>
+  <li>Resultaatbestanden van nul bytes zijn niet als voltooid geteld, en ontbrekende tests zijn opnieuw uitgevoerd met <code class="language-plaintext highlighter-rouge">FORCE=1</code>.</li>
+  <li>Het gebruik van de TypeSafe SDK met de twee engines valt buiten dit bereik.</li>
+</ul>
+<h3 id="82-licenties">
+  
+  
+    <a href="#82-licenties" class="anchor-heading" aria-labelledby="82-licenties"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8.2. Licenties
+  
+  
+</h3>
+    
+
+<p>Status geverifieerd aan de hand van Hugging Face-modelkaarten en repositorybestanden per november 2026:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>Licentie</th>
+      <th>Basismodel</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">vllm-sr/d3</code></td>
+      <td><strong>Apache-2.0</strong></td>
+      <td>Qwen/Qwen3.8-27B (Apache-2.0)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">vllm-sr/d3-mini</code></td>
+      <td><strong>Apache-2.0</strong></td>
+      <td>Qwen/Qwen3.5-4B (Apache-2.0)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">vllm-sr/d3-edge</code></td>
+      <td><strong>Apache-2.0</strong></td>
+      <td>Qwen/Qwen3.5-0.8B (Apache-2.0)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">Cloudflare/clef</code></td>
+      <td><strong>Apache-2.0</strong></td>
+      <td>Qwen/Qwen3.8-27B</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">Cloudflare/clef-flash</code></td>
+      <td><strong>Apache-2.0</strong></td>
+      <td>Qwen3.5 (9B)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">LiquidAI/d1-3B</code></td>
+      <td><strong>LFM 1.0</strong> ⚠</td>
+      <td>LiquidAI/LFM2.5-VL-3B</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>De D3- en CLEF-families zijn onder Apache-2.0 gepubliceerd; toch moeten bij herdistributie en afgeleid werk, naast de modelkaart, ook het licentiebestand van de gebruikte versie en eventuele aanvullende voorwaarden worden onderzocht.</p>
+
+<p><strong>d1-3B is niet Apache-2.0.</strong> De rechten die gelden in software onder Apache-2.0 mogen niet ongewijzigd van toepassing worden verondersteld; vóór commerciële distributie of opname in een product moet de actuele licentietekst van Liquid AI worden onderzocht en, indien nodig, juridisch advies worden ingewonnen.</p>
+<h3 id="83-conclusie">
+  
+  
+    <a href="#83-conclusie" class="anchor-heading" aria-labelledby="83-conclusie"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8.3. Conclusie
+  
+  
+</h3>
+    
+
+<p>Deze evaluatie laat zien dat de System One-familie onder bepaalde voorwaarden in productie kan worden gebruikt, maar dat een betrouwbare deployment vereist dat <strong>het model, de inferentie-engine en de hardware samen worden geverifieerd</strong>.</p>
+
+<ul>
+  <li><strong>Nauwkeurigheid</strong> neemt toe met de grootte, maar modellen uit de 4B-klasse komen veel dichter bij 27B dan verwacht; de keuze moet op taak en uitleesmethode worden gebaseerd, niet op het aantal parameters.</li>
+  <li><strong>Vertrouwen</strong> is niet gekalibreerd; onzekerheid wordt niet in de uitvoer weergegeven. Automatische beslissingen moeten worden opgebouwd met op gelabelde gegevens gevalideerde drempels en met menselijke beoordeling.</li>
+  <li><strong>Turks</strong>: de zwakste punten zijn geordende <code class="language-plaintext highlighter-rouge">score</code>-vragen en parafraseconsistentie; beide moeten afzonderlijk met gegevens van de eigen organisatie worden getest.</li>
+  <li><strong>Overeenstemming tussen engines</strong> hangt af van het model en de engineversie: D1 en CLEF zijn overdraagbaar in de geteste versies, 27B D3 is overdraagbaar in beschermde modus, en de kleine D3-modellen werken niet in de geteste SGLang-image.</li>
+  <li><strong>Hardware</strong> is een echte grens: 27B-modellen kunnen op GB10 niet betrouwbaar worden uitgevoerd zonder een beschermd werkprotocol.</li>
+</ul>
+
+<p>De beslissing om naar productie te gaan moet berusten op drempels die op toepassingsspecifieke gelabelde gegevens zijn geverifieerd, op continue monitoring van beslissingsregistraties en op afzonderlijke acceptatietests voor elke combinatie van model, engine en versie.</p>
+
+          
+
+          
+        </main>
+        
+
+
+      </div>
+    </div>
+    
+      
+
+<div class="search-overlay"></div>
+
+    
+  </div>
+
+  
+
+  <script>
+    window.JTD_I18N = {
+      search_no_results: "Geen resultaten gevonden",
+      copy_code: "Code naar klembord kopiëren"
+    };
+  </script>
+
+  
+
+
+<div id="cookie-consent-banner" class="cookie-consent" role="dialog"
+     aria-modal="false" aria-label="Cookie consent"
+     data-consent-state="pending" hidden>
+  <div class="cookie-consent__body">
+    <div class="cookie-consent__text">
+      <span class="cookie-consent__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+          <path d="M21 12a9 9 0 1 1-9-9 4.5 4.5 0 0 0 4.5 4.5A4.5 4.5 0 0 0 21 12zm-9-3.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-1.5 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm6-1.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-3 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0z"/>
+        </svg>
+      </span>
+      <p>Wij gebruiken cookies om het websiteverkeer te analyseren en uw ervaring te verbeteren. Door op 'Accepteren' te klikken, stemt u in met het gebruik van analytische cookies zoals beschreven in ons privacybeleid.
+        <a href="https://aetherix.com/privacy-policy/" target="_blank" rel="noopener noreferrer"
+           class="cookie-consent__link">Privacybeleid</a>
+      </p>
+    </div>
+    <div class="cookie-consent__actions">
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--reject"
+              data-consent-action="rejected">Weigeren</button>
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--accept"
+              data-consent-action="accepted">Accepteren</button>
+    </div>
+  </div>
+</div>
+<script>
+  // Eski karar önbellekte varsa bannerı gösterme
+  (function() {
+    try {
+      var v = localStorage.getItem('cookieConsent');
+      if (v === 'accepted' || v === 'rejected') {
+        document.documentElement.dataset.cookieConsent = v;
+      }
+    } catch (e) {}
+  })();
+</script>
+<script src="/assets/js/cookie-banner.js" defer></script>
+
+</body>
+</html>
+

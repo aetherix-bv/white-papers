@@ -40,8 +40,8 @@
 <meta name="generator" content="Jekyll v4.3.4" />
 <meta property="og:title" content="Cosmos3-Edge op RTX PRO 6000 Max-Q — BF16, vLLM vision-language-inferentiebenchmark" />
 <meta property="og:locale" content="nl" />
-<meta name="description" content="Cosmos3-Edge (3.9B parameters), geserveerd in BF16-formaat met vLLM op RTX PRO 6000 Max-Q, begint één camera die één 720p-beeld stuurt na 0.09 s te antwoorden en schrijft daarna 310.3 tok/s." />
-<meta name="twitter:description" property="og:description" content="Cosmos3-Edge (3.9B parameters), geserveerd in BF16-formaat met vLLM op RTX PRO 6000 Max-Q, begint één camera die één 720p-beeld stuurt na 0.09 s te antwoorden en schrijft daarna 310.3 tok/s." />
+<meta name="description" content="Cosmos3-Edge (3.9B parameters), geserveerd in BF16-formaat met vLLM op RTX PRO 6000 Max-Q, begint één camera die één 720p-beeld stuurt na 88 ms (time to first token, TTFT) te antwoorden en schrijft daarna 310.3 tok/s." />
+<meta name="twitter:description" property="og:description" content="Cosmos3-Edge (3.9B parameters), geserveerd in BF16-formaat met vLLM op RTX PRO 6000 Max-Q, begint één camera die één 720p-beeld stuurt na 88 ms (time to first token, TTFT) te antwoorden en schrijft daarna 310.3 tok/s." />
 <link rel="canonical" href="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos3-edge/rtx-pro-6000-max-q/bf16-vllm/" />
 <meta property="og:url" content="https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos3-edge/rtx-pro-6000-max-q/bf16-vllm/" />
 <meta property="og:site_name" content="Aetherix White Papers" />
@@ -50,7 +50,7 @@
 <meta name="twitter:title" content="Cosmos3-Edge op RTX PRO 6000 Max-Q — BF16, vLLM vision-language-inferentiebenchmark" />
 <meta name="twitter:site" content="@Aetherixnl" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","description":"Cosmos3-Edge (3.9B parameters), geserveerd in BF16-formaat met vLLM op RTX PRO 6000 Max-Q, begint één camera die één 720p-beeld stuurt na 0.09 s te antwoorden en schrijft daarna 310.3 tok/s.","headline":"Cosmos3-Edge op RTX PRO 6000 Max-Q — BF16, vLLM vision-language-inferentiebenchmark","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://whitepapers.aetherix.com/assets/images/aetherix-logo.png"}},"url":"https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos3-edge/rtx-pro-6000-max-q/bf16-vllm/"}</script>
+{"@context":"https://schema.org","@type":"WebPage","description":"Cosmos3-Edge (3.9B parameters), geserveerd in BF16-formaat met vLLM op RTX PRO 6000 Max-Q, begint één camera die één 720p-beeld stuurt na 88 ms (time to first token, TTFT) te antwoorden en schrijft daarna 310.3 tok/s.","headline":"Cosmos3-Edge op RTX PRO 6000 Max-Q — BF16, vLLM vision-language-inferentiebenchmark","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://whitepapers.aetherix.com/assets/images/aetherix-logo.png"}},"url":"https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/cosmos3-edge/rtx-pro-6000-max-q/bf16-vllm/"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -181,7 +181,7 @@
   
     <ul class="nav-list"><li class="nav-list-item"><a href="/nl/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/nl/about/" class="nav-list-link">Over ons</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in White Papers category" aria-pressed="false">
       <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
-    </button><a href="/nl/papers/" class="nav-list-link">White Papers</a><ul class="nav-list"><li class="nav-list-item"><a href="/nl/papers/local-llm-guide/" class="nav-list-link">Handleiding voor lokaal LLM-gebruik</a></li><li class="nav-list-item"><a href="/nl/papers/llm-quantization-selection/" class="nav-list-link">Keuzegids voor LLM-kwantisatie</a></li><li class="nav-list-item"><a href="/nl/papers/conditional-memory-offloading/" class="nav-list-link">Engram-offloading bij LLM-inferentie</a></li><li class="nav-list-item"><a href="/nl/papers/b300-gb300-cluster-architecture/" class="nav-list-link">NVIDIA DGX B300 vs GB300 NVL72: vergelijking van clusterarchitecturen</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-2node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 2 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-3node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 3 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-4node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 4 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-8node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 8 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/qwen3.6-27b-dgx-spark-benchmark/" class="nav-list-link">Qwen3.6-27B DGX Spark-benchmark</a></li><li class="nav-list-item"><a href="/nl/papers/qwen3.6-27b-dgx-spark-scaling/" class="nav-list-link">Schaling van Qwen3.6-27B op een DGX Spark-cluster</a></li><li class="nav-list-item"><a href="/nl/papers/kv-cache-offloading-lmcache/" class="nav-list-link">Offloading van de KV-cache met LMCache bij LLM-inferentie</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-link-speed-tensor-parallel/" class="nav-list-link">Netwerklinksnelheid voor tensorparallelle inferentie op 8× DGX Spark (200G vs 100G)</a></li><li class="nav-list-item"><a href="/nl/papers/jev-open-weight-alternatives/" class="nav-list-link">De eerste open-gewichtsalternatieven voor Jev</a></li><li class="nav-list-item"><a href="/nl/papers/deepseek-v4.1-flash-4spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash-deployment op 4× DGX Spark</a></li><li class="nav-list-item"><a href="/nl/papers/deepseek-v4.1-flash-8spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash-deployment op 8× DGX Spark met TP8</a></li><li class="nav-list-item"><a href="/nl/papers/kimi-k3-dgx-b300-inference-benchmark/" class="nav-list-link">Kimi K3-inferentiebenchmark op DGX-B300</a></li></ul></li><li class="nav-list-item"><a href="/nl/llm-inference-benchmarks/" class="nav-list-link">LLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/nl/cv-inference-benchmarks/" class="nav-list-link">CV Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/nl/vlm-inference-benchmarks/" class="nav-list-link">VLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/nl/device-advisor/" class="nav-list-link">Apparaatadvies</a></li><li class="nav-list-item"><a href="/nl/changelog/" class="nav-list-link">Wijzigingslogboek</a></li></ul>
+    </button><a href="/nl/papers/" class="nav-list-link">White Papers</a><ul class="nav-list"><li class="nav-list-item"><a href="/nl/papers/local-llm-guide/" class="nav-list-link">Handleiding voor lokaal LLM-gebruik</a></li><li class="nav-list-item"><a href="/nl/papers/llm-quantization-selection/" class="nav-list-link">Keuzegids voor LLM-kwantisatie</a></li><li class="nav-list-item"><a href="/nl/papers/conditional-memory-offloading/" class="nav-list-link">Engram-offloading bij LLM-inferentie</a></li><li class="nav-list-item"><a href="/nl/papers/b300-gb300-cluster-architecture/" class="nav-list-link">NVIDIA DGX B300 vs GB300 NVL72: vergelijking van clusterarchitecturen</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-2node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 2 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-3node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 3 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-4node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 4 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-8node-cluster-setup/" class="nav-list-link">Installatiehandleiding voor een DGX Spark AI-cluster met 8 nodes</a></li><li class="nav-list-item"><a href="/nl/papers/qwen3.6-27b-dgx-spark-benchmark/" class="nav-list-link">Qwen3.6-27B DGX Spark-benchmark</a></li><li class="nav-list-item"><a href="/nl/papers/qwen3.6-27b-dgx-spark-scaling/" class="nav-list-link">Schaling van Qwen3.6-27B op een DGX Spark-cluster</a></li><li class="nav-list-item"><a href="/nl/papers/kv-cache-offloading-lmcache/" class="nav-list-link">Offloading van de KV-cache met LMCache bij LLM-inferentie</a></li><li class="nav-list-item"><a href="/nl/papers/dgx-spark-link-speed-tensor-parallel/" class="nav-list-link">Netwerklinksnelheid voor tensorparallelle inferentie op DGX Sparks (200G vs 100G)</a></li><li class="nav-list-item"><a href="/nl/papers/jev-open-weight-alternatives/" class="nav-list-link">De eerste open-gewichtsalternatieven voor Jev</a></li><li class="nav-list-item"><a href="/nl/papers/system-one-production-readiness/" class="nav-list-link">System One in productie: besliskwaliteit, betrouwbaarheid en prestaties op DGX Spark met vLLM en SGLang</a></li><li class="nav-list-item"><a href="/nl/papers/deepseek-v4.1-flash-4spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash-deployment op 4× DGX Spark</a></li><li class="nav-list-item"><a href="/nl/papers/deepseek-v4.1-flash-8spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash-deployment op 8× DGX Spark met TP8</a></li><li class="nav-list-item"><a href="/nl/papers/kimi-k3-dgx-b300-inference-benchmark/" class="nav-list-link">Kimi K3-inferentiebenchmark op DGX-B300</a></li></ul></li><li class="nav-list-item"><a href="/nl/llm-inference-benchmarks/" class="nav-list-link">LLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/nl/cv-inference-benchmarks/" class="nav-list-link">CV Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/nl/vlm-inference-benchmarks/" class="nav-list-link">VLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/nl/device-advisor/" class="nav-list-link">Apparaatadvies</a></li><li class="nav-list-item"><a href="/nl/changelog/" class="nav-list-link">Wijzigingslogboek</a></li></ul>
 
   
 </nav>
@@ -280,34 +280,34 @@
 <tr><th scope="row">Kwantisatie</th><td>BF16</td></tr>
 <tr><th scope="row">Beeldformaat</th><td>720p</td></tr>
 <tr><th scope="row">Beelden per camera</th><td>1</td></tr>
-<tr><th scope="row">Max. camera&#39;s (respons ≤ 3 s)</th><td>16+</td></tr>
+<tr><th scope="row">Max. camera&#39;s (TTFT ≤ 3000 ms)</th><td>16+</td></tr>
 <tr><th scope="row">Engine</th><td>vLLM</td></tr>
 </tbody>
 </table></div>
 <div class="table-wrapper"><table>
-<thead><tr><th>Camera&#39;s</th><th>Respons (s)</th><th>TPS (tok/s)</th><th>Doel</th></tr></thead>
+<thead><tr><th>Camera&#39;s</th><th>TTFT (ms)</th><th>TPS (tok/s)</th><th>Doel</th></tr></thead>
 <tbody>
-<tr><td>1</td><td>0.09</td><td>310.3</td><td>≤3 s</td></tr>
-<tr><td>2</td><td>0.10</td><td>276.4</td><td>≤3 s</td></tr>
-<tr><td>4</td><td>0.13</td><td>238.5</td><td>≤3 s</td></tr>
-<tr><td>8</td><td>0.24</td><td>205.8</td><td>≤3 s</td></tr>
-<tr><td>16</td><td>0.38</td><td>168.6</td><td>≤3 s</td></tr>
+<tr><td>1</td><td>88</td><td>310.3</td><td>≤3000 ms</td></tr>
+<tr><td>2</td><td>105</td><td>276.4</td><td>≤3000 ms</td></tr>
+<tr><td>4</td><td>132</td><td>238.5</td><td>≤3000 ms</td></tr>
+<tr><td>8</td><td>240</td><td>205.8</td><td>≤3000 ms</td></tr>
+<tr><td>16</td><td>379</td><td>168.6</td><td>≤3000 ms</td></tr>
 </tbody>
 </table></div>
 <div class="table-wrapper"><table>
-<thead><tr><th>Beelden per verzoek</th><th>Respons (s)</th><th>TPS (tok/s)</th><th>Doel</th></tr></thead>
+<thead><tr><th>Beelden per verzoek</th><th>TTFT (ms)</th><th>TPS (tok/s)</th><th>Doel</th></tr></thead>
 <tbody>
-<tr><td>1</td><td>0.09</td><td>310.3</td><td>≤3 s</td></tr>
-<tr><td>3</td><td>0.21</td><td>300.9</td><td>≤3 s</td></tr>
-<tr><td>5</td><td>0.34</td><td>289.7</td><td>≤3 s</td></tr>
+<tr><td>1</td><td>88</td><td>310.3</td><td>≤3000 ms</td></tr>
+<tr><td>3</td><td>208</td><td>300.9</td><td>≤3000 ms</td></tr>
+<tr><td>5</td><td>343</td><td>289.7</td><td>≤3000 ms</td></tr>
 </tbody>
 </table></div>
-<p>Cosmos3-Edge (3.9B parameters), geserveerd in BF16-formaat met vLLM op RTX PRO 6000 Max-Q, begint één camera die één 720p-beeld stuurt na 0.09 s te antwoorden en schrijft daarna 310.3 tok/s.</p>
-<p>Met 5 beelden per camera op 720p begint het antwoord na 0.34 s. Met één beeld op 2K na 0.43 s.</p>
-<p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het minstens 16 camera&#39;s tegelijk bij: ook bij het hoogste gemeten aantal haalde het het doel, dus de werkelijke grens ligt hoger.</p>
+<p>Cosmos3-Edge (3.9B parameters), geserveerd in BF16-formaat met vLLM op RTX PRO 6000 Max-Q, begint één camera die één 720p-beeld stuurt na 88 ms (time to first token, TTFT) te antwoorden en schrijft daarna 310.3 tok/s.</p>
+<p>Met 5 beelden per camera op 720p begint het antwoord na 343 ms. Met één beeld op 2K na 432 ms.</p>
+<p>Bij het standaarddoel van een gemiddelde TTFT binnen 3,000 ms (720p, één beeld per camera) houdt het minstens 16 camera&#39;s tegelijk bij: ook bij het hoogste gemeten aantal haalde het het doel, dus de werkelijke grens ligt hoger.</p>
 </div>
 </div>
-<div class="bt-explained-src" hidden><div data-vlmbt-explained="cosmos3-edge_rtxpro6000maxq_bf16_vllm"><p>Cosmos3-Edge (3.9B parameters), geserveerd in BF16-formaat met vLLM op RTX PRO 6000 Max-Q, begint één camera die één 720p-beeld stuurt na 0.09 s te antwoorden en schrijft daarna 310.3 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 0.34 s. Met één beeld op 2K na 0.43 s.</p><p>Bij het standaarddoel van een antwoord dat binnen 3 s begint (720p, één beeld per camera) houdt het minstens 16 camera&#39;s tegelijk bij: ook bij het hoogste gemeten aantal haalde het het doel, dus de werkelijke grens ligt hoger.</p></div></div>
+<div class="bt-explained-src" hidden><div data-vlmbt-explained="cosmos3-edge_rtxpro6000maxq_bf16_vllm"><p>Cosmos3-Edge (3.9B parameters), geserveerd in BF16-formaat met vLLM op RTX PRO 6000 Max-Q, begint één camera die één 720p-beeld stuurt na 88 ms (time to first token, TTFT) te antwoorden en schrijft daarna 310.3 tok/s.</p><p>Met 5 beelden per camera op 720p begint het antwoord na 343 ms. Met één beeld op 2K na 432 ms.</p><p>Bij het standaarddoel van een gemiddelde TTFT binnen 3,000 ms (720p, één beeld per camera) houdt het minstens 16 camera&#39;s tegelijk bij: ook bij het hoogste gemeten aantal haalde het het doel, dus de werkelijke grens ligt hoger.</p></div></div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1"></script>

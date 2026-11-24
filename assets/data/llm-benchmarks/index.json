@@ -172,6 +172,11 @@
           "id": "qwen3.8-27b_1spark_nvfp4_vllm_mtp_eugr_c1",
           "model": "Qwen3.8-27B",
           "path": "1x-dgx-spark/qwen3.8-27b_1spark_nvfp4_vllm_mtp_eugr_c1.json"
+        },
+        {
+          "id": "inkling-2-mini_1spark_mxfp8_vllm",
+          "model": "Inkling-2-Mini",
+          "path": "1x-dgx-spark/inkling-2-mini_1spark_mxfp8_vllm.json"
         }
       ]
     },
@@ -323,6 +328,11 @@
           "id": "glm-5.3-flash_4spark_fp8_sglang",
           "model": "GLM-5.3-Flash",
           "path": "4x-dgx-spark/glm-5.3-flash_4spark_fp8_sglang.json"
+        },
+        {
+          "id": "minimax-m3.1-flash_4spark_nvfp4_vllm_tp4",
+          "model": "MiniMax-M3.1-Flash",
+          "path": "4x-dgx-spark/minimax-m3.1-flash_4spark_nvfp4_vllm_tp4.json"
         }
       ]
     },
@@ -375,6 +385,11 @@
           "id": "mimo-v2.6-pro-rl_8spark_fp4_sglang",
           "model": "MiMo-V2.6-Pro-RL",
           "path": "8x-dgx-spark/mimo-v2.6-pro-rl_8spark_fp4_sglang.json"
+        },
+        {
+          "id": "muse-spark-open-816b-a42b_8spark_nvfp4_vllm",
+          "model": "Muse-Spark-Open-816B-A42B",
+          "path": "8x-dgx-spark/muse-spark-open-816b-a42b_8spark_nvfp4_vllm.json"
         }
       ]
     },
@@ -383,6 +398,11 @@
       "slug": "rtx-pro-6000",
       "path": "rtx-pro-6000/device.json",
       "runs": [
+        {
+          "id": "inkling-2-mini_rtxpro6000_mxfp8_vllm",
+          "model": "Inkling-2-Mini",
+          "path": "rtx-pro-6000/inkling-2-mini_rtxpro6000_mxfp8_vllm.json"
+        },
         {
           "id": "gpt-oss-120b_rtxpro6000_mxfp4_vllm",
           "model": "GPT-OSS 120B",
@@ -674,6 +694,36 @@
           "id": "step-5-preview_b300_fp8_vllm_dp4",
           "model": "Step-5-Preview",
           "path": "dgx-b300/step-5-preview_b300_fp8_vllm_dp4.json"
+        },
+        {
+          "id": "deepseek-v4.1-flash-1017_b300_fp8_vllm_tp2",
+          "model": "DeepSeek-V4.1-Flash-1017",
+          "path": "dgx-b300/deepseek-v4.1-flash-1017_b300_fp8_vllm_tp2.json"
+        },
+        {
+          "id": "minimax-m3.1-flash_b300_nvfp4_vllm_tp2",
+          "model": "MiniMax-M3.1-Flash",
+          "path": "dgx-b300/minimax-m3.1-flash_b300_nvfp4_vllm_tp2.json"
+        },
+        {
+          "id": "nemotron-3.5-bolt-74b-a9b_b300_bf16_vllm_tp1",
+          "model": "NVIDIA-Nemotron-3.5-Bolt-74B-A9B",
+          "path": "dgx-b300/nemotron-3.5-bolt-74b-a9b_b300_bf16_vllm_tp1.json"
+        },
+        {
+          "id": "mistral-large-4-1t-a52b_b300_fp8_sglang_tp8",
+          "model": "Mistral-Large-4-1T-A52B",
+          "path": "dgx-b300/mistral-large-4-1t-a52b_b300_fp8_sglang_tp8.json"
+        },
+        {
+          "id": "ripple-65b-preview_b300_nvfp4_sglang_dflash2",
+          "model": "Ripple-65B-Preview",
+          "path": "dgx-b300/ripple-65b-preview_b300_nvfp4_sglang_dflash2.json"
+        },
+        {
+          "id": "kimi-k3.1-pro_b300_mxfp4_sglang_tp8_dflash2",
+          "model": "Kimi-K3.1-Pro",
+          "path": "dgx-b300/kimi-k3.1-pro_b300_mxfp4_sglang_tp8_dflash2.json"
         }
       ]
     }

@@ -1,0 +1,1535 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-default.css">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet">
+
+  <style id="jtd-nav-activation">
+  
+
+.site-nav > ul.nav-list:first-child > li > a,
+.site-nav > ul.nav-list:first-child > li > ul > li:not(:nth-child(14)) > a,
+.site-nav > ul.nav-list:first-child > li > ul > li > ul > li > a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:not(:first-child) a,
+.site-nav li.external a {
+  background-image: none;
+}
+
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(14) > a {
+  font-weight: 600;
+  text-decoration: none;
+}.site-nav > ul.nav-list:first-child > li:nth-child(3) > button svg,
+.site-nav > ul.nav-list:first-child > li:nth-child(3) > ul > li:nth-child(14) > button svg {
+  transform: rotate(-90deg);
+}.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list,
+.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list > li.nav-list-item:nth-child(14) > ul.nav-list {
+  display: block;
+}
+  </style>
+
+  
+
+  
+    <script src="/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+
+
+  <!-- Begin Jekyll SEO tag v2.9.1 -->
+<title>System One in Production: Decision Quality, Reliability and Performance on DGX Spark with vLLM and SGLang | Aetherix White Papers</title>
+<meta name="generator" content="Jekyll v4.3.4" />
+<meta property="og:title" content="System One in Production: Decision Quality, Reliability and Performance on DGX Spark with vLLM and SGLang" />
+<meta property="og:locale" content="en" />
+<meta name="description" content="Six typed-decision models from 0.6B to 27B evaluated on one NVIDIA DGX Spark with vLLM and SGLang: Turkish accuracy, confidence calibration, paraphrase consistency, multimodal limits, engine portability, and the confidence thresholds a production decision policy needs." />
+<meta name="twitter:description" property="og:description" content="Six typed-decision models from 0.6B to 27B evaluated on one NVIDIA DGX Spark with vLLM and SGLang: Turkish accuracy, confidence calibration, paraphrase consistency, multimodal limits, engine portability, and the confidence thresholds a production decision policy needs." />
+<link rel="canonical" href="https://whitepapers.aetherix.com/papers/system-one-production-readiness/" />
+<meta property="og:url" content="https://whitepapers.aetherix.com/papers/system-one-production-readiness/" />
+<meta property="og:site_name" content="Aetherix White Papers" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-11-04T00:00:00+00:00" />
+<meta property="article:modified_time" content="2026-11-04T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="System One in Production: Decision Quality, Reliability and Performance on DGX Spark with vLLM and SGLang" />
+<meta name="twitter:site" content="@Aetherixnl" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2026-11-04T00:00:00+00:00","datePublished":"2026-11-04T00:00:00+00:00","description":"Six typed-decision models from 0.6B to 27B evaluated on one NVIDIA DGX Spark with vLLM and SGLang: Turkish accuracy, confidence calibration, paraphrase consistency, multimodal limits, engine portability, and the confidence thresholds a production decision policy needs.","headline":"System One in Production: Decision Quality, Reliability and Performance on DGX Spark with vLLM and SGLang","mainEntityOfPage":{"@type":"WebPage","@id":"https://whitepapers.aetherix.com/papers/system-one-production-readiness/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://whitepapers.aetherix.com/assets/images/aetherix-logo.png"}},"url":"https://whitepapers.aetherix.com/papers/system-one-production-readiness/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  
+<!-- Google tag (gtag.js) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JWLN33085T"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+
+  // Consent Mode v2 — default DENIED. Banner onayı ile GRANTED olur.
+  // KVKK/GDPR uyumu: ziyaretçi onay vermeden çerez set edilmez.
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    functionality_storage: 'granted',
+    security_storage: 'granted',
+    wait_for_update: 500
+  });
+
+  gtag('js', new Date());
+  gtag('config', 'G-JWLN33085T', {
+    anonymize_ip: true
+  });
+</script>
+
+<link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/papers/system-one-production-readiness/">
+<link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/papers/system-one-production-readiness/">
+<link rel="alternate" hreflang="x-default" href="https://whitepapers.aetherix.com/papers/system-one-production-readiness/">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/images/favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+
+
+</head>
+
+<body>
+  <a class="skip-to-main" href="#main-content">Skip to main content</a>
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="svg-link" viewBox="0 0 24 24">
+  <title>Link</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+</symbol>
+
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+  <title>Menu</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+    <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</symbol>
+
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+  <title>Expand</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</symbol>
+
+  <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
+<symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+  <title id="svg-external-link-title">(external link)</title>
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+</symbol>
+
+  
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+  <title>Document</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+</symbol>
+
+    <symbol id="svg-search" viewBox="0 0 24 24">
+  <title>Search</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</symbol>
+
+  
+  
+    <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+<symbol id="svg-copy" viewBox="0 0 16 16">
+  <title>Copy</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+</symbol>
+<symbol id="svg-copied" viewBox="0 0 16 16">
+  <title>Copied</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"/>
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"/>
+  </svg>
+</symbol>
+
+  
+</svg>
+
+  
+    <div class="side-bar">
+  <div class="site-header" role="banner">
+    <a href="/" class="site-title lh-tight">
+  <div class="site-logo" role="img" aria-label="Aetherix White Papers"></div>
+
+</a>
+    <button id="menu-button" class="site-button btn-reset" aria-label="Toggle menu" aria-pressed="false">
+      <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  <nav aria-label="Main" id="site-nav" class="site-nav">
+  
+  
+    <ul class="nav-list"><li class="nav-list-item"><a href="/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/about/" class="nav-list-link">About</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in White Papers category" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+    </button><a href="/papers/" class="nav-list-link">White Papers</a><ul class="nav-list"><li class="nav-list-item"><a href="/papers/local-llm-guide/" class="nav-list-link">Local LLM Usage Guide</a></li><li class="nav-list-item"><a href="/papers/llm-quantization-selection/" class="nav-list-link">LLM Quantization Selection Guide</a></li><li class="nav-list-item"><a href="/papers/conditional-memory-offloading/" class="nav-list-link">Engram Offloading in LLM Inference</a></li><li class="nav-list-item"><a href="/papers/b300-gb300-cluster-architecture/" class="nav-list-link">NVIDIA DGX B300 vs GB300 NVL72 Cluster Architecture Comparison</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-2node-cluster-setup/" class="nav-list-link">DGX Spark 2-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-3node-cluster-setup/" class="nav-list-link">DGX Spark 3-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-4node-cluster-setup/" class="nav-list-link">DGX Spark 4-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-8node-cluster-setup/" class="nav-list-link">DGX Spark 8-Node AI Cluster Setup Guide</a></li><li class="nav-list-item"><a href="/papers/qwen3.6-27b-dgx-spark-benchmark/" class="nav-list-link">Qwen3.6-27B DGX Spark Benchmark</a></li><li class="nav-list-item"><a href="/papers/qwen3.6-27b-dgx-spark-scaling/" class="nav-list-link">Qwen3.6-27B DGX Spark Cluster Scaling</a></li><li class="nav-list-item"><a href="/papers/kv-cache-offloading-lmcache/" class="nav-list-link">KV Cache Offloading with LMCache in LLM Inference</a></li><li class="nav-list-item"><a href="/papers/dgx-spark-link-speed-tensor-parallel/" class="nav-list-link">Network Link Speed for Tensor-Parallel Inference on DGX Sparks (200G vs 100G)</a></li><li class="nav-list-item"><a href="/papers/jev-open-weight-alternatives/" class="nav-list-link">The First Open-Weight Alternatives to Jev</a></li><li class="nav-list-item"><a href="/papers/system-one-production-readiness/" class="nav-list-link">System One in Production: Decision Quality, Reliability and Performance on DGX Spark with vLLM and SGLang</a></li><li class="nav-list-item"><a href="/papers/deepseek-v4.1-flash-4spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash 4× DGX Spark Deployment</a></li><li class="nav-list-item"><a href="/papers/deepseek-v4.1-flash-8spark-deployment/" class="nav-list-link">DeepSeek-V4.1-Flash 8× DGX Spark TP8 Deployment</a></li><li class="nav-list-item"><a href="/papers/kimi-k3-dgx-b300-inference-benchmark/" class="nav-list-link">Kimi K3 Inference Benchmark on DGX-B300</a></li></ul></li><li class="nav-list-item"><a href="/llm-inference-benchmarks/" class="nav-list-link">LLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/cv-inference-benchmarks/" class="nav-list-link">CV Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/vlm-inference-benchmarks/" class="nav-list-link">VLM Inference Benchmark Explorer</a></li><li class="nav-list-item"><a href="/device-advisor/" class="nav-list-link">Device Advisor</a></li><li class="nav-list-item"><a href="/changelog/" class="nav-list-link">Changelog</a></li></ul>
+
+  
+</nav>
+
+
+  
+  
+    <div class="lang-switcher">
+  
+    
+    
+      <span class="lang-switcher-item active">EN</span>
+    
+  
+    
+    
+      <a class="lang-switcher-item" href="/nl/papers/system-one-production-readiness/">NL</a>
+    
+  
+</div>
+<script src="/assets/js/lang-switch.js"></script>
+
+  
+</div>
+
+  
+  <div class="main" id="top">
+    <div id="main-header" class="main-header">
+  
+    
+
+<div class="search" role="search">
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Search" aria-label="Search" autocomplete="off">
+    <label for="search-input" class="search-label"><svg viewBox="0 0 24 24" class="search-icon"><use xlink:href="#svg-search"></use></svg></label>
+  </div>
+  <div id="search-results" class="search-results"></div>
+</div>
+
+  
+  
+  
+    <nav aria-label="Auxiliary" class="aux-nav">
+  <ul class="aux-nav-list">
+    
+      <li class="aux-nav-list-item">
+        <a href="https://aetherix.com" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          aetherix.com
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://github.com/aetherix-bv" class="site-button"
+          
+          target="_blank" rel="noopener noreferrer"
+          
+        >
+          GitHub
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+  
+</div>
+
+    <div class="main-content-wrap">
+      <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+  <ol class="breadcrumb-nav-list">
+    <li class="breadcrumb-nav-list-item"><a href="/papers/">White Papers</a></li>
+    <li class="breadcrumb-nav-list-item"><span>System One in Production: Decision Quality, Reliability and Performance on DGX Spark with vLLM and SGLang</span></li>
+  </ol>
+</nav>
+      <div id="main-content" class="main-content">
+        <main>
+          
+            <p><em>Prepared by: <strong>Aetherix B.V.</strong> — Trusted Jetson Hardware Provider for Edge AI</em></p>
+
+<p><em>Test platform: NVIDIA DGX Spark (GB10) · Models: System One family · Report date: November 2026</em></p><hr />
+<h2 class="no_toc" id="table-of-contents">
+  
+  
+    <a href="#table-of-contents" class="anchor-heading" aria-labelledby="table-of-contents"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Table of contents
+  
+  
+</h2>
+    
+
+<ul id="markdown-toc">
+  <li><a href="#executive-summary" id="markdown-toc-executive-summary">Executive Summary</a></li>
+  <li><a href="#1-problem-from-free-text-to-typed-decisions" id="markdown-toc-1-problem-from-free-text-to-typed-decisions">1. Problem: from free text to typed decisions</a>    <ul>
+      <li><a href="#11-three-readout-methods" id="markdown-toc-11-three-readout-methods">1.1. Three readout methods</a></li>
+    </ul>
+  </li>
+  <li><a href="#2-method-and-the-limits-of-the-evidence" id="markdown-toc-2-method-and-the-limits-of-the-evidence">2. Method and the limits of the evidence</a>    <ul>
+      <li><a href="#21-limits-of-the-evidence" id="markdown-toc-21-limits-of-the-evidence">2.1. Limits of the evidence</a></li>
+    </ul>
+  </li>
+  <li><a href="#3-decision-quality-accuracy-consistency-language-behaviour" id="markdown-toc-3-decision-quality-accuracy-consistency-language-behaviour">3. Decision quality: accuracy, consistency, language behaviour</a>    <ul>
+      <li><a href="#31-external-english-standard" id="markdown-toc-31-external-english-standard">3.1. External English standard</a></li>
+      <li><a href="#32-turkish-hard-label-standard" id="markdown-toc-32-turkish-hard-label-standard">3.2. Turkish hard-label standard</a></li>
+      <li><a href="#33-turkish-probability-labelled-sample" id="markdown-toc-33-turkish-probability-labelled-sample">3.3. Turkish probability-labelled sample</a></li>
+    </ul>
+  </li>
+  <li><a href="#4-confidence-and-uncertainty" id="markdown-toc-4-confidence-and-uncertainty">4. Confidence and uncertainty</a>    <ul>
+      <li><a href="#41-what-confidence-does-not-say" id="markdown-toc-41-what-confidence-does-not-say">4.1. What <code class="language-plaintext highlighter-rouge">confidence</code> does not say</a></li>
+      <li><a href="#42-coveragerisk-analysis" id="markdown-toc-42-coveragerisk-analysis">4.2. Coverage–risk analysis</a></li>
+    </ul>
+  </li>
+  <li><a href="#5-multimodal-input-boundary-cases-performance" id="markdown-toc-5-multimodal-input-boundary-cases-performance">5. Multimodal input, boundary cases, performance</a>    <ul>
+      <li><a href="#51-image-and-video" id="markdown-toc-51-image-and-video">5.1. Image and video</a></li>
+      <li><a href="#52-concurrent-request-performance" id="markdown-toc-52-concurrent-request-performance">5.2. Concurrent request performance</a></li>
+    </ul>
+  </li>
+  <li><a href="#6-engine-portability-vllm-and-sglang" id="markdown-toc-6-engine-portability-vllm-and-sglang">6. Engine portability: vLLM and SGLang</a>    <ul>
+      <li><a href="#61-differences-at-the-api-level" id="markdown-toc-61-differences-at-the-api-level">6.1. Differences at the API level</a></li>
+      <li><a href="#62-speed" id="markdown-toc-62-speed">6.2. Speed</a></li>
+      <li><a href="#63-conclusion" id="markdown-toc-63-conclusion">6.3. Conclusion</a></li>
+    </ul>
+  </li>
+  <li><a href="#7-decision-guide-for-production" id="markdown-toc-7-decision-guide-for-production">7. Decision guide for production</a>    <ul>
+      <li><a href="#71-model-selection" id="markdown-toc-71-model-selection">7.1. Model selection</a></li>
+      <li><a href="#72-recommended-decision-policy" id="markdown-toc-72-recommended-decision-policy">7.2. Recommended decision policy</a></li>
+    </ul>
+  </li>
+  <li><a href="#8-risks-licences-and-conclusion" id="markdown-toc-8-risks-licences-and-conclusion">8. Risks, licences and conclusion</a>    <ul>
+      <li><a href="#81-limits-of-validity" id="markdown-toc-81-limits-of-validity">8.1. Limits of validity</a></li>
+      <li><a href="#82-licences" id="markdown-toc-82-licences">8.2. Licences</a></li>
+      <li><a href="#83-conclusion" id="markdown-toc-83-conclusion">8.3. Conclusion</a></li>
+    </ul>
+  </li>
+</ul><hr />
+<h2 id="executive-summary">
+  
+  
+    <a href="#executive-summary" class="anchor-heading" aria-labelledby="executive-summary"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Executive Summary
+  
+  
+</h2>
+    
+
+<p>This study evaluates the production readiness of the System One model family, which produces typed decisions directly instead of free text. Tests run across six models, datasets with different labelling approaches and two inference engines produce three main findings.</p>
+
+<p>First, <strong>although the highest accuracy is generally obtained with the larger models, there is no linear relationship between model size and accuracy.</strong> <code class="language-plaintext highlighter-rouge">d3-27b</code> reaches 0.963 accuracy on the Turkish TDB dataset, while the 0.6B-parameter <code class="language-plaintext highlighter-rouge">d3-edge</code> remains at 0.336. By contrast, the 4B <code class="language-plaintext highlighter-rouge">d3-mini</code> approaches the 27B model with 0.887 accuracy and overtakes the 9B <code class="language-plaintext highlighter-rouge">clef-flash</code> model (0.853).</p>
+
+<p>Second, <strong>high accuracy alone does not mean reliable decision-making.</strong> Even in the 42 cases where the answer is genuinely ambiguous, the models produce an average maximum option probability in the 0.75–0.77 range. The <code class="language-plaintext highlighter-rouge">confidence</code> field should therefore not be read as a calibrated estimate of accuracy; it should be treated as a pre-screening (triage) signal used with thresholds validated on labelled data.</p>
+
+<p>Third, <strong>System One support in inference engines is still maturing, so compatibility must be verified separately for each model.</strong> With the same client, datasets and model roster, <code class="language-plaintext highlighter-rouge">d3-27b</code>, <code class="language-plaintext highlighter-rouge">clef</code> and <code class="language-plaintext highlighter-rouge">clef-flash</code> produced closely similar results on both engines. However, in the SGLang development image tested, the TDB accuracy of <code class="language-plaintext highlighter-rouge">d3-mini</code> fell from 0.887 to 0.280, and <code class="language-plaintext highlighter-rouge">d3-edge</code> failed to start.</p>
+
+<p>This result does not show that the two engines generally make different decisions. The findings point to the answer-code readout in the SGLang version tested behaving incorrectly on the small D3 models. The problem should therefore, on the current evidence, be assessed per model and version. Nevertheless, every model–engine–version combination must be verified separately before production, and this acceptance test must be repeated at every version upgrade.</p>
+
+<blockquote>
+  <p><strong>Key findings</strong></p>
+
+  <ol>
+    <li>On the Turkish TDB set the highest accuracy is <code class="language-plaintext highlighter-rouge">d3-27b</code> (0.963) and <code class="language-plaintext highlighter-rouge">clef</code> (0.944); the lowest is <code class="language-plaintext highlighter-rouge">d3-edge</code> (0.336).</li>
+    <li>The <code class="language-plaintext highlighter-rouge">confidence ≥ 0.90</code> threshold automatically resolves 87% of the 354 scored cases for <code class="language-plaintext highlighter-rouge">d3-27b</code> with a 1.3% error risk.</li>
+    <li>Stability against option-order changes is complete in every model (<code class="language-plaintext highlighter-rouge">flip = 0.0</code>), whereas paraphrase consistency is about 0.83 even in the best model.</li>
+    <li>In the image/video tests only <code class="language-plaintext highlighter-rouge">d3-27b</code> answers all 8 items correctly; the common weakness is reading exact numbers from a chart.</li>
+    <li>27B models can reach 93–96 °C on GB10 and the process can terminate silently; a protected operating protocol is mandatory.</li>
+  </ol>
+</blockquote>
+
+<p><strong>Scope note.</strong> The report focuses on the measurement results and their implications for production decisions. Installation commands, API usage, SDK-related cautions and troubleshooting recommendations are outside the scope of this report. Hardware and software versions are fixed to the test environment. Results obtained in a different environment must be measured and verified separately.</p><hr />
+<h2 id="1-problem-from-free-text-to-typed-decisions">
+  
+  
+    <a href="#1-problem-from-free-text-to-typed-decisions" class="anchor-heading" aria-labelledby="1-problem-from-free-text-to-typed-decisions"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1. Problem: from free text to typed decisions
+  
+  
+</h2>
+    
+
+<p>When a conventional language model is run, it reads text and produces a free-form answer; the application then parses that answer to extract a decision. This approach carries two structural costs: the parsing layer is fragile, and the model’s probability information is lost. The difference between “yes” and “yes, but…” can only be estimated by reinterpreting the generated text.</p>
+
+<p>System One (Jev) removes this step. The model is given a <code class="language-plaintext highlighter-rouge">state</code> text and typed questions about that text; it produces a normalised probability for each option. There are three question types:</p>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">choice</code></strong> — a selection among defined options.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">noul</code></strong> — a yes/no decision; the result is read from <code class="language-plaintext highlighter-rouge">P(yes)</code>.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">score</code></strong> — a distribution over ordered levels; the result is the level expectation computed as the weighted mean of the distribution.</li>
+</ul>
+
+<p>The output schema consists of three fields, each answering a different question:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>What it says</th>
+      <th>What it does not say</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">probabilities</code></td>
+      <td>The relative distribution across options</td>
+      <td>Whether that distribution is correct</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">confidence</code></td>
+      <td>The model’s internal confidence in the chosen answer</td>
+      <td>The probability that it is correct in the real world</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">diagnostics.label_mass</code></td>
+      <td>The total probability mass assigned to valid labels</td>
+      <td>The quality of the distribution within the labels</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>A <code class="language-plaintext highlighter-rouge">label_mass</code> below 1 indicates that part of the probability mass has spilled outside the defined options and that the decision may need additional review.</p>
+<h3 id="11-three-readout-methods">
+  
+  
+    <a href="#11-three-readout-methods" class="anchor-heading" aria-labelledby="11-three-readout-methods"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1.1. Three readout methods
+  
+  
+</h3>
+    
+
+<p>Although the models share the same API, they produce the decision through different mechanisms. This difference determines both the cost and how the output should be interpreted.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Strategy</th>
+      <th>Model family</th>
+      <th>How it works</th>
+      <th><code class="language-plaintext highlighter-rouge">label_mass</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Answer-code readout</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">vllm-sr/d3</code></td>
+      <td>A separate forward pass per question; options are scored through the logits of answer codes and normalised with softmax</td>
+      <td>Fixed at 1</td>
+    </tr>
+    <tr>
+      <td><strong>Joint schema head</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">Cloudflare/clef</code>, <code class="language-plaintext highlighter-rouge">clef-flash</code></td>
+      <td>Several questions are evaluated in a single prefill by a dedicated transformer head</td>
+      <td>Fixed at 1</td>
+    </tr>
+    <tr>
+      <td><strong>Label-token readout</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">LiquidAI/d1-3B</code></td>
+      <td>The first token of the answer is taken as the basis; the logits of the relevant labels are converted to probabilities with softmax</td>
+      <td>Dynamic</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>The practical consequences of the distinction are:</p>
+
+<ul>
+  <li><strong>D3</strong> makes a separate pass per question, so processing cost rises as the number of questions grows.</li>
+  <li><strong>CLEF</strong> gains a single-forward-pass advantage on requests containing several questions; <code class="language-plaintext highlighter-rouge">usage.input_tokens</code> is reported over the shared input.</li>
+  <li><strong>D1-3B</strong> does not have to distribute probability only across valid labels, so <code class="language-plaintext highlighter-rouge">label_mass</code> is a real signal in this family.</li>
+</ul>
+
+<p>The <code class="language-plaintext highlighter-rouge">instructions</code> field cannot be used in D3 requests; when it is sent, <code class="language-plaintext highlighter-rouge">400</code> is returned and the model runs with a fixed question template. In CLEF <code class="language-plaintext highlighter-rouge">instructions</code> is not mandatory, but <code class="language-plaintext highlighter-rouge">chat_template_kwargs</code> caused the request to be rejected in this study. CLEF and CLEF-Flash use the same <code class="language-plaintext highlighter-rouge">joint_schema_model.py</code> implementation and the same head configuration; the difference is in backbone size (32×4096 and 64×5120).</p><hr />
+<h2 id="2-method-and-the-limits-of-the-evidence">
+  
+  
+    <a href="#2-method-and-the-limits-of-the-evidence" class="anchor-heading" aria-labelledby="2-method-and-the-limits-of-the-evidence"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2. Method and the limits of the evidence
+  
+  
+</h2>
+    
+
+<p>The evaluation covers datasets with different labelling approaches, principally a Turkish hard-label standard, a Turkish sample with probability-distribution labels, and an external English standard. These datasets make it possible to examine model performance against different criteria.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Dataset</th>
+      <th>Content</th>
+      <th>Label regime</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>TurkishDecisionBenchmark v0.2 public</strong></td>
+      <td>396 cases: 354 scored + 42 ambiguity controls</td>
+      <td>Single correct answer; ambiguous cases reported separately</td>
+    </tr>
+    <tr>
+      <td><strong>cisimcik sample</strong></td>
+      <td>120 Turkish questions (40 <code class="language-plaintext highlighter-rouge">noul</code>, 40 <code class="language-plaintext highlighter-rouge">choice</code>, 40 <code class="language-plaintext highlighter-rouge">score</code>), seed 42</td>
+      <td>Probability distribution from a reviewer panel (soft label)</td>
+    </tr>
+    <tr>
+      <td><strong>JevBench-public-120</strong></td>
+      <td>72 original cases (36 paraphrase pairs) + 48 easy cases</td>
+      <td>Hard label; in the easy tier the answer is explicit in the text</td>
+    </tr>
+    <tr>
+      <td><strong>bench-tr (35)</strong></td>
+      <td>25 + 10 Turkish workload questions</td>
+      <td>Expected answers fixed before measurement</td>
+    </tr>
+    <tr>
+      <td><strong>bench-images (8)</strong></td>
+      <td>Invoice, sales chart, error screen, 4-second video</td>
+      <td>7 image + 1 video item</td>
+    </tr>
+    <tr>
+      <td><strong>limits (11)</strong></td>
+      <td>Programmatic boundary and robustness scenarios</td>
+      <td>Behavioural observation</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>TDB and the cisimcik dataset serve different measurement purposes. TDB measures whether the model can find a single correct label, while cisimcik assesses how closely the probability distribution the model produces approaches the distribution of the reviewer panel. The accuracy figures from the two datasets must therefore <strong>not</strong> be compared directly.</p>
+
+<p>The tests are arranged as a pyramid; the bottom layer is a quick health check and the upper layers are more costly and comprehensive rounds. This structure makes it easier to isolate the layer in which a problem appears.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Layer</th>
+      <th>Content</th>
+      <th>Tool</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>L0</td>
+      <td>Basic operation check</td>
+      <td><code class="language-plaintext highlighter-rouge">systemone.py --example</code></td>
+    </tr>
+    <tr>
+      <td>L1-STD</td>
+      <td>JevBench-public-120</td>
+      <td><code class="language-plaintext highlighter-rouge">bench.py --set jevbench</code></td>
+    </tr>
+    <tr>
+      <td>L1-TR</td>
+      <td>TDB v0.2 public (396)</td>
+      <td><code class="language-plaintext highlighter-rouge">bench_tdb.py</code></td>
+    </tr>
+    <tr>
+      <td>L1-TR+</td>
+      <td>cisimcik sample (120)</td>
+      <td><code class="language-plaintext highlighter-rouge">bench_cisim.py</code></td>
+    </tr>
+    <tr>
+      <td>L2</td>
+      <td>Image/video (8)</td>
+      <td><code class="language-plaintext highlighter-rouge">bench_images.py</code></td>
+    </tr>
+    <tr>
+      <td>L3</td>
+      <td>Boundary and robustness (11)</td>
+      <td><code class="language-plaintext highlighter-rouge">limits.py</code></td>
+    </tr>
+    <tr>
+      <td>L4</td>
+      <td>Metric derivation</td>
+      <td><code class="language-plaintext highlighter-rouge">summary.py</code></td>
+    </tr>
+    <tr>
+      <td>L5</td>
+      <td>Concurrency 1/8/64</td>
+      <td><code class="language-plaintext highlighter-rouge">concurrency.py</code></td>
+    </tr>
+    <tr>
+      <td>L6</td>
+      <td>Cross-engine agreement</td>
+      <td><code class="language-plaintext highlighter-rouge">xengine.py</code></td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Measured metrics: accuracy, group consistency (TDB contrast question groups), error at high confidence, mean probability assigned to the correct answer (mean gold p), overconfidence on ambiguous cases, soft-label Brier, Brier, normalised score-MAE, ECE(10), decision flip rate (<code class="language-plaintext highlighter-rouge">flip</code>), p50/p95 latency and <code class="language-plaintext highlighter-rouge">label_mass</code>.</p>
+
+<p>The numbers in the tables are taken verbatim from the raw output; the decimal point has been kept.</p>
+
+<p><strong>Test environment.</strong> The tests were run on an NVIDIA DGX Spark (GB10, 121 GiB unified memory, aarch64). On the vLLM side the <code class="language-plaintext highlighter-rouge">vllm/vllm-openai:nightly</code> image and the <code class="language-plaintext highlighter-rouge">--max-model-len 32768</code> configuration were used. GPU memory utilization was 0.88 in the standard tests, and 0.78 with <code class="language-plaintext highlighter-rouge">--enforce-eager</code> in the protected tests of the 27B models. SGLang tests were run with the <code class="language-plaintext highlighter-rouge">lmsysorg/sglang:dev</code> and <code class="language-plaintext highlighter-rouge">dev-clef</code> images on port 8001, using the same client scripts and the same JSON request bodies.</p>
+
+<blockquote>
+  <p><strong>System One support is new.</strong> According to the records, the support entered the vLLM mainline on 14 October 2026 (vllm#61565) and is not yet in release versions; the <code class="language-plaintext highlighter-rouge">nightly</code> image was therefore used. Nightly’s ARM64 support and its ability to run on DGX Spark were verified in this environment, but on every installation the image must be checked to contain the relevant change.</p>
+</blockquote>
+<h3 id="21-limits-of-the-evidence">
+  
+  
+    <a href="#21-limits-of-the-evidence" class="anchor-heading" aria-labelledby="21-limits-of-the-evidence"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2.1. Limits of the evidence
+  
+  
+</h3>
+    
+
+<p>Not all of the findings below carry the same weight. Knowing how much to trust each number is part of reading the result correctly.</p>
+
+<ul>
+  <li><strong>Repeated rounds:</strong> The main TDB, cisimcik and JevBench results rest on full test rounds; the 27B results were verified with a protocol run in batches and with merged files.</li>
+  <li><strong>Measured on one engine only:</strong> For <code class="language-plaintext highlighter-rouge">tr-set</code>, <code class="language-plaintext highlighter-rouge">clef</code>, <code class="language-plaintext highlighter-rouge">clef-flash</code> and <code class="language-plaintext highlighter-rouge">d1-3b</code> were run only on SGLang; these three models have no vLLM counterpart.</li>
+  <li><strong>Small sample:</strong> The image/video evaluation consists of 8 items; a one-item difference changes the ranking.</li>
+  <li><strong>Behavioural observation:</strong> The <code class="language-plaintext highlighter-rouge">limits</code> results are not statistical; they are scenario-based API behaviours.</li>
+  <li><strong>Observed variability:</strong> <code class="language-plaintext highlighter-rouge">clef-flash</code> TDB accuracy ranges from 85.3% to 85.9% across rounds; in batched runs a deviation of about ±0.07 was reported in probability values.</li>
+  <li><strong>Version dependence:</strong> System One support in both engines rests on development images from the same period. The results apply to these versions and this hardware.</li>
+</ul><hr />
+<h2 id="3-decision-quality-accuracy-consistency-language-behaviour">
+  
+  
+    <a href="#3-decision-quality-accuracy-consistency-language-behaviour" class="anchor-heading" aria-labelledby="3-decision-quality-accuracy-consistency-language-behaviour"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. Decision quality: accuracy, consistency, language behaviour
+  
+  
+</h2>
+    
+<h3 id="31-external-english-standard">
+  
+  
+    <a href="#31-external-english-standard" class="anchor-heading" aria-labelledby="31-external-english-standard"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.1. External English standard
+  
+  
+</h3>
+    
+
+<p>On JevBench-public-120, all models score full marks on all 48 easy questions; the separation appears mainly in the 72 original questions.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>acc_all (72)</th>
+      <th>noul</th>
+      <th>choice</th>
+      <th>score</th>
+      <th>easy (48)</th>
+      <th>Brier</th>
+      <th>ECE(10)</th>
+      <th>flip</th>
+      <th>paraphrase</th>
+      <th>p50/p95 ms</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-edge</code></td>
+      <td>0.819</td>
+      <td>0.708</td>
+      <td>0.917</td>
+      <td>0.750</td>
+      <td>1.000</td>
+      <td>0.271</td>
+      <td>0.083</td>
+      <td>0.0</td>
+      <td>0.667</td>
+      <td>9 / 11</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-mini</code></td>
+      <td><strong>1.000</strong></td>
+      <td>1.000</td>
+      <td>1.000</td>
+      <td>1.000</td>
+      <td>1.000</td>
+      <td>0.012</td>
+      <td>0.032</td>
+      <td>0.0</td>
+      <td>0.833</td>
+      <td>50 / 52</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-27b</code></td>
+      <td><strong>1.000</strong></td>
+      <td>1.000</td>
+      <td>1.000</td>
+      <td>1.000</td>
+      <td>1.000</td>
+      <td>0.004</td>
+      <td>0.012</td>
+      <td>0.0</td>
+      <td>0.833</td>
+      <td>289 / 299</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef-flash</code></td>
+      <td>0.972</td>
+      <td>1.000</td>
+      <td>0.944</td>
+      <td>1.000</td>
+      <td>1.000</td>
+      <td>0.044</td>
+      <td>0.058</td>
+      <td>0.0</td>
+      <td>0.833</td>
+      <td>112 / 116</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef</code></td>
+      <td><strong>1.000</strong></td>
+      <td>1.000</td>
+      <td>1.000</td>
+      <td>1.000</td>
+      <td>1.000</td>
+      <td>0.004</td>
+      <td>0.012</td>
+      <td>0.0</td>
+      <td>0.833</td>
+      <td>290 / 301</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d1-3b</code></td>
+      <td>0.931</td>
+      <td>0.792</td>
+      <td>1.000</td>
+      <td>1.000</td>
+      <td>1.000</td>
+      <td>0.126</td>
+      <td>0.033</td>
+      <td>0.0</td>
+      <td>0.806</td>
+      <td>61 / 64</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Two observations stand out. First, the <code class="language-plaintext highlighter-rouge">flip</code> metric is zero in every model: when the order of the options is changed, the decision does not change. Second, the <code class="language-plaintext highlighter-rouge">paraphrase</code> metric is about 0.83 even in the best models. That is, <strong>expressing the same question in different words can change the decision.</strong> In applications where decision consistency is critical, this test should be repeated with institution-specific data.</p>
+<h3 id="32-turkish-hard-label-standard">
+  
+  
+    <a href="#32-turkish-hard-label-standard" class="anchor-heading" aria-labelledby="32-turkish-hard-label-standard"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.2. Turkish hard-label standard
+  
+  
+</h3>
+    
+
+<p>In TDB the highest accuracy is seen in the 27B models, but the ranking is not uniform with size: the 4B <code class="language-plaintext highlighter-rouge">d3-mini</code> (0.887) is better than the 9B <code class="language-plaintext highlighter-rouge">clef-flash</code> (0.853), while the difference between the 27B <code class="language-plaintext highlighter-rouge">d3-27b</code> and <code class="language-plaintext highlighter-rouge">d3-mini</code> is much smaller than the difference between 0.6B and 4B.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>accuracy</th>
+      <th>group-cons</th>
+      <th>high-conf err</th>
+      <th>mean gold p</th>
+      <th>amb valid</th>
+      <th>amb max-p</th>
+      <th>Brier</th>
+      <th>ECE(10)</th>
+      <th>p50/p95 ms</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-27b</code></td>
+      <td><strong>0.963</strong></td>
+      <td><strong>0.870</strong></td>
+      <td>0.011</td>
+      <td><strong>0.934</strong></td>
+      <td>0.952</td>
+      <td>0.765</td>
+      <td><strong>0.060</strong></td>
+      <td>0.016</td>
+      <td>336 / 362</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef</code></td>
+      <td>0.944</td>
+      <td>0.797</td>
+      <td><strong>0.006</strong></td>
+      <td>0.865</td>
+      <td>0.976</td>
+      <td>0.747</td>
+      <td>0.102</td>
+      <td>0.047</td>
+      <td>351 / 386</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef-flash</code></td>
+      <td>0.853</td>
+      <td>0.638</td>
+      <td>0.011</td>
+      <td>0.753</td>
+      <td>0.905</td>
+      <td>0.715</td>
+      <td>0.232</td>
+      <td>0.060</td>
+      <td>115 / 125</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-mini</code></td>
+      <td>0.887</td>
+      <td>0.710</td>
+      <td><strong>0.006</strong></td>
+      <td>0.795</td>
+      <td>0.905</td>
+      <td>0.754</td>
+      <td>0.183</td>
+      <td>0.047</td>
+      <td>59 / 64</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d1-3b</code></td>
+      <td>0.545</td>
+      <td>0.159</td>
+      <td>0.020</td>
+      <td>0.468</td>
+      <td>0.667</td>
+      <td>0.550</td>
+      <td>0.588</td>
+      <td>0.113</td>
+      <td>66 / 86</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-edge</code></td>
+      <td>0.336</td>
+      <td>0.029</td>
+      <td>0.065</td>
+      <td>0.327</td>
+      <td>0.619</td>
+      <td>0.635</td>
+      <td>0.867</td>
+      <td>0.295</td>
+      <td>10 / 14</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>The metrics should be interpreted with the following definitions in mind:</p>
+
+<ul>
+  <li><strong>Group consistency</strong> is the share of question groups that ask about the same situation with contrasting statements and are answered entirely correctly. It shows whether a consistent decision is made when the same situation is presented in different or opposite wording.</li>
+  <li><strong>Error at high confidence</strong> is the share of wrong decisions given with at least 0.90 confidence; it should also be monitored in automated systems.</li>
+  <li><strong>Overconfidence on ambiguous cases</strong> is, across the 42 controls, the rate at which one of the valid answers is selected and the highest average probability in those cases.</li>
+</ul>
+
+<p><code class="language-plaintext highlighter-rouge">d3-mini</code> and <code class="language-plaintext highlighter-rouge">clef</code> have the same error rate at high confidence (0.006); however, <code class="language-plaintext highlighter-rouge">clef</code>’s group consistency is markedly higher (clef 0.797, <code class="language-plaintext highlighter-rouge">d3-mini</code> 0.710). That is, similar “being sure” behaviour does not mean similar consistency.</p>
+<h3 id="33-turkish-probability-labelled-sample">
+  
+  
+    <a href="#33-turkish-probability-labelled-sample" class="anchor-heading" aria-labelledby="33-turkish-probability-labelled-sample"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3.3. Turkish probability-labelled sample
+  
+  
+</h3>
+    
+
+<p>In the cisimcik sample the reference is not a single correct option but the distribution of the reviewer panel. The accuracy here is therefore not comparable with TDB accuracy.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>accuracy</th>
+      <th>noul</th>
+      <th>choice</th>
+      <th>score</th>
+      <th>score-MAE (norm)</th>
+      <th>mean gold p</th>
+      <th>p50/p95 ms</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef</code></td>
+      <td><strong>0.855</strong></td>
+      <td>0.950</td>
+      <td>0.895</td>
+      <td>0.718</td>
+      <td>0.120</td>
+      <td>0.788</td>
+      <td>488 / 2221</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-27b</code></td>
+      <td>0.840</td>
+      <td>0.975</td>
+      <td>0.850</td>
+      <td>0.692</td>
+      <td>0.114</td>
+      <td>0.810</td>
+      <td>451 / 2547</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-mini</code></td>
+      <td>0.832</td>
+      <td>0.975</td>
+      <td>0.900</td>
+      <td>0.615</td>
+      <td>0.142</td>
+      <td>0.749</td>
+      <td>78 / 388</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef-flash</code></td>
+      <td>0.786</td>
+      <td>0.875</td>
+      <td>0.921</td>
+      <td>0.564</td>
+      <td>0.168</td>
+      <td>0.728</td>
+      <td>148 / 810</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d1-3b</code></td>
+      <td>0.624</td>
+      <td>0.800</td>
+      <td>0.605</td>
+      <td>0.462</td>
+      <td>0.220</td>
+      <td>0.560</td>
+      <td>88 / 201</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-edge</code></td>
+      <td>0.429</td>
+      <td>0.500</td>
+      <td>0.450</td>
+      <td>0.333</td>
+      <td>0.311</td>
+      <td>0.370</td>
+      <td>15 / 52</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><code class="language-plaintext highlighter-rouge">score</code> questions are the type every model struggles with most. In long and complex Turkish corporate texts the model tends to drift between adjacent levels: the distinction between “medium” and “medium-high” cannot be made reliably. Although <code class="language-plaintext highlighter-rouge">clef</code> achieves the highest accuracy at 0.718, this does not mean that an ordered scale can be used automatically in production.</p><hr />
+<h2 id="4-confidence-and-uncertainty">
+  
+  
+    <a href="#4-confidence-and-uncertainty" class="anchor-heading" aria-labelledby="4-confidence-and-uncertainty"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. Confidence and uncertainty
+  
+  
+</h2>
+    
+<h3 id="41-what-confidence-does-not-say">
+  
+  
+    <a href="#41-what-confidence-does-not-say" class="anchor-heading" aria-labelledby="41-what-confidence-does-not-say"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.1. What <code class="language-plaintext highlighter-rouge">confidence</code> does not say
+  
+  
+</h3>
+    
+
+<p><code class="language-plaintext highlighter-rouge">confidence</code> expresses the probability the model reports for the answer it chose; it does not directly indicate the probability that the answer is actually correct. A high confidence report therefore does not mean the decision is necessarily right.</p>
+
+<p>In the 42 ambiguity controls in TDB, the 27B models selected one of the valid options in 95–98% of cases; the highest average probability of the selected options was in the 0.75–0.77 range. In other words, the models <strong>tend to settle on one of the options rather than abstain</strong>, and they do so with relatively high probability. The level of uncertainty is not represented directly by a separate field in the API output.</p>
+
+<p><code class="language-plaintext highlighter-rouge">label_mass</code> partly fills this gap, but only in the D1 family. In D3 and CLEF the value is fixed at 1.0; <code class="language-plaintext highlighter-rouge">label_mass</code> therefore cannot be used as a safety filter on its own in these families. The practical consequence: <strong>a <code class="language-plaintext highlighter-rouge">confidence</code> threshold is necessary but not sufficient</strong>; it must be calibrated on labelled data.</p>
+<h3 id="42-coveragerisk-analysis">
+  
+  
+    <a href="#42-coveragerisk-analysis" class="anchor-heading" aria-labelledby="42-coveragerisk-analysis"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4.2. Coverage–risk analysis
+  
+  
+</h3>
+    
+
+<p>The boundary between automatic decision and human review is set not by overall accuracy but by <strong>the error rate among decisions given with high confidence</strong>. The table below is computed on the 354 scored cases of TDB by varying the <code class="language-plaintext highlighter-rouge">confidence</code> threshold.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th><code class="language-plaintext highlighter-rouge">conf ≥ 0.8</code></th>
+      <th><code class="language-plaintext highlighter-rouge">conf ≥ 0.9</code></th>
+      <th><code class="language-plaintext highlighter-rouge">conf ≥ 0.95</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-27b</code></td>
+      <td>Coverage 0.92 · risk 0.021</td>
+      <td><strong>Coverage 0.87 · risk 0.013</strong></td>
+      <td>Coverage 0.80 · risk 0.011</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef</code></td>
+      <td>Coverage 0.85 · risk 0.023</td>
+      <td>Coverage 0.69 · risk 0.008</td>
+      <td>Coverage 0.48 · risk 0.006</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef-flash</code></td>
+      <td>Coverage 0.68 · risk 0.046</td>
+      <td>Coverage 0.49 · risk 0.023</td>
+      <td>Coverage 0.25 · risk 0.000</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-mini</code></td>
+      <td>Coverage 0.68 · risk 0.021</td>
+      <td>Coverage 0.56 · risk 0.010</td>
+      <td>Coverage 0.43 · risk 0.007</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d1-3b</code></td>
+      <td>Coverage 0.22 · risk 0.195</td>
+      <td>Coverage 0.12 · risk 0.122</td>
+      <td>Coverage 0.03 · risk 0.000</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-edge</code></td>
+      <td>Coverage 0.25 · risk 0.596</td>
+      <td>Coverage 0.12 · risk 0.523</td>
+      <td>Coverage 0.07 · risk 0.360</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><em>Coverage: the share of decisions meeting the confidence threshold among all decisions. Risk: the error rate among decisions resolved automatically.</em></p>
+
+<p>The most important distinction in the table is between <code class="language-plaintext highlighter-rouge">d3-27b</code> and <code class="language-plaintext highlighter-rouge">clef</code>. At the 0.90 threshold <code class="language-plaintext highlighter-rouge">d3-27b</code> closes 87% of cases with 1.3% risk, while <code class="language-plaintext highlighter-rouge">clef</code> closes 69% with 0.8% risk. Lower risk comes at the price of more human review; the choice depends on the cost of a wrong decision.</p>
+
+<p>For <code class="language-plaintext highlighter-rouge">d3-edge</code>, <code class="language-plaintext highlighter-rouge">confidence</code> is not a reliable indicator: even when the model reports high confidence, the error rate remains in the 0.36–0.60 range. <code class="language-plaintext highlighter-rouge">d1-3b</code> similarly shows high risk at low coverage.</p>
+
+<p>These results apply only to the dataset and test conditions used. If the distribution of production data changes, the same coverage and risk levels cannot be guaranteed. The thresholds must therefore be recalibrated on the application’s own labelled data.</p><hr />
+<h2 id="5-multimodal-input-boundary-cases-performance">
+  
+  
+    <a href="#5-multimodal-input-boundary-cases-performance" class="anchor-heading" aria-labelledby="5-multimodal-input-boundary-cases-performance"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5. Multimodal input, boundary cases, performance
+  
+  
+</h2>
+    
+<h3 id="51-image-and-video">
+  
+  
+    <a href="#51-image-and-video" class="anchor-heading" aria-labelledby="51-image-and-video"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.1. Image and video
+  
+  
+</h3>
+    
+
+<p>Images and video can be added to the <code class="language-plaintext highlighter-rouge">state</code> field. In D3 and CLEF, images are processed at up to 1.6 megapixels and video at 2 frames per second and at most 32 frames. D1 supports only images and downsamples them to 1024×1024.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>Correct answers</th>
+      <th>Note</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-27b</code></td>
+      <td><strong>8/8</strong></td>
+      <td>The only model to answer every item correctly</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-mini</code></td>
+      <td>7/8</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef</code></td>
+      <td>7/8</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d1-3b</code></td>
+      <td>6/7</td>
+      <td>Video not supported; g7 was not run, requests containing <code class="language-plaintext highlighter-rouge">videos</code> returned an error</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef-flash</code></td>
+      <td>6/8</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-edge</code></td>
+      <td>6/8</td>
+      <td>—</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>The common weakness is the item coded <code class="language-plaintext highlighter-rouge">g3</code>: reading a numeric value from a chart. Every model except <code class="language-plaintext highlighter-rouge">d3-27b</code> answered this question incorrectly and produced different values in the 0.7–1.9 range. The models can determine the overall trend of the chart but struggle to <strong>read exact numeric values</strong>. In workflows where numerical accuracy is critical, the model output must therefore be verified against a data source independent of the image.</p>
+
+<p>In the D3 family, media is processed once and the resulting representation is shared across all questions. In the tests, asking 16 questions in a single request and in 16 separate requests gave the same result; in image-heavy workloads this reduces cost by avoiding repeated processing.</p>
+<h3 id="52-concurrent-request-performance">
+  
+  
+    <a href="#52-concurrent-request-performance" class="anchor-heading" aria-labelledby="52-concurrent-request-performance"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5.2. Concurrent request performance
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>1 client</th>
+      <th>8 clients</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-edge</code></td>
+      <td>118.6</td>
+      <td>335.6</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d1-3b</code></td>
+      <td>21.0</td>
+      <td>107.2</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-mini</code></td>
+      <td>19.0</td>
+      <td>39.2</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef-flash</code></td>
+      <td>8.8</td>
+      <td>16.8</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-27b</code></td>
+      <td>2.5</td>
+      <td>5.9</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef</code></td>
+      <td>3.1</td>
+      <td>4.9</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Values are completed requests per second (req/s), measured with single-question requests; for latency see the p50/p95 columns in §3. At a single request, latency depends largely on the duration of one forward pass. Because D3 evaluates each question in a separate pass while CLEF can evaluate several questions in a single forward pass, CLEF’s latency advantage grows as the number of questions increases.</p><hr />
+<h2 id="6-engine-portability-vllm-and-sglang">
+  
+  
+    <a href="#6-engine-portability-vllm-and-sglang" class="anchor-heading" aria-labelledby="6-engine-portability-vllm-and-sglang"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6. Engine portability: vLLM and SGLang
+  
+  
+</h2>
+    
+
+<p>For a system not to depend on a single inference engine, it must be known whether the same API produces the same decision. The same client scripts, the same datasets and the same model roster were run on both engines. This section measures agreement between two engines with pinned versions; it makes no claim about the general behaviour of the engines.</p>
+
+<p><em>V: vLLM, S: SGLang.</em></p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>TDB (V→S)</th>
+      <th>cisimcik (V→S)</th>
+      <th>std72 (V→S)</th>
+      <th>tr-set (V→S)</th>
+      <th>vision-8 (V→S)</th>
+      <th>Portability</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-27b</code></td>
+      <td>0.963 → 0.966</td>
+      <td>0.840 → 0.840</td>
+      <td>1.000 → 1.000</td>
+      <td>0.943 → 0.943</td>
+      <td>1.000 → 1.000</td>
+      <td>Yes (protected mode)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef</code></td>
+      <td>0.9435 → 0.9435</td>
+      <td>0.855 → 0.856</td>
+      <td>1.000 → 0.972</td>
+      <td>— → 0.914*</td>
+      <td>0.875 → 0.875</td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef-flash</code></td>
+      <td>0.853 → 0.853</td>
+      <td>0.786 → 0.782</td>
+      <td>0.972 → 0.972</td>
+      <td>— → 0.857*</td>
+      <td>0.750 → 0.875</td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d1-3b</code></td>
+      <td>0.545 → 0.568</td>
+      <td>0.624 → 0.622</td>
+      <td>0.931 → 0.931</td>
+      <td>— → 0.829*</td>
+      <td>0.857 → 0.875</td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-mini</code></td>
+      <td>0.887 → <strong>0.280</strong> ⚠</td>
+      <td>0.832 → <strong>0.319</strong> ⚠</td>
+      <td>1.000 → <strong>0.292</strong> ⚠</td>
+      <td>0.886 → <strong>0.257</strong> ⚠</td>
+      <td>0.875 → <strong>0.250</strong> ⚠</td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-edge</code></td>
+      <td>0.336 → ✗</td>
+      <td>— → ✗</td>
+      <td>0.819 → ✗</td>
+      <td>0.800 → ✗</td>
+      <td>0.750 → ✗</td>
+      <td>No</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>* <code class="language-plaintext highlighter-rouge">tr-set</code> was run only on SGLang; there is no vLLM counterpart in these rows. ✗: the model could not be started in SGLang.</p>
+<h3 id="61-differences-at-the-api-level">
+  
+  
+    <a href="#61-differences-at-the-api-level" class="anchor-heading" aria-labelledby="61-differences-at-the-api-level"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.1. Differences at the API level
+  
+  
+</h3>
+    
+
+<p>That the same client code produces the same result on both engines in the D1 and CLEF families shows that the observed differences do not come from the client. There are, however, mismatches at the schema level, and the client must handle each of them separately.</p>
+
+<ol>
+  <li><strong>The <code class="language-plaintext highlighter-rouge">model</code> field is mandatory in SGLang.</strong> When it is omitted, <code class="language-plaintext highlighter-rouge">422 Field required</code> is returned; in vLLM it is optional. A compatible client must obtain the model name from <code class="language-plaintext highlighter-rouge">/v1/models</code> and add it to the body.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">confidence</code> may not match the probability of the selected option.</strong> In the SGLang output the example <code class="language-plaintext highlighter-rouge">choice: "diger", confidence: 0.303, probabilities: {…, "diger": 0.536}</code> was observed. According to the schema these two values should be equal. In SGLang, <code class="language-plaintext highlighter-rouge">confidence</code> must not be used in threshold calculations without verification.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">probabilities</code> is absent in <code class="language-plaintext highlighter-rouge">noul</code> answers.</strong> While vLLM returns a <code class="language-plaintext highlighter-rouge">{yes, no}</code> distribution, SGLang gives only <code class="language-plaintext highlighter-rouge">{"type":"noul","noul":0.117}</code>. The missing probability can be derived with <code class="language-plaintext highlighter-rouge">P(no) = 1 − P(yes)</code> because <code class="language-plaintext highlighter-rouge">noul</code> is binary.</li>
+  <li><strong>The location of <code class="language-plaintext highlighter-rouge">label_mass</code> differs.</strong> vLLM returns it under <code class="language-plaintext highlighter-rouge">diagnostics[qid].{label_mass, argmax_is_label}</code>, while SGLang returns it in the per-answer <code class="language-plaintext highlighter-rouge">x_label_mass</code> field; moreover, the field is absent in the <code class="language-plaintext highlighter-rouge">d3-mini</code> output. A missing value must not be silently accepted as valid.</li>
+  <li><strong>Error codes differ.</strong> An unknown question field returns <code class="language-plaintext highlighter-rouge">400</code> in vLLM and <code class="language-plaintext highlighter-rouge">422</code> in SGLang; <code class="language-plaintext highlighter-rouge">chat_template_kwargs</code> is ignored with <code class="language-plaintext highlighter-rouge">200</code> in vLLM but returns <code class="language-plaintext highlighter-rouge">400</code> in SGLang. Options with the same name after truncation are accepted in both engines; the option, question and level limits are the same.</li>
+</ol>
+<h3 id="62-speed">
+  
+  
+    <a href="#62-speed" class="anchor-heading" aria-labelledby="62-speed"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.2. Speed
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>SGLang req/s (1 / 8)</th>
+      <th>Relative to vLLM</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d1-3b</code></td>
+      <td>27 / 63</td>
+      <td>About 1/4 of vLLM under high load</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-mini</code></td>
+      <td>17 / 37</td>
+      <td>Similar; falls at 64 clients</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef-flash</code></td>
+      <td>8 / 15</td>
+      <td>On a par</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">d3-27b</code></td>
+      <td>3 / 7</td>
+      <td>Slightly higher in protected mode</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">clef</code></td>
+      <td>3 / 5</td>
+      <td>Equal</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>The vLLM values are given in §5.2.</p>
+<h3 id="63-conclusion">
+  
+  
+    <a href="#63-conclusion" class="anchor-heading" aria-labelledby="63-conclusion"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6.3. Conclusion
+  
+  
+</h3>
+    
+
+<p><strong>The results in this section are compatibility observations obtained only for the versions tested; they must not be interpreted as a general portability rule.</strong> In the versions tested, the label-token method (D1) and the joint-schema method (CLEF) produced similar results on both engines; the 27B D3 model is compatible in protected mode. The degradation seen in the small D3 models does not mean that the engine does not support this method in general. What it shows is that the answer-code implementation in that development image produced incorrect results on small models. Because the failure was observed in one model and one version, no firm judgement can be made about its cause; numerical precision, the attention path and schema mapping must each be examined separately.</p>
+
+<p>Every model–engine–version combination must therefore pass a separate verification test before production, and the test must be repeated when the engine version is upgraded. In terms of performance, SGLang may provide slightly lower latency at a single request, while vLLM’s batching advantage becomes evident under high concurrency on <code class="language-plaintext highlighter-rouge">d1-3B</code>.</p><hr />
+<h2 id="7-decision-guide-for-production">
+  
+  
+    <a href="#7-decision-guide-for-production" class="anchor-heading" aria-labelledby="7-decision-guide-for-production"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7. Decision guide for production
+  
+  
+</h2>
+    
+<h3 id="71-model-selection">
+  
+  
+    <a href="#71-model-selection" class="anchor-heading" aria-labelledby="71-model-selection"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7.1. Model selection
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Option</th>
+      <th>When</th>
+      <th>Limitation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong><code class="language-plaintext highlighter-rouge">d3-27b</code></strong> (27B)</td>
+      <td>When accuracy is critical; when there are complex inputs including image and video</td>
+      <td>~340 ms single-request latency</td>
+    </tr>
+    <tr>
+      <td><strong><code class="language-plaintext highlighter-rouge">clef</code></strong> (27B)</td>
+      <td>When the single-forward-pass advantage is needed for multi-question requests</td>
+      <td>~98% of <code class="language-plaintext highlighter-rouge">d3-27b</code> accuracy</td>
+    </tr>
+    <tr>
+      <td><strong><code class="language-plaintext highlighter-rouge">clef-flash</code></strong> (9B)</td>
+      <td>2–9 questions per request; when the cost of a wrong decision is low</td>
+      <td>TDB 0.853</td>
+    </tr>
+    <tr>
+      <td><strong><code class="language-plaintext highlighter-rouge">d3-mini</code></strong> (4B)</td>
+      <td>Real-time pre-filtering; ~50 ms budget</td>
+      <td>TDB <code class="language-plaintext highlighter-rouge">score</code> 0.615; unusable in the SGLang image tested</td>
+    </tr>
+    <tr>
+      <td><strong><code class="language-plaintext highlighter-rouge">d1-3b</code></strong> (3B)</td>
+      <td>High-volume labelling; ~60 ms budget</td>
+      <td>TDB 0.545; LFM 1.0 licence</td>
+    </tr>
+    <tr>
+      <td><strong><code class="language-plaintext highlighter-rouge">d3-edge</code></strong> (0.6B)</td>
+      <td>First routing only; when the cost of error is very low</td>
+      <td>TDB 0.336; confidence threshold meaningless</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>The relationship between size and accuracy is not uniform: <code class="language-plaintext highlighter-rouge">clef</code> (27B) and <code class="language-plaintext highlighter-rouge">d3-27b</code> (27B) have similar accuracy, while <code class="language-plaintext highlighter-rouge">d3-mini</code> (4B) is better than the 9B <code class="language-plaintext highlighter-rouge">clef-flash</code> on TDB. The choice depends on the readout method and the task rather than on the parameter count.</p>
+<h3 id="72-recommended-decision-policy">
+  
+  
+    <a href="#72-recommended-decision-policy" class="anchor-heading" aria-labelledby="72-recommended-decision-policy"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7.2. Recommended decision policy
+  
+  
+</h3>
+    
+
+<ol>
+  <li><strong>Threshold:</strong> As an initial policy, <code class="language-plaintext highlighter-rouge">confidence ≥ 0.90</code> and <code class="language-plaintext highlighter-rouge">label_mass ≥ 0.95</code> are required together. For <code class="language-plaintext highlighter-rouge">d3-27b</code> this resolves about 87% of 354 cases automatically with 1.3% risk. The thresholds are verified with the application data before going to production.</li>
+  <li><strong>Routing to human review:</strong> When <code class="language-plaintext highlighter-rouge">label_mass &lt; 0.95</code>, the decision goes to human review. In D3 and CLEF this field is fixed at 1.0, so it is not sufficient on its own; task categories with high error rates (<code class="language-plaintext highlighter-rouge">by_category</code>) and Turkish <code class="language-plaintext highlighter-rouge">score</code> questions are also routed.</li>
+  <li><strong>Record keeping:</strong> <code class="language-plaintext highlighter-rouge">confidence</code> and, where possible, the probability distribution are stored with each decision; the thresholds are updated in line with new results and the coverage–risk analysis is repeated with real data.</li>
+  <li><strong>Re-querying:</strong> In batched runs and runs that depend on memory state, probabilities may vary by about ±0.07. Decisions close to the threshold are verified with a single request before publication; where possible, a configuration that provides deterministic behaviour (<code class="language-plaintext highlighter-rouge">VLLM_BATCH_INVARIANT</code>) is evaluated.</li>
+  <li><strong>What to avoid:</strong> Basing a production decision on <code class="language-plaintext highlighter-rouge">d3-edge</code> alone; treating <code class="language-plaintext highlighter-rouge">confidence</code> as calibrated accuracy; embedding d1-3B in an Apache-2.0-compatible product without examining the licence terms.</li>
+</ol><hr />
+<h2 id="8-risks-licences-and-conclusion">
+  
+  
+    <a href="#8-risks-licences-and-conclusion" class="anchor-heading" aria-labelledby="8-risks-licences-and-conclusion"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8. Risks, licences and conclusion
+  
+  
+</h2>
+    
+<h3 id="81-limits-of-validity">
+  
+  
+    <a href="#81-limits-of-validity" class="anchor-heading" aria-labelledby="81-limits-of-validity"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8.1. Limits of validity
+  
+  
+</h3>
+    
+
+<ul>
+  <li>The results apply to a single hardware configuration (DGX Spark GB10), a single memory configuration and the development images of two engines.</li>
+  <li>The TDB and cisimcik labels were not changed within the scope of this study; the results must be reproduced when new versions are published.</li>
+  <li>The 27B results were obtained with the protected protocol (GPU memory utilization 0.78, <code class="language-plaintext highlighter-rouge">--enforce-eager</code>, batched runs); latency and stability may change under different settings.</li>
+  <li>For <code class="language-plaintext highlighter-rouge">tr-set</code>, <code class="language-plaintext highlighter-rouge">clef</code>, <code class="language-plaintext highlighter-rouge">clef-flash</code> and <code class="language-plaintext highlighter-rouge">d1-3b</code> were measured only on SGLang; cross-engine comparison cannot be made for these three models.</li>
+  <li>Zero-byte result files were not counted as complete, and missing tests were rerun with <code class="language-plaintext highlighter-rouge">FORCE=1</code>.</li>
+  <li>Use of the TypeSafe SDK with the two engines is not included in this scope.</li>
+</ul>
+<h3 id="82-licences">
+  
+  
+    <a href="#82-licences" class="anchor-heading" aria-labelledby="82-licences"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8.2. Licences
+  
+  
+</h3>
+    
+
+<p>Status verified against Hugging Face model cards and repository files as of November 2026:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>Licence</th>
+      <th>Base model</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">vllm-sr/d3</code></td>
+      <td><strong>Apache-2.0</strong></td>
+      <td>Qwen/Qwen3.8-27B (Apache-2.0)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">vllm-sr/d3-mini</code></td>
+      <td><strong>Apache-2.0</strong></td>
+      <td>Qwen/Qwen3.5-4B (Apache-2.0)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">vllm-sr/d3-edge</code></td>
+      <td><strong>Apache-2.0</strong></td>
+      <td>Qwen/Qwen3.5-0.8B (Apache-2.0)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">Cloudflare/clef</code></td>
+      <td><strong>Apache-2.0</strong></td>
+      <td>Qwen/Qwen3.8-27B</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">Cloudflare/clef-flash</code></td>
+      <td><strong>Apache-2.0</strong></td>
+      <td>Qwen3.5 (9B)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">LiquidAI/d1-3B</code></td>
+      <td><strong>LFM 1.0</strong> ⚠</td>
+      <td>LiquidAI/LFM2.5-VL-3B</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>The D3 and CLEF families are published under Apache-2.0; nevertheless, when redistribution and derivative work are evaluated, the licence file of the version used, and any additional terms, should be examined in addition to the model card.</p>
+
+<p><strong>d1-3B is not Apache-2.0.</strong> The rights that apply in Apache-2.0-licensed software must not be assumed to apply unchanged; before commercial distribution or inclusion in a product, Liquid AI’s current licence text should be examined and, if necessary, legal advice obtained.</p>
+<h3 id="83-conclusion">
+  
+  
+    <a href="#83-conclusion" class="anchor-heading" aria-labelledby="83-conclusion"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 8.3. Conclusion
+  
+  
+</h3>
+    
+
+<p>This evaluation shows that the System One family can be used in production under certain conditions, but that a reliable deployment requires <strong>the model, inference engine and hardware combination to be verified together</strong>.</p>
+
+<ul>
+  <li><strong>Accuracy</strong> increases with size, but 4B-class models come much closer to 27B than expected; the choice should be made by task and readout method, not by parameter count.</li>
+  <li><strong>Confidence</strong> is not calibrated; uncertainty is not represented in the output. Automatic decisions must be built with thresholds validated on labelled data and with human review.</li>
+  <li><strong>Turkish</strong>: the weakest points are ordered <code class="language-plaintext highlighter-rouge">score</code> questions and paraphrase consistency; both must be tested separately with institution-specific data.</li>
+  <li><strong>Engine agreement</strong> depends on the model and the engine version: D1 and CLEF are portable in the versions tested, 27B D3 is portable in protected mode, and the small D3 models do not work in the SGLang image tested.</li>
+  <li><strong>Hardware</strong> is a real limit: 27B models cannot be run reliably on GB10 without a protected operating protocol.</li>
+</ul>
+
+<p>The decision to go to production should rest on thresholds verified on application-specific labelled data, continuous monitoring of decision records, and separate acceptance tests run for every model–engine–version combination.</p>
+
+          
+
+          
+        </main>
+        
+
+
+      </div>
+    </div>
+    
+      
+
+<div class="search-overlay"></div>
+
+    
+  </div>
+
+  
+
+  <script>
+    window.JTD_I18N = {
+      search_no_results: "No results found",
+      copy_code: "Copy code to clipboard"
+    };
+  </script>
+
+  
+
+
+<div id="cookie-consent-banner" class="cookie-consent" role="dialog"
+     aria-modal="false" aria-label="Cookie consent"
+     data-consent-state="pending" hidden>
+  <div class="cookie-consent__body">
+    <div class="cookie-consent__text">
+      <span class="cookie-consent__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+          <path d="M21 12a9 9 0 1 1-9-9 4.5 4.5 0 0 0 4.5 4.5A4.5 4.5 0 0 0 21 12zm-9-3.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-1.5 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm6-1.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-3 4.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0z"/>
+        </svg>
+      </span>
+      <p>We use cookies to analyze site traffic and improve your experience. By clicking 'Accept', you consent to the use of analytics cookies as described in our Privacy Policy.
+        <a href="https://aetherix.com/privacy-policy/" target="_blank" rel="noopener noreferrer"
+           class="cookie-consent__link">Privacy Policy</a>
+      </p>
+    </div>
+    <div class="cookie-consent__actions">
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--reject"
+              data-consent-action="rejected">Reject</button>
+      <button type="button" class="cookie-consent__btn cookie-consent__btn--accept"
+              data-consent-action="accepted">Accept</button>
+    </div>
+  </div>
+</div>
+<script>
+  // Eski karar önbellekte varsa bannerı gösterme
+  (function() {
+    try {
+      var v = localStorage.getItem('cookieConsent');
+      if (v === 'accepted' || v === 'rejected') {
+        document.documentElement.dataset.cookieConsent = v;
+      }
+    } catch (e) {}
+  })();
+</script>
+<script src="/assets/js/cookie-banner.js" defer></script>
+
+</body>
+</html>
+
