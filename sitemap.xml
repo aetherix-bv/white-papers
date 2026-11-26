@@ -1575,6 +1575,26 @@
     <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/kimi-k3-1-pro/dgx-b300/mxfp4-sglang-tp8-spec8/"/>
   </url>
   <url>
+    <loc>https://whitepapers.aetherix.com/llm-inference-benchmarks/tencent-hy4-flash/dgx-b300/bf16-sglang-tp2-spec6/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/tencent-hy4-flash/dgx-b300/bf16-sglang-tp2-spec6/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/tencent-hy4-flash/dgx-b300/bf16-sglang-tp2-spec6/"/>
+  </url>
+  <url>
+    <loc>https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/tencent-hy4-flash/dgx-b300/bf16-sglang-tp2-spec6/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/tencent-hy4-flash/dgx-b300/bf16-sglang-tp2-spec6/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/tencent-hy4-flash/dgx-b300/bf16-sglang-tp2-spec6/"/>
+  </url>
+  <url>
+    <loc>https://whitepapers.aetherix.com/llm-inference-benchmarks/ernie-5-5-flash-preview/dgx-b300/fp8-sglang-tp1-spec7/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/ernie-5-5-flash-preview/dgx-b300/fp8-sglang-tp1-spec7/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/ernie-5-5-flash-preview/dgx-b300/fp8-sglang-tp1-spec7/"/>
+  </url>
+  <url>
+    <loc>https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/ernie-5-5-flash-preview/dgx-b300/fp8-sglang-tp1-spec7/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/ernie-5-5-flash-preview/dgx-b300/fp8-sglang-tp1-spec7/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/ernie-5-5-flash-preview/dgx-b300/fp8-sglang-tp1-spec7/"/>
+  </url>
+  <url>
     <loc>https://whitepapers.aetherix.com/cv-inference-benchmarks/gb10/dashcamnet-int8/</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/cv-inference-benchmarks/gb10/dashcamnet-int8/"/>
     <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/cv-inference-benchmarks/gb10/dashcamnet-int8/"/>
