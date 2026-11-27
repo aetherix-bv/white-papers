@@ -325,6 +325,16 @@
     <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/qwen3-vl-30b-a3b-instruct/thor/fp8-vllm-tp1-spec/"/>
   </url>
   <url>
+    <loc>https://whitepapers.aetherix.com/llm-inference-benchmarks/inkling-2-mini/thor/mxfp8-vllm-tp1-spec7/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/inkling-2-mini/thor/mxfp8-vllm-tp1-spec7/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/inkling-2-mini/thor/mxfp8-vllm-tp1-spec7/"/>
+  </url>
+  <url>
+    <loc>https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/inkling-2-mini/thor/mxfp8-vllm-tp1-spec7/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/inkling-2-mini/thor/mxfp8-vllm-tp1-spec7/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/inkling-2-mini/thor/mxfp8-vllm-tp1-spec7/"/>
+  </url>
+  <url>
     <loc>https://whitepapers.aetherix.com/llm-inference-benchmarks/gpt-oss-120b/1x-dgx-spark/mxfp4-vllm-tp1/</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://whitepapers.aetherix.com/llm-inference-benchmarks/gpt-oss-120b/1x-dgx-spark/mxfp4-vllm-tp1/"/>
     <xhtml:link rel="alternate" hreflang="nl" href="https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/gpt-oss-120b/1x-dgx-spark/mxfp4-vllm-tp1/"/>

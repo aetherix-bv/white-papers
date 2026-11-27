@@ -4,13 +4,13 @@
 
 LLM figures were measured with the CordatusAI LLM Benchmark Tool and CV
 figures with the cordatus-benchmark tool. The
-Intelligence Index and Agentic Index fields in benchmarks.json are republished
-from Artificial Analysis (https://artificialanalysis.ai) and must be attributed
-to them wherever they are shown.
+intelligence_index field in benchmarks.json is computed from data published by
+ai-leaderboard.dev (https://www.ai-leaderboard.dev), with its method, and must be
+attributed to them wherever it is shown.
 
 ## Benchmark explorers
 
-- [LLM Inference Benchmark Explorer](https://whitepapers.aetherix.com/llm-inference-benchmarks/): 130 runs — time to first token and per-request tokens/s at concurrency 1–64, with Max C (concurrent requests meeting TTFT ≤ 1 s and ≥ 20 tok/s by default) and estimated chat / agentic user capacity per model × device — how many people a model on a given device can serve. Each run's plain-language explanation is in the page HTML and in llms-full.txt. Dutch: https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/
+- [LLM Inference Benchmark Explorer](https://whitepapers.aetherix.com/llm-inference-benchmarks/): 131 runs — time to first token and per-request tokens/s at concurrency 1–64, with Max C (concurrent requests meeting TTFT ≤ 1 s and ≥ 20 tok/s by default) and estimated chat / agentic user capacity per model × device — how many people a model on a given device can serve. Each run's plain-language explanation is in the page HTML and in llms-full.txt. Dutch: https://whitepapers.aetherix.com/nl/llm-inference-benchmarks/
 - [CV Inference Benchmark Explorer](https://whitepapers.aetherix.com/cv-inference-benchmarks/): 181 device × model results — FPS per camera and frame drop by camera count. Dutch: https://whitepapers.aetherix.com/nl/cv-inference-benchmarks/
 - [VLM Inference Benchmark Explorer](https://whitepapers.aetherix.com/vlm-inference-benchmarks/): 137 vision-language model runs — response time (time to first token) and per-request tokens/s by image size, images per camera and number of cameras, and Max Cameras: the highest measured number of cameras (one request in flight per camera) whose answer starts within the target (3 s by default). Dutch: https://whitepapers.aetherix.com/nl/vlm-inference-benchmarks/
 
